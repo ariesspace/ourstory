@@ -310,7 +310,6 @@ select {
     display: grid;
     place-items: center;
     padding: clamp(42px, 8vw, 100px) 0;
-    border-bottom: 1px solid var(--line);
     text-align: center;
 }
 
