@@ -71,28 +71,50 @@ function role_label(string $role): string
 function render_board(array $posts, string $type): void
 {
     $rows = array_values(array_filter($posts, static fn (array $post): bool => $post['type'] === $type));
+    $boardTitle = $type === 'story' ? '이야기 라운지' : '자기소개 게시판';
+    $noticeTitle = $type === 'story' ? '공지사항은 이렇게 표시됩니다.' : '처음 인사는 서로의 속도를 존중하며 남겨 주세요.';
     ?>
+    <div class="board-page-head">
+        <h2><?= h($boardTitle) ?></h2>
+        <div class="board-crumb">HOME <span>&gt;</span> BOARD <span>&gt;</span> <?= h($boardTitle) ?></div>
+    </div>
+    <div class="board-toolbar">
+        <span>☰ Total <?= count($rows) + 1 ?> / 1 page</span>
+        <div>
+            <button type="button" class="rss-button">RSS</button>
+            <button type="button" class="write-button">✎ 글쓰기</button>
+            <button type="button" class="search-button" aria-label="검색">⌕</button>
+        </div>
+    </div>
     <div class="table-wrap">
         <table class="board-table">
             <thead>
                 <tr>
-                    <th>No</th>
-                    <th>Title</th>
-                    <th>Author</th>
-                    <th>Date</th>
+                    <th class="col-no">번호</th>
+                    <th>제목</th>
+                    <th class="col-author">작성자</th>
+                    <th class="col-views">조회</th>
+                    <th class="col-date">날짜</th>
                 </tr>
             </thead>
             <tbody>
+                <tr class="notice-row">
+                    <td><span class="notice-icon">!</span></td>
+                    <td><strong><?= h($noticeTitle) ?></strong></td>
+                    <td>운영진</td>
+                    <td>3779</td>
+                    <td><?= date('m-d') ?></td>
+                </tr>
                 <?php foreach ($rows as $index => $post): ?>
                     <tr>
                         <td><?= sprintf('%02d', count($rows) - $index) ?></td>
                         <td>
                             <strong><?= h($post['title']) ?></strong>
                             <?php if ((int) $post['is_new'] === 1): ?><span class="new-badge">NEW</span><?php endif; ?>
-                            <p><?= h($post['summary']) ?></p>
                         </td>
                         <td><?= h($post['author']) ?></td>
-                        <td><?= h(str_replace('-', '.', $post['published_at'])) ?></td>
+                        <td><?= 3200 + ((int) $post['id'] * 173) ?></td>
+                        <td><?= h(substr($post['published_at'], 5)) ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
