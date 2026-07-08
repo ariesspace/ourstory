@@ -102,6 +102,11 @@ select {
     font-weight: 800;
 }
 
+.signin:hover,
+.signin.active {
+    background: #dcd0ec;
+}
+
 .site-main {
     max-width: 1400px;
     margin: 0 auto;
@@ -169,6 +174,13 @@ select {
     gap: 22px;
 }
 
+.login-page {
+    min-height: calc(100vh - 220px);
+    display: grid;
+    place-items: center;
+    padding: clamp(28px, 6vw, 72px) 0;
+}
+
 .login-card,
 .feature-card,
 .mini-list,
@@ -189,6 +201,41 @@ select {
     background:
         radial-gradient(circle at 95% 0%, rgba(232, 188, 205, 0.5), transparent 34%),
         var(--lavender);
+}
+
+.login-card-large {
+    width: min(100%, 528px);
+    grid-column: auto;
+    min-height: 0;
+    padding: clamp(32px, 5vw, 42px);
+    border-radius: 38px;
+}
+
+.login-card-large .heart-mark {
+    width: 64px;
+    height: 64px;
+    font-size: 32px;
+}
+
+.login-card-large h2 {
+    font-size: clamp(42px, 6vw, 48px);
+}
+
+.login-card-large p {
+    font-size: 17px;
+}
+
+.login-card-large .login-form input,
+.login-card-large .login-form button {
+    min-height: 66px;
+    border-radius: 22px;
+    font-size: 21px;
+}
+
+.login-card-large .quick-roles span {
+    min-height: 46px;
+    border-radius: 18px;
+    font-size: 16px;
 }
 
 .heart-mark {
@@ -282,7 +329,7 @@ select {
 }
 
 .notice-feature {
-    grid-column: span 4;
+    grid-column: span 6;
     padding: 34px;
     background:
         radial-gradient(circle at 105% 110%, rgba(232, 188, 205, 0.75), transparent 42%),
@@ -323,7 +370,7 @@ select {
 }
 
 .image-feature {
-    grid-column: span 4;
+    grid-column: span 6;
     min-height: 249px;
     background: #ffffff;
 }

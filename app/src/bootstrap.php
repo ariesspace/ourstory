@@ -119,7 +119,7 @@ function site_seed(PDO $pdo): void
 function active_page(): string
 {
     $page = $_GET['page'] ?? 'home';
-    $allowed = ['home', 'story', 'intro', 'members', 'calendar', 'album', 'admin'];
+    $allowed = ['home', 'story', 'intro', 'members', 'calendar', 'album', 'admin', 'login'];
 
     return in_array($page, $allowed, true) ? $page : 'home';
 }

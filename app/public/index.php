@@ -21,6 +21,8 @@ $menus = [
     'admin' => 'Admin',
 ];
 
+$pageTitles = $menus + ['login' => 'Sign in'];
+
 function page_url(string $page): string
 {
     return $page === 'home' ? '/' : '/?page=' . rawurlencode($page);
@@ -92,7 +94,7 @@ function render_board(array $posts, string $type): void
                 <a class="<?= $page === $id ? 'active' : '' ?>" href="<?= h(page_url($id)) ?>"><?= h($label) ?></a>
             <?php endforeach; ?>
         </nav>
-        <a class="signin" href="/?page=members">Sign in</a>
+        <a class="signin <?= $page === 'login' ? 'active' : '' ?>" href="/?page=login">Sign in</a>
     </header>
 
     <main class="site-main">
@@ -107,22 +109,6 @@ function render_board(array $posts, string $type): void
             </section>
 
             <section class="portal-grid">
-                <article class="login-card">
-                    <div class="heart-mark">♡</div>
-                    <h2>Welcome<br>back.</h2>
-                    <p>회원 전용 공간입니다. 로컬 시안에서는 화면 구성만 확인할 수 있습니다.</p>
-                    <form class="login-form">
-                        <input type="text" placeholder="아이디" aria-label="아이디">
-                        <input type="password" placeholder="비밀번호" aria-label="비밀번호">
-                        <button type="button">입장하기 ↗</button>
-                    </form>
-                    <div class="quick-roles">
-                        <span>운영자</span>
-                        <span>스태프</span>
-                        <span>회원</span>
-                    </div>
-                </article>
-
                 <a class="feature-card notice-feature" href="/?page=story">
                     <span>Notice //</span>
                     <h2>이번 주말<br>감성 티타임</h2>
@@ -176,10 +162,28 @@ function render_board(array $posts, string $type): void
                     <p>함께하는 일정을 확인하기</p>
                 </a>
             </section>
+        <?php elseif ($page === 'login'): ?>
+            <section class="login-page" aria-label="로그인">
+                <article class="login-card login-card-large">
+                    <div class="heart-mark">♡</div>
+                    <h2>Welcome<br>back.</h2>
+                    <p>회원 전용 공간입니다. 로컬 시안에서는 화면 구성만 확인할 수 있습니다.</p>
+                    <form class="login-form">
+                        <input type="text" placeholder="아이디" aria-label="아이디">
+                        <input type="password" placeholder="비밀번호" aria-label="비밀번호">
+                        <button type="button">입장하기 ↗</button>
+                    </form>
+                    <div class="quick-roles">
+                        <span>운영자</span>
+                        <span>스태프</span>
+                        <span>회원</span>
+                    </div>
+                </article>
+            </section>
         <?php else: ?>
             <section class="sub-hero">
                 <div>
-                    <h1><?= h($menus[$page]) ?></h1>
+                    <h1><?= h($pageTitles[$page]) ?></h1>
                     <p>우리들의 이야기가 열리는 공간입니다.</p>
                 </div>
                 <?php if (in_array($page, ['story', 'intro', 'album'], true)): ?>
