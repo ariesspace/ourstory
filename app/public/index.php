@@ -173,11 +173,6 @@ function render_board(array $posts, string $type): void
                         <input type="password" placeholder="비밀번호" aria-label="비밀번호">
                         <button type="button">입장하기 ↗</button>
                     </form>
-                    <div class="quick-roles">
-                        <span>운영자</span>
-                        <span>스태프</span>
-                        <span>회원</span>
-                    </div>
                 </article>
             </section>
         <?php else: ?>
