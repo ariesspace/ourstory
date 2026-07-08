@@ -131,27 +131,12 @@ function render_board(array $posts, string $type): void
 function render_access_denied(string $title): void
 {
     ?>
-    <section class="locked-layout">
-        <aside class="locked-side" aria-label="내부 메뉴">
-            <div class="locked-side-title">
-                <strong>Our Story</strong>
-                <span>private lounge</span>
-            </div>
-            <a href="/?page=story" class="active">이야기 라운지 <span>-</span></a>
-            <a href="/?page=intro">자기소개 <span>+</span></a>
-            <a href="/?page=members">멤버 공간 <span>+</span></a>
-            <a href="/?page=calendar">일정 캘린더 <span>+</span></a>
-            <a href="/?page=album">갤러리 <span>+</span></a>
-        </aside>
-        <section class="locked-panel">
-            <div class="locked-breadcrumb">홈 &gt; <?= h($title) ?> &gt; 권한 없음</div>
-            <div class="locked-message">
-                <div class="locked-icon">!</div>
-                <h2>접근 권한이 없습니다</h2>
-                <p>우리들의 이야기 회원만 접근이 가능한 메뉴입니다.</p>
-                <a href="/?page=login">로그인</a>
-            </div>
-        </section>
+    <section class="access-panel" aria-label="접근 권한 없음">
+        <span class="access-kicker"><?= h($title) ?></span>
+        <div class="access-icon">!</div>
+        <h1>접근 권한이 없습니다</h1>
+        <p>로그인 후 이용할 수 있는 공간입니다.</p>
+        <a href="/?page=login">로그인</a>
     </section>
     <?php
 }
