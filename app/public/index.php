@@ -131,12 +131,17 @@ function render_board(array $posts, string $type): void
 function render_access_denied(string $title): void
 {
     ?>
-    <section class="access-panel" aria-label="접근 권한 없음">
-        <span class="access-kicker"><?= h($title) ?></span>
-        <div class="access-icon">!</div>
-        <h1>접근 권한이 없습니다</h1>
-        <p>로그인 후 이용할 수 있는 공간입니다.</p>
-        <a href="/?page=login">로그인</a>
+    <section class="access-page" aria-label="접근 권한 없음">
+        <div class="access-code">403</div>
+        <div class="access-copy">
+            <span><?= h($title) ?></span>
+            <h1>접근 권한이 없습니다</h1>
+            <p>이 페이지는 로그인한 회원에게만 열려 있습니다.</p>
+            <div class="access-actions">
+                <a href="/?page=login">로그인</a>
+                <a href="/">홈으로</a>
+            </div>
+        </div>
     </section>
     <?php
 }

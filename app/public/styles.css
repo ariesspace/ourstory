@@ -305,60 +305,59 @@ select {
     font-weight: 700;
 }
 
-.access-panel {
-    width: min(100%, 620px);
-    min-height: 360px;
+.access-page {
+    min-height: calc(100vh - 290px);
     display: grid;
-    justify-items: center;
-    align-content: center;
-    margin: clamp(42px, 8vw, 88px) auto;
-    padding: clamp(32px, 6vw, 54px);
-    border: 1px solid rgba(255, 235, 244, 0.9);
-    border-radius: 32px;
-    background:
-        radial-gradient(circle at 94% 0%, rgba(185, 139, 216, 0.16), transparent 34%),
-        radial-gradient(circle at 0% 100%, rgba(255, 214, 110, 0.18), transparent 34%),
-        #ffffff;
-    box-shadow: var(--shadow);
-    text-align: center;
+    grid-template-columns: minmax(180px, 0.48fr) minmax(280px, 0.52fr);
+    gap: clamp(22px, 6vw, 80px);
+    align-items: center;
+    padding: clamp(42px, 8vw, 100px) 0;
+    border-bottom: 1px solid var(--line);
 }
 
-.access-kicker {
-    margin-bottom: 22px;
+.access-code {
+    color: #f2e9fb;
+    font-size: clamp(120px, 22vw, 280px);
+    font-weight: 900;
+    line-height: 0.8;
+    letter-spacing: 0;
+}
+
+.access-copy {
+    max-width: 560px;
+}
+
+.access-copy span {
+    display: inline-flex;
+    margin-bottom: 18px;
     color: var(--rose);
     font-size: 13px;
     font-weight: 900;
     text-transform: uppercase;
 }
 
-.access-icon {
-    width: 58px;
-    height: 58px;
-    display: grid;
-    place-items: center;
-    margin-bottom: 22px;
-    border-radius: 999px;
-    background: #efe4ff;
-    color: var(--purple);
-    font-size: 32px;
-    font-weight: 900;
-}
-
-.access-panel h1 {
+.access-copy h1 {
     margin: 0;
     color: var(--ink);
-    font-size: clamp(30px, 4vw, 44px);
-    line-height: 1.16;
+    font-size: clamp(40px, 6vw, 72px);
+    line-height: 1.05;
     letter-spacing: 0;
 }
 
-.access-panel p {
-    margin: 16px 0 26px;
+.access-copy p {
+    max-width: 460px;
+    margin: 22px 0 32px;
     color: var(--muted);
-    font-size: 18px;
+    font-size: clamp(18px, 2vw, 22px);
 }
 
-.access-panel a {
+.access-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.access-actions a {
     display: inline-flex;
     align-items: center;
     min-height: 48px;
@@ -367,6 +366,11 @@ select {
     background: var(--purple-dark);
     color: #ffffff;
     font-weight: 900;
+}
+
+.access-actions a + a {
+    background: #fff1c7;
+    color: #4a3d48;
 }
 
 .feature-card {
@@ -1066,12 +1070,18 @@ select {
         grid-template-columns: 1fr;
     }
 
-    .access-panel {
-        min-height: 320px;
-        padding: 24px;
+    .access-page {
+        min-height: auto;
+        grid-template-columns: 1fr;
+        gap: 18px;
+        padding: 56px 0;
     }
 
-    .access-panel p {
+    .access-code {
+        font-size: 116px;
+    }
+
+    .access-copy p {
         font-size: 17px;
     }
 
