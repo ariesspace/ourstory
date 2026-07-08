@@ -132,7 +132,6 @@ function render_access_denied(string $title): void
 {
     ?>
     <section class="access-page" aria-label="접근 권한 없음">
-        <div class="access-code">403</div>
         <div class="access-copy">
             <span><?= h($title) ?></span>
             <h1>접근 권한이 없습니다</h1>

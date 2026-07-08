@@ -308,19 +308,10 @@ select {
 .access-page {
     min-height: calc(100vh - 290px);
     display: grid;
-    grid-template-columns: minmax(180px, 0.48fr) minmax(280px, 0.52fr);
-    gap: clamp(22px, 6vw, 80px);
-    align-items: center;
+    place-items: center;
     padding: clamp(42px, 8vw, 100px) 0;
     border-bottom: 1px solid var(--line);
-}
-
-.access-code {
-    color: #f2e9fb;
-    font-size: clamp(120px, 22vw, 280px);
-    font-weight: 900;
-    line-height: 0.8;
-    letter-spacing: 0;
+    text-align: center;
 }
 
 .access-copy {
@@ -346,7 +337,7 @@ select {
 
 .access-copy p {
     max-width: 460px;
-    margin: 22px 0 32px;
+    margin: 22px auto 32px;
     color: var(--muted);
     font-size: clamp(18px, 2vw, 22px);
 }
@@ -354,6 +345,7 @@ select {
 .access-actions {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 10px;
 }
 
@@ -1072,13 +1064,7 @@ select {
 
     .access-page {
         min-height: auto;
-        grid-template-columns: 1fr;
-        gap: 18px;
         padding: 56px 0;
-    }
-
-    .access-code {
-        font-size: 116px;
     }
 
     .access-copy p {
