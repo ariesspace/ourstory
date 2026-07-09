@@ -420,10 +420,7 @@ textarea {
 }
 
 .login-page .chapter-heading h1 {
-    margin-top: 10px;
-    font-size: clamp(32px, 4vw, 42px);
-    font-weight: 400;
-    letter-spacing: 0.18em;
+    display: none;
 }
 
 .login-form {
