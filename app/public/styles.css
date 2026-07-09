@@ -385,6 +385,24 @@ textarea {
     font-weight: 300;
 }
 
+.board-heading {
+    margin-bottom: 72px;
+}
+
+.board-heading span,
+.board-heading p {
+    display: none;
+}
+
+.board-heading h1 {
+    margin-top: 0;
+    padding-bottom: 22px;
+    border-bottom: 1px solid rgba(51, 51, 51, 0.16);
+    font-size: clamp(23px, 3vw, 30px);
+    font-weight: 400;
+    letter-spacing: 0.32em;
+}
+
 .login-page {
     display: grid;
     place-items: center;
@@ -474,62 +492,65 @@ textarea {
 }
 
 .writing-box {
-    margin-bottom: 60px;
-    padding: 24px;
-    border: 1px solid rgba(157, 162, 194, 0.22);
-    background: rgba(255, 255, 255, 0.22);
+    margin-bottom: 76px;
+    padding: 0;
+    border: 0;
+    background: transparent;
 }
 
 .writing-box input {
-    margin-bottom: 18px;
-    padding: 12px 4px;
-    font-size: 21px;
-    font-weight: 700;
+    margin-bottom: 30px;
+    padding: 0 10px 20px;
+    border-bottom-color: rgba(51, 51, 51, 0.18);
+    color: rgba(51, 51, 51, 0.74);
+    font-size: 23px;
+    font-weight: 300;
 }
 
 .writing-box textarea {
-    min-height: 160px;
-    margin-bottom: 20px;
-    padding: 14px;
+    min-height: 190px;
+    margin-bottom: 36px;
+    padding: 28px;
     resize: vertical;
-    border: 1px solid rgba(157, 162, 194, 0.18);
+    border: 1px solid rgba(51, 51, 51, 0.12);
+    color: rgba(51, 51, 51, 0.72);
+    font-size: 17px;
     line-height: 2;
 }
 
 .writing-box div {
-    text-align: center;
+    text-align: right;
 }
 
 .writing-box button,
 .event-form button {
-    min-width: 132px;
+    min-width: 160px;
     background: transparent;
     color: var(--ink);
+    border-color: rgba(51, 51, 51, 0.75);
 }
 
 .story-list {
     display: grid;
-    gap: 36px;
+    gap: 0;
 }
 
 .story-entry {
-    display: grid;
-    grid-template-columns: 56px minmax(0, 1fr);
-    gap: 26px;
-    padding-bottom: 34px;
-    border-bottom: 1px solid var(--line);
+    display: block;
+    padding: 44px 0 52px;
+    border-bottom: 1px solid rgba(51, 51, 51, 0.1);
 }
 
 .story-number {
-    color: rgba(51, 51, 51, 0.34);
-    font-size: 24px;
-    font-style: italic;
+    display: none;
 }
 
 .story-entry h2 {
-    margin: 0 0 18px;
-    font-size: clamp(22px, 3vw, 30px);
-    line-height: 1.4;
+    margin: 0 0 24px;
+    font-size: clamp(21px, 2.4vw, 26px);
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: 0.08em;
 }
 
 .story-entry h2 span {
@@ -543,18 +564,19 @@ textarea {
 }
 
 .story-entry p {
-    margin: 0 0 22px;
-    color: rgba(51, 51, 51, 0.76);
+    margin: 0 0 42px;
+    color: rgba(51, 51, 51, 0.68);
+    font-size: 16px;
     font-weight: 300;
-    line-height: 2;
+    line-height: 2.1;
 }
 
 .story-entry footer {
     display: flex;
     justify-content: flex-end;
-    gap: 12px;
+    gap: 20px;
     color: var(--muted);
-    font-size: 14px;
+    font-size: 13px;
     font-style: italic;
 }
 

@@ -71,7 +71,7 @@ function role_label(string $role): string
 function render_page_title(string $title, string $subtitle = ''): void
 {
     ?>
-    <header class="chapter-heading">
+    <header class="chapter-heading<?= $title === '목차 및 이야기' || $title === '인물의 첫 문장' ? ' board-heading' : '' ?>">
         <span>Our Story</span>
         <h1><?= h($title) ?></h1>
         <?php if ($subtitle !== ''): ?><p><?= h($subtitle) ?></p><?php endif; ?>
