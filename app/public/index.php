@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'login
     if ($username !== '' && $password !== '') {
         $_SESSION['our_story_user'] = [
             'name' => $username,
-            'role' => 'member',
+            'role' => $username === 'admin' ? 'admin' : 'member',
         ];
         header('Location: /?page=story');
         exit;
@@ -43,16 +43,16 @@ $events = $db->query('SELECT * FROM events ORDER BY day ASC')->fetchAll();
 $photos = $db->query('SELECT * FROM photos ORDER BY id ASC')->fetchAll();
 
 $menus = [
-    'home' => 'Home',
-    'story' => 'Stories',
-    'intro' => 'Introduce',
-    'members' => 'Members',
-    'calendar' => 'Calendar',
-    'album' => 'Gallery',
-    'admin' => 'Admin',
+    'home' => '처음',
+    'story' => '목차',
+    'intro' => '인물',
+    'members' => '등장인물',
+    'calendar' => '기록',
+    'album' => '삽화',
+    'admin' => '설정',
 ];
 
-$pageTitles = $menus + ['login' => 'Sign in'];
+$pageTitles = $menus + ['login' => '로그인'];
 
 function page_url(string $page): string
 {
@@ -68,63 +68,49 @@ function role_label(string $role): string
     };
 }
 
+function render_page_title(string $title, string $subtitle = ''): void
+{
+    ?>
+    <header class="chapter-heading">
+        <span>Our Story</span>
+        <h1><?= h($title) ?></h1>
+        <?php if ($subtitle !== ''): ?><p><?= h($subtitle) ?></p><?php endif; ?>
+    </header>
+    <?php
+}
+
 function render_board(array $posts, string $type): void
 {
     $rows = array_values(array_filter($posts, static fn (array $post): bool => $post['type'] === $type));
-    $boardTitle = $type === 'story' ? '이야기 라운지' : '자기소개 게시판';
-    $noticeTitle = $type === 'story' ? '공지사항은 이렇게 표시됩니다.' : '처음 인사는 서로의 속도를 존중하며 남겨 주세요.';
+    $boardTitle = $type === 'story' ? '목차 및 이야기' : '인물의 첫 문장';
+    $placeholder = $type === 'story' ? '당신의 이야기를 들려주세요...' : '처음 건네는 인사를 적어주세요...';
+
+    render_page_title($boardTitle, '한 페이지씩 천천히 남기는 우리의 기록');
     ?>
-    <div class="board-page-head">
-        <h2><?= h($boardTitle) ?></h2>
-        <div class="board-crumb">HOME <span>&gt;</span> BOARD <span>&gt;</span> <?= h($boardTitle) ?></div>
-    </div>
-    <div class="board-toolbar">
-        <span>☰ Total <?= count($rows) + 1 ?> / 1 page</span>
+    <section class="writing-box" aria-label="새 글 작성">
+        <input type="text" placeholder="제목을 적어주세요." aria-label="제목">
+        <textarea placeholder="<?= h($placeholder) ?>" aria-label="본문"></textarea>
         <div>
-            <button type="button" class="rss-button">RSS</button>
-            <button type="button" class="write-button">✎ 글쓰기</button>
-            <button type="button" class="search-button" aria-label="검색">⌕</button>
+            <button type="button">글 남기기</button>
         </div>
-    </div>
-    <div class="table-wrap">
-        <table class="board-table">
-            <thead>
-                <tr>
-                    <th class="col-no">번호</th>
-                    <th>제목</th>
-                    <th class="col-author">작성자</th>
-                    <th class="col-views">조회</th>
-                    <th class="col-date">날짜</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="notice-row">
-                    <td><span class="notice-icon">!</span></td>
-                    <td><strong><?= h($noticeTitle) ?></strong></td>
-                    <td>운영진</td>
-                    <td>3779</td>
-                    <td><?= date('m-d') ?></td>
-                </tr>
-                <?php foreach ($rows as $index => $post): ?>
-                    <tr>
-                        <td><?= sprintf('%02d', count($rows) - $index) ?></td>
-                        <td>
-                            <strong><?= h($post['title']) ?></strong>
-                            <?php if ((int) $post['is_new'] === 1): ?><span class="new-badge">NEW</span><?php endif; ?>
-                        </td>
-                        <td><?= h($post['author']) ?></td>
-                        <td><?= 3200 + ((int) $post['id'] * 173) ?></td>
-                        <td><?= h(substr($post['published_at'], 5)) ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-    <div class="pagination" aria-label="페이지 이동">
-        <button type="button" aria-label="이전 페이지">&lt;</button>
-        <strong>1</strong>
-        <button type="button" aria-label="다음 페이지">&gt;</button>
-    </div>
+    </section>
+
+    <section class="story-list" aria-label="<?= h($boardTitle) ?>">
+        <?php foreach ($rows as $post): ?>
+            <article class="story-entry">
+                <div class="story-number"><?= sprintf('%02d', (int) $post['id']) ?></div>
+                <div>
+                    <h2><?= h($post['title']) ?><?php if ((int) $post['is_new'] === 1): ?><span>NEW</span><?php endif; ?></h2>
+                    <p><?= h($post['summary']) ?></p>
+                    <footer>
+                        <time datetime="<?= h($post['published_at']) ?>"><?= h(str_replace('-', '.', $post['published_at'])) ?></time>
+                        <span>/</span>
+                        <b><?= h($post['author']) ?></b>
+                    </footer>
+                </div>
+            </article>
+        <?php endforeach; ?>
+    </section>
     <?php
 }
 
@@ -132,14 +118,12 @@ function render_access_denied(string $title): void
 {
     ?>
     <section class="access-page" aria-label="접근 권한 없음">
-        <div class="access-copy">
-            <span><?= h($title) ?></span>
-            <h1>접근 권한이 없습니다</h1>
-            <p>이 페이지는 로그인한 회원에게만 열려 있습니다.</p>
-            <div class="access-actions">
-                <a href="/?page=login">로그인</a>
-                <a href="/">홈으로</a>
-            </div>
+        <span><?= h($title) ?></span>
+        <h1>접근 권한이 없습니다</h1>
+        <p>이 장은 로그인한 회원에게만 열려 있습니다.</p>
+        <div>
+            <a href="/?page=login">로그인</a>
+            <a href="/">처음으로</a>
         </div>
     </section>
     <?php
@@ -157,7 +141,8 @@ function render_access_denied(string $title): void
 <body>
     <header class="site-header">
         <a class="brand" href="/">
-            <span>our story<span class="dot">.</span></span>
+            <strong>우리들의 이야기</strong>
+            <span>Written by us</span>
         </a>
         <nav class="main-nav" aria-label="주요 메뉴">
             <?php foreach ($menus as $id => $label): ?>
@@ -165,183 +150,128 @@ function render_access_denied(string $title): void
             <?php endforeach; ?>
         </nav>
         <?php if ($isLoggedIn): ?>
-            <a class="signin" href="/?action=logout">Logout</a>
+            <a class="header-action" href="/?action=logout">책 덮기</a>
         <?php else: ?>
-            <a class="signin <?= $page === 'login' ? 'active' : '' ?>" href="/?page=login">Sign in</a>
+            <a class="header-action <?= $page === 'login' ? 'active' : '' ?>" href="/?page=login">첫 장 넘기기</a>
         <?php endif; ?>
     </header>
 
-    <main class="site-main">
-        <?php if ($page === 'home'): ?>
-            <section class="hero">
-                <span class="floating-note note-left">Private Lounge</span>
-                <span class="floating-note note-right">Safe & Respectful</span>
-                <div class="hero-title">
-                    <h1>OUR <span>STORY</span></h1>
-                    <p>초대받은 사람들만 머무는 조용한 커뮤니티. 서로의 경계와 속도를 존중하며, 안전한 이야기를 나눕니다.</p>
-                </div>
-            </section>
+    <main class="book-shell">
+        <div class="book">
+            <div class="book-spine" aria-hidden="true"></div>
 
-            <section class="portal-grid">
-                <a class="feature-card notice-feature" href="/?page=story">
-                    <span>Notice //</span>
-                    <h2>이번 주말<br>감성 티타임</h2>
-                    <p>소규모 모임 안내와 참여 의사를 확인합니다.</p>
-                    <strong>↗</strong>
-                </a>
-
-                <a class="feature-card image-feature" href="/?page=album">
-                    <img src="/assets/our-story-lounge.png" alt="따뜻한 라운지 테이블">
-                    <span>
-                        <strong>Our Gallery</strong>
-                        <small>기억의 조각 보기 ›</small>
-                    </span>
-                </a>
-
-                <section class="mini-list">
-                    <div class="mini-head">
-                        <h2>이야기 라운지</h2>
-                        <small>01/03</small>
-                    </div>
-                    <?php foreach (array_slice(array_filter($posts, static fn (array $post): bool => $post['type'] === 'story'), 0, 3) as $index => $post): ?>
-                        <a href="/?page=story">
-                            <em>0<?= $index + 1 ?></em>
-                            <span>
-                                <strong><?= h($post['title']) ?></strong>
-                                <small><?= h($post['published_at']) ?></small>
-                            </span>
-                        </a>
-                    <?php endforeach; ?>
+            <?php if ($page === 'home'): ?>
+                <section class="home-spread">
+                    <article class="cover-page">
+                        <img src="/assets/our-story-lounge.png" alt="">
+                        <div class="cover-line"></div>
+                        <div class="cover-copy">
+                            <span>Prologue</span>
+                            <h1>우리들의<br>이야기</h1>
+                            <p>Written by us</p>
+                        </div>
+                    </article>
+                    <article class="intro-page">
+                        <div>
+                            <span class="ornament">❦</span>
+                            <h2>기억은 기록을 통해<br>비로소 영원해진다</h2>
+                            <p>바쁘게 흘러가는 시간 속에서,<br>당신의 흔적을 한 페이지씩 채워주세요.</p>
+                            <div class="home-actions">
+                                <a href="/?page=login">첫 장 넘기기</a>
+                                <a href="/?page=story">목차 둘러보기</a>
+                            </div>
+                        </div>
+                    </article>
                 </section>
-
-                <section class="mini-list">
-                    <div class="mini-head">
-                        <h2>새로운 인연들</h2>
-                        <small>02/03</small>
-                    </div>
-                    <?php foreach (array_slice(array_filter($posts, static fn (array $post): bool => $post['type'] === 'intro'), 0, 3) as $index => $post): ?>
-                        <a href="/?page=intro">
-                            <em>0<?= $index + 1 ?></em>
-                            <span>
-                                <strong><?= h($post['title']) ?></strong>
-                                <small><?= h($post['published_at']) ?></small>
-                            </span>
-                        </a>
-                    <?php endforeach; ?>
-                </section>
-
-                <a class="calendar-card" href="/?page=calendar">
-                    <span>⌁</span>
-                    <h2>Calendar</h2>
-                    <p>함께하는 일정을 확인하기</p>
-                </a>
-            </section>
-        <?php elseif ($page === 'login'): ?>
-            <section class="login-page" aria-label="로그인">
-                <article class="login-card login-card-large">
-                    <div class="heart-mark">♡</div>
-                    <h2>Welcome<br>back.</h2>
-                    <p>회원 전용 공간입니다. 로컬 시안에서는 화면 구성만 확인할 수 있습니다.</p>
-                    <?php if ($loginError !== ''): ?><p class="form-error"><?= h($loginError) ?></p><?php endif; ?>
+            <?php elseif ($page === 'login'): ?>
+                <section class="chapter-page login-page">
+                    <?php render_page_title('이야기 시작하기', '회원만 이어서 쓸 수 있는 책입니다.'); ?>
                     <form class="login-form" method="post" action="/?page=login">
+                        <?php if ($loginError !== ''): ?><p class="form-error"><?= h($loginError) ?></p><?php endif; ?>
                         <input type="hidden" name="action" value="login">
                         <input type="text" name="username" placeholder="아이디" aria-label="아이디" autocomplete="username">
                         <input type="password" name="password" placeholder="비밀번호" aria-label="비밀번호" autocomplete="current-password">
-                        <button type="submit">입장하기 ↗</button>
+                        <button type="submit">로그인</button>
                     </form>
-                </article>
-            </section>
-        <?php else: ?>
-            <?php if (!$isLoggedIn): ?>
-                <?php render_access_denied($pageTitles[$page]); ?>
-            <?php else: ?>
-                <section class="sub-hero">
-                    <div>
-                        <h1><?= h($pageTitles[$page]) ?></h1>
-                        <p>우리들의 이야기가 열리는 공간입니다.</p>
-                    </div>
-                    <?php if (in_array($page, ['story', 'intro', 'album'], true)): ?>
-                        <button type="button">+ 글쓰기</button>
-                    <?php endif; ?>
                 </section>
-
-                <section class="content-panel">
-                    <?php if ($page === 'story'): ?>
-                        <?php render_board($posts, 'story'); ?>
-                    <?php elseif ($page === 'intro'): ?>
-                        <?php render_board($posts, 'intro'); ?>
-                    <?php elseif ($page === 'members'): ?>
-                        <div class="filters">
-                            <label>연령 <select><option>모두 보기</option><option>20대</option><option>30대</option><option>40대</option></select></label>
-                            <label>성향 <select><option>모두 보기</option><option>리더형</option><option>동행형</option><option>균형형</option></select></label>
-                            <button type="button">검색</button>
-                        </div>
+            <?php elseif (!$isLoggedIn): ?>
+                <section class="chapter-page">
+                    <?php render_access_denied($pageTitles[$page]); ?>
+                </section>
+            <?php else: ?>
+                <?php if ($page === 'story'): ?>
+                    <section class="chapter-page"><?php render_board($posts, 'story'); ?></section>
+                <?php elseif ($page === 'intro'): ?>
+                    <section class="chapter-page"><?php render_board($posts, 'intro'); ?></section>
+                <?php elseif ($page === 'members'): ?>
+                    <section class="chapter-page">
+                        <?php render_page_title('등장인물', '이 책을 함께 쓰는 사람들'); ?>
                         <div class="member-grid">
                             <?php foreach ($members as $member): ?>
                                 <article class="member-card">
-                                    <div class="avatar"><?= h(mb_substr($member['name'], 0, 1, 'UTF-8')) ?></div>
-                                    <div>
-                                        <h2><?= h($member['name']) ?></h2>
-                                        <p><span><?= h($member['age_group']) ?> / <?= h($member['region']) ?></span><span><?= h($member['tendency']) ?></span></p>
-                                    </div>
+                                    <div><?= h(mb_substr($member['name'], 0, 1, 'UTF-8')) ?></div>
+                                    <h2><?= h($member['name']) ?></h2>
+                                    <p><?= h($member['age_group']) ?> · <?= h($member['region']) ?> · <?= h(role_label($member['role'])) ?></p>
                                     <blockquote><?= h($member['intro']) ?></blockquote>
                                 </article>
                             <?php endforeach; ?>
                         </div>
-                    <?php elseif ($page === 'calendar'): ?>
+                    </section>
+                <?php elseif ($page === 'calendar'): ?>
+                    <section class="chapter-page">
+                        <?php render_page_title('기록', '날짜마다 접어둔 작은 책갈피'); ?>
                         <div class="calendar-head">
-                            <h2>2026. 07</h2>
-                            <div><button type="button">&lt;</button><button type="button">&gt;</button></div>
+                            <button type="button">&lt;</button>
+                            <strong>2026. 07</strong>
+                            <button type="button">&gt;</button>
                         </div>
-                        <div class="calendar-grid">
-                            <?php foreach (['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as $dayName): ?><strong><?= h($dayName) ?></strong><?php endforeach; ?>
+                        <div class="event-form">
+                            <input type="date" value="2026-07-09" aria-label="날짜">
+                            <input type="text" placeholder="어떤 일이 있었나요?" aria-label="일정">
+                            <button type="button">새겨넣기</button>
+                        </div>
+                        <div class="calendar-book">
+                            <?php foreach (['日', '月', '火', '水', '木', '金', '土'] as $dayName): ?><b><?= h($dayName) ?></b><?php endforeach; ?>
                             <?php for ($i = 0; $i < 3; $i++): ?><span class="empty"></span><?php endfor; ?>
                             <?php for ($day = 1; $day <= 31; $day++): ?>
                                 <?php $event = current(array_filter($events, static fn (array $row): bool => (int) $row['day'] === $day)); ?>
                                 <span>
-                                    <b><?= $day ?></b>
+                                    <em><?= $day ?></em>
                                     <?php if ($event): ?><small><?= h($event['title']) ?></small><?php endif; ?>
                                 </span>
                             <?php endfor; ?>
                         </div>
-                    <?php elseif ($page === 'album'): ?>
+                    </section>
+                <?php elseif ($page === 'album'): ?>
+                    <section class="chapter-page">
+                        <?php render_page_title('삽화', '그림과 사진으로 남긴 우리의 순간들'); ?>
                         <div class="album-grid">
-                            <?php foreach ($photos as $photo): ?>
-                                <article>
+                            <?php foreach ($photos as $index => $photo): ?>
+                                <article class="photo-card">
                                     <img src="/assets/our-story-lounge.png" alt="<?= h($photo['title']) ?>">
                                     <h2><?= h($photo['title']) ?></h2>
                                     <p><?= h($photo['caption']) ?></p>
                                 </article>
                             <?php endforeach; ?>
                         </div>
-                    <?php elseif ($page === 'admin'): ?>
-                        <div class="admin-note">
-                            <h2>Members</h2>
-                            <p>실제 권한 변경은 다음 단계에서 인증 기능과 함께 연결합니다.</p>
-                        </div>
-                        <div class="table-wrap">
-                            <table class="board-table">
-                                <thead><tr><th>Name</th><th>Current Role</th><th>Action</th></tr></thead>
-                                <tbody>
-                                    <?php foreach ($members as $member): ?>
-                                        <tr>
-                                            <td><?= h($member['name']) ?></td>
-                                            <td><span class="role-badge"><?= h(role_label($member['role'])) ?></span></td>
-                                            <td><button type="button" class="save-button">Save</button></td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    <?php endif; ?>
-                </section>
+                    </section>
+                <?php elseif ($page === 'admin'): ?>
+                    <section class="chapter-page">
+                        <?php render_page_title('시스템 설정', '새로운 작가를 등록하는 관리자 공간'); ?>
+                        <form class="admin-form">
+                            <h2>신규 아이디 발급</h2>
+                            <input type="text" placeholder="새로운 아이디" aria-label="새로운 아이디">
+                            <input type="password" placeholder="초기 비밀번호" aria-label="초기 비밀번호">
+                            <button type="button">등록 완료하기</button>
+                        </form>
+                    </section>
+                <?php endif; ?>
             <?php endif; ?>
-        <?php endif; ?>
+        </div>
     </main>
 
     <footer class="site-footer">
-        <p>안전하고 다정한 우리만의 쉼터</p>
-        <small>Copyright 2026 Our Story. All rights reserved.</small>
+        <p>우리들의 이야기, 2026</p>
     </footer>
 </body>
 </html>
