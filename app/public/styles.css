@@ -2,7 +2,7 @@
 
 :root {
     color-scheme: light;
-    --book-bg: #fff5f8;
+    --book-bg: #f4dbe3;
     --page: #fffdfc;
     --ink: #332a34;
     --muted: rgba(51, 42, 52, 0.62);
@@ -26,11 +26,11 @@ body {
     display: flex;
     flex-direction: column;
     background:
-        radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.95) 0 16%, transparent 33%),
-        radial-gradient(circle at 82% 12%, rgba(247, 190, 211, 0.38) 0 12%, transparent 34%),
-        radial-gradient(circle at 18% 82%, rgba(255, 211, 225, 0.46) 0 10%, transparent 31%),
-        radial-gradient(circle at 72% 74%, rgba(255, 255, 255, 0.72) 0 15%, transparent 36%),
-        linear-gradient(135deg, #fffafb 0%, #fff1f6 44%, #fffdfd 100%);
+        radial-gradient(circle at 14% 22%, rgba(255, 248, 235, 0.58) 0 12%, transparent 31%),
+        radial-gradient(circle at 84% 10%, rgba(224, 158, 181, 0.34) 0 14%, transparent 35%),
+        radial-gradient(circle at 20% 82%, rgba(231, 174, 193, 0.42) 0 12%, transparent 34%),
+        radial-gradient(circle at 76% 76%, rgba(255, 236, 187, 0.28) 0 13%, transparent 34%),
+        linear-gradient(135deg, #fffdfb 0%, #f2d7e0 46%, #fff3d8 100%);
     color: var(--ink);
     font-family: "Noto Serif KR", "Batang", "Times New Roman", serif;
     line-height: 1.7;
