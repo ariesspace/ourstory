@@ -29,24 +29,26 @@ body {
     display: flex;
     flex-direction: column;
     background:
-        radial-gradient(circle at 28px 28px, rgba(199, 131, 139, 0.09) 0 10px, transparent 11px),
-        radial-gradient(circle at 84px 84px, rgba(188, 202, 185, 0.11) 0 9px, transparent 10px),
-        radial-gradient(circle at 56px 0, transparent 0 18px, rgba(199, 131, 139, 0.07) 19px 21px, transparent 22px),
-        radial-gradient(circle at 0 56px, transparent 0 18px, rgba(142, 83, 89, 0.045) 19px 21px, transparent 22px),
-        linear-gradient(90deg, transparent 0 54px, rgba(199, 131, 139, 0.075) 55px 57px, transparent 58px 112px),
-        linear-gradient(0deg, transparent 0 54px, rgba(188, 202, 185, 0.065) 55px 57px, transparent 58px 112px),
-        radial-gradient(circle at 16% 18%, rgba(252, 230, 232, 0.72), transparent 31%),
+        radial-gradient(circle at 34px 34px, rgba(199, 131, 139, 0.045) 0 8px, transparent 9px),
+        radial-gradient(circle at 102px 102px, rgba(188, 202, 185, 0.055) 0 7px, transparent 8px),
+        radial-gradient(circle at 68px 0, transparent 0 21px, rgba(199, 131, 139, 0.035) 22px 23px, transparent 24px),
+        radial-gradient(circle at 0 68px, transparent 0 21px, rgba(142, 83, 89, 0.03) 22px 23px, transparent 24px),
+        linear-gradient(90deg, transparent 0 66px, rgba(199, 131, 139, 0.038) 67px 68px, transparent 69px 136px),
+        linear-gradient(0deg, transparent 0 66px, rgba(188, 202, 185, 0.035) 67px 68px, transparent 69px 136px),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.82) 0, rgba(252, 230, 232, 0.48) 128px, rgba(255, 250, 248, 0) 260px),
+        radial-gradient(circle at 16% 18%, rgba(252, 230, 232, 0.66), transparent 31%),
         radial-gradient(circle at 70% 16%, rgba(240, 247, 235, 0.52), transparent 27%),
         radial-gradient(circle at 18% 84%, rgba(239, 246, 233, 0.5), transparent 29%),
         radial-gradient(circle at 84% 76%, rgba(255, 246, 224, 0.48), transparent 30%),
         #fffaf8;
     background-size:
-        112px 112px,
-        112px 112px,
-        112px 112px,
-        112px 112px,
-        112px 112px,
-        112px 112px,
+        136px 136px,
+        136px 136px,
+        136px 136px,
+        136px 136px,
+        136px 136px,
+        136px 136px,
+        auto,
         auto,
         auto,
         auto,
@@ -78,10 +80,11 @@ textarea {
     align-items: center;
     padding: 24px clamp(18px, 4vw, 44px);
     background:
-        linear-gradient(135deg, rgba(255, 255, 255, 0.93), rgba(252, 238, 240, 0.9)),
-        radial-gradient(circle at 12% 50%, rgba(199, 131, 139, 0.08), transparent 28%);
-    border-bottom: 1px solid var(--line);
-    box-shadow: 0 8px 28px -20px rgba(142, 83, 89, 0.22);
+        linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(252, 238, 240, 0.62)),
+        radial-gradient(circle at 12% 50%, rgba(199, 131, 139, 0.055), transparent 28%);
+    border-bottom: 1px solid rgba(188, 126, 132, 0.08);
+    box-shadow: 0 12px 32px -28px rgba(142, 83, 89, 0.18);
+    backdrop-filter: blur(2px);
 }
 
 .brand strong,
