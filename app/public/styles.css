@@ -66,8 +66,9 @@ textarea {
     align-items: center;
     padding: 24px clamp(18px, 4vw, 44px);
     background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(252, 238, 240, 0.62)),
-        radial-gradient(circle at 12% 50%, rgba(199, 131, 139, 0.055), transparent 28%);
+        linear-gradient(180deg, rgba(252, 238, 240, 0.78), rgba(252, 230, 232, 0.54)),
+        radial-gradient(circle at 12% 50%, rgba(199, 131, 139, 0.065), transparent 30%),
+        radial-gradient(circle at 86% 60%, rgba(255, 246, 224, 0.32), transparent 32%);
     border-bottom: 1px solid rgba(188, 126, 132, 0.08);
     box-shadow: 0 12px 32px -28px rgba(142, 83, 89, 0.18);
     backdrop-filter: blur(2px);
@@ -721,8 +722,9 @@ textarea {
     padding: 22px;
     border-top: 1px solid var(--line);
     background:
-        linear-gradient(135deg, rgba(252, 238, 240, 0.9), rgba(255, 255, 255, 0.93)),
-        radial-gradient(circle at 88% 50%, rgba(199, 131, 139, 0.08), transparent 28%);
+        linear-gradient(180deg, rgba(252, 230, 232, 0.5), rgba(252, 238, 240, 0.76)),
+        radial-gradient(circle at 88% 50%, rgba(199, 131, 139, 0.075), transparent 30%),
+        radial-gradient(circle at 14% 40%, rgba(255, 246, 224, 0.3), transparent 32%);
     color: rgba(51, 51, 51, 0.5);
     text-align: center;
     font-size: 13px;
