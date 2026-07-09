@@ -185,6 +185,7 @@ function render_access_denied(string $title): void
                 </section>
             <?php elseif ($page === 'login'): ?>
                 <section class="chapter-page login-page">
+                    <?php render_page_title('로그인'); ?>
                     <form class="login-form" method="post" action="/?page=login">
                         <?php if ($loginError !== ''): ?><p class="form-error"><?= h($loginError) ?></p><?php endif; ?>
                         <input type="hidden" name="action" value="login">

@@ -407,14 +407,27 @@ textarea {
     display: grid;
     place-items: center;
     align-content: center;
+    row-gap: 34px;
+}
+
+.login-page .chapter-heading {
+    margin-bottom: 0;
+}
+
+.login-page .chapter-heading span {
+    font-size: 11px;
+    letter-spacing: 0.34em;
+}
+
+.login-page .chapter-heading h1 {
+    margin-top: 10px;
+    font-size: clamp(32px, 4vw, 42px);
+    font-weight: 400;
+    letter-spacing: 0.18em;
 }
 
 .login-form {
     width: min(100%, 340px);
-}
-
-.login-page {
-    align-content: center;
 }
 
 .login-form input,
