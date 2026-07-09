@@ -10,7 +10,7 @@
     --line-soft: rgba(174, 119, 129, 0.09);
     --accent: #c98f9d;
     --accent-dark: #3a2d34;
-    --leaf: #aebdaf;
+    --leaf: #b9cbb3;
     --gold: #d7c490;
     --shadow: 0 24px 60px -24px rgba(113, 73, 82, 0.25);
 }
@@ -30,10 +30,12 @@ body {
     flex-direction: column;
     background:
         radial-gradient(circle at 24px 24px, rgba(201, 143, 157, 0.1) 0 9px, transparent 10px),
-        radial-gradient(circle at 72px 72px, rgba(174, 189, 175, 0.08) 0 8px, transparent 9px),
+        radial-gradient(circle at 72px 72px, rgba(185, 203, 179, 0.1) 0 8px, transparent 9px),
         linear-gradient(90deg, transparent 0 47px, rgba(201, 143, 157, 0.08) 48px 50px, transparent 51px 96px),
-        linear-gradient(0deg, transparent 0 47px, rgba(201, 143, 157, 0.07) 48px 50px, transparent 51px 96px),
+        linear-gradient(0deg, transparent 0 47px, rgba(185, 203, 179, 0.07) 48px 50px, transparent 51px 96px),
         radial-gradient(circle at 16% 18%, rgba(250, 229, 235, 0.76), transparent 31%),
+        radial-gradient(circle at 68% 18%, rgba(232, 241, 225, 0.46), transparent 27%),
+        radial-gradient(circle at 18% 84%, rgba(230, 240, 224, 0.5), transparent 29%),
         radial-gradient(circle at 84% 76%, rgba(255, 246, 224, 0.42), transparent 30%),
         #fffafa;
     background-size:
@@ -41,6 +43,8 @@ body {
         96px 96px,
         96px 96px,
         96px 96px,
+        auto,
+        auto,
         auto,
         auto,
         auto;
