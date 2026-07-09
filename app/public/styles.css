@@ -2,14 +2,14 @@
 
 :root {
     color-scheme: light;
-    --book-bg: #e8e2d5;
-    --page: #faf8f5;
-    --ink: #2b2622;
-    --muted: rgba(43, 38, 34, 0.62);
-    --line: rgba(43, 38, 34, 0.14);
-    --line-soft: rgba(43, 38, 34, 0.08);
-    --accent: #d96c6c;
-    --shadow: 0 24px 60px -22px rgba(43, 38, 34, 0.34);
+    --book-bg: #fff5f8;
+    --page: #fffdfc;
+    --ink: #332a34;
+    --muted: rgba(51, 42, 52, 0.62);
+    --line: rgba(199, 138, 162, 0.2);
+    --line-soft: rgba(199, 138, 162, 0.1);
+    --accent: #d98aa6;
+    --shadow: 0 24px 60px -24px rgba(105, 68, 90, 0.28);
 }
 
 * {
@@ -25,7 +25,12 @@ body {
     margin: 0;
     display: flex;
     flex-direction: column;
-    background: var(--book-bg);
+    background:
+        radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.95) 0 16%, transparent 33%),
+        radial-gradient(circle at 82% 12%, rgba(247, 190, 211, 0.38) 0 12%, transparent 34%),
+        radial-gradient(circle at 18% 82%, rgba(255, 211, 225, 0.46) 0 10%, transparent 31%),
+        radial-gradient(circle at 72% 74%, rgba(255, 255, 255, 0.72) 0 15%, transparent 36%),
+        linear-gradient(135deg, #fffafb 0%, #fff1f6 44%, #fffdfd 100%);
     color: var(--ink);
     font-family: "Noto Serif KR", "Batang", "Times New Roman", serif;
     line-height: 1.7;
@@ -51,9 +56,9 @@ textarea {
     gap: 24px;
     align-items: center;
     padding: 24px clamp(18px, 4vw, 44px);
-    background: rgba(250, 248, 245, 0.94);
+    background: rgba(255, 253, 252, 0.9);
     border-bottom: 1px solid var(--line);
-    box-shadow: 0 6px 24px -18px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 6px 24px -18px rgba(105, 68, 90, 0.2);
 }
 
 .brand strong,
@@ -79,7 +84,7 @@ textarea {
     flex-wrap: wrap;
     justify-content: center;
     gap: clamp(12px, 3vw, 28px);
-    color: rgba(43, 38, 34, 0.72);
+    color: rgba(51, 42, 52, 0.72);
     font-size: 14px;
     letter-spacing: 0.16em;
 }
@@ -124,9 +129,13 @@ textarea {
     position: relative;
     min-height: 75vh;
     overflow: hidden;
-    border: 1px solid rgba(43, 38, 34, 0.08);
+    border: 1px solid rgba(199, 138, 162, 0.13);
     border-radius: 6px;
-    background: var(--page);
+    background:
+        radial-gradient(circle at 16% 12%, rgba(255, 225, 235, 0.5) 0 10%, transparent 30%),
+        radial-gradient(circle at 86% 22%, rgba(255, 247, 249, 0.95) 0 14%, transparent 34%),
+        radial-gradient(circle at 60% 88%, rgba(248, 187, 209, 0.28) 0 10%, transparent 30%),
+        var(--page);
     box-shadow: var(--shadow);
 }
 
@@ -143,12 +152,12 @@ textarea {
 
 .book::before {
     left: 0;
-    background: linear-gradient(90deg, rgba(43, 38, 34, 0.08), transparent);
+    background: linear-gradient(90deg, rgba(199, 138, 162, 0.1), transparent);
 }
 
 .book::after {
     right: 0;
-    background: linear-gradient(270deg, rgba(43, 38, 34, 0.08), transparent);
+    background: linear-gradient(270deg, rgba(199, 138, 162, 0.1), transparent);
 }
 
 .book-spine {
@@ -159,7 +168,7 @@ textarea {
     z-index: 4;
     width: 32px;
     transform: translateX(-50%);
-    background: linear-gradient(90deg, transparent, rgba(43, 38, 34, 0.08), transparent);
+    background: linear-gradient(90deg, transparent, rgba(199, 138, 162, 0.11), transparent);
     pointer-events: none;
 }
 
@@ -200,7 +209,7 @@ textarea {
     height: 100%;
     object-fit: cover;
     opacity: 0.34;
-    filter: contrast(1.04) saturate(0.72) sepia(0.12);
+    filter: contrast(1.02) saturate(0.86);
     mix-blend-mode: multiply;
 }
 
@@ -209,7 +218,7 @@ textarea {
     position: absolute;
     width: 230px;
     height: 230px;
-    border: 1px solid rgba(43, 38, 34, 0.26);
+    border: 1px solid rgba(51, 42, 52, 0.22);
     border-radius: 999px;
 }
 
@@ -219,7 +228,7 @@ textarea {
     left: 50%;
     width: 1px;
     height: 130px;
-    background: rgba(43, 38, 34, 0.18);
+    background: rgba(51, 42, 52, 0.16);
 }
 
 .cover-copy {
@@ -330,7 +339,7 @@ textarea {
 .writing-box button:hover,
 .event-form button:hover,
 .access-actions a:hover {
-    background: rgba(43, 38, 34, 0.82);
+    background: rgba(51, 42, 52, 0.86);
     color: var(--page);
 }
 
@@ -357,7 +366,7 @@ textarea {
     display: inline-block;
     margin: 12px 0 0;
     padding-bottom: 12px;
-    border-bottom: 1px solid rgba(43, 38, 34, 0.28);
+    border-bottom: 1px solid rgba(51, 42, 52, 0.24);
     font-size: clamp(30px, 5vw, 44px);
     letter-spacing: 0.18em;
 }
@@ -386,7 +395,7 @@ textarea {
 .event-form input {
     width: 100%;
     border: 0;
-    border-bottom: 1px solid rgba(43, 38, 34, 0.28);
+    border-bottom: 1px solid rgba(51, 42, 52, 0.24);
     background: transparent;
     color: var(--ink);
     outline: none;
@@ -456,7 +465,7 @@ textarea {
 .writing-box {
     margin-bottom: 60px;
     padding: 24px;
-    border: 1px solid rgba(43, 38, 34, 0.18);
+    border: 1px solid rgba(199, 138, 162, 0.22);
     background: rgba(255, 255, 255, 0.22);
 }
 
@@ -472,7 +481,7 @@ textarea {
     margin-bottom: 20px;
     padding: 14px;
     resize: vertical;
-    border: 1px solid rgba(43, 38, 34, 0.12);
+    border: 1px solid rgba(199, 138, 162, 0.16);
     line-height: 2;
 }
 
@@ -501,7 +510,7 @@ textarea {
 }
 
 .story-number {
-    color: rgba(43, 38, 34, 0.35);
+    color: rgba(51, 42, 52, 0.34);
     font-size: 24px;
     font-style: italic;
 }
@@ -524,7 +533,7 @@ textarea {
 
 .story-entry p {
     margin: 0 0 22px;
-    color: rgba(43, 38, 34, 0.78);
+    color: rgba(51, 42, 52, 0.76);
     font-weight: 300;
     line-height: 2;
 }
@@ -550,7 +559,7 @@ textarea {
 .admin-form {
     position: relative;
     padding: 26px;
-    border: 1px solid rgba(43, 38, 34, 0.18);
+    border: 1px solid rgba(199, 138, 162, 0.22);
     background: rgba(255, 255, 255, 0.26);
 }
 
@@ -587,7 +596,7 @@ textarea {
 
 .photo-card {
     padding: 12px 12px 18px;
-    box-shadow: 0 10px 24px -18px rgba(43, 38, 34, 0.5);
+    box-shadow: 0 10px 24px -18px rgba(105, 68, 90, 0.42);
     transition: transform 0.2s ease;
 }
 
@@ -601,7 +610,7 @@ textarea {
     display: block;
     margin-bottom: 14px;
     object-fit: cover;
-    filter: sepia(0.22) saturate(0.82);
+    filter: saturate(0.92);
 }
 
 .calendar-head {
@@ -662,7 +671,7 @@ textarea {
 }
 
 .calendar-book span:not(.empty):hover {
-    background: rgba(43, 38, 34, 0.04);
+    background: rgba(216, 145, 172, 0.07);
 }
 
 .calendar-book em,
@@ -678,7 +687,7 @@ textarea {
 .calendar-book small {
     padding-left: 8px;
     border-left: 2px solid var(--accent);
-    background: rgba(232, 226, 213, 0.45);
+    background: rgba(255, 228, 237, 0.62);
     font-size: 12px;
 }
 
@@ -703,8 +712,8 @@ textarea {
     margin-top: auto;
     padding: 22px;
     border-top: 1px solid var(--line);
-    background: rgba(250, 248, 245, 0.9);
-    color: rgba(43, 38, 34, 0.42);
+    background: rgba(255, 253, 252, 0.9);
+    color: rgba(51, 42, 52, 0.45);
     text-align: center;
     font-size: 13px;
     letter-spacing: 0.16em;
