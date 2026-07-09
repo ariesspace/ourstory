@@ -163,7 +163,7 @@ function render_access_denied(string $title): void
             <?php if ($page === 'home'): ?>
                 <section class="home-spread">
                     <article class="cover-page">
-                        <img src="/assets/main.png" alt="">
+                        <img src="/assets/main2.jpg" alt="">
                         <div class="cover-line"></div>
                         <div class="cover-copy">
                             <span>Prologue</span>
