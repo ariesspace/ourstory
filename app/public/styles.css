@@ -406,25 +406,103 @@ textarea {
 .login-page {
     display: grid;
     place-items: center;
+    padding: clamp(24px, 5vw, 58px);
+}
+
+.login-spread {
+    width: min(100%, 880px);
+    min-height: 560px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    overflow: hidden;
+    border: 1px solid rgba(157, 162, 194, 0.16);
+    border-radius: 4px;
+    background: var(--page);
+    box-shadow: var(--shadow);
+}
+
+.login-note {
+    position: relative;
+    display: grid;
+    place-items: center;
+    padding: 46px;
+    border-right: 1px solid var(--line-soft);
+    background:
+        linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(113, 127, 167, 0.055)),
+        #fdfdfd;
+    box-shadow: inset -24px 0 26px -22px rgba(51, 51, 51, 0.16);
+}
+
+.login-note div {
+    width: min(100%, 300px);
+    min-height: 380px;
+    display: grid;
+    place-items: center;
     align-content: center;
-    row-gap: 34px;
+    gap: 24px;
+    border: 1px solid rgba(51, 51, 51, 0.08);
+    text-align: center;
 }
 
-.login-page .chapter-heading {
-    margin-bottom: 0;
-}
-
-.login-page .chapter-heading span {
+.login-note span,
+.login-panel header span {
+    color: var(--accent);
     font-size: 11px;
-    letter-spacing: 0.34em;
+    font-style: normal;
+    font-weight: 500;
+    letter-spacing: 0.38em;
 }
 
-.login-page .chapter-heading h1 {
-    display: none;
+.login-note i {
+    width: 22px;
+    height: 1px;
+    background: rgba(51, 51, 51, 0.2);
+}
+
+.login-note p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 2.1;
+    letter-spacing: 0.16em;
+}
+
+.login-panel {
+    display: grid;
+    place-items: center;
+    padding: clamp(34px, 6vw, 70px);
+    background: #fcfcfc;
+    box-shadow: inset 18px 0 24px -22px rgba(51, 51, 51, 0.18);
+}
+
+.login-panel header {
+    margin-bottom: 48px;
+    text-align: center;
+}
+
+.login-panel h1 {
+    margin: 0 0 8px;
+    color: var(--ink);
+    font-size: clamp(23px, 3vw, 30px);
+    font-weight: 500;
+    letter-spacing: 0.24em;
 }
 
 .login-form {
-    width: min(100%, 340px);
+    width: min(100%, 320px);
+    gap: 28px;
+}
+
+.login-form label {
+    display: grid;
+    gap: 2px;
+}
+
+.login-form label span {
+    color: rgba(51, 51, 51, 0.48);
+    font-size: 13px;
+    letter-spacing: 0.1em;
 }
 
 .login-form input,
@@ -444,6 +522,17 @@ textarea {
 .admin-form input {
     min-height: 54px;
     font-size: 18px;
+}
+
+.login-form input {
+    min-height: 38px;
+    font-size: 15px;
+}
+
+.login-form button {
+    margin-top: 8px;
+    min-height: 52px;
+    width: 100%;
 }
 
 .login-form input:focus,
@@ -774,6 +863,20 @@ textarea {
 
     .header-action {
         justify-self: center;
+    }
+
+    .login-spread {
+        grid-template-columns: 1fr;
+        min-height: auto;
+    }
+
+    .login-note {
+        display: none;
+    }
+
+    .login-panel {
+        min-height: 540px;
+        box-shadow: none;
     }
 
     .book-spine,

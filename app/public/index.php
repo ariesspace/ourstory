@@ -185,14 +185,34 @@ function render_access_denied(string $title): void
                 </section>
             <?php elseif ($page === 'login'): ?>
                 <section class="chapter-page login-page">
-                    <?php render_page_title('로그인'); ?>
-                    <form class="login-form" method="post" action="/?page=login">
-                        <?php if ($loginError !== ''): ?><p class="form-error"><?= h($loginError) ?></p><?php endif; ?>
-                        <input type="hidden" name="action" value="login">
-                        <input type="text" name="username" placeholder="아이디" aria-label="아이디" autocomplete="username">
-                        <input type="password" name="password" placeholder="비밀번호" aria-label="비밀번호" autocomplete="current-password">
-                        <button type="submit">로그인</button>
-                    </form>
+                    <div class="login-spread">
+                        <aside class="login-note" aria-hidden="true">
+                            <div>
+                                <span>OUR STORY</span>
+                                <i></i>
+                                <p>우리가 함께<br>써 내려가는 페이지</p>
+                            </div>
+                        </aside>
+                        <div class="login-panel">
+                            <header>
+                                <h1>우리들의 이야기</h1>
+                                <span>OUR STORY</span>
+                            </header>
+                            <form class="login-form" method="post" action="/?page=login">
+                                <?php if ($loginError !== ''): ?><p class="form-error"><?= h($loginError) ?></p><?php endif; ?>
+                                <input type="hidden" name="action" value="login">
+                                <label>
+                                    <span>아이디</span>
+                                    <input type="text" name="username" aria-label="아이디" autocomplete="username">
+                                </label>
+                                <label>
+                                    <span>비밀번호</span>
+                                    <input type="password" name="password" aria-label="비밀번호" autocomplete="current-password">
+                                </label>
+                                <button type="submit">로그인</button>
+                            </form>
+                        </div>
+                    </div>
                 </section>
             <?php elseif (!$isLoggedIn): ?>
                 <section class="chapter-page">
