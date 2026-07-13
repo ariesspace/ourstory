@@ -152,13 +152,16 @@ function render_access_denied(string $title): void
         <?php if ($isLoggedIn): ?>
             <a class="header-action" href="/?action=logout">책 덮기</a>
         <?php else: ?>
-            <a class="header-action <?= $page === 'login' ? 'active' : '' ?>" href="/?page=login">첫 장 넘기기</a>
+            <a class="header-action <?= $page === 'login' ? 'active' : '' ?>" href="/?page=login" <?= $page !== 'login' ? 'data-page-turn' : '' ?>>첫 장 넘기기</a>
         <?php endif; ?>
     </header>
 
     <main class="book-shell">
         <div class="book">
             <div class="book-spine" aria-hidden="true"></div>
+            <div class="page-turn-overlay" aria-hidden="true">
+                <div class="turning-page"></div>
+            </div>
 
             <?php if ($page === 'home'): ?>
                 <section class="home-spread">
@@ -177,7 +180,7 @@ function render_access_denied(string $title): void
                             <h2>기억은 기록을 통해<br>비로소 영원해진다</h2>
                             <p>바쁘게 흘러가는 시간 속에서,<br>당신의 흔적을 한 페이지씩 채워주세요.</p>
                             <div class="home-actions">
-                                <a href="/?page=login">첫 장 넘기기</a>
+                                <a href="/?page=login" data-page-turn>첫 장 넘기기</a>
                                 <a href="/?page=story">목차 둘러보기</a>
                             </div>
                         </div>
@@ -289,6 +292,31 @@ function render_access_denied(string $title): void
             <?php endif; ?>
         </div>
     </main>
+
+    <script>
+        (() => {
+            const links = document.querySelectorAll('[data-page-turn]');
+            const overlay = document.querySelector('.page-turn-overlay');
+
+            if (!links.length || !overlay) {
+                return;
+            }
+
+            links.forEach((link) => {
+                link.addEventListener('click', (event) => {
+                    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.target) {
+                        return;
+                    }
+
+                    event.preventDefault();
+                    document.body.classList.add('is-page-turning');
+                    window.setTimeout(() => {
+                        window.location.href = link.href;
+                    }, 880);
+                });
+            });
+        })();
+    </script>
 
     <footer class="site-footer">
         <p>우리들의 이야기, 2026</p>
