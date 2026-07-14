@@ -729,18 +729,19 @@
                 const dayButton = document.createElement('button');
 
                 dayButton.type = 'button';
-                dayButton.className = [
-                    'relative aspect-square rounded-full flex items-center justify-center transition-colors',
-                    isSelected ? 'bg-[var(--accent-red)] text-white hover:text-white' : 'hover:text-[var(--accent-red)]'
+                dayButton.className = 'relative min-h-16 flex flex-col items-center justify-center gap-1 transition-colors hover:text-[var(--accent-red)]';
+
+                const dayNumber = document.createElement('span');
+                dayNumber.className = [
+                    'w-9 h-9 rounded-full flex items-center justify-center transition-colors',
+                    isSelected ? 'bg-[var(--text-dark)] text-white shadow-md' : ''
                 ].join(' ');
-                dayButton.textContent = String(day);
+                dayNumber.textContent = String(day);
+                dayButton.appendChild(dayNumber);
 
                 if (hasSchedule) {
                     const dot = document.createElement('span');
-                    dot.className = [
-                        'absolute left-1/2 -translate-x-1/2 bottom-1.5 w-1.5 h-1.5 rounded-full',
-                        isSelected ? 'bg-white' : 'bg-[var(--accent-red)]'
-                    ].join(' ');
+                    dot.className = 'w-1.5 h-1.5 rounded-full bg-[var(--accent-red)]';
                     dayButton.appendChild(dot);
                 }
 
