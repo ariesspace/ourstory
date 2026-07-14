@@ -461,6 +461,11 @@ body.is-page-turning .page-turn-overlay {
     padding: clamp(34px, 7vw, 76px);
 }
 
+.board-page {
+    min-height: min(70vh, 780px);
+    padding: 0;
+}
+
 .chapter-heading {
     margin-bottom: 48px;
     text-align: center;
@@ -705,14 +710,14 @@ body.is-page-turning .page-turn-overlay {
 .board-spread {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    min-height: 560px;
-    margin: -10px clamp(-58px, -5vw, -30px) 0;
+    min-height: min(70vh, 780px);
+    margin: 0;
 }
 
 .story-list,
 .writing-box {
     min-width: 0;
-    padding: clamp(38px, 5vw, 58px) clamp(32px, 4vw, 54px);
+    padding: clamp(54px, 6vw, 82px) clamp(42px, 5vw, 72px);
 }
 
 .story-list {
@@ -725,7 +730,7 @@ body.is-page-turning .page-turn-overlay {
 
 .story-list h2,
 .writing-box h2 {
-    margin: 0 0 56px;
+    margin: 0 0 52px;
     padding-bottom: 18px;
     border-bottom: 1px solid rgba(51, 51, 51, 0.1);
     text-align: center;
@@ -736,7 +741,7 @@ body.is-page-turning .page-turn-overlay {
 }
 
 .story-scroll {
-    max-height: 440px;
+    max-height: 500px;
     overflow-y: auto;
     padding-right: 18px;
 }

@@ -85,7 +85,6 @@ function render_board(array $posts, string $type): void
     $boardTitle = $type === 'story' ? '목차 및 이야기' : '인물의 첫 문장';
     $placeholder = $type === 'story' ? '당신의 이야기를 들려주세요...' : '처음 건네는 인사를 적어주세요...';
 
-    render_page_title($boardTitle, '한 페이지씩 천천히 남기는 우리의 기록');
     ?>
     <div class="board-spread">
         <section class="story-list" aria-label="<?= h($boardTitle) ?>">
@@ -226,9 +225,9 @@ function render_access_denied(string $title): void
                 </section>
             <?php else: ?>
                 <?php if ($page === 'story'): ?>
-                    <section class="chapter-page"><?php render_board($posts, 'story'); ?></section>
+                    <section class="chapter-page board-page"><?php render_board($posts, 'story'); ?></section>
                 <?php elseif ($page === 'intro'): ?>
-                    <section class="chapter-page"><?php render_board($posts, 'intro'); ?></section>
+                    <section class="chapter-page board-page"><?php render_board($posts, 'intro'); ?></section>
                 <?php elseif ($page === 'members'): ?>
                     <section class="chapter-page">
                         <?php render_page_title('등장인물', '이 책을 함께 쓰는 사람들'); ?>
