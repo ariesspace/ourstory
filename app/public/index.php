@@ -166,7 +166,7 @@ function render_access_denied(string $title): void
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>우리들의 이야기</title>
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/styles.css?v=<?= filemtime(__DIR__ . '/styles.css') ?>">
 </head>
 <body>
     <header class="site-header">
