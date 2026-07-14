@@ -705,14 +705,14 @@ body.is-page-turning .page-turn-overlay {
 .board-spread {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    min-height: 540px;
+    min-height: 560px;
     margin: -10px clamp(-42px, -4vw, -22px) 0;
 }
 
 .story-list,
 .writing-box {
     min-width: 0;
-    padding: clamp(30px, 5vw, 52px);
+    padding: clamp(38px, 5vw, 58px) clamp(34px, 5vw, 64px);
 }
 
 .story-list {
@@ -720,27 +720,25 @@ body.is-page-turning .page-turn-overlay {
 }
 
 .writing-box {
-    background:
-        linear-gradient(90deg, rgba(157, 162, 194, 0.045), transparent 18%),
-        rgba(255, 255, 255, 0.46);
+    background: rgba(255, 255, 255, 0.38);
 }
 
 .story-list h2,
 .writing-box h2 {
-    margin: 0 0 38px;
-    padding-bottom: 16px;
+    margin: 0 0 56px;
+    padding-bottom: 18px;
     border-bottom: 1px solid rgba(51, 51, 51, 0.1);
     text-align: center;
     color: var(--ink);
-    font-size: clamp(18px, 2vw, 22px);
+    font-size: clamp(20px, 2.2vw, 24px);
     font-weight: 400;
-    letter-spacing: 0.34em;
+    letter-spacing: 0.42em;
 }
 
 .story-scroll {
-    max-height: 520px;
+    max-height: 440px;
     overflow-y: auto;
-    padding-right: 12px;
+    padding-right: 18px;
 }
 
 .story-scroll::-webkit-scrollbar {
@@ -754,96 +752,51 @@ body.is-page-turning .page-turn-overlay {
 .story-entry {
     position: relative;
     display: grid;
-    grid-template-columns: 38px minmax(0, 1fr);
-    gap: 18px;
-    padding: 0 0 26px;
-    margin-bottom: 26px;
-    border-bottom: 1px solid rgba(51, 51, 51, 0.08);
-    transition: transform 0.24s ease;
-}
-
-.story-entry:hover {
-    transform: translateX(5px);
+    grid-template-columns: 34px minmax(0, 1fr) 34px;
+    gap: 16px;
+    align-items: baseline;
+    padding: 0 0 14px;
+    margin-bottom: 22px;
+    border-bottom: 1px dashed rgba(51, 51, 51, 0.12);
 }
 
 .story-number {
-    padding-top: 4px;
-    color: rgba(51, 51, 51, 0.38);
-    font-size: 13px;
+    color: rgba(51, 51, 51, 0.42);
+    font-size: 15px;
     font-style: italic;
     letter-spacing: 0.08em;
 }
 
 .story-entry h3 {
-    display: inline-block;
-    position: relative;
-    margin: 0 0 12px;
-    font-size: clamp(17px, 1.8vw, 20px);
+    margin: 0;
+    font-size: clamp(16px, 1.7vw, 19px);
     font-weight: 400;
-    line-height: 1.55;
-    letter-spacing: 0.06em;
+    line-height: 1.4;
+    letter-spacing: 0.03em;
 }
 
-.story-entry h3::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -3px;
-    height: 1px;
-    background: rgba(51, 51, 51, 0.52);
-    transform: scaleX(0);
-    transform-origin: right;
-    transition: transform 0.22s ease;
-}
-
-.story-entry:hover h3::after {
-    transform: scaleX(1);
-    transform-origin: left;
-}
-
-.story-entry h3 span {
-    display: inline-flex;
-    margin-left: 9px;
-    padding: 2px 7px;
-    background: rgba(197, 188, 213, 0.18);
-    color: var(--accent);
-    font-size: 10px;
-    letter-spacing: 0.12em;
-}
-
-.story-entry p {
-    margin: 0 0 18px;
-    color: rgba(51, 51, 51, 0.62);
-    font-size: 14px;
-    font-weight: 300;
-    line-height: 1.9;
-}
-
-.story-entry footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 14px;
-    color: var(--muted);
-    font-size: 12px;
+.story-page-number {
+    color: rgba(157, 162, 194, 0.9);
+    font-size: 13px;
     font-style: italic;
+    text-align: right;
 }
 
 .writing-box input {
-    margin-bottom: 24px;
-    padding: 0 10px 18px;
+    margin-bottom: 30px;
+    padding: 0 0 18px;
     border-bottom-color: rgba(51, 51, 51, 0.16);
     color: rgba(51, 51, 51, 0.74);
-    font-size: 21px;
+    font-size: 22px;
     font-weight: 300;
 }
 
 .writing-box textarea {
-    min-height: 250px;
-    margin-bottom: 28px;
-    padding: 26px;
+    min-height: 326px;
+    margin-bottom: 30px;
+    padding: 28px 30px;
     resize: vertical;
-    border: 1px solid rgba(51, 51, 51, 0.1);
+    border: 1px solid rgba(51, 51, 51, 0.08);
     color: rgba(51, 51, 51, 0.72);
     font-size: 16px;
     line-height: 2;
@@ -855,10 +808,11 @@ body.is-page-turning .page-turn-overlay {
 
 .writing-box button,
 .event-form button {
-    min-width: 160px;
+    min-width: 136px;
+    min-height: 46px;
     background: transparent;
     color: var(--ink);
-    border-color: rgba(51, 51, 51, 0.75);
+    border-color: rgba(51, 51, 51, 0.22);
 }
 
 .member-grid,
@@ -1123,14 +1077,13 @@ body.is-page-turning .page-turn-overlay {
         font-size: clamp(28px, 8vw, 36px);
     }
 
-    .access-actions,
-    .story-entry footer {
+    .access-actions {
         display: grid;
         justify-content: stretch;
     }
 
     .story-entry {
-        grid-template-columns: 1fr;
+        grid-template-columns: 34px minmax(0, 1fr) 30px;
         gap: 10px;
     }
 

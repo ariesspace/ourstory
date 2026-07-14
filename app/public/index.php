@@ -95,21 +95,16 @@ function render_board(array $posts, string $type): void
                     <article class="story-entry">
                         <div class="story-number"><?= sprintf('%02d', (int) $post['id']) ?></div>
                         <div>
-                            <h3><?= h($post['title']) ?><?php if ((int) $post['is_new'] === 1): ?><span>NEW</span><?php endif; ?></h3>
-                            <p><?= h($post['summary']) ?></p>
-                            <footer>
-                                <time datetime="<?= h($post['published_at']) ?>"><?= h(str_replace('-', '.', $post['published_at'])) ?></time>
-                                <span>/</span>
-                                <b><?= h($post['author']) ?></b>
-                            </footer>
+                            <h3><?= h($post['title']) ?></h3>
                         </div>
+                        <span class="story-page-number"><?= sprintf('%02d', (int) $post['id']) ?></span>
                     </article>
                 <?php endforeach; ?>
             </div>
         </section>
 
         <section class="writing-box" aria-label="새 글 작성">
-            <h2><?= $type === 'story' ? '새 이야기 쓰기' : '첫 문장 남기기' ?></h2>
+            <h2><?= $type === 'story' ? '이야기 쓰기' : '첫 문장 쓰기' ?></h2>
             <input type="text" placeholder="제목을 적어주세요." aria-label="제목">
             <textarea placeholder="<?= h($placeholder) ?>" aria-label="본문"></textarea>
             <div>
