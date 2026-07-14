@@ -130,7 +130,7 @@ textarea {
 }
 
 .book-shell {
-    width: min(100%, 1040px);
+    width: min(100%, 1160px);
     flex: 1;
     margin: clamp(64px, 7vw, 86px) auto clamp(50px, 6vw, 70px);
     padding: 0 clamp(14px, 3vw, 24px);
@@ -138,7 +138,7 @@ textarea {
 
 .book {
     position: relative;
-    min-height: min(72vh, 820px);
+    min-height: min(68vh, 760px);
     overflow: hidden;
     border: 1px solid rgba(157, 162, 194, 0.2);
     border-radius: 6px;
@@ -296,14 +296,14 @@ body.is-page-turning .page-turn-overlay {
 }
 
 .home-spread {
-    min-height: min(72vh, 820px);
+    min-height: min(68vh, 760px);
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .cover-page,
 .intro-page {
-    min-height: min(72vh, 820px);
+    min-height: min(68vh, 760px);
 }
 
 .cover-page {
@@ -512,7 +512,7 @@ body.is-page-turning .page-turn-overlay {
 .login-page {
     display: grid;
     place-items: center;
-    min-height: min(72vh, 820px);
+    min-height: min(68vh, 760px);
     padding: 0;
 }
 
