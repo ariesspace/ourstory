@@ -85,6 +85,7 @@ function render_board(array $posts, string $type): void
     $boardTitle = $type === 'story' ? '목차 및 이야기' : '인물의 첫 문장';
     $placeholder = $type === 'story' ? '당신의 이야기를 들려주세요...' : '처음 건네는 인사를 적어주세요...';
 
+    render_page_title($boardTitle);
     ?>
     <div class="board-spread">
         <section class="story-list" aria-label="<?= h($boardTitle) ?>">
