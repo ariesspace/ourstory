@@ -729,7 +729,7 @@
                 const dayButton = document.createElement('button');
 
                 dayButton.type = 'button';
-                dayButton.className = 'relative min-h-16 flex flex-col items-center justify-center gap-1 transition-colors hover:text-[var(--accent-red)]';
+                dayButton.className = 'relative min-h-16 flex items-center justify-center transition-colors hover:text-[var(--accent-red)]';
 
                 const dayNumber = document.createElement('span');
                 dayNumber.className = [
@@ -741,7 +741,7 @@
 
                 if (hasSchedule) {
                     const dot = document.createElement('span');
-                    dot.className = 'w-1.5 h-1.5 rounded-full bg-[var(--accent-red)]';
+                    dot.className = 'absolute left-1/2 top-1/2 mt-5 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[var(--accent-red)]';
                     dayButton.appendChild(dot);
                 }
 
