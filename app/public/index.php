@@ -37,6 +37,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'login
 
 $currentUser = $_SESSION['our_story_user'] ?? null;
 $isLoggedIn = is_array($currentUser);
+
+if (
+    $isLoggedIn
+    && $_SERVER['REQUEST_METHOD'] === 'POST'
+    && ($_POST['action'] ?? '') === 'create_post'
+) {
+    $postType = (string) ($_POST['type'] ?? '');
+    $title = trim((string) ($_POST['title'] ?? ''));
+    $content = trim((string) ($_POST['content'] ?? ''));
+
+    if (in_array($postType, ['story', 'intro'], true) && $title !== '' && $content !== '') {
+        $summary = mb_substr($content, 0, 180, 'UTF-8');
+        $stmt = $db->prepare('INSERT INTO posts (type, title, author, summary, published_at, is_new) VALUES (?, ?, ?, ?, ?, ?)');
+        $stmt->execute([
+            $postType,
+            $title,
+            (string) ($currentUser['name'] ?? 'member'),
+            $summary,
+            date('Y-m-d'),
+            1,
+        ]);
+    }
+
+    header('Location: ' . page_url($postType === 'intro' ? 'intro' : 'story'));
+    exit;
+}
+
 $posts = $db->query('SELECT * FROM posts ORDER BY published_at DESC, id DESC')->fetchAll();
 $members = $db->query('SELECT * FROM members ORDER BY id ASC')->fetchAll();
 $events = $db->query('SELECT * FROM events ORDER BY day ASC')->fetchAll();
@@ -103,14 +130,16 @@ function render_board(array $posts, string $type): void
             </div>
         </section>
 
-        <section class="writing-box" aria-label="새 글 작성">
+        <form class="writing-box" method="post" action="<?= h(page_url($type)) ?>" aria-label="새 글 작성">
             <h2><?= $type === 'story' ? '이야기 쓰기' : '첫 문장 쓰기' ?></h2>
-            <input type="text" placeholder="제목을 적어주세요." aria-label="제목">
-            <textarea placeholder="<?= h($placeholder) ?>" aria-label="본문"></textarea>
+            <input type="hidden" name="action" value="create_post">
+            <input type="hidden" name="type" value="<?= h($type) ?>">
+            <input type="text" name="title" placeholder="제목을 적어주세요." aria-label="제목" required>
+            <textarea name="content" placeholder="<?= h($placeholder) ?>" aria-label="본문" required></textarea>
             <div>
-                <button type="button">글 남기기</button>
+                <button type="submit">글 남기기</button>
             </div>
-        </section>
+        </form>
     </div>
     <?php
 }
