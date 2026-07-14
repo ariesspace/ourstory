@@ -1,432 +1,611 @@
-<?php
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>:our story | Archive</title>
 
-declare(strict_types=1);
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-session_start();
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-require dirname(__DIR__) . '/src/bootstrap.php';
+    <!-- Google Fonts -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
 
-$db = site_db();
-$page = active_page();
-
-if (($_GET['action'] ?? '') === 'logout') {
-    $_SESSION = [];
-    if (session_status() === PHP_SESSION_ACTIVE) {
-        session_destroy();
-    }
-    header('Location: /');
-    exit;
-}
-
-$loginError = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'login') {
-    $username = trim((string) ($_POST['username'] ?? ''));
-    $password = trim((string) ($_POST['password'] ?? ''));
-
-    if ($username !== '' && $password !== '') {
-        $_SESSION['our_story_user'] = [
-            'name' => $username,
-            'role' => $username === 'admin' ? 'admin' : 'member',
-        ];
-        header('Location: /?page=story');
-        exit;
-    }
-
-    $loginError = '아이디와 비밀번호를 입력해 주세요.';
-}
-
-$currentUser = $_SESSION['our_story_user'] ?? null;
-$isLoggedIn = is_array($currentUser);
-
-if (
-    $isLoggedIn
-    && $_SERVER['REQUEST_METHOD'] === 'POST'
-    && ($_POST['action'] ?? '') === 'create_post'
-) {
-    $postType = (string) ($_POST['type'] ?? '');
-    $title = trim((string) ($_POST['title'] ?? ''));
-    $content = trim((string) ($_POST['content'] ?? ''));
-
-    if (in_array($postType, ['story', 'intro'], true) && $title !== '' && $content !== '') {
-        $summary = mb_substr($content, 0, 180, 'UTF-8');
-        $stmt = $db->prepare('INSERT INTO posts (type, title, author, summary, published_at, is_new) VALUES (?, ?, ?, ?, ?, ?)');
-        $stmt->execute([
-            $postType,
-            $title,
-            (string) ($currentUser['name'] ?? 'member'),
-            $summary,
-            date('Y-m-d'),
-            1,
-        ]);
-        $newPostId = (int) $db->lastInsertId();
-    }
-
-    $redirect = page_url($postType === 'intro' ? 'intro' : 'story');
-    if (isset($newPostId) && $newPostId > 0) {
-        $redirect .= '&post=' . $newPostId;
-    }
-
-    header('Location: ' . $redirect);
-    exit;
-}
-
-if (
-    $isLoggedIn
-    && $_SERVER['REQUEST_METHOD'] === 'POST'
-    && in_array(($_POST['action'] ?? ''), ['update_post', 'delete_post'], true)
-) {
-    $postId = (int) ($_POST['post_id'] ?? 0);
-    $postType = (string) ($_POST['type'] ?? 'story');
-    $redirectPage = $postType === 'intro' ? 'intro' : 'story';
-    $stmt = $db->prepare('SELECT * FROM posts WHERE id = ? AND type = ?');
-    $stmt->execute([$postId, $redirectPage]);
-    $post = $stmt->fetch();
-
-    if ($post && (string) $post['author'] === (string) ($currentUser['name'] ?? '')) {
-        if (($_POST['action'] ?? '') === 'delete_post') {
-            $stmt = $db->prepare('DELETE FROM posts WHERE id = ?');
-            $stmt->execute([$postId]);
-            header('Location: ' . page_url($redirectPage));
-            exit;
+        :root {
+            --bg-cream: #fdfbf7; /* 嫄곗쓽 ?곗깋??媛源뚯슫 ?щ┝ */
+            --bg-pink: #fcedf2; /* ?고븯怨??곕쑜???묓겕 */
+            --text-dark: #2a2825;
+            --accent-red: #d92518;
+            --border-light: rgba(42, 40, 37, 0.1);
         }
 
-        $title = trim((string) ($_POST['title'] ?? ''));
-        $content = trim((string) ($_POST['content'] ?? ''));
-        if ($title !== '' && $content !== '') {
-            $summary = mb_substr($content, 0, 180, 'UTF-8');
-            $stmt = $db->prepare('UPDATE posts SET title = ?, summary = ? WHERE id = ?');
-            $stmt->execute([$title, $summary, $postId]);
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            /* 留묒? ?붿씠?몄뿉???고븳 ?묓겕濡??⑥뼱吏???ъ꽑 洹몃씪?곗씠??諛곌꼍 */
+            background: linear-gradient(135deg, var(--bg-cream) 0%, var(--bg-pink) 100%);
+            background-attachment: fixed; /* ?ㅽ겕濡???諛곌꼍 怨좎젙 */
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
-    }
 
-    header('Location: ' . page_url($redirectPage) . '&post=' . $postId);
-    exit;
-}
+        .font-serif-en { font-family: 'Playfair Display', serif; }
+        .font-serif-ko { font-family: 'Nanum Myeongjo', serif; }
 
-$posts = $db->query('SELECT * FROM posts ORDER BY published_at DESC, id DESC')->fetchAll();
-$members = $db->query('SELECT * FROM members ORDER BY id ASC')->fetchAll();
-$events = $db->query('SELECT * FROM events ORDER BY day ASC')->fetchAll();
-$photos = $db->query('SELECT * FROM photos ORDER BY id ASC')->fetchAll();
-
-$menus = [
-    'home' => '처음',
-    'story' => '목차',
-    'intro' => '인물',
-    'members' => '등장인물',
-    'calendar' => '기록',
-    'album' => '삽화',
-    'admin' => '설정',
-];
-
-$pageTitles = $menus + ['login' => '로그인'];
-
-function page_url(string $page): string
-{
-    return $page === 'home' ? '/' : '/?page=' . rawurlencode($page);
-}
-
-function role_label(string $role): string
-{
-    return match ($role) {
-        'super_admin' => '운영자',
-        'admin' => '스태프',
-        default => '회원',
-    };
-}
-
-function render_page_title(string $title, string $subtitle = ''): void
-{
-    ?>
-    <header class="chapter-heading<?= $title === '목차 및 이야기' || $title === '인물의 첫 문장' ? ' board-heading' : '' ?>">
-        <span>Our Story</span>
-        <h1><?= h($title) ?></h1>
-        <?php if ($subtitle !== ''): ?><p><?= h($subtitle) ?></p><?php endif; ?>
-    </header>
-    <?php
-}
-
-function render_board(array $posts, string $type, array $currentUser): void
-{
-    $rows = array_values(array_filter($posts, static fn (array $post): bool => $post['type'] === $type));
-    $boardTitle = $type === 'story' ? '목차 및 이야기' : '인물의 첫 문장';
-    $placeholder = $type === 'story' ? '당신의 이야기를 들려주세요...' : '처음 건네는 인사를 적어주세요...';
-    $selectedId = (int) ($_GET['post'] ?? 0);
-    $selectedPost = null;
-    foreach ($rows as $row) {
-        if ((int) $row['id'] === $selectedId) {
-            $selectedPost = $row;
-            break;
+        /* Navigation Hover Effect */
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+            cursor: pointer;
+            padding-bottom: 5px;
         }
-    }
-    $isEditing = $selectedPost !== null && (int) ($_GET['edit'] ?? 0) === (int) $selectedPost['id'];
-    $isAuthor = $selectedPost !== null && (string) $selectedPost['author'] === (string) ($currentUser['name'] ?? '');
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -2px;
+            left: 0;
+            background-color: var(--text-dark);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%;
+        }
+        .nav-link.active {
+            font-weight: 700;
+        }
+        /* ?쒖꽦?붾맂 硫붾돱紐??놁뿉 '-' 湲고샇 異붽? */
+        .nav-link.active::before {
+            content: '- ';
+            position: absolute;
+            left: -15px;
+            top: 0;
+            color: var(--text-dark);
+            font-weight: 400;
+        }
 
-    render_page_title($boardTitle);
-    ?>
-    <div class="board-spread">
-        <section class="story-list" aria-label="<?= h($boardTitle) ?>">
-            <h2>목차</h2>
-            <div class="story-scroll">
-                <?php foreach ($rows as $post): ?>
-                    <article class="story-entry<?= $selectedPost !== null && (int) $selectedPost['id'] === (int) $post['id'] ? ' active' : '' ?>">
-                        <div class="story-number"><?= sprintf('%02d', (int) $post['id']) ?></div>
-                        <div>
-                            <h3><a href="<?= h(page_url($type) . '&post=' . (int) $post['id']) ?>"><?= h($post['title']) ?></a></h3>
+        /* 硫붽? 硫붾돱 (?쒕∼?ㅼ슫) ?ㅽ???*/
+        #mega-menu {
+            position: fixed;
+            top: 90px; /* ?ㅻ뜑 ?믪씠(?⑤뵫 ?ы븿) ?꾨옒 ?꾩튂 */
+            left: 0;
+            width: 100%;
+            background-color: var(--bg-cream);
+            border-bottom: 1px solid var(--border-light);
+            z-index: 40;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            /* 珥덇린 ?곹깭: ?④? & ?꾨줈 ?щ씪媛 ?덉쓬 */
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+        }
+        #mega-menu.open {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* ???붿냼 由ъ뀑 */
+        input:focus, textarea:focus { outline: none; }
+
+        /* View Transitions */
+        .view-hidden { display: none !important; }
+        .fade-in { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(15px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.3); }
+
+        /* Story Card Hover */
+        .story-card {
+            transition: transform 0.4s ease, border-color 0.4s ease;
+            background: rgba(255,255,255,0.3); /* 移대뱶 ?쎄컙 諛섑닾紐낇븯寃?*/
+            padding: 20px;
+            border-radius: 8px;
+            backdrop-filter: blur(5px);
+        }
+        .story-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-red);
+            background: rgba(255,255,255,0.7);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Navigation -->
+    <header class="fixed top-0 left-0 w-full z-50 transition-all duration-300" id="main-header">
+        <div class="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center relative z-50">
+
+            <!-- Left Menu -->
+            <nav class="flex gap-10 text-sm tracking-widest uppercase hidden md:flex w-1/3 pl-4">
+                <button class="nav-link active uppercase" data-menu="journal">Journal</button>
+                <button class="nav-link uppercase" data-menu="members">Members</button>
+            </nav>
+
+            <!-- Center Logo -->
+            <div class="text-3xl font-serif-en italic tracking-tighter w-1/3 text-center cursor-pointer view-trigger" data-target="view-read">
+                :our story
+            </div>
+
+            <!-- Right Menu -->
+            <div class="flex justify-end items-center gap-6 text-sm tracking-widest w-1/3">
+                <span id="current-date" class="hidden lg:block opacity-70"></span>
+                <button class="view-trigger flex items-center justify-center w-10 h-10 bg-[var(--accent-red)] text-white rounded-full hover:scale-110 transition-transform" data-target="view-write" title="Write a story">
+                    <i class="ph ph-plus text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mega Menu Dropdown -->
+        <div id="mega-menu" class="h-[400px]">
+            <div class="max-w-7xl mx-auto h-full flex">
+                <!-- Left: 媛먯꽦 ?대?吏 ?곸뿭 -->
+                <div class="w-1/2 h-full p-8">
+                    <div class="w-full h-full overflow-hidden relative group rounded-sm bg-gray-100">
+                        <img id="menu-image" src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&q=80&w=800" alt="Menu Image" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105">
+                        <div class="absolute inset-0 bg-black/10"></div> <!-- ?대?吏 ?댁쭩 ?대몼寃?-->
+                    </div>
+                </div>
+
+                <!-- Right: ?쒕툕 硫붾돱 由ъ뒪??-->
+                <div class="w-1/2 h-full p-16 flex flex-col justify-center">
+                    <!-- Journal Submenu -->
+                    <div id="submenu-journal" class="submenu-content hidden">
+                        <div class="grid grid-cols-2 gap-x-12 gap-y-8">
+                            <div>
+                                <h4 class="font-serif-en italic text-xl mb-4 border-b border-[var(--border-light)] pb-2 flex items-center gap-2">
+                                    <i class="ph ph-book-open"></i> records
+                                </h4>
+                                <ul class="space-y-4 text-sm opacity-70">
+                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-read">Latest Updates</li>
+                                    <li class="hover:text-[var(--accent-red)] cursor-pointer opacity-50">Monthly Archive</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-serif-en italic text-xl mb-4 border-b border-[var(--border-light)] pb-2 flex items-center gap-2">
+                                    <i class="ph ph-pencil-simple"></i> create
+                                </h4>
+                                <ul class="space-y-4 text-sm opacity-70">
+                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-write">Write New Story</li>
+                                </ul>
+                            </div>
                         </div>
-                        <span class="story-author"><?= h($post['author']) ?></span>
-                    </article>
-                <?php endforeach; ?>
+                    </div>
+
+                    <!-- Members Submenu -->
+                    <div id="submenu-members" class="submenu-content hidden">
+                        <div class="grid grid-cols-2 gap-x-12 gap-y-8">
+                            <div>
+                                <h4 class="font-serif-en italic text-xl mb-4 border-b border-[var(--border-light)] pb-2 flex items-center gap-2">
+                                    <i class="ph ph-users"></i> directory
+                                </h4>
+                                <ul class="space-y-4 text-sm opacity-70">
+                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-people">All Members</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Overlay (硫붾돱 ?대┫ ??諛곌꼍 ?대몼寃? -->
+    <div id="menu-overlay" class="fixed inset-0 bg-black/20 z-30 opacity-0 pointer-events-none transition-opacity duration-500"></div>
+
+    <!-- Header Spacer -->
+    <div class="h-32"></div>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow w-full max-w-7xl mx-auto px-6 py-4 relative z-10">
+
+        <!-- ========================================== -->
+        <!-- VIEW 1: JOURNAL (紐⑸줉 蹂닿린) -->
+        <!-- ========================================== -->
+        <section id="view-read" class="w-full fade-in">
+            <!-- Hero Banner -->
+            <div class="mb-20 border-b border-[var(--border-light)] pb-16 flex flex-col md:flex-row items-end justify-between gap-8">
+                <h1 class="text-5xl md:text-7xl font-serif-ko font-light leading-tight tracking-tight">
+                    湲곕줉??紐⑥뿬<br>?곕━媛 ?섎뒗 ?쒓컙.
+                </h1>
+                <p class="text-sm tracking-widest uppercase opacity-60 font-serif-en text-right">
+                    Putting a Moment of Peace<br>to Cities Around the World
+                </p>
+            </div>
+
+            <div class="flex justify-between items-end mb-10">
+                <h2 class="text-xl font-bold tracking-widest uppercase">Latest Updates</h2>
+                <span class="text-xs opacity-50 tracking-widest uppercase">Archive</span>
+            </div>
+
+            <!-- Story Grid -->
+            <div id="story-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
+                <!-- 濡쒕뵫 ?곹깭 -->
+                <div class="col-span-full flex flex-col items-center justify-center py-20 opacity-50">
+                    <div class="w-8 h-8 border-2 border-t-[var(--accent-red)] border-gray-400 rounded-full animate-spin mb-4"></div>
+                    <p class="text-sm tracking-widest uppercase">Loading stories...</p>
+                </div>
             </div>
         </section>
 
-        <?php if ($selectedPost !== null && !$isEditing): ?>
-            <section class="writing-box story-detail" aria-label="선택한 글">
-                <h2>이야기</h2>
-                <article>
-                    <h3><?= h($selectedPost['title']) ?></h3>
-                    <p><?= nl2br(h($selectedPost['summary'])) ?></p>
-                    <footer>
-                        <span><?= h(str_replace('-', '.', $selectedPost['published_at'])) ?></span>
-                        <span><?= h($selectedPost['author']) ?></span>
-                    </footer>
-                </article>
-                <?php if ($isAuthor): ?>
-                    <div class="author-actions">
-                        <a href="<?= h(page_url($type) . '&post=' . (int) $selectedPost['id'] . '&edit=' . (int) $selectedPost['id']) ?>">수정</a>
-                        <form method="post" action="<?= h(page_url($type)) ?>">
-                            <input type="hidden" name="action" value="delete_post">
-                            <input type="hidden" name="type" value="<?= h($type) ?>">
-                            <input type="hidden" name="post_id" value="<?= (int) $selectedPost['id'] ?>">
-                            <button type="submit">삭제</button>
-                        </form>
-                    </div>
-                <?php endif; ?>
-            </section>
-        <?php else: ?>
-            <form class="writing-box" method="post" action="<?= h(page_url($type)) ?>" aria-label="<?= $isEditing ? '글 수정' : '새 글 작성' ?>">
-                <h2><?= $isEditing ? '이야기 수정' : ($type === 'story' ? '이야기 쓰기' : '첫 문장 쓰기') ?></h2>
-                <input type="hidden" name="action" value="<?= $isEditing ? 'update_post' : 'create_post' ?>">
-                <input type="hidden" name="type" value="<?= h($type) ?>">
-                <?php if ($isEditing): ?><input type="hidden" name="post_id" value="<?= (int) $selectedPost['id'] ?>"><?php endif; ?>
-                <input type="text" name="title" value="<?= $isEditing ? h($selectedPost['title']) : '' ?>" placeholder="제목을 적어주세요." aria-label="제목" required>
-                <textarea name="content" placeholder="<?= h($placeholder) ?>" aria-label="본문" required><?= $isEditing ? h($selectedPost['summary']) : '' ?></textarea>
-                <div>
-                    <button type="submit"><?= $isEditing ? '수정하기' : '글 남기기' ?></button>
-                </div>
-            </form>
-        <?php endif; ?>
-    </div>
-    <?php
-}
-
-function render_access_denied(string $title): void
-{
-    ?>
-    <section class="access-page" aria-label="접근 권한 없음">
-        <span><?= h($title) ?></span>
-        <h1>접근 권한이 없습니다</h1>
-        <p>이 장은 로그인한 회원에게만 열려 있습니다.</p>
-        <div>
-            <a href="/?page=login">로그인</a>
-            <a href="/">처음으로</a>
-        </div>
-    </section>
-    <?php
-}
-
-?>
-<!doctype html>
-<html lang="ko">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>우리들의 이야기</title>
-    <link rel="stylesheet" href="/styles.css?v=<?= filemtime(__DIR__ . '/styles.css') ?>">
-</head>
-<body>
-    <header class="site-header">
-        <a class="brand" href="/">
-            <strong>우리들의 이야기</strong>
-            <span>Written by us</span>
-        </a>
-        <nav class="main-nav" aria-label="주요 메뉴">
-            <?php foreach ($menus as $id => $label): ?>
-                <a class="<?= $page === $id ? 'active' : '' ?>" href="<?= h(page_url($id)) ?>"><?= h($label) ?></a>
-            <?php endforeach; ?>
-        </nav>
-        <?php if ($isLoggedIn): ?>
-            <a class="header-action" href="/?action=logout">책 덮기</a>
-        <?php else: ?>
-            <a class="header-action <?= $page === 'login' ? 'active' : '' ?>" href="/?page=login" <?= $page !== 'login' ? 'data-page-turn' : '' ?>>첫 장 넘기기</a>
-        <?php endif; ?>
-    </header>
-
-    <main class="book-shell">
-        <div class="book">
-            <div class="book-spine" aria-hidden="true"></div>
-            <div class="page-turn-overlay" aria-hidden="true">
-                <div class="turning-page"></div>
+        <!-- ========================================== -->
+        <!-- VIEW 2: WRITE (湲?곌린 ?? -->
+        <!-- ========================================== -->
+        <section id="view-write" class="w-full max-w-4xl mx-auto view-hidden fade-in py-10">
+            <div class="text-center mb-16">
+                <span class="text-[var(--accent-red)] text-4xl font-serif-en italic">:w</span>
+                <h2 class="mt-4 text-sm tracking-widest uppercase opacity-60">Write Your Story</h2>
             </div>
 
-            <?php if ($page === 'home'): ?>
-                <section class="home-spread">
-                    <article class="cover-page">
-                        <img src="/assets/main.png" alt="">
-                        <div class="cover-line"></div>
-                        <div class="cover-copy">
-                            <span>Prologue</span>
-                            <h1>우리들의<br>이야기</h1>
-                            <p>Written by us</p>
-                        </div>
-                    </article>
-                    <article class="intro-page">
-                        <div>
-                            <span class="ornament">❦</span>
-                            <h2>기억은 기록을 통해<br>비로소 영원해진다</h2>
-                            <p>바쁘게 흘러가는 시간 속에서,<br>당신의 흔적을 한 페이지씩 채워주세요.</p>
-                            <div class="home-actions">
-                                <a href="/?page=login" data-page-turn>첫 장 넘기기</a>
-                                <a href="/?page=story">목차 둘러보기</a>
-                            </div>
-                        </div>
-                    </article>
-                </section>
-            <?php elseif ($page === 'login'): ?>
-                <section class="chapter-page login-page">
-                    <div class="login-spread">
-                        <article class="cover-page login-cover">
-                            <img src="/assets/main.png" alt="">
-                            <div class="cover-line"></div>
-                            <div class="cover-copy">
-                                <span>Prologue</span>
-                                <h1>우리들의<br>이야기</h1>
-                                <p>Written by us</p>
-                            </div>
-                        </article>
-                        <div class="login-panel">
-                            <header>
-                                <h1>우리들의 이야기</h1>
-                                <span>OUR STORY</span>
-                            </header>
-                            <form class="login-form" method="post" action="/?page=login">
-                                <?php if ($loginError !== ''): ?><p class="form-error"><?= h($loginError) ?></p><?php endif; ?>
-                                <input type="hidden" name="action" value="login">
-                                <label>
-                                    <span>아이디</span>
-                                    <input type="text" name="username" aria-label="아이디" autocomplete="username">
-                                </label>
-                                <label>
-                                    <span>비밀번호</span>
-                                    <input type="password" name="password" aria-label="비밀번호" autocomplete="current-password">
-                                </label>
-                                <button type="submit">로그인</button>
-                            </form>
-                        </div>
+            <form id="story-form" class="flex flex-col gap-10 relative">
+                <!-- Title Input -->
+                <div class="relative group">
+                    <input
+                        type="text"
+                        id="story-title-input"
+                        placeholder="?쒕ぉ???낅젰?섏꽭??
+                        class="w-full bg-transparent text-4xl md:text-5xl font-serif-ko font-bold text-gray-800 placeholder-gray-400 border-b border-[var(--border-light)] pb-4 transition-colors focus:border-[var(--accent-red)]"
+                        required
+                    >
+                </div>
+
+                <!-- Content Input -->
+                <div class="relative flex-grow min-h-[400px]">
+                    <textarea
+                        id="story-content-input"
+                        placeholder="?닿납???뱀떊???댁빞湲곕? ?몄뼱?볦쑝?몄슂..."
+                        class="w-full h-full min-h-[400px] bg-transparent resize-none text-lg leading-loose text-gray-700 placeholder-gray-400 border-none"
+                        required
+                    ></textarea>
+                </div>
+
+                <!-- Submit Button Area -->
+                <div class="flex justify-between items-center border-t border-[var(--border-light)] pt-8 mt-8">
+                    <button type="button" class="view-trigger text-sm tracking-widest uppercase opacity-50 hover:opacity-100 transition-opacity" data-target="view-read">
+                        Cancel
+                    </button>
+                    <button type="submit" id="submit-btn" class="bg-[var(--accent-red)] text-white px-10 py-4 text-sm font-bold tracking-widest uppercase hover:bg-red-700 transition-colors flex items-center gap-3">
+                        <span>Publish</span>
+                        <i class="ph ph-arrow-right"></i>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 3: MEMBERS (?뚯썝 紐⑸줉) -->
+        <!-- ========================================== -->
+        <section id="view-people" class="w-full view-hidden fade-in">
+            <!-- Full Red Banner (李멸퀬 ?대?吏 3 ?먮굦) -->
+            <div class="w-full bg-[var(--accent-red)] text-white py-32 mb-16 flex justify-center items-center rounded-sm shadow-xl">
+                <h1 class="text-8xl font-serif-en italic transform -rotate-90 md:rotate-0 tracking-tighter opacity-90">:m</h1>
+            </div>
+
+            <div class="flex justify-between items-end mb-10">
+                <h2 class="text-xl font-bold tracking-widest uppercase">Our Members</h2>
+                <span class="text-xs opacity-50 tracking-widest uppercase">Directory</span>
+            </div>
+
+            <!-- Member Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+                <!-- Member 1 -->
+                <div class="group cursor-pointer">
+                    <div class="w-full aspect-[3/4] bg-gray-200 mb-4 overflow-hidden rounded-sm shadow-md">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400" alt="Member" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105">
                     </div>
-                </section>
-            <?php elseif (!$isLoggedIn): ?>
-                <section class="chapter-page">
-                    <?php render_access_denied($pageTitles[$page]); ?>
-                </section>
-            <?php else: ?>
-                <?php if ($page === 'story'): ?>
-                    <section class="chapter-page board-page"><?php render_board($posts, 'story', $currentUser); ?></section>
-                <?php elseif ($page === 'intro'): ?>
-                    <section class="chapter-page board-page"><?php render_board($posts, 'intro', $currentUser); ?></section>
-                <?php elseif ($page === 'members'): ?>
-                    <section class="chapter-page">
-                        <?php render_page_title('등장인물', '이 책을 함께 쓰는 사람들'); ?>
-                        <div class="member-grid">
-                            <?php foreach ($members as $member): ?>
-                                <article class="member-card">
-                                    <div><?= h(mb_substr($member['name'], 0, 1, 'UTF-8')) ?></div>
-                                    <h2><?= h($member['name']) ?></h2>
-                                    <p><?= h($member['age_group']) ?> · <?= h($member['region']) ?> · <?= h(role_label($member['role'])) ?></p>
-                                    <blockquote><?= h($member['intro']) ?></blockquote>
-                                </article>
-                            <?php endforeach; ?>
-                        </div>
-                    </section>
-                <?php elseif ($page === 'calendar'): ?>
-                    <section class="chapter-page">
-                        <?php render_page_title('기록', '날짜마다 접어둔 작은 책갈피'); ?>
-                        <div class="calendar-head">
-                            <button type="button">&lt;</button>
-                            <strong>2026. 07</strong>
-                            <button type="button">&gt;</button>
-                        </div>
-                        <div class="event-form">
-                            <input type="date" value="2026-07-09" aria-label="날짜">
-                            <input type="text" placeholder="어떤 일이 있었나요?" aria-label="일정">
-                            <button type="button">새겨넣기</button>
-                        </div>
-                        <div class="calendar-book">
-                            <?php foreach (['日', '月', '火', '水', '木', '金', '土'] as $dayName): ?><b><?= h($dayName) ?></b><?php endforeach; ?>
-                            <?php for ($i = 0; $i < 3; $i++): ?><span class="empty"></span><?php endfor; ?>
-                            <?php for ($day = 1; $day <= 31; $day++): ?>
-                                <?php $event = current(array_filter($events, static fn (array $row): bool => (int) $row['day'] === $day)); ?>
-                                <span>
-                                    <em><?= $day ?></em>
-                                    <?php if ($event): ?><small><?= h($event['title']) ?></small><?php endif; ?>
-                                </span>
-                            <?php endfor; ?>
-                        </div>
-                    </section>
-                <?php elseif ($page === 'album'): ?>
-                    <section class="chapter-page">
-                        <?php render_page_title('삽화', '그림과 사진으로 남긴 우리의 순간들'); ?>
-                        <div class="album-grid">
-                            <?php foreach ($photos as $index => $photo): ?>
-                                <article class="photo-card">
-                                    <img src="/assets/our-story-lounge.png" alt="<?= h($photo['title']) ?>">
-                                    <h2><?= h($photo['title']) ?></h2>
-                                    <p><?= h($photo['caption']) ?></p>
-                                </article>
-                            <?php endforeach; ?>
-                        </div>
-                    </section>
-                <?php elseif ($page === 'admin'): ?>
-                    <section class="chapter-page">
-                        <?php render_page_title('시스템 설정', '새로운 작가를 등록하는 관리자 공간'); ?>
-                        <form class="admin-form">
-                            <h2>신규 아이디 발급</h2>
-                            <input type="text" placeholder="새로운 아이디" aria-label="새로운 아이디">
-                            <input type="password" placeholder="초기 비밀번호" aria-label="초기 비밀번호">
-                            <button type="button">등록 완료하기</button>
-                        </form>
-                    </section>
-                <?php endif; ?>
-            <?php endif; ?>
-        </div>
+                    <p class="text-xs tracking-widest uppercase opacity-50 mb-1">Editor</p>
+                    <h3 class="font-serif-ko font-bold text-lg">吏??/h3>
+                </div>
+
+                <!-- Member 2 -->
+                <div class="group cursor-pointer">
+                    <div class="w-full aspect-[3/4] bg-gray-200 mb-4 overflow-hidden rounded-sm shadow-md">
+                        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=400" alt="Member" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105">
+                    </div>
+                    <p class="text-xs tracking-widest uppercase opacity-50 mb-1">Writer</p>
+                    <h3 class="font-serif-ko font-bold text-lg">?쒖뿰</h3>
+                </div>
+
+                <!-- Member 3 -->
+                <div class="group cursor-pointer">
+                    <div class="w-full aspect-[3/4] bg-gray-200 mb-4 overflow-hidden rounded-sm shadow-md">
+                        <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=400" alt="Member" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105">
+                    </div>
+                    <p class="text-xs tracking-widest uppercase opacity-50 mb-1">Creator</p>
+                    <h3 class="font-serif-ko font-bold text-lg">誘쇱슦</h3>
+                </div>
+            </div>
+        </section>
+
     </main>
 
-    <script>
-        (() => {
-            const links = document.querySelectorAll('[data-page-turn]');
-            const overlay = document.querySelector('.page-turn-overlay');
+    <!-- Footer -->
+    <footer class="w-full border-t border-[var(--border-light)] mt-20 py-10 text-center text-xs tracking-widest uppercase opacity-50 relative z-10">
+        <p>&copy; 2026 :our story. All rights reserved.</p>
+    </footer>
 
-            if (!links.length || !overlay) {
+    <!-- ?뚮┝ 硫붿떆吏 (?좎뒪?? -->
+    <div id="toast" class="fixed bottom-10 right-10 bg-[var(--text-dark)] text-[var(--bg-cream)] px-8 py-4 shadow-2xl opacity-0 transition-opacity duration-300 pointer-events-none z-50 text-sm tracking-widest uppercase flex items-center gap-3 rounded-md">
+        <span id="toast-icon" class="text-[var(--accent-red)]"><i class="ph-fill ph-info"></i></span>
+        <span id="toast-message">Message</span>
+    </div>
+
+    <!-- Firebase 諛?UI 濡쒖쭅 (JavaScript) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // ==========================================
+        // UI 濡쒖쭅 (硫붾돱 諛??붾㈃ ?꾪솚)
+        // ==========================================
+        const header = document.getElementById('main-header');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const megaMenu = document.getElementById('mega-menu');
+        const menuOverlay = document.getElementById('menu-overlay');
+        const menuImage = document.getElementById('menu-image');
+        const submenuContents = document.querySelectorAll('.submenu-content');
+        const viewTriggers = document.querySelectorAll('.view-trigger');
+        const views = document.querySelectorAll('main > section[id^="view-"]');
+
+        let isMenuOpen = false;
+
+        // ?꾩옱 ?좎쭨 ?명똿
+        const dateOptions = { year: 'numeric', month: 'short', day: '2-digit' };
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', dateOptions).toUpperCase();
+
+        // ?ㅻ뜑 諛곌꼍 ?좉? ?⑥닔
+        function updateHeaderBg() {
+            if (window.scrollY > 10 || isMenuOpen) {
+                header.classList.add('bg-[var(--bg-cream)]', 'shadow-sm');
+                header.classList.remove('bg-transparent');
+            } else {
+                header.classList.remove('bg-[var(--bg-cream)]', 'shadow-sm');
+                header.classList.add('bg-transparent');
+            }
+        }
+        window.addEventListener('scroll', updateHeaderBg);
+
+        // 硫붾돱 ?リ린 ?⑥닔
+        function closeMenu() {
+            megaMenu.classList.remove('open');
+            menuOverlay.classList.remove('opacity-100');
+            menuOverlay.classList.add('pointer-events-none');
+            // 硫붾돱 ?レ쓣 ???꾩옱 蹂닿퀬 ?덈뒗 酉곗뿉 ?대떦?섎뒗 ??쭔 active ?좎? (?ш린???⑥닚?뷀븯??紐⑤몢 ?댁젣)
+            // navLinks.forEach(l => l.classList.remove('active'));
+            isMenuOpen = false;
+            updateHeaderBg();
+        }
+
+        // 硫붾돱 ???대┃ ?대깽??(硫붽? 硫붾돱 ?닿린/?댁슜 蹂寃?
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.stopPropagation(); // ?대┃ ?대깽???꾪뙆 諛⑹?
+
+                const menuName = link.getAttribute('data-menu');
+                const wasActive = link.classList.contains('active');
+
+                // ?대? ?쒖꽦?붾맂 硫붾돱瑜??ㅼ떆 ?꾨Ⅴ硫??リ린
+                if (wasActive && isMenuOpen) {
+                    closeMenu();
+                    return;
+                }
+
+                // ?쒖꽦???곹깭 ?쒖떆 蹂寃?
+                navLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+
+                // ?쒕툕硫붾돱 ?댁슜 蹂寃?
+                submenuContents.forEach(content => content.classList.add('hidden'));
+                const activeSubmenu = document.getElementById(`submenu-${menuName}`);
+                if (activeSubmenu) activeSubmenu.classList.remove('hidden');
+
+                // ?대?吏 蹂寃?(硫붾돱蹂?媛먯꽦 ?대?吏)
+                if (menuName === 'journal') {
+                    menuImage.src = 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&q=80&w=800'; // ?ㅼ씠?대━/梨낆긽 ?대?吏
+                } else if (menuName === 'members') {
+                    menuImage.src = 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&q=80&w=800'; // 紐⑥엫/?щ엺???대?吏
+                }
+
+                // 硫붾돱 ?닿린
+                megaMenu.classList.add('open');
+                menuOverlay.classList.remove('pointer-events-none');
+                menuOverlay.classList.add('opacity-100');
+                isMenuOpen = true;
+                updateHeaderBg();
+            });
+        });
+
+        // 酉??꾪솚 濡쒖쭅 (?붾㈃ 諛붽씀湲?
+        viewTriggers.forEach(trigger => {
+            trigger.addEventListener('click', () => {
+                const targetId = trigger.getAttribute('data-target');
+
+                // 硫붾돱 ?대젮?덉쑝硫??リ린
+                if (isMenuOpen) closeMenu();
+
+                views.forEach(view => {
+                    if (view.id === targetId) {
+                        view.classList.remove('view-hidden');
+                        // ?좊땲硫붿씠???몃━嫄?
+                        view.classList.remove('fade-in');
+                        void view.offsetWidth;
+                        view.classList.add('fade-in');
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    } else {
+                        view.classList.add('view-hidden');
+                    }
+                });
+            });
+        });
+
+        // 諛곌꼍(?ㅻ쾭?덉씠) ?대┃ ??硫붾돱 ?リ린
+        menuOverlay.addEventListener('click', closeMenu);
+
+        // ?좎뒪???뚮┝ ?⑥닔
+        function showToast(message, isSuccess = true) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').textContent = message;
+            document.getElementById('toast-icon').innerHTML = isSuccess ? '<i class="ph-fill ph-check-circle"></i>' : '<i class="ph-fill ph-warning-circle"></i>';
+            toast.style.opacity = '1';
+            setTimeout(() => { toast.style.opacity = '0'; }, 3000);
+        }
+
+        // ==========================================
+        // Firebase 濡쒖쭅
+        // ==========================================
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        const form = document.getElementById('story-form');
+        const listContainer = document.getElementById('story-list-container');
+        const submitBtn = document.getElementById('submit-btn');
+
+        async function initAuth() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("?몄쬆 ?먮윭:", error);
+            }
+        }
+
+        // ?ㅼ떆媛??곗씠???쎄린
+        function setupRealtimeListener() {
+            const storiesRef = collection(db, 'artifacts', appId, 'public', 'data', 'stories');
+            const q = query(storiesRef);
+
+            onSnapshot(q, (snapshot) => {
+                const stories = [];
+                snapshot.forEach((doc) => {
+                    stories.push({ id: doc.id, ...doc.data() });
+                });
+
+                // ?섑뵆 ?곗씠???쎌엯 (?곗씠?곌? ?놁쓣 ?뚮쭔)
+                if (stories.length === 0) {
+                    const now = new Date();
+                    stories.push({
+                        id: 'sample-1', title: '鍮??ㅻ뒗 ?좎쓽 移댄럹, 洹몃━怨?鍮?, content: '?곕쑜???꾨찓由ъ뭅?????붽낵 諛⑷툑 援ъ슫 ?쒕굹紐?濡? 李쎈컰?쇰줈 ?⑥뼱吏??鍮쀬냼由щ? ?ㅼ쑝硫?梨낆쓣 ?쎈뒗 ???쒓컙? ?몄젣???꾨꼍???됲솕瑜?媛?몃떎以??', createdAt: { toMillis: () => now.getTime() - 86400000 * 2 }
+                    });
+                    stories.push({
+                        id: 'sample-2', title: '?ㅽ썑 ???쒖쓽 ?곴컧', content: '湲몄쓣 嫄룸떎 ?곗뿰??留덉＜移??묒? ?뚰뭹?듭뿉???ㅻ옒???꾨쫫 移대찓?쇰? 諛쒓껄?덈떎. 酉고뙆?몃뜑 ?덈㉧濡?蹂댁씠???몄긽? 議곌툑 ???곕쑜?섍퀬 ?먮━寃??섎윭媛??寃?媛숈븯??', createdAt: { toMillis: () => now.getTime() - 86400000 * 5 }
+                    });
+                    stories.push({
+                        id: 'sample-3', title: '?덈줈???꾨줈?앺듃???쒖옉', content: '?곕━留뚯쓽 怨듦컙??留뚮뱶???? ?됱긽??怨좊Ⅴ怨??고듃瑜?留욎텛硫?諛ㅼ쓣 ?덉슦???붿쬁???쇨낀?섏?留?苑?利먭쾪?? 醫뗭? 寃곌낵臾쇱씠 ?섏삤湲곕? 湲곕??섎ŉ.', createdAt: { toMillis: () => now.getTime() - 86400000 * 10 }
+                    });
+                }
+
+                // ?쒓컙???뺣젹 (理쒖떊??
+                stories.sort((a, b) => {
+                    const timeA = a.createdAt ? a.createdAt.toMillis() : Date.now();
+                    const timeB = b.createdAt ? b.createdAt.toMillis() : Date.now();
+                    return timeB - timeA;
+                });
+
+                renderStories(stories);
+            }, (error) => {
+                console.error("?곗씠???쎄린 ?먮윭:", error);
+            });
+        }
+
+        // 紐⑸줉 ?붾㈃??洹몃━湲?
+        function renderStories(stories) {
+            listContainer.innerHTML = '';
+            stories.forEach(story => {
+                const dateObj = story.createdAt ? new Date(story.createdAt.toMillis()) : new Date();
+                const dateStr = dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' }).toUpperCase();
+
+                const item = document.createElement('article');
+                item.className = 'story-card border border-[var(--border-light)] cursor-pointer group flex flex-col h-full';
+
+                item.innerHTML = `
+                    <div class="flex justify-between items-start mb-4">
+                        <p class="text-xs tracking-widest uppercase opacity-50 font-serif-en">${dateStr}</p>
+                        <i class="ph ph-arrow-up-right opacity-0 group-hover:opacity-100 transition-opacity text-[var(--accent-red)]"></i>
+                    </div>
+                    <h3 class="text-2xl font-serif-ko font-bold mb-4 group-hover:text-[var(--accent-red)] transition-colors line-clamp-2">${story.title}</h3>
+                    <p class="text-sm opacity-70 leading-relaxed line-clamp-3 mb-6 flex-grow">${story.content}</p>
+                    <div class="mt-auto pt-4 text-xs tracking-widest uppercase border-t border-dashed border-gray-300 opacity-50 group-hover:opacity-100 transition-opacity">
+                        Read Story
+                    </div>
+                `;
+                listContainer.appendChild(item);
+            });
+        }
+
+        // 湲 ?④린湲?泥섎━
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentUser) {
+                showToast("濡쒓렇?몄씠 ?꾩슂?⑸땲??", false);
                 return;
             }
 
-            links.forEach((link) => {
-                link.addEventListener('click', (event) => {
-                    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.target) {
-                        return;
-                    }
+            const title = document.getElementById('story-title-input').value.trim();
+            const content = document.getElementById('story-content-input').value.trim();
 
-                    event.preventDefault();
-                    document.body.classList.add('is-page-turning');
-                    window.setTimeout(() => {
-                        window.location.href = link.href;
-                    }, 880);
+            if (!title || !content) return;
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> <span>Publishing...</span>';
+
+            try {
+                const storiesRef = collection(db, 'artifacts', appId, 'public', 'data', 'stories');
+                await addDoc(storiesRef, {
+                    title: title,
+                    content: content,
+                    authorId: currentUser.uid,
+                    createdAt: serverTimestamp()
                 });
-            });
-        })();
-    </script>
 
-    <footer class="site-footer">
-        <p>우리들의 이야기, 2026</p>
-    </footer>
+                form.reset();
+                showToast("Successfully published.", true);
+
+                // ?????'Journal' ??쑝濡??대룞
+                document.querySelector('.view-trigger[data-target="view-read"]').click();
+
+            } catch (error) {
+                console.error("Write Error:", error);
+                showToast("Failed to publish.", false);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<span>Publish</span><i class="ph ph-arrow-right"></i>';
+            }
+        });
+
+        // ?쒖옉
+        initAuth();
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                setupRealtimeListener();
+            }
+        });
+
+    </script>
 </body>
 </html>
