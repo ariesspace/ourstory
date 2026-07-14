@@ -204,6 +204,14 @@
                                     <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-schedule">Monthly Schedule</li>
                                 </ul>
                             </div>
+                            <div>
+                                <h4 class="font-serif-en italic text-xl mb-4 border-b border-[var(--border-light)] pb-2 flex items-center gap-2">
+                                    <i class="ph ph-images"></i> gallery
+                                </h4>
+                                <ul class="space-y-4 text-sm opacity-70">
+                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-gallery">Activity Album</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -398,6 +406,71 @@
             </div>
         </section>
 
+        <section id="view-gallery" class="w-full view-hidden fade-in">
+            <div class="mb-16 border-b border-[var(--border-light)] pb-12 flex flex-col md:flex-row items-end justify-between gap-8">
+                <div>
+                    <span class="text-xs tracking-[0.3em] uppercase opacity-50 font-bold">Activity Album</span>
+                    <h1 class="mt-4 text-5xl md:text-7xl font-serif-en italic tracking-tighter">
+                        <span class="opacity-80">:</span>Gallery
+                    </h1>
+                    <p class="mt-4 text-sm opacity-60 font-serif-ko leading-relaxed">
+                        함께한 순간들을 사진과 짧은 기록으로 남기는 공간
+                    </p>
+                </div>
+                <button type="button" class="view-trigger bg-[var(--accent-red)] text-white px-8 py-3 text-xs tracking-widest uppercase hover:bg-red-700 transition-colors flex items-center gap-2" data-target="view-gallery-write">
+                    <i class="ph ph-plus"></i>
+                    Add Photo
+                </button>
+            </div>
+
+            <div id="gallery-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="col-span-full flex flex-col items-center justify-center py-20 opacity-50">
+                    <div class="w-8 h-8 border-2 border-t-[var(--accent-red)] border-gray-400 rounded-full animate-spin mb-4"></div>
+                    <p class="text-sm tracking-widest uppercase">Loading gallery...</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-gallery-write" class="w-full max-w-4xl mx-auto view-hidden fade-in py-10">
+            <div class="text-center mb-16">
+                <span class="text-[var(--accent-red)] text-4xl font-serif-en italic">:g</span>
+                <h2 class="mt-4 text-sm tracking-widest uppercase opacity-60">Add Activity Photo</h2>
+            </div>
+
+            <form id="gallery-form" class="flex flex-col gap-8">
+                <input
+                    type="text"
+                    id="gallery-title-input"
+                    placeholder="앨범 제목을 입력하세요"
+                    class="w-full bg-transparent text-4xl md:text-5xl font-serif-ko font-bold text-gray-800 placeholder-gray-400 border-b border-[var(--border-light)] pb-4 transition-colors focus:border-[var(--accent-red)]"
+                    required
+                >
+                <input
+                    type="url"
+                    id="gallery-image-input"
+                    placeholder="사진 이미지 주소를 붙여주세요"
+                    class="w-full bg-transparent text-base text-gray-700 placeholder-gray-400 border-b border-[var(--border-light)] pb-4 transition-colors focus:border-[var(--accent-red)]"
+                    required
+                >
+                <textarea
+                    id="gallery-content-input"
+                    placeholder="사진에 담긴 활동 이야기를 적어주세요..."
+                    class="w-full min-h-[220px] bg-white/30 resize-none text-lg leading-loose text-gray-700 placeholder-gray-400 border border-[var(--border-light)] p-6 focus:border-[var(--accent-red)] transition-colors"
+                    required
+                ></textarea>
+
+                <div class="flex justify-between items-center border-t border-[var(--border-light)] pt-8 mt-4">
+                    <button type="button" class="view-trigger text-sm tracking-widest uppercase opacity-50 hover:opacity-100 transition-opacity" data-target="view-gallery">
+                        Cancel
+                    </button>
+                    <button type="submit" id="gallery-submit-btn" class="bg-[var(--accent-red)] text-white px-10 py-4 text-sm font-bold tracking-widest uppercase hover:bg-red-700 transition-colors flex items-center gap-3">
+                        <span>Publish Photo</span>
+                        <i class="ph ph-arrow-right"></i>
+                    </button>
+                </div>
+            </form>
+        </section>
+
     </main>
 
     <footer class="w-full border-t border-[var(--border-light)] mt-20 py-10 text-center text-xs tracking-widest uppercase opacity-50 relative z-10">
@@ -538,12 +611,16 @@
         const scheduleTitle = document.getElementById('schedule-title');
         const prevMonthBtn = document.getElementById('prev-month');
         const nextMonthBtn = document.getElementById('next-month');
+        const galleryList = document.getElementById('gallery-list');
+        const galleryForm = document.getElementById('gallery-form');
+        const gallerySubmitBtn = document.getElementById('gallery-submit-btn');
 
         let calendarDate = new Date();
         let selectedDateKey = formatDateKey(calendarDate);
         const localSchedules = {
             '2026-07-14': ['우리들의 이야기 일정 메뉴 추가', '첫 모임 기록 정리']
         };
+        let localGalleryItems = getSampleGalleryItems();
 
         async function initAuth() {
             if (!auth) {
@@ -585,6 +662,86 @@
                     createdAt: { toMillis: () => now.getTime() - 86400000 * 10 }
                 }
             ];
+        }
+
+        function getSampleGalleryItems() {
+            const now = new Date();
+            return [
+                {
+                    id: 'gallery-1',
+                    title: '첫 모임의 오후',
+                    content: '가볍게 인사를 나누고 앞으로 남길 이야기들을 함께 정리했던 시간.',
+                    imageUrl: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=900',
+                    createdAt: now.getTime() - 86400000
+                },
+                {
+                    id: 'gallery-2',
+                    title: '기록을 나누는 책상',
+                    content: '노트와 커피, 그리고 조용히 이어지는 대화가 있던 날.',
+                    imageUrl: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&q=80&w=900',
+                    createdAt: now.getTime() - 86400000 * 4
+                },
+                {
+                    id: 'gallery-3',
+                    title: '작은 산책',
+                    content: '모임 뒤 함께 걸으며 찍은 느린 풍경.',
+                    imageUrl: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&q=80&w=900',
+                    createdAt: now.getTime() - 86400000 * 7
+                }
+            ];
+        }
+
+        function renderGallery(items) {
+            if (!galleryList) return;
+
+            galleryList.innerHTML = '';
+
+            if (items.length === 0) {
+                galleryList.innerHTML = '<p class="col-span-full py-20 text-center text-sm opacity-50 font-serif-ko">아직 등록된 사진이 없습니다.</p>';
+                return;
+            }
+
+            items.forEach((item) => {
+                const dateStr = new Date(item.createdAt).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: '2-digit'
+                }).toUpperCase();
+                const card = document.createElement('article');
+                card.className = 'group bg-white/35 border border-[var(--border-light)] rounded-sm overflow-hidden shadow-sm hover:-translate-y-1 transition-transform';
+
+                const imageWrap = document.createElement('div');
+                imageWrap.className = 'aspect-[4/3] bg-gray-100 overflow-hidden';
+
+                const image = document.createElement('img');
+                image.src = item.imageUrl;
+                image.alt = item.title;
+                image.loading = 'lazy';
+                image.className = 'w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700';
+                image.onerror = () => {
+                    image.src = 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=900';
+                };
+
+                const body = document.createElement('div');
+                body.className = 'p-6';
+
+                const meta = document.createElement('p');
+                meta.className = 'text-xs tracking-widest uppercase opacity-45 font-serif-en mb-3';
+                meta.textContent = dateStr;
+
+                const title = document.createElement('h3');
+                title.className = 'text-2xl font-serif-ko font-bold mb-3 group-hover:text-[var(--accent-red)] transition-colors';
+                title.textContent = item.title;
+
+                const content = document.createElement('p');
+                content.className = 'text-sm opacity-70 leading-relaxed line-clamp-3';
+                content.textContent = item.content;
+
+                imageWrap.appendChild(image);
+                body.append(meta, title, content);
+                card.append(imageWrap, body);
+                galleryList.appendChild(card);
+            });
         }
 
         function setupRealtimeListener() {
@@ -807,9 +964,38 @@
             showToast("일정이 저장되었습니다.", true);
         });
 
+        galleryForm?.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const title = document.getElementById('gallery-title-input').value.trim();
+            const imageUrl = document.getElementById('gallery-image-input').value.trim();
+            const content = document.getElementById('gallery-content-input').value.trim();
+
+            if (!title || !imageUrl || !content) return;
+
+            gallerySubmitBtn.disabled = true;
+            gallerySubmitBtn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> <span>Publishing...</span>';
+
+            localGalleryItems.unshift({
+                id: `gallery-${Date.now()}`,
+                title,
+                imageUrl,
+                content,
+                createdAt: Date.now()
+            });
+
+            galleryForm.reset();
+            renderGallery(localGalleryItems);
+            showToast("앨범 게시글이 등록되었습니다.", true);
+            document.querySelector('.view-trigger[data-target="view-gallery"]').click();
+            gallerySubmitBtn.disabled = false;
+            gallerySubmitBtn.innerHTML = '<span>Publish Photo</span><i class="ph ph-arrow-right"></i>';
+        });
+
         initAuth();
         renderCalendar();
         renderSchedules();
+        renderGallery(localGalleryItems);
         if (auth) {
             onAuthStateChanged(auth, (user) => {
                 if (user) {
