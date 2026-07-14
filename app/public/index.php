@@ -58,9 +58,48 @@ if (
             date('Y-m-d'),
             1,
         ]);
+        $newPostId = (int) $db->lastInsertId();
     }
 
-    header('Location: ' . page_url($postType === 'intro' ? 'intro' : 'story'));
+    $redirect = page_url($postType === 'intro' ? 'intro' : 'story');
+    if (isset($newPostId) && $newPostId > 0) {
+        $redirect .= '&post=' . $newPostId;
+    }
+
+    header('Location: ' . $redirect);
+    exit;
+}
+
+if (
+    $isLoggedIn
+    && $_SERVER['REQUEST_METHOD'] === 'POST'
+    && in_array(($_POST['action'] ?? ''), ['update_post', 'delete_post'], true)
+) {
+    $postId = (int) ($_POST['post_id'] ?? 0);
+    $postType = (string) ($_POST['type'] ?? 'story');
+    $redirectPage = $postType === 'intro' ? 'intro' : 'story';
+    $stmt = $db->prepare('SELECT * FROM posts WHERE id = ? AND type = ?');
+    $stmt->execute([$postId, $redirectPage]);
+    $post = $stmt->fetch();
+
+    if ($post && (string) $post['author'] === (string) ($currentUser['name'] ?? '')) {
+        if (($_POST['action'] ?? '') === 'delete_post') {
+            $stmt = $db->prepare('DELETE FROM posts WHERE id = ?');
+            $stmt->execute([$postId]);
+            header('Location: ' . page_url($redirectPage));
+            exit;
+        }
+
+        $title = trim((string) ($_POST['title'] ?? ''));
+        $content = trim((string) ($_POST['content'] ?? ''));
+        if ($title !== '' && $content !== '') {
+            $summary = mb_substr($content, 0, 180, 'UTF-8');
+            $stmt = $db->prepare('UPDATE posts SET title = ?, summary = ? WHERE id = ?');
+            $stmt->execute([$title, $summary, $postId]);
+        }
+    }
+
+    header('Location: ' . page_url($redirectPage) . '&post=' . $postId);
     exit;
 }
 
@@ -106,11 +145,21 @@ function render_page_title(string $title, string $subtitle = ''): void
     <?php
 }
 
-function render_board(array $posts, string $type): void
+function render_board(array $posts, string $type, array $currentUser): void
 {
     $rows = array_values(array_filter($posts, static fn (array $post): bool => $post['type'] === $type));
     $boardTitle = $type === 'story' ? '목차 및 이야기' : '인물의 첫 문장';
     $placeholder = $type === 'story' ? '당신의 이야기를 들려주세요...' : '처음 건네는 인사를 적어주세요...';
+    $selectedId = (int) ($_GET['post'] ?? 0);
+    $selectedPost = null;
+    foreach ($rows as $row) {
+        if ((int) $row['id'] === $selectedId) {
+            $selectedPost = $row;
+            break;
+        }
+    }
+    $isEditing = $selectedPost !== null && (int) ($_GET['edit'] ?? 0) === (int) $selectedPost['id'];
+    $isAuthor = $selectedPost !== null && (string) $selectedPost['author'] === (string) ($currentUser['name'] ?? '');
 
     render_page_title($boardTitle);
     ?>
@@ -119,27 +168,53 @@ function render_board(array $posts, string $type): void
             <h2>목차</h2>
             <div class="story-scroll">
                 <?php foreach ($rows as $post): ?>
-                    <article class="story-entry">
+                    <article class="story-entry<?= $selectedPost !== null && (int) $selectedPost['id'] === (int) $post['id'] ? ' active' : '' ?>">
                         <div class="story-number"><?= sprintf('%02d', (int) $post['id']) ?></div>
                         <div>
-                            <h3><?= h($post['title']) ?></h3>
+                            <h3><a href="<?= h(page_url($type) . '&post=' . (int) $post['id']) ?>"><?= h($post['title']) ?></a></h3>
                         </div>
-                        <span class="story-page-number"><?= sprintf('%02d', (int) $post['id']) ?></span>
+                        <span class="story-author"><?= h($post['author']) ?></span>
                     </article>
                 <?php endforeach; ?>
             </div>
         </section>
 
-        <form class="writing-box" method="post" action="<?= h(page_url($type)) ?>" aria-label="새 글 작성">
-            <h2><?= $type === 'story' ? '이야기 쓰기' : '첫 문장 쓰기' ?></h2>
-            <input type="hidden" name="action" value="create_post">
-            <input type="hidden" name="type" value="<?= h($type) ?>">
-            <input type="text" name="title" placeholder="제목을 적어주세요." aria-label="제목" required>
-            <textarea name="content" placeholder="<?= h($placeholder) ?>" aria-label="본문" required></textarea>
-            <div>
-                <button type="submit">글 남기기</button>
-            </div>
-        </form>
+        <?php if ($selectedPost !== null && !$isEditing): ?>
+            <section class="writing-box story-detail" aria-label="선택한 글">
+                <h2>이야기</h2>
+                <article>
+                    <h3><?= h($selectedPost['title']) ?></h3>
+                    <p><?= nl2br(h($selectedPost['summary'])) ?></p>
+                    <footer>
+                        <span><?= h(str_replace('-', '.', $selectedPost['published_at'])) ?></span>
+                        <span><?= h($selectedPost['author']) ?></span>
+                    </footer>
+                </article>
+                <?php if ($isAuthor): ?>
+                    <div class="author-actions">
+                        <a href="<?= h(page_url($type) . '&post=' . (int) $selectedPost['id'] . '&edit=' . (int) $selectedPost['id']) ?>">수정</a>
+                        <form method="post" action="<?= h(page_url($type)) ?>">
+                            <input type="hidden" name="action" value="delete_post">
+                            <input type="hidden" name="type" value="<?= h($type) ?>">
+                            <input type="hidden" name="post_id" value="<?= (int) $selectedPost['id'] ?>">
+                            <button type="submit">삭제</button>
+                        </form>
+                    </div>
+                <?php endif; ?>
+            </section>
+        <?php else: ?>
+            <form class="writing-box" method="post" action="<?= h(page_url($type)) ?>" aria-label="<?= $isEditing ? '글 수정' : '새 글 작성' ?>">
+                <h2><?= $isEditing ? '이야기 수정' : ($type === 'story' ? '이야기 쓰기' : '첫 문장 쓰기') ?></h2>
+                <input type="hidden" name="action" value="<?= $isEditing ? 'update_post' : 'create_post' ?>">
+                <input type="hidden" name="type" value="<?= h($type) ?>">
+                <?php if ($isEditing): ?><input type="hidden" name="post_id" value="<?= (int) $selectedPost['id'] ?>"><?php endif; ?>
+                <input type="text" name="title" value="<?= $isEditing ? h($selectedPost['title']) : '' ?>" placeholder="제목을 적어주세요." aria-label="제목" required>
+                <textarea name="content" placeholder="<?= h($placeholder) ?>" aria-label="본문" required><?= $isEditing ? h($selectedPost['summary']) : '' ?></textarea>
+                <div>
+                    <button type="submit"><?= $isEditing ? '수정하기' : '글 남기기' ?></button>
+                </div>
+            </form>
+        <?php endif; ?>
     </div>
     <?php
 }
@@ -255,9 +330,9 @@ function render_access_denied(string $title): void
                 </section>
             <?php else: ?>
                 <?php if ($page === 'story'): ?>
-                    <section class="chapter-page board-page"><?php render_board($posts, 'story'); ?></section>
+                    <section class="chapter-page board-page"><?php render_board($posts, 'story', $currentUser); ?></section>
                 <?php elseif ($page === 'intro'): ?>
-                    <section class="chapter-page board-page"><?php render_board($posts, 'intro'); ?></section>
+                    <section class="chapter-page board-page"><?php render_board($posts, 'intro', $currentUser); ?></section>
                 <?php elseif ($page === 'members'): ?>
                     <section class="chapter-page">
                         <?php render_page_title('등장인물', '이 책을 함께 쓰는 사람들'); ?>

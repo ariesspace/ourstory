@@ -764,6 +764,10 @@ body.is-page-turning .page-turn-overlay {
     border-bottom: 1px dashed rgba(51, 51, 51, 0.12);
 }
 
+.story-entry.active h3 a {
+    color: var(--accent);
+}
+
 .story-entry > div:nth-child(2) {
     min-width: 0;
     flex: 1;
@@ -785,12 +789,17 @@ body.is-page-turning .page-turn-overlay {
     letter-spacing: 0.03em;
 }
 
-.story-page-number {
-    flex: 0 0 34px;
+.story-entry h3 a {
+    color: inherit;
+}
+
+.story-author {
+    flex: 0 0 72px;
     color: rgba(157, 162, 194, 0.9);
     font-size: 13px;
     font-style: italic;
     text-align: right;
+    white-space: nowrap;
 }
 
 .writing-box input {
@@ -815,6 +824,64 @@ body.is-page-turning .page-turn-overlay {
 
 .writing-box div {
     text-align: right;
+}
+
+.story-detail article {
+    min-height: 386px;
+}
+
+.story-detail h3 {
+    margin: 0 0 34px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid rgba(51, 51, 51, 0.12);
+    font-size: clamp(22px, 2.8vw, 30px);
+    font-weight: 400;
+    letter-spacing: 0.08em;
+}
+
+.story-detail p {
+    min-height: 220px;
+    margin: 0;
+    color: rgba(51, 51, 51, 0.7);
+    font-size: 17px;
+    font-weight: 300;
+    line-height: 2.2;
+}
+
+.story-detail footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 18px;
+    margin-top: 34px;
+    color: var(--muted);
+    font-size: 13px;
+    font-style: italic;
+}
+
+.author-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.author-actions form {
+    margin: 0;
+}
+
+.author-actions a,
+.author-actions button {
+    min-width: 86px;
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(51, 51, 51, 0.22);
+    background: transparent;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 14px;
+    letter-spacing: 0.12em;
+    cursor: pointer;
 }
 
 .writing-box button,
@@ -1095,6 +1162,11 @@ body.is-page-turning .page-turn-overlay {
 
     .story-entry {
         gap: 10px;
+    }
+
+    .story-author {
+        flex-basis: 54px;
+        font-size: 12px;
     }
 
     .story-number {
