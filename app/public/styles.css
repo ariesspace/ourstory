@@ -702,30 +702,150 @@ body.is-page-turning .page-turn-overlay {
     min-width: 112px;
 }
 
+.board-spread {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    min-height: 540px;
+    margin: -10px clamp(-42px, -4vw, -22px) 0;
+}
+
+.story-list,
 .writing-box {
-    margin-bottom: 76px;
-    padding: 0;
-    border: 0;
-    background: transparent;
+    min-width: 0;
+    padding: clamp(30px, 5vw, 52px);
+}
+
+.story-list {
+    border-right: 1px solid var(--line-soft);
+}
+
+.writing-box {
+    background:
+        linear-gradient(90deg, rgba(157, 162, 194, 0.045), transparent 18%),
+        rgba(255, 255, 255, 0.46);
+}
+
+.story-list h2,
+.writing-box h2 {
+    margin: 0 0 38px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(51, 51, 51, 0.1);
+    text-align: center;
+    color: var(--ink);
+    font-size: clamp(18px, 2vw, 22px);
+    font-weight: 400;
+    letter-spacing: 0.34em;
+}
+
+.story-scroll {
+    max-height: 520px;
+    overflow-y: auto;
+    padding-right: 12px;
+}
+
+.story-scroll::-webkit-scrollbar {
+    width: 4px;
+}
+
+.story-scroll::-webkit-scrollbar-thumb {
+    background: rgba(157, 162, 194, 0.34);
+}
+
+.story-entry {
+    position: relative;
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr);
+    gap: 18px;
+    padding: 0 0 26px;
+    margin-bottom: 26px;
+    border-bottom: 1px solid rgba(51, 51, 51, 0.08);
+    transition: transform 0.24s ease;
+}
+
+.story-entry:hover {
+    transform: translateX(5px);
+}
+
+.story-number {
+    padding-top: 4px;
+    color: rgba(51, 51, 51, 0.38);
+    font-size: 13px;
+    font-style: italic;
+    letter-spacing: 0.08em;
+}
+
+.story-entry h3 {
+    display: inline-block;
+    position: relative;
+    margin: 0 0 12px;
+    font-size: clamp(17px, 1.8vw, 20px);
+    font-weight: 400;
+    line-height: 1.55;
+    letter-spacing: 0.06em;
+}
+
+.story-entry h3::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -3px;
+    height: 1px;
+    background: rgba(51, 51, 51, 0.52);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.22s ease;
+}
+
+.story-entry:hover h3::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+.story-entry h3 span {
+    display: inline-flex;
+    margin-left: 9px;
+    padding: 2px 7px;
+    background: rgba(197, 188, 213, 0.18);
+    color: var(--accent);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+}
+
+.story-entry p {
+    margin: 0 0 18px;
+    color: rgba(51, 51, 51, 0.62);
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.9;
+}
+
+.story-entry footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 14px;
+    color: var(--muted);
+    font-size: 12px;
+    font-style: italic;
 }
 
 .writing-box input {
-    margin-bottom: 30px;
-    padding: 0 10px 20px;
-    border-bottom-color: rgba(51, 51, 51, 0.18);
+    margin-bottom: 24px;
+    padding: 0 10px 18px;
+    border-bottom-color: rgba(51, 51, 51, 0.16);
     color: rgba(51, 51, 51, 0.74);
-    font-size: 23px;
+    font-size: 21px;
     font-weight: 300;
 }
 
 .writing-box textarea {
-    min-height: 190px;
-    margin-bottom: 36px;
-    padding: 28px;
+    min-height: 250px;
+    margin-bottom: 28px;
+    padding: 26px;
     resize: vertical;
-    border: 1px solid rgba(51, 51, 51, 0.12);
+    border: 1px solid rgba(51, 51, 51, 0.1);
     color: rgba(51, 51, 51, 0.72);
-    font-size: 17px;
+    font-size: 16px;
     line-height: 2;
 }
 
@@ -739,56 +859,6 @@ body.is-page-turning .page-turn-overlay {
     background: transparent;
     color: var(--ink);
     border-color: rgba(51, 51, 51, 0.75);
-}
-
-.story-list {
-    display: grid;
-    gap: 0;
-}
-
-.story-entry {
-    display: block;
-    padding: 44px 0 52px;
-    border-bottom: 1px solid rgba(51, 51, 51, 0.1);
-}
-
-.story-number {
-    display: none;
-}
-
-.story-entry h2 {
-    margin: 0 0 24px;
-    font-size: clamp(21px, 2.4vw, 26px);
-    font-weight: 400;
-    line-height: 1.5;
-    letter-spacing: 0.08em;
-}
-
-.story-entry h2 span {
-    display: inline-flex;
-    margin-left: 10px;
-    padding: 2px 7px;
-    background: rgba(197, 188, 213, 0.18);
-    color: var(--accent);
-    font-size: 10px;
-    letter-spacing: 0.12em;
-}
-
-.story-entry p {
-    margin: 0 0 42px;
-    color: rgba(51, 51, 51, 0.68);
-    font-size: 16px;
-    font-weight: 300;
-    line-height: 2.1;
-}
-
-.story-entry footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 20px;
-    color: var(--muted);
-    font-size: 13px;
-    font-style: italic;
 }
 
 .member-grid,
@@ -1010,6 +1080,16 @@ body.is-page-turning .page-turn-overlay {
         grid-template-columns: 1fr;
     }
 
+    .board-spread {
+        grid-template-columns: 1fr;
+        margin: 0;
+    }
+
+    .story-list {
+        border-right: 0;
+        border-bottom: 1px solid var(--line-soft);
+    }
+
     .cover-page,
     .intro-page {
         min-height: 56vh;
@@ -1044,7 +1124,6 @@ body.is-page-turning .page-turn-overlay {
     }
 
     .access-actions,
-    .story-entry,
     .story-entry footer {
         display: grid;
         justify-content: stretch;
@@ -1053,5 +1132,9 @@ body.is-page-turning .page-turn-overlay {
     .story-entry {
         grid-template-columns: 1fr;
         gap: 10px;
+    }
+
+    .story-number {
+        padding-top: 0;
     }
 }
