@@ -213,8 +213,8 @@
 
                 <form id="login-form" class="flex flex-col gap-6">
                     <div class="flex flex-col gap-1">
-                        <label for="email" class="text-xs tracking-widest uppercase opacity-70">Email</label>
-                        <input type="email" id="email" class="border-b border-[var(--border-light)] bg-transparent py-2 focus:border-[var(--accent-red)] transition-colors" placeholder="your@email.com" required>
+                        <label for="user-id" class="text-xs tracking-widest uppercase opacity-70">ID</label>
+                        <input type="text" id="user-id" class="border-b border-[var(--border-light)] bg-transparent py-2 focus:border-[var(--accent-red)] transition-colors" placeholder="your id" autocomplete="username" required>
                     </div>
                     <div class="flex flex-col gap-1">
                         <label for="password" class="text-xs tracking-widest uppercase opacity-70">Password</label>
