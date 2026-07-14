@@ -528,6 +528,11 @@ body.is-page-turning .page-turn-overlay {
     box-shadow: none;
 }
 
+.login-cover {
+    min-height: inherit;
+    box-shadow: inset -24px 0 26px -22px rgba(51, 51, 51, 0.16);
+}
+
 .login-note {
     position: relative;
     display: grid;
@@ -979,6 +984,10 @@ body.is-page-turning .page-turn-overlay {
 
     .login-note {
         display: none;
+    }
+
+    .login-cover {
+        min-height: 56vh;
     }
 
     .login-panel {

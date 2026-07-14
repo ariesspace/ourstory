@@ -189,13 +189,15 @@ function render_access_denied(string $title): void
             <?php elseif ($page === 'login'): ?>
                 <section class="chapter-page login-page">
                     <div class="login-spread">
-                        <aside class="login-note" aria-hidden="true">
-                            <div>
-                                <span>OUR STORY</span>
-                                <i></i>
-                                <p>우리가 함께<br>써 내려가는 페이지</p>
+                        <article class="cover-page login-cover">
+                            <img src="/assets/main.png" alt="">
+                            <div class="cover-line"></div>
+                            <div class="cover-copy">
+                                <span>Prologue</span>
+                                <h1>우리들의<br>이야기</h1>
+                                <p>Written by us</p>
                             </div>
-                        </aside>
+                        </article>
                         <div class="login-panel">
                             <header>
                                 <h1>우리들의 이야기</h1>
