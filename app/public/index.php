@@ -445,11 +445,16 @@
                     class="w-full bg-transparent text-4xl md:text-5xl font-serif-ko font-bold text-gray-800 placeholder-gray-400 border-b border-[var(--border-light)] pb-4 transition-colors focus:border-[var(--accent-red)]"
                     required
                 >
+                <label for="gallery-image-input" class="group cursor-pointer border border-dashed border-[var(--border-light)] bg-white/25 min-h-[180px] flex flex-col items-center justify-center gap-3 text-center transition-colors hover:border-[var(--accent-red)]">
+                    <i class="ph ph-image-square text-4xl text-[var(--accent-red)]"></i>
+                    <span class="text-sm tracking-widest uppercase opacity-60">Select Photo File</span>
+                    <span id="gallery-file-name" class="text-xs opacity-45 font-serif-ko">활동 사진을 선택해주세요</span>
+                </label>
                 <input
-                    type="url"
+                    type="file"
                     id="gallery-image-input"
-                    placeholder="사진 이미지 주소를 붙여주세요"
-                    class="w-full bg-transparent text-base text-gray-700 placeholder-gray-400 border-b border-[var(--border-light)] pb-4 transition-colors focus:border-[var(--accent-red)]"
+                    accept="image/*"
+                    class="hidden"
                     required
                 >
                 <textarea
@@ -480,6 +485,24 @@
     <div id="toast" class="fixed bottom-10 right-10 bg-[var(--text-dark)] text-[var(--bg-cream)] px-8 py-4 shadow-2xl opacity-0 transition-opacity duration-300 pointer-events-none z-50 text-sm tracking-widest uppercase flex items-center gap-3 rounded-md">
         <span id="toast-icon" class="text-[var(--accent-red)]"><i class="ph-fill ph-info"></i></span>
         <span id="toast-message">Message</span>
+    </div>
+
+    <div id="gallery-modal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-black/50 p-6">
+        <div class="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto bg-[var(--bg-cream)] border border-[var(--border-light)] shadow-2xl rounded-sm">
+            <button type="button" id="gallery-modal-close" class="absolute top-5 right-5 z-10 w-10 h-10 rounded-full bg-white/80 hover:bg-[var(--accent-red)] hover:text-white transition-colors flex items-center justify-center" aria-label="Close gallery detail">
+                <i class="ph ph-x text-lg"></i>
+            </button>
+            <div class="grid grid-cols-1 lg:grid-cols-2">
+                <div class="min-h-[320px] bg-gray-100">
+                    <img id="gallery-modal-image" src="" alt="" class="w-full h-full object-cover">
+                </div>
+                <div class="p-8 md:p-12 flex flex-col justify-center">
+                    <p id="gallery-modal-date" class="text-xs tracking-widest uppercase opacity-45 font-serif-en mb-4"></p>
+                    <h3 id="gallery-modal-title" class="text-4xl font-serif-ko font-bold leading-tight mb-6"></h3>
+                    <p id="gallery-modal-content" class="text-base leading-loose opacity-75 whitespace-pre-line font-serif-ko"></p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script type="module">
@@ -614,6 +637,14 @@
         const galleryList = document.getElementById('gallery-list');
         const galleryForm = document.getElementById('gallery-form');
         const gallerySubmitBtn = document.getElementById('gallery-submit-btn');
+        const galleryImageInput = document.getElementById('gallery-image-input');
+        const galleryFileName = document.getElementById('gallery-file-name');
+        const galleryModal = document.getElementById('gallery-modal');
+        const galleryModalClose = document.getElementById('gallery-modal-close');
+        const galleryModalImage = document.getElementById('gallery-modal-image');
+        const galleryModalDate = document.getElementById('gallery-modal-date');
+        const galleryModalTitle = document.getElementById('gallery-modal-title');
+        const galleryModalContent = document.getElementById('gallery-modal-content');
 
         let calendarDate = new Date();
         let selectedDateKey = formatDateKey(calendarDate);
@@ -709,6 +740,9 @@
                 }).toUpperCase();
                 const card = document.createElement('article');
                 card.className = 'group bg-white/35 border border-[var(--border-light)] rounded-sm overflow-hidden shadow-sm hover:-translate-y-1 transition-transform';
+                card.tabIndex = 0;
+                card.setAttribute('role', 'button');
+                card.setAttribute('aria-label', `${item.title} 자세히 보기`);
 
                 const imageWrap = document.createElement('div');
                 imageWrap.className = 'aspect-[4/3] bg-gray-100 overflow-hidden';
@@ -740,8 +774,45 @@
                 imageWrap.appendChild(image);
                 body.append(meta, title, content);
                 card.append(imageWrap, body);
+                card.addEventListener('click', () => openGalleryModal(item, dateStr));
+                card.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        openGalleryModal(item, dateStr);
+                    }
+                });
                 galleryList.appendChild(card);
             });
+        }
+
+        function readImageFile(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => reject(reader.error);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function openGalleryModal(item, dateStr) {
+            if (!galleryModal) return;
+
+            galleryModalImage.src = item.imageUrl;
+            galleryModalImage.alt = item.title;
+            galleryModalDate.textContent = dateStr;
+            galleryModalTitle.textContent = item.title;
+            galleryModalContent.textContent = item.content;
+            galleryModal.classList.remove('hidden');
+            galleryModal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeGalleryModal() {
+            if (!galleryModal) return;
+
+            galleryModal.classList.add('hidden');
+            galleryModal.classList.remove('flex');
+            document.body.style.overflow = '';
         }
 
         function setupRealtimeListener() {
@@ -964,32 +1035,58 @@
             showToast("일정이 저장되었습니다.", true);
         });
 
-        galleryForm?.addEventListener('submit', (e) => {
+        galleryImageInput?.addEventListener('change', () => {
+            const file = galleryImageInput.files?.[0];
+            galleryFileName.textContent = file ? file.name : '활동 사진을 선택해주세요';
+        });
+
+        galleryModalClose?.addEventListener('click', closeGalleryModal);
+        galleryModal?.addEventListener('click', (event) => {
+            if (event.target === galleryModal) {
+                closeGalleryModal();
+            }
+        });
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && !galleryModal?.classList.contains('hidden')) {
+                closeGalleryModal();
+            }
+        });
+
+        galleryForm?.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const title = document.getElementById('gallery-title-input').value.trim();
-            const imageUrl = document.getElementById('gallery-image-input').value.trim();
+            const imageFile = galleryImageInput.files?.[0];
             const content = document.getElementById('gallery-content-input').value.trim();
 
-            if (!title || !imageUrl || !content) return;
+            if (!title || !imageFile || !content) return;
 
             gallerySubmitBtn.disabled = true;
             gallerySubmitBtn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> <span>Publishing...</span>';
 
-            localGalleryItems.unshift({
-                id: `gallery-${Date.now()}`,
-                title,
-                imageUrl,
-                content,
-                createdAt: Date.now()
-            });
+            try {
+                const imageUrl = await readImageFile(imageFile);
 
-            galleryForm.reset();
-            renderGallery(localGalleryItems);
-            showToast("앨범 게시글이 등록되었습니다.", true);
-            document.querySelector('.view-trigger[data-target="view-gallery"]').click();
-            gallerySubmitBtn.disabled = false;
-            gallerySubmitBtn.innerHTML = '<span>Publish Photo</span><i class="ph ph-arrow-right"></i>';
+                localGalleryItems.unshift({
+                    id: `gallery-${Date.now()}`,
+                    title,
+                    imageUrl,
+                    content,
+                    createdAt: Date.now()
+                });
+
+                galleryForm.reset();
+                galleryFileName.textContent = '활동 사진을 선택해주세요';
+                renderGallery(localGalleryItems);
+                showToast("앨범 게시글이 등록되었습니다.", true);
+                document.querySelector('.view-trigger[data-target="view-gallery"]').click();
+            } catch (error) {
+                console.error("Image Read Error:", error);
+                showToast("사진을 불러오지 못했습니다.", false);
+            } finally {
+                gallerySubmitBtn.disabled = false;
+                gallerySubmitBtn.innerHTML = '<span>Publish Photo</span><i class="ph ph-arrow-right"></i>';
+            }
         });
 
         initAuth();
