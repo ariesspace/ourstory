@@ -131,6 +131,7 @@
             <nav class="flex gap-10 text-sm tracking-widest uppercase hidden md:flex w-1/3 pl-4">
                 <button class="nav-link active uppercase" data-menu="journal">Journal</button>
                 <button class="nav-link uppercase" data-menu="members">Members</button>
+                <button class="nav-link uppercase" data-menu="schedule">Schedule</button>
             </nav>
 
             <div class="text-3xl font-serif-en italic tracking-tighter w-1/3 text-center cursor-pointer view-trigger" data-target="view-read">
@@ -188,6 +189,19 @@
                                 </h4>
                                 <ul class="space-y-4 text-sm opacity-70">
                                     <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-people">All Members</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="submenu-schedule" class="submenu-content hidden">
+                        <div class="grid grid-cols-2 gap-x-12 gap-y-8">
+                            <div>
+                                <h4 class="font-serif-en italic text-xl mb-4 border-b border-[var(--border-light)] pb-2 flex items-center gap-2">
+                                    <i class="ph ph-calendar-blank"></i> calendar
+                                </h4>
+                                <ul class="space-y-4 text-sm opacity-70">
+                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-schedule">Monthly Schedule</li>
                                 </ul>
                             </div>
                         </div>
@@ -330,6 +344,60 @@
             </div>
         </section>
 
+        <section id="view-schedule" class="w-full view-hidden fade-in">
+            <div class="w-full py-20 mb-16 flex flex-col justify-center items-center relative border-b border-[var(--border-light)]">
+                <div class="text-center flex flex-col items-center gap-6">
+                    <span class="text-xs tracking-[0.3em] uppercase opacity-50 font-bold">Our Timeline</span>
+                    <h1 class="text-6xl md:text-8xl font-serif-en italic tracking-tighter text-[var(--text-dark)] flex items-baseline justify-center">
+                        <span class="text-[var(--text-dark)] opacity-80">:</span>Schedule
+                    </h1>
+                    <p class="text-sm opacity-60 font-serif-ko max-w-md px-4 leading-relaxed mt-2">
+                        우리가 함께할 시간들, 그리고 기록할 일정
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-12 mb-20 max-w-6xl mx-auto px-4">
+                <div class="w-full lg:w-2/3">
+                    <div class="flex justify-between items-center mb-10">
+                        <button id="prev-month" class="p-2 hover:text-[var(--accent-red)] transition-colors" type="button" aria-label="Previous month">
+                            <i class="ph ph-caret-left text-2xl"></i>
+                        </button>
+                        <h2 id="calendar-month-year" class="text-4xl font-serif-en italic tracking-widest text-center">July 2026</h2>
+                        <button id="next-month" class="p-2 hover:text-[var(--accent-red)] transition-colors" type="button" aria-label="Next month">
+                            <i class="ph ph-caret-right text-2xl"></i>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-7 gap-4 mb-6 text-center text-xs tracking-widest uppercase opacity-40 font-bold">
+                        <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                    </div>
+
+                    <div id="calendar-grid" class="grid grid-cols-7 gap-y-8 gap-x-4 text-center font-serif-en text-xl"></div>
+                </div>
+
+                <div class="w-full lg:w-1/3 flex flex-col border-l border-[var(--border-light)] pl-0 lg:pl-12 pt-10 lg:pt-0 min-h-[400px]">
+                    <h3 id="selected-date-display" class="text-2xl font-bold font-serif-en italic mb-8 pb-4 border-b border-[var(--border-light)]">
+                        2026. 07. 14
+                    </h3>
+
+                    <div id="schedule-list" class="flex-grow overflow-y-auto mb-8 flex flex-col gap-4">
+                        <p class="text-sm opacity-50 italic font-serif-ko">일정을 불러오는 중입니다...</p>
+                    </div>
+
+                    <div class="mt-auto bg-white/40 p-6 rounded-sm border border-[var(--border-light)] shadow-sm">
+                        <h4 class="text-sm tracking-widest uppercase font-bold mb-4 flex items-center gap-2">
+                            <i class="ph ph-plus-circle text-lg"></i> Add Event
+                        </h4>
+                        <form id="schedule-form" class="flex flex-col gap-4">
+                            <input type="text" id="schedule-title" placeholder="일정 제목 (예: 독서 모임)" class="bg-transparent border-b border-[var(--border-light)] pb-2 text-sm focus:border-[var(--accent-red)] transition-colors" required>
+                            <button type="submit" id="schedule-submit-btn" class="bg-[var(--text-dark)] text-[var(--bg-cream)] text-xs tracking-widest uppercase py-3 hover:bg-[var(--accent-red)] transition-colors mt-2">Save Event</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <footer class="w-full border-t border-[var(--border-light)] mt-20 py-10 text-center text-xs tracking-widest uppercase opacity-50 relative z-10">
@@ -402,6 +470,8 @@
                     menuImage.src = 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&q=80&w=800';
                 } else if (menuName === 'members') {
                     menuImage.src = 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&q=80&w=800';
+                } else if (menuName === 'schedule') {
+                    menuImage.src = 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&q=80&w=800';
                 }
 
                 megaMenu.classList.add('open');
@@ -460,6 +530,20 @@
         const form = document.getElementById('story-form');
         const listContainer = document.getElementById('story-list-container');
         const submitBtn = document.getElementById('submit-btn');
+        const calendarGrid = document.getElementById('calendar-grid');
+        const calendarMonthYear = document.getElementById('calendar-month-year');
+        const selectedDateDisplay = document.getElementById('selected-date-display');
+        const scheduleList = document.getElementById('schedule-list');
+        const scheduleForm = document.getElementById('schedule-form');
+        const scheduleTitle = document.getElementById('schedule-title');
+        const prevMonthBtn = document.getElementById('prev-month');
+        const nextMonthBtn = document.getElementById('next-month');
+
+        let calendarDate = new Date();
+        let selectedDateKey = formatDateKey(calendarDate);
+        const localSchedules = {
+            '2026-07-14': ['우리들의 이야기 일정 메뉴 추가', '첫 모임 기록 정리']
+        };
 
         async function initAuth() {
             if (!auth) {
@@ -612,7 +696,119 @@
             }
         });
 
+        function formatDateKey(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function renderCalendar() {
+            if (!calendarGrid || !calendarMonthYear) return;
+
+            const year = calendarDate.getFullYear();
+            const month = calendarDate.getMonth();
+            const firstDay = new Date(year, month, 1).getDay();
+            const lastDate = new Date(year, month + 1, 0).getDate();
+
+            calendarMonthYear.textContent = new Date(year, month, 1).toLocaleDateString('en-US', {
+                month: 'long',
+                year: 'numeric'
+            });
+            calendarGrid.innerHTML = '';
+
+            for (let i = 0; i < firstDay; i += 1) {
+                calendarGrid.appendChild(document.createElement('div'));
+            }
+
+            for (let day = 1; day <= lastDate; day += 1) {
+                const dayDate = new Date(year, month, day);
+                const dateKey = formatDateKey(dayDate);
+                const hasSchedule = Boolean(localSchedules[dateKey]?.length);
+                const isSelected = dateKey === selectedDateKey;
+                const dayButton = document.createElement('button');
+
+                dayButton.type = 'button';
+                dayButton.className = [
+                    'relative aspect-square rounded-full flex items-center justify-center transition-colors',
+                    isSelected ? 'bg-[var(--accent-red)] text-white hover:text-white' : 'hover:text-[var(--accent-red)]'
+                ].join(' ');
+                dayButton.textContent = String(day);
+
+                if (hasSchedule) {
+                    const dot = document.createElement('span');
+                    dot.className = [
+                        'absolute left-1/2 -translate-x-1/2 bottom-1.5 w-1.5 h-1.5 rounded-full',
+                        isSelected ? 'bg-white' : 'bg-[var(--accent-red)]'
+                    ].join(' ');
+                    dayButton.appendChild(dot);
+                }
+
+                dayButton.addEventListener('click', () => {
+                    selectedDateKey = dateKey;
+                    renderCalendar();
+                    renderSchedules();
+                });
+
+                calendarGrid.appendChild(dayButton);
+            }
+        }
+
+        function renderSchedules() {
+            if (!scheduleList || !selectedDateDisplay) return;
+
+            const [year, month, day] = selectedDateKey.split('-');
+            const items = localSchedules[selectedDateKey] || [];
+
+            selectedDateDisplay.textContent = `${year}. ${month}. ${day}`;
+            scheduleList.innerHTML = '';
+
+            if (items.length === 0) {
+                scheduleList.innerHTML = '<p class="text-sm opacity-50 italic font-serif-ko">등록된 일정이 없습니다.</p>';
+                return;
+            }
+
+            items.forEach((item, index) => {
+                const scheduleItem = document.createElement('article');
+                scheduleItem.className = 'border-b border-[var(--border-light)] pb-4';
+                scheduleItem.innerHTML = `
+                    <p class="text-xs tracking-widest uppercase opacity-40 mb-2">Event ${String(index + 1).padStart(2, '0')}</p>
+                    <h4 class="font-serif-ko text-base leading-relaxed">${item}</h4>
+                `;
+                scheduleList.appendChild(scheduleItem);
+            });
+        }
+
+        prevMonthBtn?.addEventListener('click', () => {
+            calendarDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth() - 1, 1);
+            renderCalendar();
+        });
+
+        nextMonthBtn?.addEventListener('click', () => {
+            calendarDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth() + 1, 1);
+            renderCalendar();
+        });
+
+        scheduleForm?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const title = scheduleTitle.value.trim();
+
+            if (!title) return;
+
+            if (!localSchedules[selectedDateKey]) {
+                localSchedules[selectedDateKey] = [];
+            }
+
+            localSchedules[selectedDateKey].push(title);
+            scheduleForm.reset();
+            renderCalendar();
+            renderSchedules();
+            showToast("일정이 저장되었습니다.", true);
+        });
+
         initAuth();
+        renderCalendar();
+        renderSchedules();
         if (auth) {
             onAuthStateChanged(auth, (user) => {
                 if (user) {
