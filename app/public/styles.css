@@ -589,7 +589,7 @@ body.is-page-turning .page-turn-overlay {
 }
 
 .login-panel header {
-    margin-bottom: 48px;
+    margin-bottom: 28px;
     text-align: center;
 }
 
@@ -603,7 +603,7 @@ body.is-page-turning .page-turn-overlay {
 
 .login-form {
     width: min(100%, 320px);
-    gap: 28px;
+    gap: 22px;
 }
 
 .login-form label {
@@ -642,7 +642,7 @@ body.is-page-turning .page-turn-overlay {
 }
 
 .login-form button {
-    margin-top: 8px;
+    margin-top: 4px;
     min-height: 52px;
     width: 100%;
 }
