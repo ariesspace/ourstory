@@ -56,7 +56,7 @@ function sm_bars_values(): array
         $twitter = $website;
         $website = '';
     }
-    if ($twitter !== '' && preg_match('#^https?://(?:www\.)?(?:x|twitter)\.com/([^/?#]+)#i', $twitter, $match)) {
+    if ($twitter !== '' && preg_match('~^https?://(?:www\.)?(?:x|twitter)\.com/([^/?#]+)~i', $twitter, $match)) {
         $twitter = $match[1];
     }
     $twitter = ltrim($twitter, '@');
