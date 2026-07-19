@@ -175,12 +175,12 @@
                 <button type="button" id="mobile-menu-toggle" class="md:hidden w-10 h-10 flex items-center justify-center border border-[var(--border-light)] rounded-full" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mobile-menu">
                     <i class="ph ph-list text-xl" id="mobile-menu-icon"></i>
                 </button>
-                <nav class="gap-6 text-sm tracking-widest uppercase hidden md:flex">
+                <nav class="gap-3 lg:gap-5 xl:gap-6 text-xs lg:text-sm tracking-widest uppercase hidden md:flex">
                     <button class="nav-link active uppercase" data-menu="journal">Journal</button>
                     <button class="nav-link uppercase" data-menu="members">Members</button>
                     <button class="nav-link uppercase" data-menu="schedule">Schedule</button>
                     <button class="nav-link uppercase hidden" data-menu="system" id="system-nav-link">System</button>
-                    <button class="nav-link view-trigger uppercase hidden" data-target="view-my-page" id="my-page-nav-link">My Page</button>
+                    <button class="nav-link view-trigger uppercase whitespace-nowrap hidden" data-target="view-my-page" id="my-page-nav-link">My Page</button>
                 </nav>
             </div>
 
