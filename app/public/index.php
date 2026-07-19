@@ -819,6 +819,13 @@
                 <span class="text-xs opacity-50 tracking-widest uppercase">Directory</span>
             </div>
 
+            <div class="mb-8 border-b border-[var(--text-dark)] flex items-center gap-3">
+                <i class="ph ph-magnifying-glass text-xl opacity-45" aria-hidden="true"></i>
+                <label for="people-search" class="sr-only">회원 검색</label>
+                <input type="search" id="people-search" class="w-full bg-transparent py-4 outline-none placeholder:opacity-40" placeholder="이름, 아이디, 지역 또는 소개로 검색">
+                <span id="people-search-count" class="shrink-0 text-xs tracking-widest uppercase opacity-45"></span>
+            </div>
+
             <p id="people-status" class="py-16 text-center text-sm opacity-50">회원 목록을 불러오는 중입니다.</p>
             <div id="people-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
             <button type="button" id="member-profile-view-trigger" class="view-trigger hidden" data-target="view-member-profile"></button>
@@ -827,7 +834,7 @@
         <section id="view-member-profile" class="w-full max-w-3xl mx-auto view-hidden fade-in py-8">
             <button type="button" class="view-trigger text-xs tracking-widest uppercase opacity-60 mb-10" data-target="view-people"><i class="ph ph-arrow-left mr-2"></i>Members</button>
             <div class="border-b border-[var(--border-light)] pb-10 mb-8 flex items-start gap-5">
-                <div id="member-profile-avatar" class="w-20 h-20 shrink-0 rounded-full bg-[var(--accent-red)] text-white flex items-center justify-center text-3xl font-serif-en italic"></div>
+                <div id="member-profile-avatar" class="w-20 h-20 shrink-0 rounded-full overflow-hidden bg-[var(--accent-red)] text-white flex items-center justify-center text-3xl font-serif-en italic"></div>
                 <div class="min-w-0">
                     <h1 id="member-profile-name" class="text-4xl md:text-5xl font-serif-ko font-bold break-words"></h1>
                     <p id="member-profile-username" class="mt-2 opacity-45"></p>
@@ -1010,6 +1017,13 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <div id="profile-photo-modal" class="fixed inset-0 z-[90] hidden items-center justify-center bg-black/80 p-4 sm:p-8" role="dialog" aria-modal="true" aria-label="프로필 사진 확대 보기">
+        <button type="button" id="profile-photo-modal-close" class="absolute top-5 right-5 z-10 w-11 h-11 rounded-full bg-white/90 text-black hover:bg-[var(--accent-red)] hover:text-white transition-colors flex items-center justify-center" aria-label="프로필 사진 닫기">
+            <i class="ph ph-x text-xl"></i>
+        </button>
+        <img id="profile-photo-modal-image" src="" alt="" class="max-w-full max-h-full object-contain shadow-2xl">
     </div>
 
     <script type="module">
@@ -1355,6 +1369,7 @@
         const myPageForm = document.getElementById('my-page-form');
         const myPageError = document.getElementById('my-page-error');
         const myAvatarInput = document.getElementById('my-avatar-input');
+        const myAvatarPreviewWrap = document.getElementById('my-avatar-preview-wrap');
         const myAvatarPreview = document.getElementById('my-avatar-preview');
         const myAvatarFallback = document.getElementById('my-avatar-fallback');
         const myAvatarRemove = document.getElementById('my-avatar-remove');
@@ -1365,8 +1380,13 @@
         const myTimelineList = document.getElementById('my-timeline-list');
         const peopleStatus = document.getElementById('people-status');
         const peopleList = document.getElementById('people-list');
+        const peopleSearch = document.getElementById('people-search');
+        const peopleSearchCount = document.getElementById('people-search-count');
         const memberTimelineStatus = document.getElementById('member-timeline-status');
         const memberTimelineList = document.getElementById('member-timeline-list');
+        const profilePhotoModal = document.getElementById('profile-photo-modal');
+        const profilePhotoModalImage = document.getElementById('profile-photo-modal-image');
+        const profilePhotoModalClose = document.getElementById('profile-photo-modal-close');
         const smBoardList = document.getElementById('sm-board-list');
         const smBoardStatus = document.getElementById('sm-board-status');
         const smPagination = document.getElementById('sm-pagination');
@@ -1389,6 +1409,7 @@
         let galleryEditingId = null;
         let galleryNewFiles = [];
         let galleryRemovedPhotoIds = [];
+        let peopleDirectoryItems = [];
         let viewedTimelineUsername = null;
         let smCurrentPage = 1;
         let smSearch = '';
@@ -1927,8 +1948,30 @@
             return (profile.displayName || profile.username || '?').trim().charAt(0).toUpperCase();
         }
 
+        function openProfilePhoto(profile) {
+            if (!profile.avatarUrl) return;
+            profilePhotoModalImage.src = profile.avatarUrl;
+            profilePhotoModalImage.alt = `${profile.displayName || profile.username} 프로필 사진`;
+            profilePhotoModal.classList.remove('hidden');
+            profilePhotoModal.classList.add('flex');
+            document.body.classList.add('overflow-hidden');
+            profilePhotoModalClose.focus();
+        }
+
+        function closeProfilePhoto() {
+            profilePhotoModal.classList.add('hidden');
+            profilePhotoModal.classList.remove('flex');
+            profilePhotoModalImage.removeAttribute('src');
+            document.body.classList.remove('overflow-hidden');
+        }
+
         function renderProfileAvatar(container, profile, cacheBust = false) {
             container.replaceChildren();
+            container.classList.remove('cursor-zoom-in');
+            container.removeAttribute('role');
+            container.removeAttribute('tabindex');
+            container.onclick = null;
+            container.onkeydown = null;
             const initial = profileInitial(profile);
             if (!profile.avatarUrl) {
                 container.textContent = initial;
@@ -1943,6 +1986,20 @@
                 container.textContent = initial;
             }, { once: true });
             container.appendChild(image);
+            container.classList.add('cursor-zoom-in');
+            container.setAttribute('role', 'button');
+            container.setAttribute('tabindex', '0');
+            container.setAttribute('aria-label', `${profile.displayName || profile.username} 프로필 사진 확대`);
+            container.onclick = event => {
+                event.stopPropagation();
+                openProfilePhoto(profile);
+            };
+            container.onkeydown = event => {
+                if (event.key !== 'Enter' && event.key !== ' ') return;
+                event.preventDefault();
+                event.stopPropagation();
+                openProfilePhoto(profile);
+            };
         }
 
         function fillMyProfile(profile, cacheBust = false) {
@@ -1961,6 +2018,16 @@
                 myAvatarPreview.classList.remove('hidden');
                 myAvatarFallback.classList.add('hidden');
                 myAvatarRemove.classList.remove('hidden');
+                myAvatarPreviewWrap.classList.add('cursor-zoom-in');
+                myAvatarPreviewWrap.setAttribute('role', 'button');
+                myAvatarPreviewWrap.setAttribute('tabindex', '0');
+                myAvatarPreviewWrap.onclick = () => openProfilePhoto(profile);
+                myAvatarPreviewWrap.onkeydown = event => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        openProfilePhoto(profile);
+                    }
+                };
                 myAvatarPreview.onerror = () => {
                     myAvatarPreview.classList.add('hidden');
                     myAvatarFallback.classList.remove('hidden');
@@ -1970,6 +2037,11 @@
                 myAvatarPreview.classList.add('hidden');
                 myAvatarFallback.classList.remove('hidden');
                 myAvatarRemove.classList.add('hidden');
+                myAvatarPreviewWrap.classList.remove('cursor-zoom-in');
+                myAvatarPreviewWrap.removeAttribute('role');
+                myAvatarPreviewWrap.removeAttribute('tabindex');
+                myAvatarPreviewWrap.onclick = null;
+                myAvatarPreviewWrap.onkeydown = null;
             }
         }
 
@@ -2093,6 +2165,68 @@
             }
         });
 
+        function renderPeopleDirectory() {
+            const query = peopleSearch.value.trim().toLocaleLowerCase('ko-KR');
+            const items = query
+                ? peopleDirectoryItems.filter(profile => [
+                    profile.displayName,
+                    profile.username,
+                    profile.region,
+                    profile.personality,
+                    profile.relationshipStyle,
+                    profile.bio
+                ].some(value => String(value || '').toLocaleLowerCase('ko-KR').includes(query)))
+                : peopleDirectoryItems;
+            peopleList.innerHTML = '';
+            peopleSearchCount.textContent = `${items.length} / ${peopleDirectoryItems.length}`;
+            if (!items.length) {
+                const empty = document.createElement('p');
+                empty.className = 'col-span-full py-16 text-center text-sm opacity-50';
+                empty.textContent = query ? '검색 결과가 없습니다.' : '등록된 회원이 없습니다.';
+                peopleList.appendChild(empty);
+                return;
+            }
+            items.forEach(profile => {
+                const card = document.createElement('article');
+                card.className = 'cursor-pointer text-left overflow-hidden bg-white/35 border border-[var(--border-light)] hover:border-[var(--accent-red)] hover:-translate-y-1 transition-all';
+                card.setAttribute('role', 'button');
+                card.setAttribute('tabindex', '0');
+                card.setAttribute('aria-label', `${profile.displayName} 회원 프로필 보기`);
+                const portrait = document.createElement('span');
+                portrait.className = 'flex w-full aspect-[4/3] overflow-hidden bg-[var(--accent-red)]/90 text-white items-center justify-center text-6xl font-serif-en italic';
+                renderProfileAvatar(portrait, profile);
+                const details = document.createElement('span');
+                details.className = 'block p-6';
+                const top = document.createElement('div');
+                top.className = 'flex items-center gap-4';
+                const identity = document.createElement('span');
+                identity.className = 'min-w-0';
+                const name = document.createElement('strong');
+                name.className = 'block text-xl font-serif-ko truncate';
+                name.textContent = profile.displayName;
+                const username = document.createElement('span');
+                username.className = 'block text-xs opacity-45 mt-1 truncate';
+                username.textContent = `@${profile.username}`;
+                identity.append(name, username);
+                top.append(identity);
+                const bio = document.createElement('p');
+                bio.className = 'text-sm opacity-60 mt-5 line-clamp-2 min-h-[2.5rem]';
+                bio.textContent = profile.bio || '아직 자기소개가 없습니다.';
+                const meta = document.createElement('p');
+                meta.className = 'text-xs opacity-40 mt-5 pt-4 border-t border-[var(--border-light)]';
+                meta.textContent = `${profile.region || '지역 미입력'} · Timeline ${profile.postCount}`;
+                details.append(top, bio, meta);
+                card.append(portrait, details);
+                card.addEventListener('click', () => openMemberTimeline(profile.username));
+                card.addEventListener('keydown', event => {
+                    if (event.target !== card || (event.key !== 'Enter' && event.key !== ' ')) return;
+                    event.preventDefault();
+                    openMemberTimeline(profile.username);
+                });
+                peopleList.appendChild(card);
+            });
+        }
+
         async function loadPeopleDirectory() {
             peopleStatus.textContent = '회원 목록을 불러오는 중입니다.';
             peopleStatus.classList.remove('hidden');
@@ -2102,42 +2236,14 @@
                 const payload = await response.json();
                 if (!response.ok) throw new Error(payload.error || '회원 목록을 불러오지 못했습니다.');
                 peopleStatus.classList.add('hidden');
-                payload.items.forEach(profile => {
-                    const card = document.createElement('button');
-                    card.type = 'button';
-                    card.className = 'text-left overflow-hidden bg-white/35 border border-[var(--border-light)] hover:border-[var(--accent-red)] hover:-translate-y-1 transition-all';
-                    const portrait = document.createElement('span');
-                    portrait.className = 'flex w-full aspect-[4/3] overflow-hidden bg-[var(--accent-red)]/90 text-white items-center justify-center text-6xl font-serif-en italic';
-                    renderProfileAvatar(portrait, profile);
-                    const details = document.createElement('span');
-                    details.className = 'block p-6';
-                    const top = document.createElement('div');
-                    top.className = 'flex items-center gap-4';
-                    const identity = document.createElement('span');
-                    identity.className = 'min-w-0';
-                    const name = document.createElement('strong');
-                    name.className = 'block text-xl font-serif-ko truncate';
-                    name.textContent = profile.displayName;
-                    const username = document.createElement('span');
-                    username.className = 'block text-xs opacity-45 mt-1 truncate';
-                    username.textContent = `@${profile.username}`;
-                    identity.append(name, username);
-                    top.append(identity);
-                    const bio = document.createElement('p');
-                    bio.className = 'text-sm opacity-60 mt-5 line-clamp-2 min-h-[2.5rem]';
-                    bio.textContent = profile.bio || '아직 자기소개가 없습니다.';
-                    const meta = document.createElement('p');
-                    meta.className = 'text-xs opacity-40 mt-5 pt-4 border-t border-[var(--border-light)]';
-                    meta.textContent = `${profile.region || '지역 미입력'} · Timeline ${profile.postCount}`;
-                    details.append(top, bio, meta);
-                    card.append(portrait, details);
-                    card.addEventListener('click', () => openMemberTimeline(profile.username));
-                    peopleList.appendChild(card);
-                });
+                peopleDirectoryItems = payload.items;
+                renderPeopleDirectory();
             } catch (error) {
                 peopleStatus.textContent = error.message;
             }
         }
+
+        peopleSearch?.addEventListener('input', renderPeopleDirectory);
 
         async function openMemberTimeline(username, navigate = true) {
             viewedTimelineUsername = username;
@@ -2976,6 +3082,14 @@
             if (event.key === 'Escape' && !galleryModal?.classList.contains('hidden')) {
                 closeGalleryModal();
             }
+            if (event.key === 'Escape' && !profilePhotoModal?.classList.contains('hidden')) {
+                closeProfilePhoto();
+            }
+        });
+
+        profilePhotoModalClose?.addEventListener('click', closeProfilePhoto);
+        profilePhotoModal?.addEventListener('click', event => {
+            if (event.target === profilePhotoModal) closeProfilePhoto();
         });
 
         document.getElementById('gallery-edit-btn')?.addEventListener('click', () => {
