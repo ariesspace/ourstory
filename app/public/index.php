@@ -1505,7 +1505,7 @@
             return flatten(field.value).filter(Boolean).join(', ');
         }
 
-        function renderIntroductions(items) {
+        function renderIntroductions(items, canManage = false) {
             introList.innerHTML = '';
 
             if (!items.length) {
@@ -1533,6 +1533,12 @@
                 const title = document.createElement('strong');
                 title.className = 'font-serif-ko text-lg truncate';
                 title.textContent = nickname?.displayValue || '익명의 자기소개';
+                if (item.isHidden) {
+                    const hiddenBadge = document.createElement('span');
+                    hiddenBadge.className = 'ml-2 text-[0.65rem] tracking-widest uppercase text-[var(--accent-red)]';
+                    hiddenBadge.textContent = '숨김';
+                    title.appendChild(hiddenBadge);
+                }
                 const birth = document.createElement('span');
                 birth.className = 'hidden md:block text-sm opacity-55';
                 birth.textContent = birthYear?.displayValue || '-';
@@ -1564,6 +1570,22 @@
                     group.append(label, value);
                     answers.appendChild(group);
                 });
+                if (canManage) {
+                    const actions = document.createElement('div');
+                    actions.className = 'sm:col-span-2 flex justify-end gap-3 pt-4 border-t border-[var(--border-light)]';
+                    const visibility = document.createElement('button');
+                    visibility.type = 'button';
+                    visibility.className = 'border border-[var(--text-dark)] px-5 py-3 text-xs tracking-widest uppercase';
+                    visibility.textContent = item.isHidden ? '다시 표시' : '숨기기';
+                    visibility.addEventListener('click', () => manageIntroduction(item.isHidden ? 'show' : 'hide', item.submissionId));
+                    const remove = document.createElement('button');
+                    remove.type = 'button';
+                    remove.className = 'bg-[var(--accent-red)] text-white px-5 py-3 text-xs tracking-widest uppercase';
+                    remove.textContent = '삭제';
+                    remove.addEventListener('click', () => manageIntroduction('delete', item.submissionId));
+                    actions.append(visibility, remove);
+                    answers.appendChild(actions);
+                }
                 summary.addEventListener('click', () => {
                     const willOpen = answers.classList.contains('hidden');
                     answers.classList.toggle('hidden', !willOpen);
@@ -1576,6 +1598,25 @@
             });
         }
 
+        async function manageIntroduction(action, submissionId) {
+            const message = action === 'delete'
+                ? '이 자기소개를 영구 삭제하시겠습니까? 삭제 후에는 복구할 수 없습니다.'
+                : action === 'hide' ? '이 자기소개를 목록에서 숨기시겠습니까?' : '이 자기소개를 다시 표시하시겠습니까?';
+            if (!window.confirm(message)) return;
+            const body = new FormData();
+            body.append('action', action);
+            body.append('submissionId', submissionId);
+            try {
+                const response = await fetch('/api/tally-introductions.php', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken || '' }, body });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '자기소개를 관리하지 못했습니다.');
+                await loadIntroductions();
+                showToast(action === 'delete' ? '자기소개를 삭제했습니다.' : action === 'hide' ? '자기소개를 숨겼습니다.' : '자기소개를 다시 표시했습니다.', true);
+            } catch (error) {
+                showToast(error.message, false);
+            }
+        }
+
         async function loadIntroductions() {
             if (!introList || !introStatus) return;
 
@@ -1586,7 +1627,7 @@
                 const response = await fetch('/api/tally-introductions.php', { headers: { Accept: 'application/json' }, cache: 'no-store' });
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const payload = await response.json();
-                renderIntroductions(Array.isArray(payload.items) ? payload.items : []);
+                renderIntroductions(Array.isArray(payload.items) ? payload.items : [], Boolean(payload.canManage));
             } catch (error) {
                 console.error('Introduction Load Error:', error);
                 introList.innerHTML = '';

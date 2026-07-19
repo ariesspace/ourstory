@@ -32,12 +32,16 @@ function verify_tally_signature(string $payload): bool
 
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $pdo = site_db();
+$viewer = site_current_user($pdo);
+$canManage = $viewer && in_array($viewer['role'], ['superuser', 'admin'], true);
 
 if ($method === 'GET') {
+    $visibility = $canManage ? '' : ' AND is_hidden = 0';
     $rows = $pdo->query(
-        'SELECT submission_id, respondent_id, form_name, submitted_at, fields_json
+        'SELECT submission_id, respondent_id, form_name, submitted_at, fields_json, is_hidden
          FROM tally_introductions
          WHERE form_id IN (' . $pdo->quote(TALLY_SELF_INTRO_FORM_ID) . ', ' . $pdo->quote(TALLY_SELF_INTRO_SHARE_ID) . ')
+         ' . $visibility . '
          ORDER BY submitted_at DESC, id DESC
          LIMIT 100'
     )->fetchAll();
@@ -49,15 +53,43 @@ if ($method === 'GET') {
             'formName' => $row['form_name'],
             'submittedAt' => $row['submitted_at'],
             'fields' => json_decode($row['fields_json'], true) ?: [],
+            'isHidden' => (bool) $row['is_hidden'],
         ];
     }, $rows);
 
-    json_response(['items' => $items]);
+    json_response(['items' => $items, 'canManage' => (bool) $canManage]);
 }
 
 if ($method !== 'POST') {
     header('Allow: GET, POST');
     json_response(['error' => 'Method not allowed.'], 405);
+}
+
+$adminAction = (string) ($_POST['action'] ?? '');
+if (in_array($adminAction, ['hide', 'show', 'delete'], true)) {
+    if (!$canManage) {
+        json_response(['error' => '관리자 권한이 필요합니다.'], 403);
+    }
+    $received = (string) ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? '');
+    if ($received === '' || !hash_equals(site_csrf_token(), $received)) {
+        json_response(['error' => '요청 검증에 실패했습니다. 페이지를 새로고침해 주세요.'], 403);
+    }
+    $submissionId = trim((string) ($_POST['submissionId'] ?? ''));
+    if ($submissionId === '') {
+        json_response(['error' => '자기소개 응답 ID가 필요합니다.'], 422);
+    }
+    if ($adminAction === 'delete') {
+        $stmt = $pdo->prepare('DELETE FROM tally_introductions WHERE submission_id = :submission_id');
+    } else {
+        $stmt = $pdo->prepare('UPDATE tally_introductions SET is_hidden = :is_hidden WHERE submission_id = :submission_id');
+        $stmt->bindValue(':is_hidden', $adminAction === 'hide' ? 1 : 0, PDO::PARAM_INT);
+    }
+    $stmt->bindValue(':submission_id', $submissionId);
+    $stmt->execute();
+    if ($stmt->rowCount() !== 1) {
+        json_response(['error' => '해당 자기소개 응답을 찾지 못했습니다.'], 404);
+    }
+    json_response(['ok' => true]);
 }
 
 $rawPayload = file_get_contents('php://input');

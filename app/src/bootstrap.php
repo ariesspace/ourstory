@@ -85,6 +85,10 @@ function site_migrate(PDO $pdo): void
         'CREATE INDEX IF NOT EXISTS idx_tally_introductions_submitted_at
          ON tally_introductions (submitted_at DESC)'
     );
+    $tallyColumns = array_column($pdo->query('PRAGMA table_info(tally_introductions)')->fetchAll(), 'name');
+    if (!in_array('is_hidden', $tallyColumns, true)) {
+        $pdo->exec("ALTER TABLE tally_introductions ADD COLUMN is_hidden INTEGER NOT NULL DEFAULT 0");
+    }
 
     $pdo->exec(
         'CREATE TABLE IF NOT EXISTS users (
