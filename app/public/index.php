@@ -625,11 +625,11 @@
         </section>
 
         <section id="view-read" class="w-full fade-in">
-            <div class="mb-14 md:mb-20 border-b border-[var(--border-light)] pb-12 md:pb-16 flex flex-col md:flex-row items-end justify-between gap-8">
-                <h1 class="text-5xl md:text-7xl font-serif-ko font-light leading-tight tracking-tight">
+            <div class="mb-14 md:mb-20 border-b border-[var(--border-light)] pb-12 md:pb-16 flex flex-col md:flex-row items-start md:items-end justify-between gap-8">
+                <h1 class="w-full text-4xl sm:text-5xl md:text-7xl font-serif-ko font-light leading-tight tracking-tight">
                     기록이 모여<br>우리가 되는 시간.
                 </h1>
-                <p class="text-sm tracking-widest uppercase opacity-60 font-serif-en text-right">
+                <p class="self-end text-sm tracking-widest uppercase opacity-60 font-serif-en text-right">
                     Putting a Moment of Peace<br>to Cities Around the World
                 </p>
             </div>
