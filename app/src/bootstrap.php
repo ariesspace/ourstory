@@ -91,13 +91,58 @@ function site_migrate(PDO $pdo): void
             username TEXT NOT NULL UNIQUE COLLATE NOCASE,
             password_hash TEXT NOT NULL,
             display_name TEXT NOT NULL,
-            role TEXT NOT NULL DEFAULT \'member\' CHECK (role IN (\'admin\', \'member\')),
+            role TEXT NOT NULL DEFAULT \'member\' CHECK (role IN (\'superuser\', \'admin\', \'member\')),
             is_active INTEGER NOT NULL DEFAULT 1,
             created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
             last_login_at TEXT
         )'
     );
+
+    site_migrate_user_roles($pdo);
+}
+
+function site_migrate_user_roles(PDO $pdo): void
+{
+    $tableSql = (string) $pdo->query(
+        "SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'users'"
+    )->fetchColumn();
+
+    if (stripos($tableSql, 'superuser') !== false) {
+        return;
+    }
+
+    $pdo->beginTransaction();
+    try {
+        $pdo->exec(
+            'CREATE TABLE users_v2 (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL UNIQUE COLLATE NOCASE,
+                password_hash TEXT NOT NULL,
+                display_name TEXT NOT NULL,
+                role TEXT NOT NULL DEFAULT \'member\' CHECK (role IN (\'superuser\', \'admin\', \'member\')),
+                is_active INTEGER NOT NULL DEFAULT 1,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                last_login_at TEXT
+            )'
+        );
+        $pdo->exec(
+            "INSERT INTO users_v2
+                (id, username, password_hash, display_name, role, is_active, created_at, updated_at, last_login_at)
+             SELECT
+                id, username, password_hash, display_name,
+                CASE WHEN username = 'admin' COLLATE NOCASE AND role = 'admin' THEN 'superuser' ELSE role END,
+                is_active, created_at, updated_at, last_login_at
+             FROM users"
+        );
+        $pdo->exec('DROP TABLE users');
+        $pdo->exec('ALTER TABLE users_v2 RENAME TO users');
+        $pdo->commit();
+    } catch (Throwable $error) {
+        $pdo->rollBack();
+        throw $error;
+    }
 }
 
 function site_seed(PDO $pdo): void
@@ -152,7 +197,7 @@ function site_seed(PDO $pdo): void
 
 function site_seed_admin(PDO $pdo): void
 {
-    $adminCount = (int) $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'admin'")->fetchColumn();
+    $adminCount = (int) $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'superuser'")->fetchColumn();
     $password = (string) getenv('OUR_STORY_ADMIN_PASSWORD');
 
     if ($adminCount > 0 || $password === '') {
@@ -167,7 +212,7 @@ function site_seed_admin(PDO $pdo): void
         ':username' => 'admin',
         ':password_hash' => password_hash($password, PASSWORD_DEFAULT),
         ':display_name' => '관리자',
-        ':role' => 'admin',
+        ':role' => 'superuser',
     ]);
 }
 

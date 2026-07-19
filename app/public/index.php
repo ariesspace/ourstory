@@ -349,12 +349,54 @@
             <div id="members-table-wrap" class="hidden overflow-x-auto bg-white/35 border border-[var(--border-light)] rounded-sm shadow-sm">
                 <table class="w-full min-w-[760px] text-left">
                     <thead class="text-xs tracking-widest uppercase opacity-50 border-b border-[var(--border-light)]">
-                        <tr><th class="p-5">ID</th><th class="p-5">이름</th><th class="p-5">권한</th><th class="p-5">상태</th><th class="p-5">생성일</th><th class="p-5">최근 로그인</th></tr>
+                        <tr><th class="p-5">ID</th><th class="p-5">이름</th><th class="p-5">권한</th><th class="p-5">상태</th><th class="p-5">생성일</th><th class="p-5">최근 로그인</th><th class="p-5">관리</th></tr>
                     </thead>
                     <tbody id="members-table-body"></tbody>
                 </table>
             </div>
         </section>
+
+        <div id="member-edit-modal" class="fixed inset-0 z-[80] hidden items-center justify-center bg-black/50 p-4 sm:p-6">
+            <div class="relative w-full max-w-2xl max-h-[92vh] overflow-y-auto bg-[var(--bg-cream)] border border-[var(--border-light)] shadow-2xl rounded-sm p-6 sm:p-10">
+                <button type="button" id="member-edit-close" class="absolute top-5 right-5 w-10 h-10 rounded-full border border-[var(--border-light)] flex items-center justify-center" aria-label="회원 수정 닫기"><i class="ph ph-x"></i></button>
+                <div class="mb-9 pr-12">
+                    <span class="text-xs tracking-[0.3em] uppercase opacity-50">System</span>
+                    <h2 class="text-4xl font-serif-en italic mt-2">Edit Member</h2>
+                </div>
+                <form id="member-edit-form" class="space-y-7">
+                    <input type="hidden" id="edit-user-id">
+                    <div>
+                        <label for="edit-username" class="block text-xs tracking-widest uppercase opacity-60 mb-2">로그인 ID</label>
+                        <input type="text" id="edit-username" minlength="3" maxlength="32" pattern="[A-Za-z0-9._-]+" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" required>
+                    </div>
+                    <div>
+                        <label for="edit-display-name" class="block text-xs tracking-widest uppercase opacity-60 mb-2">표시 이름</label>
+                        <input type="text" id="edit-display-name" maxlength="60" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" required>
+                    </div>
+                    <div>
+                        <label for="edit-password" class="block text-xs tracking-widest uppercase opacity-60 mb-2">새 비밀번호</label>
+                        <input type="text" id="edit-password" minlength="10" maxlength="128" autocomplete="off" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" placeholder="변경하지 않으려면 비워두세요">
+                    </div>
+                    <div>
+                        <label for="edit-role" class="block text-xs tracking-widest uppercase opacity-60 mb-2">권한</label>
+                        <select id="edit-role" class="w-full bg-transparent border-b border-[var(--border-light)] py-3">
+                            <option value="member">Member</option>
+                            <option value="admin">Admin</option>
+                            <option value="superuser">Superuser</option>
+                        </select>
+                    </div>
+                    <label class="flex items-center gap-3 text-sm cursor-pointer">
+                        <input type="checkbox" id="edit-is-active" class="w-4 h-4" checked>
+                        <span>로그인 활성화</span>
+                    </label>
+                    <p id="member-edit-error" class="hidden text-sm text-[var(--accent-red)] text-center"></p>
+                    <div class="flex justify-end gap-3 pt-3">
+                        <button type="button" id="member-edit-cancel" class="px-6 py-3 text-sm opacity-60">Cancel</button>
+                        <button type="submit" id="member-edit-submit" class="bg-[var(--accent-red)] text-white px-8 py-3 text-sm tracking-widest uppercase">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
         <section id="view-system-add" class="w-full max-w-3xl mx-auto view-hidden fade-in py-8">
             <div class="text-center mb-12">
@@ -387,6 +429,7 @@
                     <select id="new-role" class="w-full bg-transparent border-b border-[var(--border-light)] py-3 focus:border-[var(--accent-red)]">
                         <option value="member">Member</option>
                         <option value="admin">Admin</option>
+                        <option value="superuser">Superuser</option>
                     </select>
                 </div>
                 <p id="member-add-error" class="hidden text-sm text-[var(--accent-red)] text-center"></p>
@@ -795,7 +838,7 @@
             trigger.addEventListener('click', () => {
                 let targetId = trigger.getAttribute('data-target');
 
-                if (targetId?.startsWith('view-system-') && siteUser?.role !== 'admin') {
+                if (targetId?.startsWith('view-system-') && !['superuser', 'admin'].includes(siteUser?.role)) {
                     showToast('관리자 로그인이 필요합니다.', false);
                     targetId = 'view-login';
                 }
@@ -840,14 +883,18 @@
         function applySiteAuth(user, token = null) {
             siteUser = user;
             csrfToken = token;
-            const isAdmin = user?.role === 'admin';
+            const isManager = ['superuser', 'admin'].includes(user?.role);
 
-            systemNavLink.classList.toggle('hidden', !isAdmin);
-            mobileSystemSection.classList.toggle('hidden', !isAdmin);
+            systemNavLink.classList.toggle('hidden', !isManager);
+            mobileSystemSection.classList.toggle('hidden', !isManager);
             loginNavBtn.textContent = user ? user.displayName : 'Login';
-            loginNavBtn.dataset.target = isAdmin ? 'view-system-members' : 'view-login';
+            loginNavBtn.dataset.target = isManager ? 'view-system-members' : 'view-login';
             mobileLoginBtn.textContent = user ? user.displayName : 'Login';
-            mobileLoginBtn.dataset.target = isAdmin ? 'view-system-members' : 'view-login';
+            mobileLoginBtn.dataset.target = isManager ? 'view-system-members' : 'view-login';
+
+            document.querySelectorAll('#new-role option, #edit-role option').forEach(option => {
+                option.hidden = user?.role !== 'superuser' && option.value !== 'member';
+            });
         }
 
         async function loadSiteSession() {
@@ -954,6 +1001,9 @@
         const memberAddForm = document.getElementById('member-add-form');
         const memberAddError = document.getElementById('member-add-error');
         const memberAddResult = document.getElementById('member-add-result');
+        const memberEditModal = document.getElementById('member-edit-modal');
+        const memberEditForm = document.getElementById('member-edit-form');
+        const memberEditError = document.getElementById('member-edit-error');
 
         let calendarDate = new Date();
         let selectedDateKey = formatDateKey(calendarDate);
@@ -1060,6 +1110,28 @@
             return Number.isNaN(date.getTime()) ? value : date.toLocaleString('ko-KR');
         }
 
+        function openMemberEditor(member) {
+            if (!member.canEdit) {
+                showToast('이 계정을 수정할 권한이 없습니다.', false);
+                return;
+            }
+
+            document.getElementById('edit-user-id').value = member.id;
+            document.getElementById('edit-username').value = member.username;
+            document.getElementById('edit-display-name').value = member.displayName;
+            document.getElementById('edit-password').value = '';
+            document.getElementById('edit-role').value = member.role;
+            document.getElementById('edit-is-active').checked = member.isActive;
+            memberEditError.classList.add('hidden');
+            memberEditModal.classList.remove('hidden');
+            memberEditModal.classList.add('flex');
+        }
+
+        function closeMemberEditor() {
+            memberEditModal.classList.add('hidden');
+            memberEditModal.classList.remove('flex');
+        }
+
         function renderMembers(items) {
             membersTableBody.innerHTML = '';
             items.forEach(member => {
@@ -1078,6 +1150,27 @@
                     cell.textContent = text;
                     row.appendChild(cell);
                 });
+
+                const actionCell = document.createElement('td');
+                actionCell.className = 'p-5';
+                const editButton = document.createElement('button');
+                editButton.type = 'button';
+                editButton.className = member.canEdit
+                    ? 'text-xs underline hover:text-[var(--accent-red)]'
+                    : 'text-xs opacity-30 cursor-not-allowed';
+                editButton.textContent = member.canEdit ? '수정' : '권한 없음';
+                editButton.disabled = !member.canEdit;
+                editButton.addEventListener('click', event => {
+                    event.stopPropagation();
+                    openMemberEditor(member);
+                });
+                actionCell.appendChild(editButton);
+                row.appendChild(actionCell);
+
+                if (member.canEdit) {
+                    row.classList.add('cursor-pointer', 'hover:bg-white/30', 'transition-colors');
+                    row.addEventListener('click', () => openMemberEditor(member));
+                }
                 membersTableBody.appendChild(row);
             });
             membersStatus.classList.add('hidden');
@@ -1085,7 +1178,7 @@
         }
 
         async function loadMembers() {
-            if (siteUser?.role !== 'admin') return;
+            if (!['superuser', 'admin'].includes(siteUser?.role)) return;
             membersStatus.textContent = '회원 목록을 불러오는 중입니다.';
             membersStatus.classList.remove('hidden');
             membersTableWrap.classList.add('hidden');
@@ -1117,6 +1210,50 @@
         });
 
         membersRefreshBtn?.addEventListener('click', loadMembers);
+
+        document.getElementById('member-edit-close')?.addEventListener('click', closeMemberEditor);
+        document.getElementById('member-edit-cancel')?.addEventListener('click', closeMemberEditor);
+        memberEditModal?.addEventListener('click', event => {
+            if (event.target === memberEditModal) closeMemberEditor();
+        });
+
+        memberEditForm?.addEventListener('submit', async event => {
+            event.preventDefault();
+            const submitButton = document.getElementById('member-edit-submit');
+            memberEditError.classList.add('hidden');
+            submitButton.disabled = true;
+
+            try {
+                const response = await fetch('/api/users.php', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        'X-CSRF-Token': csrfToken || ''
+                    },
+                    body: JSON.stringify({
+                        id: Number(document.getElementById('edit-user-id').value),
+                        username: document.getElementById('edit-username').value.trim(),
+                        displayName: document.getElementById('edit-display-name').value.trim(),
+                        password: document.getElementById('edit-password').value,
+                        role: document.getElementById('edit-role').value,
+                        isActive: document.getElementById('edit-is-active').checked
+                    })
+                });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '회원 수정에 실패했습니다.');
+
+                closeMemberEditor();
+                await loadSiteSession();
+                await loadMembers();
+                showToast('회원 정보가 수정되었습니다.', true);
+            } catch (error) {
+                memberEditError.textContent = error.message;
+                memberEditError.classList.remove('hidden');
+            } finally {
+                submitButton.disabled = false;
+            }
+        });
 
         memberAddForm?.addEventListener('submit', async (event) => {
             event.preventDefault();
