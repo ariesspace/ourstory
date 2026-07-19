@@ -1,13 +1,27 @@
 services:
   web:
     image: nginx:1.27-alpine
-    ports:
-      - "${OUR_STORY_HTTP_BIND:-0.0.0.0}:${OUR_STORY_HTTP_PORT:-8090}:80"
+    expose:
+      - "80"
     volumes:
       - ./app/public:/var/www/html/public:ro
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
       - php
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2.10-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
     restart: unless-stopped
 
   php:
@@ -17,6 +31,7 @@ services:
     command: sh -c "mkdir -p storage/data && chown -R www-data:www-data storage && php-fpm"
     environment:
       TALLY_WEBHOOK_SECRET: "${TALLY_WEBHOOK_SECRET:-}"
+      OUR_STORY_ADMIN_PASSWORD: "${OUR_STORY_ADMIN_PASSWORD:-}"
     volumes:
       - ./app:/var/www/html
       - our_story_data:/var/www/html/storage/data
@@ -24,3 +39,5 @@ services:
 
 volumes:
   our_story_data:
+  caddy_data:
+  caddy_config:

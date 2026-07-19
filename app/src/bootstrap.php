@@ -84,10 +84,26 @@ function site_migrate(PDO $pdo): void
         'CREATE INDEX IF NOT EXISTS idx_tally_introductions_submitted_at
          ON tally_introductions (submitted_at DESC)'
     );
+
+    $pdo->exec(
+        'CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL UNIQUE COLLATE NOCASE,
+            password_hash TEXT NOT NULL,
+            display_name TEXT NOT NULL,
+            role TEXT NOT NULL DEFAULT \'member\' CHECK (role IN (\'admin\', \'member\')),
+            is_active INTEGER NOT NULL DEFAULT 1,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            last_login_at TEXT
+        )'
+    );
 }
 
 function site_seed(PDO $pdo): void
 {
+    site_seed_admin($pdo);
+
     if ((int) $pdo->query('SELECT COUNT(*) FROM posts')->fetchColumn() === 0) {
         $stmt = $pdo->prepare('INSERT INTO posts (type, title, author, summary, published_at, is_new) VALUES (?, ?, ?, ?, ?, ?)');
         $rows = [
@@ -132,6 +148,87 @@ function site_seed(PDO $pdo): void
             $stmt->execute($row);
         }
     }
+}
+
+function site_seed_admin(PDO $pdo): void
+{
+    $adminCount = (int) $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'admin'")->fetchColumn();
+    $password = (string) getenv('OUR_STORY_ADMIN_PASSWORD');
+
+    if ($adminCount > 0 || $password === '') {
+        return;
+    }
+
+    $stmt = $pdo->prepare(
+        'INSERT INTO users (username, password_hash, display_name, role)
+         VALUES (:username, :password_hash, :display_name, :role)'
+    );
+    $stmt->execute([
+        ':username' => 'admin',
+        ':password_hash' => password_hash($password, PASSWORD_DEFAULT),
+        ':display_name' => '관리자',
+        ':role' => 'admin',
+    ]);
+}
+
+function site_session_start(): void
+{
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        return;
+    }
+
+    $isHttps = ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https'
+        || (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+
+    session_name('ourstory_session');
+    session_set_cookie_params([
+        'lifetime' => 0,
+        'path' => '/',
+        'secure' => $isHttps,
+        'httponly' => true,
+        'samesite' => 'Lax',
+    ]);
+    session_start();
+}
+
+function site_current_user(PDO $pdo): ?array
+{
+    site_session_start();
+    $userId = (int) ($_SESSION['user_id'] ?? 0);
+
+    if ($userId < 1) {
+        return null;
+    }
+
+    $stmt = $pdo->prepare(
+        'SELECT id, username, display_name, role
+         FROM users
+         WHERE id = :id AND is_active = 1'
+    );
+    $stmt->execute([':id' => $userId]);
+    $user = $stmt->fetch();
+
+    if (!$user) {
+        unset($_SESSION['user_id']);
+        return null;
+    }
+
+    return [
+        'id' => (int) $user['id'],
+        'username' => $user['username'],
+        'displayName' => $user['display_name'],
+        'role' => $user['role'],
+    ];
+}
+
+function site_csrf_token(): string
+{
+    site_session_start();
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+
+    return $_SESSION['csrf_token'];
 }
 
 function active_page(): string

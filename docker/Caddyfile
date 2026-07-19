@@ -1,0 +1,9 @@
+49-247-137-213.sslip.io {
+    encode zstd gzip
+    reverse_proxy web:80
+}
+
+http://49.247.137.213 {
+    encode zstd gzip
+    reverse_proxy web:80
+}

@@ -154,10 +154,11 @@
                 <button type="button" id="mobile-menu-toggle" class="md:hidden w-10 h-10 flex items-center justify-center border border-[var(--border-light)] rounded-full" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mobile-menu">
                     <i class="ph ph-list text-xl" id="mobile-menu-icon"></i>
                 </button>
-                <nav class="gap-10 text-sm tracking-widest uppercase hidden md:flex">
+                <nav class="gap-6 text-sm tracking-widest uppercase hidden md:flex">
                     <button class="nav-link active uppercase" data-menu="journal">Journal</button>
                     <button class="nav-link uppercase" data-menu="members">Members</button>
                     <button class="nav-link uppercase" data-menu="schedule">Schedule</button>
+                    <button class="nav-link uppercase hidden" data-menu="system" id="system-nav-link">System</button>
                 </nav>
             </div>
 
@@ -242,6 +243,26 @@
                             </div>
                         </div>
                     </div>
+
+                    <div id="submenu-system" class="submenu-content hidden">
+                        <div class="grid grid-cols-2 gap-x-12 gap-y-8">
+                            <div>
+                                <h4 class="font-serif-en italic text-xl mb-4 border-b border-[var(--border-light)] pb-2 flex items-center gap-2">
+                                    <i class="ph ph-gear-six"></i> members
+                                </h4>
+                                <ul class="space-y-4 text-sm opacity-70">
+                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-system-members">회원 관리</li>
+                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-system-add">회원 추가</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-serif-en italic text-xl mb-4 border-b border-[var(--border-light)] pb-2 flex items-center gap-2">
+                                    <i class="ph ph-shield-check"></i> session
+                                </h4>
+                                <button type="button" class="logout-trigger text-sm opacity-70 hover:text-[var(--accent-red)]">Logout</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -264,7 +285,15 @@
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-gallery">Activity Album</button>
                     </div>
                 </section>
-                <button type="button" class="view-trigger w-full py-3 text-sm tracking-widest uppercase border border-[var(--text-dark)]" data-target="view-login">Login</button>
+                <section id="mobile-system-section" class="hidden">
+                    <p class="font-serif-en italic text-xl mb-4">System</p>
+                    <div class="grid gap-2">
+                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-system-members">회원 관리</button>
+                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-system-add">회원 추가</button>
+                        <button type="button" class="logout-trigger text-left py-3 border-b border-[var(--border-light)]">Logout</button>
+                    </div>
+                </section>
+                <button type="button" id="mobile-login-btn" class="view-trigger w-full py-3 text-sm tracking-widest uppercase border border-[var(--text-dark)]" data-target="view-login">Login</button>
             </div>
         </div>
     </header>
@@ -296,12 +325,77 @@
                     <button type="submit" class="w-full bg-[var(--accent-red)] text-white py-3 mt-4 text-sm font-bold tracking-widest uppercase hover:bg-red-700 transition-colors">
                         Enter
                     </button>
+                    <p id="login-error" class="hidden text-sm text-[var(--accent-red)] text-center"></p>
                 </form>
 
                 <div class="mt-8 text-center text-xs opacity-60">
                     <p>아직 멤버가 아니신가요? <button class="underline hover:text-[var(--accent-red)] transition-colors ml-1">초대장 요청하기</button></p>
                 </div>
             </div>
+        </section>
+
+        <section id="view-system-members" class="w-full view-hidden fade-in">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12 border-b border-[var(--border-light)] pb-10">
+                <div>
+                    <span class="text-xs tracking-[0.3em] uppercase opacity-50 font-bold">System</span>
+                    <h1 class="text-5xl md:text-7xl font-serif-en italic tracking-tighter mt-3">Member Management</h1>
+                </div>
+                <div class="flex gap-3">
+                    <button type="button" id="members-refresh-btn" class="w-11 h-11 border border-[var(--border-light)] rounded-full flex items-center justify-center hover:border-[var(--accent-red)]" aria-label="회원 목록 새로고침"><i class="ph ph-arrow-clockwise"></i></button>
+                    <button type="button" class="view-trigger bg-[var(--accent-red)] text-white px-6 py-3 text-xs tracking-widest uppercase" data-target="view-system-add">회원 추가</button>
+                </div>
+            </div>
+            <p id="members-status" class="py-14 text-center text-sm opacity-50">회원 목록을 불러오는 중입니다.</p>
+            <div id="members-table-wrap" class="hidden overflow-x-auto bg-white/35 border border-[var(--border-light)] rounded-sm shadow-sm">
+                <table class="w-full min-w-[760px] text-left">
+                    <thead class="text-xs tracking-widest uppercase opacity-50 border-b border-[var(--border-light)]">
+                        <tr><th class="p-5">ID</th><th class="p-5">이름</th><th class="p-5">권한</th><th class="p-5">상태</th><th class="p-5">생성일</th><th class="p-5">최근 로그인</th></tr>
+                    </thead>
+                    <tbody id="members-table-body"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="view-system-add" class="w-full max-w-3xl mx-auto view-hidden fade-in py-8">
+            <div class="text-center mb-12">
+                <span class="text-xs tracking-[0.3em] uppercase opacity-50 font-bold">System</span>
+                <h1 class="text-5xl md:text-7xl font-serif-en italic tracking-tighter mt-3">Add Member</h1>
+                <p class="text-sm opacity-55 mt-5">신규 로그인 아이디와 임시 비밀번호를 생성합니다.</p>
+            </div>
+            <form id="member-add-form" class="bg-white/35 border border-[var(--border-light)] rounded-sm shadow-sm p-6 sm:p-10 space-y-8">
+                <div>
+                    <label for="new-display-name" class="block text-xs tracking-widest uppercase opacity-60 mb-3">표시 이름</label>
+                    <input type="text" id="new-display-name" maxlength="60" class="w-full bg-transparent border-b border-[var(--border-light)] py-3 focus:border-[var(--accent-red)]" required>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between gap-4 mb-3">
+                        <label for="new-username" class="text-xs tracking-widest uppercase opacity-60">로그인 ID</label>
+                        <button type="button" id="generate-id-btn" class="text-xs underline hover:text-[var(--accent-red)]">ID 자동 생성</button>
+                    </div>
+                    <input type="text" id="new-username" minlength="3" maxlength="32" pattern="[A-Za-z0-9._-]+" autocomplete="off" class="w-full bg-transparent border-b border-[var(--border-light)] py-3 focus:border-[var(--accent-red)]" required>
+                    <p class="text-xs opacity-40 mt-2">영문, 숫자, 점, 밑줄, 하이픈만 사용할 수 있습니다.</p>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between gap-4 mb-3">
+                        <label for="new-password" class="text-xs tracking-widest uppercase opacity-60">임시 비밀번호</label>
+                        <button type="button" id="generate-password-btn" class="text-xs underline hover:text-[var(--accent-red)]">비밀번호 자동 생성</button>
+                    </div>
+                    <input type="text" id="new-password" minlength="10" maxlength="128" autocomplete="off" class="w-full bg-transparent border-b border-[var(--border-light)] py-3 focus:border-[var(--accent-red)]" required>
+                </div>
+                <div>
+                    <label for="new-role" class="block text-xs tracking-widest uppercase opacity-60 mb-3">권한</label>
+                    <select id="new-role" class="w-full bg-transparent border-b border-[var(--border-light)] py-3 focus:border-[var(--accent-red)]">
+                        <option value="member">Member</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <p id="member-add-error" class="hidden text-sm text-[var(--accent-red)] text-center"></p>
+                <div id="member-add-result" class="hidden border border-green-700/20 bg-green-50/70 p-4 text-sm text-green-800 text-center">회원 계정이 생성되었습니다. 표시된 아이디와 임시 비밀번호를 안전하게 전달하세요.</div>
+                <div class="flex items-center justify-between gap-4 pt-4">
+                    <button type="button" class="view-trigger text-sm tracking-widest uppercase opacity-50" data-target="view-system-members">Cancel</button>
+                    <button type="submit" id="member-add-submit" class="bg-[var(--accent-red)] text-white px-8 py-4 text-sm tracking-widest uppercase">Create Member</button>
+                </div>
+            </form>
         </section>
 
         <section id="view-read" class="w-full fade-in">
@@ -593,11 +687,18 @@
         const mobileMenu = document.getElementById('mobile-menu');
         const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
         const mobileMenuIcon = document.getElementById('mobile-menu-icon');
+        const systemNavLink = document.getElementById('system-nav-link');
+        const mobileSystemSection = document.getElementById('mobile-system-section');
+        const loginNavBtn = document.getElementById('login-nav-btn');
+        const mobileLoginBtn = document.getElementById('mobile-login-btn');
+        const logoutTriggers = document.querySelectorAll('.logout-trigger');
         const viewTriggers = document.querySelectorAll('.view-trigger');
         const views = document.querySelectorAll('main > section[id^="view-"]');
 
         let isMenuOpen = false;
         let isMobileMenuOpen = false;
+        let siteUser = null;
+        let csrfToken = null;
 
         const dateOptions = { year: 'numeric', month: 'short', day: '2-digit' };
         document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', dateOptions).toUpperCase();
@@ -678,6 +779,8 @@
                     menuImage.src = 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&q=80&w=800';
                 } else if (menuName === 'schedule') {
                     menuImage.src = 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&q=80&w=800';
+                } else if (menuName === 'system') {
+                    menuImage.src = 'https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&q=80&w=800';
                 }
 
                 megaMenu.classList.add('open');
@@ -690,7 +793,12 @@
 
         viewTriggers.forEach(trigger => {
             trigger.addEventListener('click', () => {
-                const targetId = trigger.getAttribute('data-target');
+                let targetId = trigger.getAttribute('data-target');
+
+                if (targetId?.startsWith('view-system-') && siteUser?.role !== 'admin') {
+                    showToast('관리자 로그인이 필요합니다.', false);
+                    targetId = 'view-login';
+                }
 
                 if (isMenuOpen) closeMenu();
                 if (isMobileMenuOpen) closeMobileMenu();
@@ -708,6 +816,7 @@
                 });
 
                 if (targetId === 'view-introduce') loadIntroductions();
+                if (targetId === 'view-system-members') loadMembers();
             });
         });
 
@@ -728,10 +837,79 @@
             setTimeout(() => { toast.style.opacity = '0'; }, 3000);
         }
 
-        document.getElementById('login-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            showToast("로그인 화면이 준비되었습니다.", true);
-            document.querySelector('.view-trigger[data-target="view-read"]').click();
+        function applySiteAuth(user, token = null) {
+            siteUser = user;
+            csrfToken = token;
+            const isAdmin = user?.role === 'admin';
+
+            systemNavLink.classList.toggle('hidden', !isAdmin);
+            mobileSystemSection.classList.toggle('hidden', !isAdmin);
+            loginNavBtn.textContent = user ? user.displayName : 'Login';
+            loginNavBtn.dataset.target = isAdmin ? 'view-system-members' : 'view-login';
+            mobileLoginBtn.textContent = user ? user.displayName : 'Login';
+            mobileLoginBtn.dataset.target = isAdmin ? 'view-system-members' : 'view-login';
+        }
+
+        async function loadSiteSession() {
+            try {
+                const response = await fetch('/api/auth.php', { headers: { Accept: 'application/json' }, cache: 'no-store' });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const payload = await response.json();
+                applySiteAuth(payload.user, payload.csrfToken);
+            } catch (error) {
+                console.error('Session Load Error:', error);
+                applySiteAuth(null);
+            }
+        }
+
+        document.getElementById('login-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const errorElement = document.getElementById('login-error');
+            const submitButton = event.currentTarget.querySelector('button[type="submit"]');
+            errorElement.classList.add('hidden');
+            submitButton.disabled = true;
+
+            try {
+                const response = await fetch('/api/auth.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                    body: JSON.stringify({
+                        action: 'login',
+                        username: document.getElementById('user-id').value.trim(),
+                        password: document.getElementById('password').value
+                    })
+                });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '로그인에 실패했습니다.');
+
+                applySiteAuth(payload.user, payload.csrfToken);
+                event.currentTarget.reset();
+                showToast(`${payload.user.displayName}님, 환영합니다.`, true);
+                document.querySelector('.view-trigger[data-target="view-system-members"]').click();
+            } catch (error) {
+                errorElement.textContent = error.message;
+                errorElement.classList.remove('hidden');
+            } finally {
+                submitButton.disabled = false;
+            }
+        });
+
+        logoutTriggers.forEach(button => {
+            button.addEventListener('click', async () => {
+                try {
+                    await fetch('/api/auth.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'logout' })
+                    });
+                } finally {
+                    applySiteAuth(null);
+                    closeMenu();
+                    if (isMobileMenuOpen) closeMobileMenu();
+                    showToast('로그아웃되었습니다.', true);
+                    document.querySelector('.view-trigger[data-target="view-read"]').click();
+                }
+            });
         });
 
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
@@ -768,6 +946,13 @@
         const introList = document.getElementById('intro-list');
         const introStatus = document.getElementById('intro-status');
         const introRefreshBtn = document.getElementById('intro-refresh-btn');
+        const membersStatus = document.getElementById('members-status');
+        const membersTableWrap = document.getElementById('members-table-wrap');
+        const membersTableBody = document.getElementById('members-table-body');
+        const membersRefreshBtn = document.getElementById('members-refresh-btn');
+        const memberAddForm = document.getElementById('member-add-form');
+        const memberAddError = document.getElementById('member-add-error');
+        const memberAddResult = document.getElementById('member-add-result');
 
         let calendarDate = new Date();
         let selectedDateKey = formatDateKey(calendarDate);
@@ -867,6 +1052,105 @@
         }
 
         introRefreshBtn?.addEventListener('click', loadIntroductions);
+
+        function formatMemberDate(value) {
+            if (!value) return '-';
+            const date = new Date(value.includes('T') ? value : `${value.replace(' ', 'T')}Z`);
+            return Number.isNaN(date.getTime()) ? value : date.toLocaleString('ko-KR');
+        }
+
+        function renderMembers(items) {
+            membersTableBody.innerHTML = '';
+            items.forEach(member => {
+                const row = document.createElement('tr');
+                row.className = 'border-b border-[var(--border-light)] last:border-0';
+                [
+                    member.username,
+                    member.displayName,
+                    member.role,
+                    member.isActive ? '활성' : '비활성',
+                    formatMemberDate(member.createdAt),
+                    formatMemberDate(member.lastLoginAt)
+                ].forEach((text, index) => {
+                    const cell = document.createElement('td');
+                    cell.className = `p-5 text-sm ${index === 0 ? 'font-semibold' : 'opacity-70'}`;
+                    cell.textContent = text;
+                    row.appendChild(cell);
+                });
+                membersTableBody.appendChild(row);
+            });
+            membersStatus.classList.add('hidden');
+            membersTableWrap.classList.remove('hidden');
+        }
+
+        async function loadMembers() {
+            if (siteUser?.role !== 'admin') return;
+            membersStatus.textContent = '회원 목록을 불러오는 중입니다.';
+            membersStatus.classList.remove('hidden');
+            membersTableWrap.classList.add('hidden');
+
+            try {
+                const response = await fetch('/api/users.php', { headers: { Accept: 'application/json' }, cache: 'no-store' });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '회원 목록을 불러오지 못했습니다.');
+                renderMembers(Array.isArray(payload.items) ? payload.items : []);
+            } catch (error) {
+                membersStatus.textContent = error.message;
+                if (/권한/.test(error.message)) applySiteAuth(null);
+            }
+        }
+
+        function randomCharacters(characters, length) {
+            const values = new Uint32Array(length);
+            crypto.getRandomValues(values);
+            return Array.from(values, value => characters[value % characters.length]).join('');
+        }
+
+        document.getElementById('generate-id-btn')?.addEventListener('click', () => {
+            document.getElementById('new-username').value = `member-${randomCharacters('abcdefghjkmnpqrstuvwxyz23456789', 6)}`;
+        });
+
+        document.getElementById('generate-password-btn')?.addEventListener('click', () => {
+            const base = randomCharacters('ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%', 14);
+            document.getElementById('new-password').value = `A9!${base}`;
+        });
+
+        membersRefreshBtn?.addEventListener('click', loadMembers);
+
+        memberAddForm?.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const submitButton = document.getElementById('member-add-submit');
+            memberAddError.classList.add('hidden');
+            memberAddResult.classList.add('hidden');
+            submitButton.disabled = true;
+
+            try {
+                const response = await fetch('/api/users.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        'X-CSRF-Token': csrfToken || ''
+                    },
+                    body: JSON.stringify({
+                        username: document.getElementById('new-username').value.trim(),
+                        displayName: document.getElementById('new-display-name').value.trim(),
+                        password: document.getElementById('new-password').value,
+                        role: document.getElementById('new-role').value
+                    })
+                });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '회원 생성에 실패했습니다.');
+
+                memberAddResult.classList.remove('hidden');
+                showToast('신규 회원 계정이 생성되었습니다.', true);
+            } catch (error) {
+                memberAddError.textContent = error.message;
+                memberAddError.classList.remove('hidden');
+            } finally {
+                submitButton.disabled = false;
+            }
+        });
 
         async function initAuth() {
             if (!auth) {
@@ -1304,6 +1588,7 @@
             }
         });
 
+        loadSiteSession();
         initAuth();
         renderCalendar();
         renderSchedules();
