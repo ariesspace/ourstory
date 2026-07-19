@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 require dirname(__DIR__, 2) . '/src/bootstrap.php';
 
-const TALLY_SELF_INTRO_FORM_ID = 'm66BrY';
+const TALLY_SELF_INTRO_FORM_ID = '98dfeef1-bb6b-46ca-b9e7-f9f3941a7028';
+const TALLY_SELF_INTRO_SHARE_ID = 'm66BrY';
 
 function json_response(array $body, int $status = 200): never
 {
@@ -36,7 +37,7 @@ if ($method === 'GET') {
     $rows = $pdo->query(
         'SELECT submission_id, respondent_id, form_name, submitted_at, fields_json
          FROM tally_introductions
-         WHERE form_id = ' . $pdo->quote(TALLY_SELF_INTRO_FORM_ID) . '
+         WHERE form_id IN (' . $pdo->quote(TALLY_SELF_INTRO_FORM_ID) . ', ' . $pdo->quote(TALLY_SELF_INTRO_SHARE_ID) . ')
          ORDER BY submitted_at DESC, id DESC
          LIMIT 100'
     )->fetchAll();
@@ -74,7 +75,7 @@ if (!is_array($payload) || ($payload['eventType'] ?? '') !== 'FORM_RESPONSE') {
 }
 
 $data = $payload['data'] ?? null;
-if (!is_array($data) || ($data['formId'] ?? '') !== TALLY_SELF_INTRO_FORM_ID) {
+if (!is_array($data) || !in_array((string) ($data['formId'] ?? ''), [TALLY_SELF_INTRO_FORM_ID, TALLY_SELF_INTRO_SHARE_ID], true)) {
     json_response(['error' => 'Unexpected form.'], 400);
 }
 
@@ -106,7 +107,7 @@ $stmt = $pdo->prepare(
 $stmt->execute([
     ':submission_id' => $submissionId,
     ':respondent_id' => (string) ($data['respondentId'] ?? ''),
-    ':form_id' => TALLY_SELF_INTRO_FORM_ID,
+    ':form_id' => (string) $data['formId'],
     ':form_name' => (string) ($data['formName'] ?? ''),
     ':submitted_at' => (string) ($data['createdAt'] ?? gmdate(DATE_ATOM)),
     ':fields_json' => $fieldsJson,
