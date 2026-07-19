@@ -1175,7 +1175,7 @@
                 applySiteAuth(payload.user, payload.csrfToken);
                 loginForm.reset();
                 showToast(`${payload.user.displayName}님, 환영합니다.`, true);
-                loginNavBtn.click();
+                document.querySelector('.view-trigger[data-target="view-read"]').click();
             } catch (error) {
                 errorElement.textContent = error.message;
                 errorElement.classList.remove('hidden');
