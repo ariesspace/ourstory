@@ -159,6 +159,7 @@
                     <button class="nav-link uppercase" data-menu="members">Members</button>
                     <button class="nav-link uppercase" data-menu="schedule">Schedule</button>
                     <button class="nav-link uppercase hidden" data-menu="system" id="system-nav-link">System</button>
+                    <button class="view-trigger uppercase hidden" data-target="view-my-page" id="my-page-nav-link">My Page</button>
                 </nav>
             </div>
 
@@ -291,6 +292,12 @@
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-system-members">회원 관리</button>
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-system-add">회원 추가</button>
                         <button type="button" class="logout-trigger text-left py-3 border-b border-[var(--border-light)]">Logout</button>
+                    </div>
+                </section>
+                <section id="mobile-my-page-section" class="hidden">
+                    <p class="font-serif-en italic text-xl mb-4">Account</p>
+                    <div class="grid gap-2">
+                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-my-page">My Page</button>
                     </div>
                 </section>
                 <button type="button" id="mobile-login-btn" class="view-trigger w-full py-3 text-sm tracking-widest uppercase border border-[var(--text-dark)]" data-target="view-login">Login</button>
@@ -837,7 +844,9 @@
         const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
         const mobileMenuIcon = document.getElementById('mobile-menu-icon');
         const systemNavLink = document.getElementById('system-nav-link');
+        const myPageNavLink = document.getElementById('my-page-nav-link');
         const mobileSystemSection = document.getElementById('mobile-system-section');
+        const mobileMyPageSection = document.getElementById('mobile-my-page-section');
         const loginNavBtn = document.getElementById('login-nav-btn');
         const mobileLoginBtn = document.getElementById('mobile-login-btn');
         const logoutTriggers = document.querySelectorAll('.logout-trigger');
@@ -997,7 +1006,9 @@
             const isManager = ['superuser', 'admin'].includes(user?.role);
 
             systemNavLink.classList.toggle('hidden', !isManager);
+            myPageNavLink.classList.toggle('hidden', !user);
             mobileSystemSection.classList.toggle('hidden', !isManager);
+            mobileMyPageSection.classList.toggle('hidden', !user);
             loginNavBtn.textContent = user ? user.displayName : 'Login';
             loginNavBtn.dataset.target = user ? 'view-my-page' : 'view-login';
             mobileLoginBtn.textContent = user ? user.displayName : 'Login';
