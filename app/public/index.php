@@ -1083,6 +1083,22 @@
         </div>
     </div>
 
+    <div id="membership-detail-modal" class="fixed inset-0 z-[85] hidden items-center justify-center bg-black/65 p-4" role="dialog" aria-modal="true" aria-labelledby="membership-detail-title">
+        <div class="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto bg-[var(--bg-cream)] border border-[var(--border-light)] shadow-2xl p-6 sm:p-10">
+            <button type="button" id="membership-detail-close" class="absolute top-4 right-4 w-10 h-10 rounded-full border border-[var(--border-light)] flex items-center justify-center hover:bg-[var(--accent-red)] hover:text-white transition-colors" aria-label="가입 신청 상세 닫기">
+                <i class="ph ph-x text-xl"></i>
+            </button>
+            <span class="text-xs tracking-[0.25em] uppercase opacity-45">Membership Application</span>
+            <h2 id="membership-detail-title" class="text-4xl md:text-5xl font-serif-ko font-bold mt-3 pr-12"></h2>
+            <div class="flex flex-wrap gap-x-5 gap-y-2 mt-4 pb-7 border-b border-[var(--border-light)] text-xs opacity-55">
+                <span id="membership-detail-meta"></span>
+                <time id="membership-detail-date"></time>
+            </div>
+            <div id="membership-detail-answers" class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6 mt-8"></div>
+            <div id="membership-detail-actions" class="hidden justify-end gap-3 mt-8 pt-6 border-t border-[var(--border-light)]"></div>
+        </div>
+    </div>
+
     <div id="profile-photo-modal" class="fixed inset-0 z-[90] hidden items-center justify-center bg-black/80 p-4 sm:p-8" role="dialog" aria-modal="true" aria-label="프로필 사진 확대 보기">
         <button type="button" id="profile-photo-modal-close" class="absolute top-5 right-5 z-10 w-11 h-11 rounded-full bg-white/90 text-black hover:bg-[var(--accent-red)] hover:text-white transition-colors flex items-center justify-center" aria-label="프로필 사진 닫기">
             <i class="ph ph-x text-xl"></i>
@@ -1463,6 +1479,13 @@
         const membershipRefreshBtn = document.getElementById('membership-refresh-btn');
         const membershipSearch = document.getElementById('membership-search');
         const membershipSearchCount = document.getElementById('membership-search-count');
+        const membershipDetailModal = document.getElementById('membership-detail-modal');
+        const membershipDetailClose = document.getElementById('membership-detail-close');
+        const membershipDetailTitle = document.getElementById('membership-detail-title');
+        const membershipDetailMeta = document.getElementById('membership-detail-meta');
+        const membershipDetailDate = document.getElementById('membership-detail-date');
+        const membershipDetailAnswers = document.getElementById('membership-detail-answers');
+        const membershipDetailActions = document.getElementById('membership-detail-actions');
         const membersStatus = document.getElementById('members-status');
         const membersTableWrap = document.getElementById('members-table-wrap');
         const membersTableBody = document.getElementById('members-table-body');
@@ -1734,6 +1757,82 @@
             profilePhotoModalClose.focus();
         }
 
+        function closeMembershipDetail() {
+            membershipDetailModal.classList.add('hidden');
+            membershipDetailModal.classList.remove('flex');
+            membershipDetailAnswers.replaceChildren();
+            membershipDetailActions.replaceChildren();
+            membershipDetailActions.classList.add('hidden');
+            membershipDetailActions.classList.remove('flex');
+            if (profilePhotoModal.classList.contains('hidden')) {
+                document.body.classList.remove('overflow-hidden');
+            }
+        }
+
+        function openMembershipDetail(item, fields, canManage, name, metaText) {
+            membershipDetailTitle.textContent = name;
+            membershipDetailMeta.textContent = metaText;
+            const submittedAt = new Date(item.submittedAt);
+            membershipDetailDate.textContent = Number.isNaN(submittedAt.getTime()) ? '' : submittedAt.toLocaleDateString('ko-KR');
+            membershipDetailAnswers.replaceChildren();
+            fields.forEach(field => {
+                const group = document.createElement('dl');
+                group.className = 'border-t border-[var(--border-light)] pt-4 min-w-0';
+                const label = document.createElement('dt');
+                label.className = 'text-xs opacity-45 mb-2 leading-relaxed';
+                label.textContent = field.label || 'Answer';
+                const value = document.createElement('dd');
+                value.className = 'font-serif-ko text-sm sm:text-base leading-relaxed whitespace-pre-wrap break-words';
+                if (field.photoUrls.length) {
+                    value.className = 'grid grid-cols-3 sm:grid-cols-4 gap-2';
+                    field.photoUrls.forEach((url, index) => {
+                        const button = document.createElement('button');
+                        button.type = 'button';
+                        button.className = 'aspect-square overflow-hidden bg-black/5 cursor-zoom-in';
+                        button.setAttribute('aria-label', `${name} 첨부 사진 ${index + 1} 확대`);
+                        const image = document.createElement('img');
+                        image.src = url;
+                        image.alt = `${name} 첨부 사진 ${index + 1}`;
+                        image.loading = 'lazy';
+                        image.className = 'w-full h-full object-cover hover:scale-105 transition-transform duration-300';
+                        button.appendChild(image);
+                        button.addEventListener('click', () => openMembershipPhoto(url, name));
+                        value.appendChild(button);
+                    });
+                } else {
+                    value.textContent = field.displayValue;
+                }
+                group.append(label, value);
+                membershipDetailAnswers.appendChild(group);
+            });
+
+            membershipDetailActions.replaceChildren();
+            membershipDetailActions.classList.toggle('hidden', !canManage);
+            membershipDetailActions.classList.toggle('flex', canManage);
+            if (canManage) {
+                const visibility = document.createElement('button');
+                visibility.type = 'button';
+                visibility.className = 'border border-[var(--text-dark)] px-5 py-2.5 text-xs tracking-widest uppercase';
+                visibility.textContent = item.isHidden ? '다시 표시' : '숨기기';
+                visibility.addEventListener('click', async () => {
+                    if (await manageMembershipApplication(item.isHidden ? 'show' : 'hide', item.submissionId)) closeMembershipDetail();
+                });
+                const remove = document.createElement('button');
+                remove.type = 'button';
+                remove.className = 'bg-[var(--accent-red)] text-white px-5 py-2.5 text-xs tracking-widest uppercase';
+                remove.textContent = '삭제';
+                remove.addEventListener('click', async () => {
+                    if (await manageMembershipApplication('delete', item.submissionId)) closeMembershipDetail();
+                });
+                membershipDetailActions.append(visibility, remove);
+            }
+
+            membershipDetailModal.classList.remove('hidden');
+            membershipDetailModal.classList.add('flex');
+            document.body.classList.add('overflow-hidden');
+            membershipDetailClose.focus();
+        }
+
         function renderMembershipApplications(items, canManage = false) {
             membershipList.innerHTML = '';
             if (!items.length) {
@@ -1811,47 +1910,11 @@
                 const detailsButton = document.createElement('button');
                 detailsButton.type = 'button';
                 detailsButton.className = 'mt-4 pt-3 border-t border-[var(--border-light)] text-[0.65rem] tracking-widest uppercase flex items-center justify-between hover:text-[var(--accent-red)]';
-                detailsButton.innerHTML = '<span>전체 답변</span><i class="ph ph-caret-down transition-transform"></i>';
+                detailsButton.innerHTML = '<span>전체 답변</span><i class="ph ph-arrow-up-right"></i>';
+                detailsButton.setAttribute('aria-haspopup', 'dialog');
+                detailsButton.addEventListener('click', () => openMembershipDetail(item, fields, canManage, name, meta.textContent));
                 body.append(titleLine, meta, detailsButton);
-
-                const answers = document.createElement('dl');
-                answers.className = 'hidden col-span-full grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5 bg-white/50 px-5 py-6 border-t border-[var(--border-light)]';
-                fields.forEach(field => {
-                    const group = document.createElement('div');
-                    group.className = 'border-t border-[var(--border-light)] pt-3';
-                    const label = document.createElement('dt');
-                    label.className = 'text-xs opacity-45 mb-2 leading-relaxed';
-                    label.textContent = field.label || 'Answer';
-                    const value = document.createElement('dd');
-                    value.className = 'font-serif-ko text-sm leading-relaxed whitespace-pre-wrap break-words';
-                    value.textContent = field.photoUrls.length ? `첨부 사진 ${field.photoUrls.length}장` : field.displayValue;
-                    group.append(label, value);
-                    answers.appendChild(group);
-                });
-                if (canManage) {
-                    const actions = document.createElement('div');
-                    actions.className = 'sm:col-span-2 flex justify-end gap-3 pt-4 border-t border-[var(--border-light)]';
-                    const visibility = document.createElement('button');
-                    visibility.type = 'button';
-                    visibility.className = 'border border-[var(--text-dark)] px-4 py-2 text-xs tracking-widest uppercase';
-                    visibility.textContent = item.isHidden ? '다시 표시' : '숨기기';
-                    visibility.addEventListener('click', () => manageMembershipApplication(item.isHidden ? 'show' : 'hide', item.submissionId));
-                    const remove = document.createElement('button');
-                    remove.type = 'button';
-                    remove.className = 'bg-[var(--accent-red)] text-white px-4 py-2 text-xs tracking-widest uppercase';
-                    remove.textContent = '삭제';
-                    remove.addEventListener('click', () => manageMembershipApplication('delete', item.submissionId));
-                    actions.append(visibility, remove);
-                    answers.appendChild(actions);
-                }
-                detailsButton.addEventListener('click', () => {
-                    const willOpen = answers.classList.contains('hidden');
-                    answers.classList.toggle('hidden', !willOpen);
-                    detailsButton.querySelector('i')?.classList.toggle('rotate-180', willOpen);
-                    detailsButton.setAttribute('aria-expanded', String(willOpen));
-                });
-                detailsButton.setAttribute('aria-expanded', 'false');
-                card.append(photoButton, body, answers);
+                card.append(photoButton, body);
                 membershipList.appendChild(card);
             });
         }
@@ -1872,7 +1935,7 @@
             const message = action === 'delete'
                 ? '이 가입 신청 기록을 영구 삭제하시겠습니까? 삭제 후에는 복구할 수 없습니다.'
                 : action === 'hide' ? '이 가입 신청 기록을 목록에서 숨기시겠습니까?' : '이 가입 신청 기록을 다시 표시하시겠습니까?';
-            if (!window.confirm(message)) return;
+            if (!window.confirm(message)) return false;
             const body = new FormData();
             body.append('action', action);
             body.append('submissionId', submissionId);
@@ -1882,8 +1945,10 @@
                 if (!response.ok) throw new Error(payload.error || '가입 신청 기록을 관리하지 못했습니다.');
                 await loadMembershipApplications();
                 showToast(action === 'delete' ? '가입 신청 기록을 삭제했습니다.' : action === 'hide' ? '가입 신청 기록을 숨겼습니다.' : '가입 신청 기록을 다시 표시했습니다.', true);
+                return true;
             } catch (error) {
                 showToast(error.message, false);
+                return false;
             }
         }
 
@@ -2611,7 +2676,9 @@
             profilePhotoModal.classList.add('hidden');
             profilePhotoModal.classList.remove('flex');
             profilePhotoModalImage.removeAttribute('src');
-            document.body.classList.remove('overflow-hidden');
+            if (membershipDetailModal.classList.contains('hidden')) {
+                document.body.classList.remove('overflow-hidden');
+            }
         }
 
         function renderProfileAvatar(container, profile, cacheBust = false) {
@@ -3853,17 +3920,17 @@
             }
         });
         window.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape' && !galleryModal?.classList.contains('hidden')) {
-                closeGalleryModal();
-            }
-            if (event.key === 'Escape' && !profilePhotoModal?.classList.contains('hidden')) {
-                closeProfilePhoto();
-            }
-            if (event.key === 'Escape' && !smBarModal?.classList.contains('hidden')) {
-                closeSmBarModal();
-            }
+            if (event.key !== 'Escape') return;
+            if (!profilePhotoModal?.classList.contains('hidden')) return closeProfilePhoto();
+            if (!membershipDetailModal?.classList.contains('hidden')) return closeMembershipDetail();
+            if (!galleryModal?.classList.contains('hidden')) return closeGalleryModal();
+            if (!smBarModal?.classList.contains('hidden')) closeSmBarModal();
         });
 
+        membershipDetailClose?.addEventListener('click', closeMembershipDetail);
+        membershipDetailModal?.addEventListener('click', event => {
+            if (event.target === membershipDetailModal) closeMembershipDetail();
+        });
         profilePhotoModalClose?.addEventListener('click', closeProfilePhoto);
         profilePhotoModal?.addEventListener('click', event => {
             if (event.target === profilePhotoModal) closeProfilePhoto();
