@@ -625,28 +625,13 @@
         </section>
 
         <section id="view-read" class="w-full fade-in">
-            <div class="mb-12 md:mb-16 border-b border-[var(--border-light)] pb-12 md:pb-16 grid md:grid-cols-[1fr_auto] items-end gap-8">
-                <div>
-                    <span class="block text-[var(--accent-red)] text-xs font-bold tracking-[0.3em] uppercase mb-6">Our Story Today</span>
-                    <h1 class="text-5xl md:text-7xl font-serif-en italic font-light leading-[0.95] tracking-tight">
-                        Latest from<br>Our Story.
-                    </h1>
-                </div>
-                <p class="max-w-md text-sm leading-7 opacity-60 md:text-right">
-                    새로운 정보와 기록, 함께한 순간을<br class="hidden md:block"> 가장 최근 소식부터 한곳에서 만나보세요.
+            <div class="mb-14 md:mb-20 border-b border-[var(--border-light)] pb-12 md:pb-16 flex flex-col md:flex-row items-end justify-between gap-8">
+                <h1 class="text-5xl md:text-7xl font-serif-ko font-light leading-tight tracking-tight">
+                    기록이 모여<br>우리가 되는 시간.
+                </h1>
+                <p class="text-sm tracking-widest uppercase opacity-60 font-serif-en text-right">
+                    Putting a Moment of Peace<br>to Cities Around the World
                 </p>
-            </div>
-
-            <div id="latest-summary" class="grid grid-cols-3 md:grid-cols-4 border-y border-[var(--border-light)] mb-12"></div>
-
-            <div class="flex justify-between items-end mb-7">
-                <div>
-                    <p class="text-xs tracking-[0.25em] uppercase text-[var(--accent-red)] font-bold mb-2">Recently</p>
-                    <h2 class="text-2xl md:text-3xl font-serif-ko font-bold">새로 올라온 이야기</h2>
-                </div>
-                <button type="button" id="latest-refresh-btn" class="text-xs opacity-50 tracking-widest uppercase hover:text-[var(--accent-red)] hover:opacity-100 transition-colors flex items-center gap-2">
-                    <i class="ph ph-arrow-clockwise"></i> Refresh
-                </button>
             </div>
 
             <div id="latest-dashboard">
@@ -1399,8 +1384,6 @@
         let localStories = [];
         const form = document.getElementById('story-form');
         const latestDashboard = document.getElementById('latest-dashboard');
-        const latestSummary = document.getElementById('latest-summary');
-        const latestRefreshBtn = document.getElementById('latest-refresh-btn');
         const submitBtn = document.getElementById('submit-btn');
         const calendarGrid = document.getElementById('calendar-grid');
         const calendarMonthYear = document.getElementById('calendar-month-year');
@@ -2991,19 +2974,12 @@
             }
         });
 
-        const latestTypeMeta = {
-            'sm-info': { icon: 'ph-book-open-text', label: 'SM INFO' },
-            album: { icon: 'ph-images', label: 'ACTIVITY ALBUM' },
-            'sm-bar': { icon: 'ph-martini', label: 'SM BAR' },
-            timeline: { icon: 'ph-chat-circle-text', label: 'TIMELINE' }
-        };
-
         function latestDate(value) {
             if (!value) return '';
             const normalized = value.includes('T') ? value : `${value.replace(' ', 'T')}Z`;
             const date = new Date(normalized);
             if (Number.isNaN(date.getTime())) return value;
-            return date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'short', day: 'numeric' });
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
         }
 
         function openLatestItem(item) {
@@ -3034,113 +3010,103 @@
             });
         }
 
-        function renderLatestSummary(counts = {}) {
-            const entries = [
-                ['SM Info', counts.smInfo ?? 0],
-                ['Albums', counts.albums ?? 0],
-                ['SM Bars', counts.bars ?? 0]
-            ];
-            if (Object.prototype.hasOwnProperty.call(counts, 'timelines')) entries.push(['Timelines', counts.timelines]);
-            latestSummary.className = 'grid border-y border-[var(--border-light)] mb-12';
-            latestSummary.style.gridTemplateColumns = `repeat(${entries.length}, minmax(0, 1fr))`;
-            latestSummary.innerHTML = '';
-            entries.forEach(([label, count], index) => {
-                const item = document.createElement('div');
-                item.className = `${index ? 'border-l' : ''} border-[var(--border-light)] px-3 md:px-6 py-5 text-center`;
-                const number = document.createElement('strong');
-                number.className = 'block text-2xl md:text-3xl font-serif-en font-normal';
-                number.textContent = String(count);
-                const name = document.createElement('span');
-                name.className = 'block mt-1 text-[0.6rem] md:text-xs tracking-widest uppercase opacity-45';
-                name.textContent = label;
-                item.append(number, name);
-                latestSummary.appendChild(item);
-            });
-        }
-
         function renderLatestDashboard(items) {
             latestDashboard.innerHTML = '';
-            if (!items.length) {
-                latestDashboard.innerHTML = '<div class="border-y border-[var(--border-light)] py-20 text-center text-sm opacity-50">아직 등록된 최신 소식이 없습니다.</div>';
-                return;
-            }
+            const columns = [
+                { type: 'sm-info', title: 'SM 정보', target: 'view-sm-board' },
+                { type: 'sm-bar', title: 'SM Bar List', target: 'view-sm-bar-list' },
+                { type: 'album', title: 'Activity Album', target: 'view-gallery' }
+            ];
+            const grid = document.createElement('div');
+            grid.className = 'grid grid-cols-1 lg:grid-cols-3 gap-y-12 lg:gap-x-10';
 
-            const featured = items[0];
-            const meta = latestTypeMeta[featured.type] || latestTypeMeta['sm-info'];
-            const feature = document.createElement('article');
-            feature.className = 'group grid md:grid-cols-2 border-y border-[var(--text-dark)] cursor-pointer bg-white/15';
-            const visual = document.createElement('div');
-            visual.className = 'min-h-56 md:min-h-80 overflow-hidden bg-[var(--accent-red)]/10 flex items-center justify-center';
-            if (featured.imageUrl) {
-                const image = document.createElement('img');
-                image.src = featured.imageUrl;
-                image.alt = featured.title;
-                image.className = 'w-full h-full min-h-56 md:min-h-80 object-cover group-hover:scale-[1.03] transition-transform duration-700';
-                visual.appendChild(image);
-            } else {
-                const icon = document.createElement('i');
-                icon.className = `ph ${meta.icon} text-[var(--accent-red)] text-7xl opacity-75 group-hover:scale-110 transition-transform`;
-                visual.appendChild(icon);
-            }
-            const body = document.createElement('div');
-            body.className = 'p-7 md:p-12 flex flex-col justify-center border-t md:border-t-0 md:border-l border-[var(--border-light)]';
-            const category = document.createElement('p');
-            category.className = 'text-xs font-bold tracking-[0.24em] text-[var(--accent-red)] mb-5';
-            category.textContent = `${meta.label} · ${latestDate(featured.occurredAt)}`;
-            const title = document.createElement('h3');
-            title.className = 'text-3xl md:text-5xl font-serif-ko font-bold leading-tight group-hover:text-[var(--accent-red)] transition-colors';
-            title.textContent = featured.title;
-            const summary = document.createElement('p');
-            summary.className = 'mt-5 text-sm md:text-base leading-7 opacity-65 line-clamp-3';
-            summary.textContent = featured.summary || '새로운 소식이 등록되었습니다.';
-            const more = document.createElement('p');
-            more.className = 'mt-8 pt-5 border-t border-dashed border-[var(--border-light)] text-xs tracking-widest uppercase flex items-center justify-between';
-            more.innerHTML = '<span>View update</span><i class="ph ph-arrow-up-right text-lg text-[var(--accent-red)]"></i>';
-            body.append(category, title, summary, more);
-            feature.append(visual, body);
-            makeLatestInteractive(feature, featured);
-            latestDashboard.appendChild(feature);
+            columns.forEach(column => {
+                const section = document.createElement('section');
+                const heading = document.createElement('div');
+                heading.className = 'flex items-end justify-between gap-4 pb-4 border-b border-[var(--text-dark)]';
+                const title = document.createElement('h2');
+                title.className = 'text-2xl font-serif-ko font-bold';
+                title.textContent = column.title;
+                const more = document.createElement('button');
+                more.type = 'button';
+                more.className = 'shrink-0 text-xs tracking-widest opacity-55 hover:text-[var(--accent-red)] hover:opacity-100 transition-colors';
+                more.textContent = '더보기';
+                more.addEventListener('click', () => document.querySelector(`.view-trigger[data-target="${column.target}"]`)?.click());
+                heading.append(title, more);
 
-            if (items.length === 1) return;
-            const list = document.createElement('div');
-            list.className = 'mt-12 border-t border-[var(--text-dark)]';
-            items.slice(1).forEach(item => {
-                const itemMeta = latestTypeMeta[item.type] || latestTypeMeta['sm-info'];
-                const row = document.createElement('article');
-                row.className = 'group grid grid-cols-[2.5rem_1fr_auto] md:grid-cols-[2.5rem_9rem_1fr_10rem_auto] gap-4 md:gap-7 items-start md:items-center py-6 border-b border-[var(--border-light)] cursor-pointer';
-                const icon = document.createElement('i');
-                icon.className = `ph ${itemMeta.icon} text-2xl text-[var(--accent-red)]`;
-                const type = document.createElement('p');
-                type.className = 'hidden md:block text-[0.65rem] tracking-[0.2em] font-bold opacity-45';
-                type.textContent = itemMeta.label;
-                const copy = document.createElement('div');
-                const title = document.createElement('h3');
-                title.className = 'font-serif-ko text-lg md:text-xl font-bold group-hover:text-[var(--accent-red)] transition-colors';
-                title.textContent = item.title;
-                const summary = document.createElement('p');
-                summary.className = 'text-sm opacity-55 line-clamp-1 mt-2';
-                summary.textContent = item.summary || item.authorName || '';
-                copy.append(title, summary);
-                const date = document.createElement('p');
-                date.className = 'hidden md:block text-xs opacity-45 text-right';
-                date.textContent = latestDate(item.occurredAt);
-                const arrow = document.createElement('i');
-                arrow.className = 'ph ph-arrow-right text-lg opacity-35 group-hover:opacity-100 group-hover:text-[var(--accent-red)] transition-colors';
-                row.append(icon, type, copy, date, arrow);
-                makeLatestInteractive(row, item);
-                list.appendChild(row);
+                const list = document.createElement('div');
+                const entries = items.filter(item => item.type === column.type).slice(0, 4);
+                if (!entries.length) {
+                    const empty = document.createElement('p');
+                    empty.className = 'py-12 text-center text-sm opacity-40 border-b border-[var(--border-light)]';
+                    empty.textContent = '아직 등록된 내용이 없습니다.';
+                    list.appendChild(empty);
+                }
+                entries.forEach((item, index) => {
+                    const row = document.createElement('article');
+                    row.className = 'group grid grid-cols-[minmax(0,1fr)_auto] gap-4 items-center py-4 border-b border-[var(--border-light)] cursor-pointer';
+                    const itemTitle = document.createElement('h3');
+                    itemTitle.className = `${index === 0 ? 'text-[var(--accent-red)] font-bold' : ''} text-sm md:text-[0.95rem] truncate group-hover:text-[var(--accent-red)] transition-colors`;
+                    itemTitle.textContent = item.title;
+                    const date = document.createElement('time');
+                    date.className = 'text-[0.65rem] opacity-40 whitespace-nowrap font-serif-en';
+                    date.textContent = latestDate(item.occurredAt);
+                    row.append(itemTitle, date);
+                    makeLatestInteractive(row, item);
+                    list.appendChild(row);
+                });
+                section.append(heading, list);
+                grid.appendChild(section);
             });
-            latestDashboard.appendChild(list);
+            latestDashboard.appendChild(grid);
+
+            const timelineItems = items.filter(item => item.type === 'timeline').slice(0, 4);
+            if (timelineItems.length) {
+                const timeline = document.createElement('section');
+                timeline.className = 'mt-16 md:mt-20';
+                const heading = document.createElement('div');
+                heading.className = 'flex items-end justify-between gap-4 pb-4 border-b border-[var(--text-dark)]';
+                const title = document.createElement('h2');
+                title.className = 'text-2xl font-serif-ko font-bold';
+                title.textContent = 'Recent Timeline';
+                const more = document.createElement('button');
+                more.type = 'button';
+                more.className = 'text-xs tracking-widest opacity-55 hover:text-[var(--accent-red)] hover:opacity-100';
+                more.textContent = '더보기';
+                more.addEventListener('click', () => document.querySelector('.view-trigger[data-target="view-people"]')?.click());
+                heading.append(title, more);
+                const list = document.createElement('div');
+                list.className = 'grid md:grid-cols-2 md:gap-x-10';
+                timelineItems.forEach(item => {
+                    const row = document.createElement('article');
+                    row.className = 'group py-5 border-b border-[var(--border-light)] cursor-pointer';
+                    const top = document.createElement('div');
+                    top.className = 'flex justify-between gap-4 mb-2';
+                    const author = document.createElement('strong');
+                    author.className = 'text-sm group-hover:text-[var(--accent-red)]';
+                    author.textContent = `${item.title} ${item.authorName || ''}`.trim();
+                    const date = document.createElement('time');
+                    date.className = 'text-[0.65rem] opacity-40 whitespace-nowrap';
+                    date.textContent = latestDate(item.occurredAt);
+                    const content = document.createElement('p');
+                    content.className = 'text-sm opacity-65 truncate';
+                    content.textContent = item.summary;
+                    top.append(author, date);
+                    row.append(top, content);
+                    makeLatestInteractive(row, item);
+                    list.appendChild(row);
+                });
+                timeline.append(heading, list);
+                latestDashboard.appendChild(timeline);
+            }
         }
 
         async function loadLatestDashboard() {
             if (!latestDashboard) return;
-            latestRefreshBtn?.classList.add('opacity-30', 'pointer-events-none');
             try {
                 const response = await fetch('/api/latest.php', { headers: { Accept: 'application/json' }, cache: 'no-store' });
                 const payload = await response.json();
                 if (!response.ok) throw new Error(payload.error || '최신 소식을 불러오지 못했습니다.');
-                renderLatestSummary(payload.counts || {});
                 renderLatestDashboard(payload.items || []);
             } catch (error) {
                 latestDashboard.innerHTML = '';
@@ -3148,12 +3114,8 @@
                 message.className = 'border-y border-[var(--border-light)] py-16 text-center text-sm text-[var(--accent-red)]';
                 message.textContent = error.message;
                 latestDashboard.appendChild(message);
-            } finally {
-                latestRefreshBtn?.classList.remove('opacity-30', 'pointer-events-none');
             }
         }
-
-        latestRefreshBtn?.addEventListener('click', loadLatestDashboard);
 
         async function initAuth() {
             if (!auth) {
