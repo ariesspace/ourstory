@@ -50,7 +50,8 @@ if ($method === 'GET' && $action === 'members') {
     $rows = $pdo->query(
         'SELECT u.id, u.username, u.display_name, u.region, u.personality, u.relationship_style, u.bio, u.avatar_stored_name,
                 (SELECT COUNT(*) FROM timeline_posts t WHERE t.user_id = u.id) AS post_count
-         FROM users u WHERE u.is_active = 1
+         FROM users u
+         WHERE u.is_active = 1 AND u.role NOT IN (\'superuser\', \'admin\')
          ORDER BY CASE u.role WHEN \'superuser\' THEN 1 WHEN \'admin\' THEN 2 ELSE 3 END,
                   u.display_name COLLATE NOCASE, u.id'
     )->fetchAll();
