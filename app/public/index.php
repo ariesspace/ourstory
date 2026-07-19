@@ -129,6 +129,10 @@
             opacity: 1;
             pointer-events: auto;
         }
+        #mobile-menu section > p {
+            color: var(--accent-red);
+            font-weight: 600;
+        }
 
 
         input:focus, textarea:focus { outline: none; }
