@@ -864,8 +864,9 @@
 
         document.getElementById('login-form').addEventListener('submit', async (event) => {
             event.preventDefault();
+            const loginForm = event.currentTarget;
             const errorElement = document.getElementById('login-error');
-            const submitButton = event.currentTarget.querySelector('button[type="submit"]');
+            const submitButton = loginForm.querySelector('button[type="submit"]');
             errorElement.classList.add('hidden');
             submitButton.disabled = true;
 
@@ -883,7 +884,7 @@
                 if (!response.ok) throw new Error(payload.error || '로그인에 실패했습니다.');
 
                 applySiteAuth(payload.user, payload.csrfToken);
-                event.currentTarget.reset();
+                loginForm.reset();
                 showToast(`${payload.user.displayName}님, 환영합니다.`, true);
                 document.querySelector('.view-trigger[data-target="view-system-members"]').click();
             } catch (error) {
