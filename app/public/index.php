@@ -188,10 +188,14 @@
                 :our story
             </div>
 
-            <div class="flex justify-end items-center gap-6 text-sm tracking-widest w-1/3">
+            <div class="flex justify-end items-center gap-3 lg:gap-6 text-sm tracking-widest w-1/3">
                 <span id="current-date" class="hidden lg:block opacity-70"></span>
                 <button class="hidden md:block opacity-70 hover:opacity-100 transition-opacity uppercase tracking-widest text-xs view-trigger" data-target="view-login" id="login-nav-btn">
                     Login
+                </button>
+                <button type="button" id="header-logout-btn" class="logout-trigger hidden opacity-55 hover:opacity-100 hover:text-[var(--accent-red)] transition-colors" title="Logout" aria-label="Logout">
+                    <i class="ph ph-sign-out text-lg md:hidden"></i>
+                    <span class="hidden md:inline text-xs uppercase tracking-widest">Logout</span>
                 </button>
                 <button class="view-trigger flex items-center justify-center w-10 h-10 bg-[var(--accent-red)] text-white rounded-full hover:scale-110 transition-transform" data-target="view-write" title="Write a story">
                     <i class="ph ph-plus text-lg"></i>
@@ -269,7 +273,7 @@
                     </div>
 
                     <div id="submenu-system" class="submenu-content hidden">
-                        <div class="grid grid-cols-2 gap-x-12 gap-y-8">
+                        <div class="grid grid-cols-1 gap-y-8">
                             <div>
                                 <h4 class="font-serif-en italic text-xl mb-4 border-b border-[var(--border-light)] pb-2 flex items-center gap-2">
                                     <i class="ph ph-gear-six"></i> members
@@ -279,17 +283,11 @@
                                     <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-system-add">회원 추가</li>
                                 </ul>
                             </div>
-                            <div>
-                                <h4 class="font-serif-en italic text-xl mb-4 border-b border-[var(--border-light)] pb-2 flex items-center gap-2">
-                                    <i class="ph ph-shield-check"></i> session
-                                </h4>
-                                <button type="button" class="logout-trigger text-sm opacity-70 hover:text-[var(--accent-red)]">Logout</button>
-                            </div>
                         </div>
                     </div>
 
                     <div id="submenu-mypage" class="submenu-content hidden">
-                        <div class="grid grid-cols-2 gap-x-12 gap-y-8">
+                        <div class="grid grid-cols-1 gap-y-8">
                             <div>
                                 <h4 class="font-serif-en italic text-xl mb-4 border-b border-[var(--border-light)] pb-2 flex items-center gap-2">
                                     <i class="ph ph-user-circle"></i> account
@@ -298,12 +296,6 @@
                                     <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-my-page">Profile</li>
                                     <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-my-timeline">My Timeline</li>
                                 </ul>
-                            </div>
-                            <div>
-                                <h4 class="font-serif-en italic text-xl mb-4 border-b border-[var(--border-light)] pb-2 flex items-center gap-2">
-                                    <i class="ph ph-sign-out"></i> session
-                                </h4>
-                                <button type="button" class="logout-trigger text-sm opacity-70 hover:text-[var(--accent-red)]">Logout</button>
                             </div>
                         </div>
                     </div>
@@ -338,7 +330,6 @@
                     <div class="grid gap-2">
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-system-members">회원 관리</button>
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-system-add">회원 추가</button>
-                        <button type="button" class="logout-trigger text-left py-3 border-b border-[var(--border-light)]">Logout</button>
                     </div>
                 </section>
                 <section id="mobile-my-page-section" class="hidden">
@@ -453,8 +444,7 @@
                     <input type="password" id="my-password" minlength="10" maxlength="128" autocomplete="new-password" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" placeholder="변경할 때만 입력하세요">
                 </div>
                 <p id="my-page-error" class="hidden text-sm text-[var(--accent-red)] text-center"></p>
-                <div class="flex items-center justify-between gap-4 pt-4">
-                    <button type="button" class="logout-trigger text-sm tracking-widest uppercase opacity-50">Logout</button>
+                <div class="flex items-center justify-end gap-4 pt-4">
                     <button type="submit" id="my-page-submit" class="bg-[var(--accent-red)] text-white px-8 py-4 text-sm tracking-widest uppercase">Save Profile</button>
                 </div>
             </form>
@@ -1110,6 +1100,7 @@
         const mobileMyPageSection = document.getElementById('mobile-my-page-section');
         const loginNavBtn = document.getElementById('login-nav-btn');
         const mobileLoginBtn = document.getElementById('mobile-login-btn');
+        const headerLogoutBtn = document.getElementById('header-logout-btn');
         const logoutTriggers = document.querySelectorAll('.logout-trigger');
         const viewTriggers = document.querySelectorAll('.view-trigger');
         const views = document.querySelectorAll('main > section[id^="view-"]');
@@ -1298,6 +1289,7 @@
             myPageNavLink.classList.toggle('hidden', !user);
             mobileSystemSection.classList.toggle('hidden', !isManager);
             mobileMyPageSection.classList.toggle('hidden', !user);
+            headerLogoutBtn.classList.toggle('hidden', !user);
             document.getElementById('sm-write-btn').classList.toggle('hidden', !user);
             document.getElementById('sm-bar-add-btn').classList.toggle('hidden', !user);
             document.getElementById('gallery-write-btn').classList.toggle('hidden', !user);
