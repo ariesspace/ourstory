@@ -721,7 +721,7 @@
             </div>
 
             <p id="intro-status" class="py-16 text-center text-sm opacity-50 font-serif-ko">자기소개를 불러오는 중입니다.</p>
-            <div id="intro-list" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
+            <div id="intro-list" class="border-t-2 border-[var(--text-dark)]"></div>
         </section>
 
         <section id="view-sm-board" class="w-full view-hidden fade-in">
@@ -1520,26 +1520,38 @@
                     .map(field => ({ ...field, displayValue: formatIntroductionAnswer(field) }))
                     .filter(field => field.displayValue);
                 const nickname = fields.find(field => /닉네임|nickname/i.test(field.label || ''));
+                const birthYear = fields.find(field => /출생년도|birth\s*year/i.test(field.label || ''));
+                const tendency = fields.find(field => /주성향|연애 유형/i.test(field.label || ''));
                 const card = document.createElement('article');
-                card.className = 'bg-white/35 backdrop-blur-sm border border-[var(--border-light)] rounded-sm shadow-sm p-6 sm:p-8';
-
-                const meta = document.createElement('div');
-                meta.className = 'flex items-center justify-between gap-4 mb-6';
+                card.className = 'border-b border-[var(--border-light)]';
+                const summary = document.createElement('button');
+                summary.type = 'button';
+                summary.className = 'w-full grid grid-cols-[3rem_1fr_auto] md:grid-cols-[4rem_1.2fr_0.7fr_1.5fr_auto_1.5rem] items-center gap-3 md:gap-5 py-5 text-left hover:text-[var(--accent-red)] transition-colors';
                 const sequence = document.createElement('span');
-                sequence.className = 'text-xs tracking-widest uppercase opacity-40';
-                sequence.textContent = `Introduction ${String(index + 1).padStart(2, '0')}`;
+                sequence.className = 'text-xs tracking-widest opacity-40 text-center';
+                sequence.textContent = String(items.length - index).padStart(2, '0');
+                const title = document.createElement('strong');
+                title.className = 'font-serif-ko text-lg truncate';
+                title.textContent = nickname?.displayValue || '익명의 자기소개';
+                const birth = document.createElement('span');
+                birth.className = 'hidden md:block text-sm opacity-55';
+                birth.textContent = birthYear?.displayValue || '-';
+                const type = document.createElement('span');
+                type.className = 'hidden md:block text-sm opacity-55 truncate';
+                type.textContent = tendency?.displayValue || '-';
                 const date = document.createElement('time');
-                date.className = 'text-xs opacity-40';
+                date.className = 'text-xs opacity-40 whitespace-nowrap';
                 const submittedAt = new Date(item.submittedAt);
                 date.textContent = Number.isNaN(submittedAt.getTime()) ? '' : submittedAt.toLocaleDateString('ko-KR');
-                meta.append(sequence, date);
-
-                const title = document.createElement('h3');
-                title.className = 'text-3xl font-serif-ko font-bold mb-7';
-                title.textContent = nickname?.displayValue || '익명의 자기소개';
+                const arrow = document.createElement('i');
+                arrow.className = 'ph ph-caret-down hidden md:block transition-transform';
+                const mobileMeta = document.createElement('span');
+                mobileMeta.className = 'md:hidden col-start-2 col-span-2 text-xs opacity-45 truncate';
+                mobileMeta.textContent = [birthYear?.displayValue, tendency?.displayValue].filter(Boolean).join(' · ');
+                summary.append(sequence, title, birth, type, date, arrow, mobileMeta);
 
                 const answers = document.createElement('dl');
-                answers.className = 'grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5';
+                answers.className = 'hidden grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5 bg-white/30 px-6 sm:px-10 py-8 border-t border-[var(--border-light)]';
                 fields.filter(field => field !== nickname).forEach(field => {
                     const group = document.createElement('div');
                     group.className = 'border-t border-[var(--border-light)] pt-3';
@@ -1552,8 +1564,14 @@
                     group.append(label, value);
                     answers.appendChild(group);
                 });
-
-                card.append(meta, title, answers);
+                summary.addEventListener('click', () => {
+                    const willOpen = answers.classList.contains('hidden');
+                    answers.classList.toggle('hidden', !willOpen);
+                    arrow.classList.toggle('rotate-180', willOpen);
+                    summary.setAttribute('aria-expanded', String(willOpen));
+                });
+                summary.setAttribute('aria-expanded', 'false');
+                card.append(summary, answers);
                 introList.appendChild(card);
             });
         }
