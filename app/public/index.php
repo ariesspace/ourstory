@@ -180,7 +180,7 @@
                     <button class="nav-link uppercase" data-menu="members">Members</button>
                     <button class="nav-link uppercase" data-menu="schedule">Schedule</button>
                     <button class="nav-link uppercase hidden" data-menu="system" id="system-nav-link">System</button>
-                    <button class="nav-link view-trigger uppercase whitespace-nowrap hidden" data-target="view-my-page" id="my-page-nav-link">My Page</button>
+                    <button class="nav-link uppercase whitespace-nowrap hidden" data-menu="mypage" id="my-page-nav-link">My Page</button>
                 </nav>
             </div>
 
@@ -286,6 +286,26 @@
                             </div>
                         </div>
                     </div>
+
+                    <div id="submenu-mypage" class="submenu-content hidden">
+                        <div class="grid grid-cols-2 gap-x-12 gap-y-8">
+                            <div>
+                                <h4 class="font-serif-en italic text-xl mb-4 border-b border-[var(--border-light)] pb-2 flex items-center gap-2">
+                                    <i class="ph ph-user-circle"></i> account
+                                </h4>
+                                <ul class="space-y-4 text-sm opacity-70">
+                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-my-page">Profile</li>
+                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-my-timeline">My Timeline</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-serif-en italic text-xl mb-4 border-b border-[var(--border-light)] pb-2 flex items-center gap-2">
+                                    <i class="ph ph-sign-out"></i> session
+                                </h4>
+                                <button type="button" class="logout-trigger text-sm opacity-70 hover:text-[var(--accent-red)]">Logout</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -320,7 +340,8 @@
                 <section id="mobile-my-page-section" class="hidden">
                     <p class="font-serif-en italic text-xl mb-4">Account</p>
                     <div class="grid gap-2">
-                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-my-page">My Page</button>
+                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-my-page">Profile</button>
+                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-my-timeline">My Timeline</button>
                     </div>
                 </section>
                 <button type="button" id="mobile-login-btn" class="view-trigger w-full py-3 text-sm tracking-widest uppercase border border-[var(--text-dark)]" data-target="view-login">Login</button>
@@ -420,7 +441,10 @@
                     <button type="submit" id="my-page-submit" class="bg-[var(--accent-red)] text-white px-8 py-4 text-sm tracking-widest uppercase">Save Profile</button>
                 </div>
             </form>
-            <div id="my-timeline-section" class="hidden mt-16">
+        </section>
+
+        <section id="view-my-timeline" class="w-full max-w-3xl mx-auto view-hidden fade-in py-8">
+            <div id="my-timeline-section" class="hidden">
                 <div class="flex items-end justify-between gap-4 mb-6 border-b border-[var(--border-light)] pb-5">
                     <div>
                         <span class="text-xs tracking-[0.3em] uppercase opacity-45">My Timeline</span>
@@ -1083,6 +1107,8 @@
                     menuImage.src = 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&q=80&w=800';
                 } else if (menuName === 'system') {
                     menuImage.src = 'https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&q=80&w=800';
+                } else if (menuName === 'mypage') {
+                    menuImage.src = 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=800';
                 }
 
                 megaMenu.classList.add('open');
@@ -1107,6 +1133,10 @@
                     targetId = 'view-login';
                 }
                 if (targetId === 'view-my-page' && !siteUser) {
+                    showToast('로그인이 필요합니다.', false);
+                    targetId = 'view-login';
+                }
+                if (targetId === 'view-my-timeline' && !siteUser) {
                     showToast('로그인이 필요합니다.', false);
                     targetId = 'view-login';
                 }
@@ -1141,6 +1171,7 @@
                 if (targetId === 'view-introduce') loadIntroductions();
                 if (targetId === 'view-system-members') loadMembers();
                 if (targetId === 'view-my-page') loadMyProfile();
+                if (targetId === 'view-my-timeline') loadMyTimeline();
                 if (targetId === 'view-sm-board') loadSmBoard();
                 if (targetId === 'view-gallery') loadActivityAlbums();
                 if (targetId === 'view-people') loadPeopleDirectory();
@@ -2082,7 +2113,6 @@
                 fillMyProfile(payload.profile);
                 myPageStatus.classList.add('hidden');
                 myPageForm.classList.remove('hidden');
-                await loadMyTimeline();
             } catch (error) {
                 myPageStatus.textContent = error.message;
             }
