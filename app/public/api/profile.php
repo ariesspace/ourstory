@@ -17,7 +17,7 @@ function profile_row(PDO $pdo, int $userId): array
 {
     $stmt = $pdo->prepare(
         'SELECT id, username, display_name, role, birth_year, region, personality,
-                relationship_style, bio
+                relationship_style, bio, avatar_stored_name
          FROM users
          WHERE id = :id AND is_active = 1'
     );
@@ -37,6 +37,9 @@ function profile_row(PDO $pdo, int $userId): array
         'personality' => $row['personality'],
         'relationshipStyle' => $row['relationship_style'],
         'bio' => $row['bio'],
+        'avatarUrl' => $row['avatar_stored_name'] !== ''
+            ? '/api/avatar.php?username=' . rawurlencode($row['username']) . '&version=' . rawurlencode($row['avatar_stored_name'])
+            : '',
     ];
 }
 

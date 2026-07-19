@@ -228,6 +228,8 @@ function site_migrate_user_profile_columns(PDO $pdo): void
         'personality' => "TEXT NOT NULL DEFAULT ''",
         'relationship_style' => "TEXT NOT NULL DEFAULT ''",
         'bio' => "TEXT NOT NULL DEFAULT ''",
+        'avatar_stored_name' => "TEXT NOT NULL DEFAULT ''",
+        'avatar_mime_type' => "TEXT NOT NULL DEFAULT ''",
     ];
 
     foreach ($definitions as $name => $definition) {

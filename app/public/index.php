@@ -393,6 +393,22 @@
             </div>
             <p id="my-page-status" class="py-14 text-center text-sm opacity-50">프로필을 불러오는 중입니다.</p>
             <form id="my-page-form" class="hidden bg-white/35 border border-[var(--border-light)] rounded-sm shadow-sm p-6 sm:p-10 space-y-8">
+                <div class="flex flex-col sm:flex-row items-center gap-6 border-b border-[var(--border-light)] pb-8">
+                    <div id="my-avatar-preview-wrap" class="w-28 h-28 shrink-0 rounded-full overflow-hidden bg-[var(--accent-red)] text-white flex items-center justify-center text-4xl font-serif-en italic">
+                        <img id="my-avatar-preview" class="hidden w-full h-full object-cover" alt="내 프로필 사진">
+                        <span id="my-avatar-fallback"></span>
+                    </div>
+                    <div class="text-center sm:text-left">
+                        <p class="text-xs tracking-widest uppercase opacity-60 mb-3">Profile Photo <span class="normal-case opacity-50">(선택)</span></p>
+                        <input type="file" id="my-avatar-input" class="hidden" accept="image/jpeg,image/png,image/gif,image/webp">
+                        <div class="flex flex-wrap justify-center sm:justify-start gap-2">
+                            <label for="my-avatar-input" class="cursor-pointer border border-[var(--border-light)] bg-white/40 px-5 py-3 text-xs tracking-widest uppercase hover:border-[var(--accent-red)] transition-colors">사진 선택</label>
+                            <button type="button" id="my-avatar-remove" class="hidden px-4 py-3 text-xs tracking-widest uppercase text-[var(--accent-red)]">사진 삭제</button>
+                        </div>
+                        <p class="text-xs opacity-45 mt-3">JPG, PNG, GIF, WEBP · 최대 5MB</p>
+                        <p id="my-avatar-error" class="hidden text-xs text-[var(--accent-red)] mt-2"></p>
+                    </div>
+                </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-7">
                     <div>
                         <label for="my-username" class="block text-xs tracking-widest uppercase opacity-60 mb-3">로그인 ID</label>
@@ -1338,6 +1354,11 @@
         const myPageStatus = document.getElementById('my-page-status');
         const myPageForm = document.getElementById('my-page-form');
         const myPageError = document.getElementById('my-page-error');
+        const myAvatarInput = document.getElementById('my-avatar-input');
+        const myAvatarPreview = document.getElementById('my-avatar-preview');
+        const myAvatarFallback = document.getElementById('my-avatar-fallback');
+        const myAvatarRemove = document.getElementById('my-avatar-remove');
+        const myAvatarError = document.getElementById('my-avatar-error');
         const myTimelineSection = document.getElementById('my-timeline-section');
         const myTimelineForm = document.getElementById('my-timeline-form');
         const myTimelineInput = document.getElementById('my-timeline-input');
@@ -1902,7 +1923,29 @@
             }
         });
 
-        function fillMyProfile(profile) {
+        function profileInitial(profile) {
+            return (profile.displayName || profile.username || '?').trim().charAt(0).toUpperCase();
+        }
+
+        function renderProfileAvatar(container, profile, cacheBust = false) {
+            container.replaceChildren();
+            const initial = profileInitial(profile);
+            if (!profile.avatarUrl) {
+                container.textContent = initial;
+                return;
+            }
+            const image = document.createElement('img');
+            image.className = 'w-full h-full object-cover';
+            image.alt = `${profile.displayName || profile.username} 프로필 사진`;
+            image.src = `${profile.avatarUrl}${profile.avatarUrl.includes('?') ? '&' : '?'}v=${cacheBust ? Date.now() : '1'}`;
+            image.addEventListener('error', () => {
+                container.replaceChildren();
+                container.textContent = initial;
+            }, { once: true });
+            container.appendChild(image);
+        }
+
+        function fillMyProfile(profile, cacheBust = false) {
             document.getElementById('my-username').value = profile.username || '';
             document.getElementById('my-role').value = profile.role || '';
             document.getElementById('my-display-name').value = profile.displayName || '';
@@ -1912,6 +1955,22 @@
             document.getElementById('my-relationship-style').value = profile.relationshipStyle || '';
             document.getElementById('my-bio').value = profile.bio || '';
             document.getElementById('my-password').value = '';
+            myAvatarFallback.textContent = profileInitial(profile);
+            if (profile.avatarUrl) {
+                myAvatarPreview.src = `${profile.avatarUrl}&v=${cacheBust ? Date.now() : '1'}`;
+                myAvatarPreview.classList.remove('hidden');
+                myAvatarFallback.classList.add('hidden');
+                myAvatarRemove.classList.remove('hidden');
+                myAvatarPreview.onerror = () => {
+                    myAvatarPreview.classList.add('hidden');
+                    myAvatarFallback.classList.remove('hidden');
+                };
+            } else {
+                myAvatarPreview.removeAttribute('src');
+                myAvatarPreview.classList.add('hidden');
+                myAvatarFallback.classList.remove('hidden');
+                myAvatarRemove.classList.add('hidden');
+            }
         }
 
         function formatTimelineDate(value) {
@@ -1939,8 +1998,8 @@
                 const article = document.createElement('article');
                 article.className = 'flex gap-4 py-6 border-b border-[var(--border-light)]';
                 const avatar = document.createElement('div');
-                avatar.className = 'w-12 h-12 shrink-0 rounded-full bg-[var(--accent-red)] text-white flex items-center justify-center font-serif-en italic text-xl';
-                avatar.textContent = (profile.displayName || profile.username).trim().charAt(0).toUpperCase();
+                avatar.className = 'w-12 h-12 shrink-0 rounded-full overflow-hidden bg-[var(--accent-red)] text-white flex items-center justify-center font-serif-en italic text-xl';
+                renderProfileAvatar(avatar, profile);
                 const body = document.createElement('div');
                 body.className = 'min-w-0 flex-1';
                 const header = document.createElement('div');
@@ -2046,12 +2105,14 @@
                 payload.items.forEach(profile => {
                     const card = document.createElement('button');
                     card.type = 'button';
-                    card.className = 'text-left bg-white/35 border border-[var(--border-light)] p-6 hover:border-[var(--accent-red)] hover:-translate-y-1 transition-all';
+                    card.className = 'text-left overflow-hidden bg-white/35 border border-[var(--border-light)] hover:border-[var(--accent-red)] hover:-translate-y-1 transition-all';
+                    const portrait = document.createElement('span');
+                    portrait.className = 'flex w-full aspect-[4/3] overflow-hidden bg-[var(--accent-red)]/90 text-white items-center justify-center text-6xl font-serif-en italic';
+                    renderProfileAvatar(portrait, profile);
+                    const details = document.createElement('span');
+                    details.className = 'block p-6';
                     const top = document.createElement('div');
                     top.className = 'flex items-center gap-4';
-                    const avatar = document.createElement('span');
-                    avatar.className = 'w-14 h-14 rounded-full bg-[var(--accent-red)] text-white flex items-center justify-center text-2xl font-serif-en italic';
-                    avatar.textContent = (profile.displayName || profile.username).trim().charAt(0).toUpperCase();
                     const identity = document.createElement('span');
                     identity.className = 'min-w-0';
                     const name = document.createElement('strong');
@@ -2061,14 +2122,15 @@
                     username.className = 'block text-xs opacity-45 mt-1 truncate';
                     username.textContent = `@${profile.username}`;
                     identity.append(name, username);
-                    top.append(avatar, identity);
+                    top.append(identity);
                     const bio = document.createElement('p');
                     bio.className = 'text-sm opacity-60 mt-5 line-clamp-2 min-h-[2.5rem]';
                     bio.textContent = profile.bio || '아직 자기소개가 없습니다.';
                     const meta = document.createElement('p');
                     meta.className = 'text-xs opacity-40 mt-5 pt-4 border-t border-[var(--border-light)]';
                     meta.textContent = `${profile.region || '지역 미입력'} · Timeline ${profile.postCount}`;
-                    card.append(top, bio, meta);
+                    details.append(top, bio, meta);
+                    card.append(portrait, details);
                     card.addEventListener('click', () => openMemberTimeline(profile.username));
                     peopleList.appendChild(card);
                 });
@@ -2087,7 +2149,7 @@
                 const payload = await response.json();
                 if (!response.ok) throw new Error(payload.error || '회원 타임라인을 불러오지 못했습니다.');
                 const profile = payload.profile;
-                document.getElementById('member-profile-avatar').textContent = (profile.displayName || profile.username).trim().charAt(0).toUpperCase();
+                renderProfileAvatar(document.getElementById('member-profile-avatar'), profile);
                 document.getElementById('member-profile-name').textContent = profile.displayName;
                 document.getElementById('member-profile-username').textContent = `@${profile.username}`;
                 document.getElementById('member-profile-meta').textContent = [profile.region, profile.personality, profile.relationshipStyle].filter(Boolean).join(' · ') || '공개 프로필 정보가 없습니다.';
@@ -2117,6 +2179,57 @@
                 myPageStatus.textContent = error.message;
             }
         }
+
+        myAvatarInput?.addEventListener('change', async () => {
+            const file = myAvatarInput.files?.[0];
+            myAvatarError.classList.add('hidden');
+            if (!file) return;
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            if (!allowedTypes.includes(file.type) || file.size > 5 * 1024 * 1024) {
+                myAvatarError.textContent = 'JPG, PNG, GIF, WEBP 형식의 5MB 이하 사진을 선택해 주세요.';
+                myAvatarError.classList.remove('hidden');
+                myAvatarInput.value = '';
+                return;
+            }
+            const body = new FormData();
+            body.append('action', 'upload');
+            body.append('avatar', file, file.name);
+            myAvatarInput.disabled = true;
+            try {
+                const response = await fetch('/api/avatar.php', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken || '' }, body });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '프로필 사진을 저장하지 못했습니다.');
+                await loadMyProfile();
+                myAvatarPreview.src = `${payload.avatarUrl}&v=${Date.now()}`;
+                showToast('프로필 사진을 저장했습니다.', true);
+            } catch (error) {
+                myAvatarError.textContent = error.message;
+                myAvatarError.classList.remove('hidden');
+            } finally {
+                myAvatarInput.disabled = false;
+                myAvatarInput.value = '';
+            }
+        });
+
+        myAvatarRemove?.addEventListener('click', async () => {
+            if (!window.confirm('프로필 사진을 삭제하시겠습니까?')) return;
+            myAvatarError.classList.add('hidden');
+            const body = new FormData();
+            body.append('action', 'remove');
+            myAvatarRemove.disabled = true;
+            try {
+                const response = await fetch('/api/avatar.php', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken || '' }, body });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '프로필 사진을 삭제하지 못했습니다.');
+                await loadMyProfile();
+                showToast('프로필 사진을 삭제했습니다.', true);
+            } catch (error) {
+                myAvatarError.textContent = error.message;
+                myAvatarError.classList.remove('hidden');
+            } finally {
+                myAvatarRemove.disabled = false;
+            }
+        });
 
         myPageForm?.addEventListener('submit', async event => {
             event.preventDefault();

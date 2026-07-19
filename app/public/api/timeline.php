@@ -31,6 +31,9 @@ function timeline_public_profile(array $row): array
         'personality' => $row['personality'],
         'relationshipStyle' => $row['relationship_style'],
         'bio' => $row['bio'],
+        'avatarUrl' => $row['avatar_stored_name'] !== ''
+            ? '/api/avatar.php?username=' . rawurlencode($row['username']) . '&version=' . rawurlencode($row['avatar_stored_name'])
+            : '',
     ];
 }
 
@@ -45,7 +48,7 @@ $action = (string) ($_GET['action'] ?? $_POST['action'] ?? 'profile');
 
 if ($method === 'GET' && $action === 'members') {
     $rows = $pdo->query(
-        'SELECT u.id, u.username, u.display_name, u.region, u.personality, u.relationship_style, u.bio,
+        'SELECT u.id, u.username, u.display_name, u.region, u.personality, u.relationship_style, u.bio, u.avatar_stored_name,
                 (SELECT COUNT(*) FROM timeline_posts t WHERE t.user_id = u.id) AS post_count
          FROM users u WHERE u.is_active = 1
          ORDER BY CASE u.role WHEN \'superuser\' THEN 1 WHEN \'admin\' THEN 2 ELSE 3 END,
@@ -62,7 +65,7 @@ if ($method === 'GET' && $action === 'members') {
 if ($method === 'GET' && $action === 'profile') {
     $username = trim((string) ($_GET['username'] ?? $viewer['username']));
     $stmt = $pdo->prepare(
-        'SELECT id, username, display_name, region, personality, relationship_style, bio
+        'SELECT id, username, display_name, region, personality, relationship_style, bio, avatar_stored_name
          FROM users WHERE username = :username COLLATE NOCASE AND is_active = 1'
     );
     $stmt->execute([':username' => $username]);
