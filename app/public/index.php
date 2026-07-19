@@ -244,7 +244,7 @@
                                     <i class="ph ph-users"></i> directory
                                 </h4>
                                 <ul class="space-y-4 text-sm opacity-70">
-                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-people">All Members</li>
+                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-people">Our Stories</li>
                                     <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-membership-archive">Membership Archive</li>
                                 </ul>
                             </div>
@@ -319,7 +319,7 @@
                 <section>
                     <p class="font-serif-en italic text-xl mb-4">Community</p>
                     <div class="grid gap-2">
-                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-people">All Members</button>
+                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-people">Our Stories</button>
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-membership-archive">Membership Archive</button>
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-schedule">Monthly Schedule</button>
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-gallery">Activity Album</button>
@@ -877,10 +877,10 @@
 
             <div class="flex justify-between items-end mb-10">
                 <div>
-                    <h2 class="text-xl font-bold tracking-widest uppercase">Our Members</h2>
+                    <h2 class="text-xl font-bold tracking-widest uppercase">Our Stories</h2>
                     <p class="text-xs opacity-45 mt-2">계정이 생성되어 있고 현재 활성 상태인 회원만 표시됩니다.</p>
                 </div>
-                <span class="text-xs opacity-50 tracking-widest uppercase">Active Directory</span>
+                <span class="text-xs opacity-50 tracking-widest uppercase">Member Timelines</span>
             </div>
 
             <div class="mb-8 border-b border-[var(--text-dark)] flex items-center gap-3">
@@ -896,7 +896,7 @@
         </section>
 
         <section id="view-member-profile" class="w-full max-w-3xl mx-auto view-hidden fade-in py-8">
-            <button type="button" class="view-trigger text-xs tracking-widest uppercase opacity-60 mb-10" data-target="view-people"><i class="ph ph-arrow-left mr-2"></i>Members</button>
+            <button type="button" class="view-trigger text-xs tracking-widest uppercase opacity-60 mb-10" data-target="view-people"><i class="ph ph-arrow-left mr-2"></i>Our Stories</button>
             <div class="border-b border-[var(--border-light)] pb-10 mb-8 flex items-start gap-5">
                 <div id="member-profile-avatar" class="w-20 h-20 shrink-0 rounded-full overflow-hidden bg-[var(--accent-red)] text-white flex items-center justify-center text-3xl font-serif-en italic"></div>
                 <div class="min-w-0">
@@ -3133,6 +3133,38 @@
             memberEditModal.classList.remove('flex');
         }
 
+        async function deleteMember(member) {
+            if (!member.canDelete) {
+                showToast('이 계정을 삭제할 권한이 없습니다.', false);
+                return;
+            }
+            const confirmed = window.confirm(
+                `${member.displayName} (@${member.username}) 계정을 삭제하시겠습니까?\n\n` +
+                '회원 목록에서 즉시 제거되며, 이 계정이 작성한 타임라인·게시글·앨범도 함께 삭제됩니다. 이 작업은 되돌릴 수 없습니다.'
+            );
+            if (!confirmed) return;
+
+            try {
+                const response = await fetch('/api/users.php', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        'X-CSRF-Token': csrfToken || ''
+                    },
+                    body: JSON.stringify({ id: member.id })
+                });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '회원을 삭제하지 못했습니다.');
+
+                peopleDirectoryItems = peopleDirectoryItems.filter(profile => profile.id !== member.id);
+                await loadMembers();
+                showToast(`${member.displayName} 계정을 삭제했습니다.`, true);
+            } catch (error) {
+                showToast(error.message, false);
+            }
+        }
+
         function renderMembers(items) {
             membersTableBody.innerHTML = '';
             items.forEach(member => {
@@ -3153,7 +3185,9 @@
                 });
 
                 const actionCell = document.createElement('td');
-                actionCell.className = 'p-5';
+                actionCell.className = 'p-5 whitespace-nowrap';
+                const actionGroup = document.createElement('div');
+                actionGroup.className = 'flex items-center gap-4';
                 const editButton = document.createElement('button');
                 editButton.type = 'button';
                 editButton.className = member.canEdit
@@ -3165,7 +3199,19 @@
                     event.stopPropagation();
                     openMemberEditor(member);
                 });
-                actionCell.appendChild(editButton);
+                actionGroup.appendChild(editButton);
+                if (member.canDelete) {
+                    const deleteButton = document.createElement('button');
+                    deleteButton.type = 'button';
+                    deleteButton.className = 'text-xs text-[var(--accent-red)] underline hover:opacity-60';
+                    deleteButton.textContent = '삭제';
+                    deleteButton.addEventListener('click', event => {
+                        event.stopPropagation();
+                        deleteMember(member);
+                    });
+                    actionGroup.appendChild(deleteButton);
+                }
+                actionCell.appendChild(actionGroup);
                 row.appendChild(actionCell);
 
                 if (member.canEdit) {

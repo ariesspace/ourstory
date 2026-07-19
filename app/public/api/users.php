@@ -92,6 +92,9 @@ if ($method === 'GET') {
     )->fetchAll();
     $items = array_map(static function (array $row) use ($actor): array {
         $canEdit = $actor['role'] === 'superuser' || $row['role'] === 'member';
+        $canDelete = (int) $row['id'] !== (int) $actor['id']
+            && $row['role'] !== 'superuser'
+            && ($actor['role'] === 'superuser' || $row['role'] === 'member');
         return [
             'id' => (int) $row['id'],
             'username' => $row['username'],
@@ -106,13 +109,14 @@ if ($method === 'GET') {
             'createdAt' => $row['created_at'],
             'lastLoginAt' => $row['last_login_at'],
             'canEdit' => $canEdit,
+            'canDelete' => $canDelete,
         ];
     }, $rows);
     users_json(['items' => $items, 'actorRole' => $actor['role']]);
 }
 
-if (!in_array($method, ['POST', 'PATCH'], true)) {
-    header('Allow: GET, POST, PATCH');
+if (!in_array($method, ['POST', 'PATCH', 'DELETE'], true)) {
+    header('Allow: GET, POST, PATCH, DELETE');
     users_json(['error' => 'Method not allowed.'], 405);
 }
 
@@ -162,7 +166,20 @@ if (!$target) {
     users_json(['error' => '회원을 찾을 수 없습니다.'], 404);
 }
 if ($actor['role'] !== 'superuser' && $target['role'] !== 'member') {
-    users_json(['error' => 'Admin은 Member 계정만 수정할 수 있습니다.'], 403);
+    users_json(['error' => 'Admin은 Member 계정만 관리할 수 있습니다.'], 403);
+}
+
+if ($method === 'DELETE') {
+    if ((int) $target['id'] === (int) $actor['id']) {
+        users_json(['error' => '현재 로그인한 본인 계정은 삭제할 수 없습니다.'], 422);
+    }
+    if ($target['role'] === 'superuser') {
+        users_json(['error' => 'Superuser 계정은 삭제할 수 없습니다.'], 422);
+    }
+
+    $stmt = $pdo->prepare('DELETE FROM users WHERE id = :id');
+    $stmt->execute([':id' => $targetId]);
+    users_json(['ok' => true]);
 }
 
 [$username, $displayName, $password, $role] = users_validate_account($body, false);
