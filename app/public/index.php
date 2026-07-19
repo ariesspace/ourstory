@@ -220,7 +220,6 @@
                                     <i class="ph ph-book-open"></i> records
                                 </h4>
                                 <ul class="space-y-4 text-sm opacity-70">
-                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-introduce">Self Introduce</li>
                                     <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-write">Write New Story</li>
                                     <li class="hover:text-[var(--accent-red)] cursor-pointer opacity-50">Monthly Archive</li>
                                 </ul>
@@ -245,6 +244,7 @@
                                 </h4>
                                 <ul class="space-y-4 text-sm opacity-70">
                                     <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-people">All Members</li>
+                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-introduce">Membership Archive</li>
                                 </ul>
                             </div>
                         </div>
@@ -308,7 +308,6 @@
                     <p class="font-serif-en italic text-xl mb-4">Journal</p>
                     <div class="grid gap-2">
                         <p class="pt-1 pb-2 text-[0.65rem] tracking-[0.25em] uppercase text-[var(--accent-red)] font-bold">Records</p>
-                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-introduce">Self Introduce</button>
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-write">Write New Story</button>
                         <p class="pt-5 pb-2 text-[0.65rem] tracking-[0.25em] uppercase text-[var(--accent-red)] font-bold">Information</p>
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-sm-board">SM 정보</button>
@@ -319,6 +318,7 @@
                     <p class="font-serif-en italic text-xl mb-4">Community</p>
                     <div class="grid gap-2">
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-people">All Members</button>
+                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-introduce">Membership Archive</button>
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-schedule">Monthly Schedule</button>
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-gallery">Activity Album</button>
                     </div>
@@ -373,7 +373,7 @@
                 </form>
 
                 <div class="mt-8 text-center text-xs opacity-60">
-                    <p>아직 멤버가 아니신가요? <button class="underline hover:text-[var(--accent-red)] transition-colors ml-1">초대장 요청하기</button></p>
+                    <p>아직 멤버가 아니신가요? <a href="https://tally.so/r/m66BrY" target="_blank" rel="noopener noreferrer" class="underline hover:text-[var(--accent-red)] transition-colors ml-1">가입 신청하기</a></p>
                 </div>
             </div>
         </section>
@@ -682,32 +682,32 @@
 
         <section id="view-introduce" class="w-full view-hidden fade-in">
             <div class="w-full py-16 md:py-20 mb-10 flex flex-col justify-center items-center text-center border-b border-[var(--border-light)]">
-                <span class="text-xs tracking-[0.3em] uppercase opacity-50 font-bold mb-5">Journal</span>
-                <h1 class="text-5xl md:text-8xl font-serif-en italic tracking-tighter">Self Introduce</h1>
-                <p class="mt-6 text-sm opacity-60 font-serif-ko leading-relaxed px-4">Tally로 접수된 자기소개가 이곳에 자동으로 기록됩니다.</p>
+                <span class="text-xs tracking-[0.3em] uppercase opacity-50 font-bold mb-5">Members</span>
+                <h1 class="text-5xl md:text-8xl font-serif-en italic tracking-tighter">Membership Archive</h1>
+                <p class="mt-6 text-sm opacity-60 font-serif-ko leading-relaxed px-4">가입 신청 당시 제출한 Tally 폼을 계정 상태와 관계없이 기록합니다.</p>
             </div>
 
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
                 <div>
-                    <h2 class="text-xl font-bold tracking-widest uppercase">Introductions</h2>
-                    <p class="text-xs opacity-45 mt-2">새 응답은 Tally 웹훅을 통해 자동 반영됩니다.</p>
+                    <h2 class="text-xl font-bold tracking-widest uppercase">Application Records</h2>
+                    <p class="text-xs opacity-45 mt-2">신규 신청과 이전 회원의 제출 기록을 함께 보관하며, 새 응답은 자동 반영됩니다.</p>
                 </div>
                 <div class="flex items-center gap-3">
-                    <button type="button" id="intro-refresh-btn" class="w-10 h-10 border border-[var(--border-light)] rounded-full flex items-center justify-center hover:border-[var(--accent-red)] transition-colors" aria-label="자기소개 새로고침">
+                    <button type="button" id="intro-refresh-btn" class="w-10 h-10 border border-[var(--border-light)] rounded-full flex items-center justify-center hover:border-[var(--accent-red)] transition-colors" aria-label="가입 신청 기록 새로고침">
                         <i class="ph ph-arrow-clockwise"></i>
                     </button>
-                    <a href="https://tally.so/r/m66BrY" target="_blank" rel="noopener noreferrer" class="bg-[var(--accent-red)] text-white px-6 py-3 text-xs tracking-widest uppercase hover:bg-red-700 transition-colors">Write Introduction</a>
+                    <a href="https://tally.so/r/m66BrY" target="_blank" rel="noopener noreferrer" class="bg-[var(--accent-red)] text-white px-6 py-3 text-xs tracking-widest uppercase hover:bg-red-700 transition-colors">Open Application Form</a>
                 </div>
             </div>
 
             <div class="mb-7 border-b border-[var(--text-dark)] flex items-center gap-3">
                 <i class="ph ph-magnifying-glass text-xl opacity-45" aria-hidden="true"></i>
-                <label for="intro-search" class="sr-only">자기소개 검색</label>
+                <label for="intro-search" class="sr-only">가입 신청 기록 검색</label>
                 <input type="search" id="intro-search" class="w-full bg-transparent py-4 outline-none placeholder:opacity-40" placeholder="닉네임, 출생년도, 성향, MBTI 또는 답변 검색">
                 <span id="intro-search-count" class="shrink-0 text-xs tracking-widest uppercase opacity-45"></span>
             </div>
 
-            <p id="intro-status" class="py-16 text-center text-sm opacity-50 font-serif-ko">자기소개를 불러오는 중입니다.</p>
+            <p id="intro-status" class="py-16 text-center text-sm opacity-50 font-serif-ko">가입 신청 기록을 불러오는 중입니다.</p>
             <div id="intro-list" class="border-t-2 border-[var(--text-dark)]"></div>
         </section>
 
@@ -842,8 +842,11 @@
             </div>
 
             <div class="flex justify-between items-end mb-10">
-                <h2 class="text-xl font-bold tracking-widest uppercase">Our Members</h2>
-                <span class="text-xs opacity-50 tracking-widest uppercase">Directory</span>
+                <div>
+                    <h2 class="text-xl font-bold tracking-widest uppercase">Our Members</h2>
+                    <p class="text-xs opacity-45 mt-2">계정이 생성되어 있고 현재 활성 상태인 회원만 표시됩니다.</p>
+                </div>
+                <span class="text-xs opacity-50 tracking-widest uppercase">Active Directory</span>
             </div>
 
             <div class="mb-8 border-b border-[var(--text-dark)] flex items-center gap-3">
@@ -1225,6 +1228,10 @@
                     showToast('로그인이 필요합니다.', false);
                     targetId = 'view-login';
                 }
+                if (targetId === 'view-introduce' && !siteUser) {
+                    showToast('가입 신청 기록은 회원 로그인 후 볼 수 있습니다.', false);
+                    targetId = 'view-login';
+                }
                 if (targetId === 'view-sm-editor' && !siteUser) {
                     showToast('게시글 작성은 로그인이 필요합니다.', false);
                     targetId = 'view-login';
@@ -1513,7 +1520,7 @@
             introList.innerHTML = '';
 
             if (!items.length) {
-                introStatus.textContent = introSearch.value.trim() ? '검색 결과가 없습니다.' : '아직 등록된 자기소개가 없습니다.';
+                introStatus.textContent = introSearch.value.trim() ? '검색 결과가 없습니다.' : '아직 등록된 가입 신청 기록이 없습니다.';
                 introStatus.classList.remove('hidden');
                 return;
             }
@@ -1536,7 +1543,7 @@
                 sequence.textContent = String(items.length - index).padStart(2, '0');
                 const title = document.createElement('strong');
                 title.className = 'font-serif-ko text-lg truncate';
-                title.textContent = nickname?.displayValue || '익명의 자기소개';
+                title.textContent = nickname?.displayValue || '이름 미입력 신청서';
                 if (item.isHidden) {
                     const hiddenBadge = document.createElement('span');
                     hiddenBadge.className = 'ml-2 text-[0.65rem] tracking-widest uppercase text-[var(--accent-red)]';
@@ -1616,8 +1623,8 @@
 
         async function manageIntroduction(action, submissionId) {
             const message = action === 'delete'
-                ? '이 자기소개를 영구 삭제하시겠습니까? 삭제 후에는 복구할 수 없습니다.'
-                : action === 'hide' ? '이 자기소개를 목록에서 숨기시겠습니까?' : '이 자기소개를 다시 표시하시겠습니까?';
+                ? '이 가입 신청 기록을 영구 삭제하시겠습니까? 삭제 후에는 복구할 수 없습니다.'
+                : action === 'hide' ? '이 가입 신청 기록을 목록에서 숨기시겠습니까?' : '이 가입 신청 기록을 다시 표시하시겠습니까?';
             if (!window.confirm(message)) return;
             const body = new FormData();
             body.append('action', action);
@@ -1625,9 +1632,9 @@
             try {
                 const response = await fetch('/api/tally-introductions.php', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken || '' }, body });
                 const payload = await response.json();
-                if (!response.ok) throw new Error(payload.error || '자기소개를 관리하지 못했습니다.');
+                if (!response.ok) throw new Error(payload.error || '가입 신청 기록을 관리하지 못했습니다.');
                 await loadIntroductions();
-                showToast(action === 'delete' ? '자기소개를 삭제했습니다.' : action === 'hide' ? '자기소개를 숨겼습니다.' : '자기소개를 다시 표시했습니다.', true);
+                showToast(action === 'delete' ? '가입 신청 기록을 삭제했습니다.' : action === 'hide' ? '가입 신청 기록을 숨겼습니다.' : '가입 신청 기록을 다시 표시했습니다.', true);
             } catch (error) {
                 showToast(error.message, false);
             }
@@ -1636,7 +1643,7 @@
         async function loadIntroductions() {
             if (!introList || !introStatus) return;
 
-            introStatus.textContent = '자기소개를 불러오는 중입니다.';
+            introStatus.textContent = '가입 신청 기록을 불러오는 중입니다.';
             introStatus.classList.remove('hidden');
 
             try {
@@ -1649,7 +1656,7 @@
             } catch (error) {
                 console.error('Introduction Load Error:', error);
                 introList.innerHTML = '';
-                introStatus.textContent = '자기소개를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.';
+                introStatus.textContent = '가입 신청 기록을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.';
             }
         }
 
