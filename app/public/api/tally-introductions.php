@@ -36,9 +36,6 @@ $viewer = site_current_user($pdo);
 $canManage = $viewer && in_array($viewer['role'], ['superuser', 'admin'], true);
 
 if ($method === 'GET') {
-    if (!$viewer) {
-        json_response(['error' => '회원 로그인이 필요합니다.'], 401);
-    }
     $visibility = $canManage ? '' : ' AND is_hidden = 0';
     $rows = $pdo->query(
         'SELECT submission_id, respondent_id, form_name, submitted_at, fields_json, is_hidden
