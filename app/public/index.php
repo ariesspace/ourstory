@@ -1055,10 +1055,7 @@
                     <div><label for="sm-bar-entrance-fee" class="block text-xs tracking-widest uppercase opacity-60 mb-2">Entrance Fee</label><input type="text" id="sm-bar-entrance-fee" maxlength="100" placeholder="예: 20,000원 / 무료" class="w-full bg-transparent border-b border-[var(--border-light)] py-3"></div>
                 </div>
                 <div><label for="sm-bar-address" class="block text-xs tracking-widest uppercase opacity-60 mb-2">Address</label><input type="text" id="sm-bar-address" maxlength="250" class="w-full bg-transparent border-b border-[var(--border-light)] py-3"></div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div><label for="sm-bar-twitter" class="block text-xs tracking-widest uppercase opacity-60 mb-2">Twitter / X</label><input type="text" id="sm-bar-twitter" maxlength="100" placeholder="@BarMA_Official" class="w-full bg-transparent border-b border-[var(--border-light)] py-3"></div>
-                    <div><label for="sm-bar-website" class="block text-xs tracking-widest uppercase opacity-60 mb-2">Website</label><input type="text" id="sm-bar-website" maxlength="500" placeholder="https:// 또는 @계정" class="w-full bg-transparent border-b border-[var(--border-light)] py-3"></div>
-                </div>
+                <div><label for="sm-bar-twitter" class="block text-xs tracking-widest uppercase opacity-60 mb-2">Twitter / X</label><input type="text" id="sm-bar-twitter" maxlength="100" placeholder="@username" class="w-full bg-transparent border-b border-[var(--border-light)] py-3"></div>
                 <div><label for="sm-bar-description" class="block text-xs tracking-widest uppercase opacity-60 mb-2">Information</label><textarea id="sm-bar-description" maxlength="1000" rows="5" class="w-full bg-transparent border border-[var(--border-light)] p-4 resize-y"></textarea></div>
                 <p id="sm-bar-form-error" class="hidden text-sm text-[var(--accent-red)] text-center"></p>
                 <div class="flex justify-end gap-3 pt-3">
@@ -1660,7 +1657,6 @@
             document.getElementById('sm-bar-address').value = item?.address || '';
             document.getElementById('sm-bar-entrance-fee').value = item?.entranceFee || '';
             document.getElementById('sm-bar-twitter').value = item?.twitterAccount || '';
-            document.getElementById('sm-bar-website').value = item?.websiteUrl || '';
             document.getElementById('sm-bar-description').value = item?.description || '';
             smBarModal.classList.remove('hidden');
             smBarModal.classList.add('flex');
@@ -1717,15 +1713,6 @@
                     twitter.className = 'inline-block md:block underline underline-offset-4';
                     twitter.textContent = item.twitterAccount;
                     link.appendChild(twitter);
-                }
-                if (item.websiteUrl) {
-                    const anchor = document.createElement('a');
-                    anchor.href = item.websiteUrl;
-                    anchor.target = '_blank';
-                    anchor.rel = 'noopener noreferrer';
-                    anchor.className = 'inline-flex items-center gap-1 underline underline-offset-4';
-                    anchor.innerHTML = 'Website <i class="ph ph-arrow-up-right"></i>';
-                    link.appendChild(anchor);
                 }
                 content.append(identity, info, link);
                 const manage = document.createElement('div');
@@ -1800,7 +1787,6 @@
             body.append('address', document.getElementById('sm-bar-address').value.trim());
             body.append('entranceFee', document.getElementById('sm-bar-entrance-fee').value.trim());
             body.append('twitterAccount', document.getElementById('sm-bar-twitter').value.trim());
-            body.append('websiteUrl', document.getElementById('sm-bar-website').value.trim());
             body.append('description', document.getElementById('sm-bar-description').value.trim());
             const submit = document.getElementById('sm-bar-submit');
             submit.disabled = true;
