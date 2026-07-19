@@ -158,6 +158,18 @@ function site_migrate(PDO $pdo): void
     );
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_activity_albums_created_at ON activity_albums (created_at DESC)');
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_activity_album_photos_album_id ON activity_album_photos (album_id, sort_order, id)');
+
+    $pdo->exec(
+        'CREATE TABLE IF NOT EXISTS timeline_posts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            content TEXT NOT NULL,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )'
+    );
+    $pdo->exec('CREATE INDEX IF NOT EXISTS idx_timeline_posts_user_created ON timeline_posts (user_id, created_at DESC, id DESC)');
 }
 
 function site_migrate_user_roles(PDO $pdo): void

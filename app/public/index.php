@@ -420,6 +420,24 @@
                     <button type="submit" id="my-page-submit" class="bg-[var(--accent-red)] text-white px-8 py-4 text-sm tracking-widest uppercase">Save Profile</button>
                 </div>
             </form>
+            <div id="my-timeline-section" class="hidden mt-16">
+                <div class="flex items-end justify-between gap-4 mb-6 border-b border-[var(--border-light)] pb-5">
+                    <div>
+                        <span class="text-xs tracking-[0.3em] uppercase opacity-45">My Timeline</span>
+                        <h2 class="text-3xl font-serif-en italic mt-2">What’s happening?</h2>
+                    </div>
+                    <span id="my-timeline-count" class="text-xs opacity-45">0 posts</span>
+                </div>
+                <form id="my-timeline-form" class="bg-white/35 border border-[var(--border-light)] p-5 sm:p-7 mb-8">
+                    <textarea id="my-timeline-input" maxlength="500" rows="4" class="w-full bg-transparent resize-none leading-relaxed" placeholder="지금의 생각이나 근황을 편하게 남겨보세요." required></textarea>
+                    <div class="flex items-center justify-between gap-4 pt-4 border-t border-[var(--border-light)]">
+                        <span id="my-timeline-length" class="text-xs opacity-40">0 / 500</span>
+                        <button type="submit" id="my-timeline-submit" class="bg-[var(--accent-red)] text-white px-6 py-3 text-xs tracking-widest uppercase">Post</button>
+                    </div>
+                    <p id="my-timeline-error" class="hidden text-sm text-[var(--accent-red)] mt-4"></p>
+                </form>
+                <div id="my-timeline-list" class="border-t border-[var(--border-light)]"></div>
+            </div>
         </section>
 
         <section id="view-system-members" class="w-full view-hidden fade-in">
@@ -761,31 +779,28 @@
                 <span class="text-xs opacity-50 tracking-widest uppercase">Directory</span>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-                <div class="group cursor-pointer">
-                    <div class="w-full aspect-[3/4] bg-gray-200 mb-4 overflow-hidden rounded-sm shadow-md">
-                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400" alt="Member" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105">
-                    </div>
-                    <p class="text-xs tracking-widest uppercase opacity-50 mb-1">Editor</p>
-                    <h3 class="font-serif-ko font-bold text-lg">지우</h3>
-                </div>
+            <p id="people-status" class="py-16 text-center text-sm opacity-50">회원 목록을 불러오는 중입니다.</p>
+            <div id="people-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            <button type="button" id="member-profile-view-trigger" class="view-trigger hidden" data-target="view-member-profile"></button>
+        </section>
 
-                <div class="group cursor-pointer">
-                    <div class="w-full aspect-[3/4] bg-gray-200 mb-4 overflow-hidden rounded-sm shadow-md">
-                        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=400" alt="Member" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105">
-                    </div>
-                    <p class="text-xs tracking-widest uppercase opacity-50 mb-1">Writer</p>
-                    <h3 class="font-serif-ko font-bold text-lg">서연</h3>
-                </div>
-
-                <div class="group cursor-pointer">
-                    <div class="w-full aspect-[3/4] bg-gray-200 mb-4 overflow-hidden rounded-sm shadow-md">
-                        <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=400" alt="Member" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105">
-                    </div>
-                    <p class="text-xs tracking-widest uppercase opacity-50 mb-1">Creator</p>
-                    <h3 class="font-serif-ko font-bold text-lg">민우</h3>
+        <section id="view-member-profile" class="w-full max-w-3xl mx-auto view-hidden fade-in py-8">
+            <button type="button" class="view-trigger text-xs tracking-widest uppercase opacity-60 mb-10" data-target="view-people"><i class="ph ph-arrow-left mr-2"></i>Members</button>
+            <div class="border-b border-[var(--border-light)] pb-10 mb-8 flex items-start gap-5">
+                <div id="member-profile-avatar" class="w-20 h-20 shrink-0 rounded-full bg-[var(--accent-red)] text-white flex items-center justify-center text-3xl font-serif-en italic"></div>
+                <div class="min-w-0">
+                    <h1 id="member-profile-name" class="text-4xl md:text-5xl font-serif-ko font-bold break-words"></h1>
+                    <p id="member-profile-username" class="mt-2 opacity-45"></p>
+                    <p id="member-profile-meta" class="mt-4 text-sm opacity-60"></p>
+                    <p id="member-profile-bio" class="mt-4 text-sm leading-relaxed whitespace-pre-wrap"></p>
                 </div>
             </div>
+            <div class="flex items-end justify-between gap-4 mb-5">
+                <h2 class="text-3xl font-serif-en italic">Timeline</h2>
+                <span id="member-timeline-count" class="text-xs opacity-45"></span>
+            </div>
+            <p id="member-timeline-status" class="py-14 text-center text-sm opacity-50">타임라인을 불러오는 중입니다.</p>
+            <div id="member-timeline-list" class="border-t border-[var(--border-light)]"></div>
         </section>
 
         <section id="view-schedule" class="w-full view-hidden fade-in">
@@ -1103,6 +1118,10 @@
                     showToast('앨범 작성은 로그인이 필요합니다.', false);
                     targetId = 'view-login';
                 }
+                if (['view-people', 'view-member-profile'].includes(targetId) && !siteUser) {
+                    showToast('회원 타임라인은 로그인이 필요합니다.', false);
+                    targetId = 'view-login';
+                }
 
                 if (isMenuOpen) closeMenu();
                 if (isMobileMenuOpen) closeMobileMenu();
@@ -1124,6 +1143,7 @@
                 if (targetId === 'view-my-page') loadMyProfile();
                 if (targetId === 'view-sm-board') loadSmBoard();
                 if (targetId === 'view-gallery') loadActivityAlbums();
+                if (targetId === 'view-people') loadPeopleDirectory();
             });
         });
 
@@ -1155,6 +1175,11 @@
             mobileMyPageSection.classList.toggle('hidden', !user);
             document.getElementById('sm-write-btn').classList.toggle('hidden', !user);
             document.getElementById('gallery-write-btn').classList.toggle('hidden', !user);
+            if (!user) {
+                myTimelineSection.classList.add('hidden');
+                peopleList.innerHTML = '';
+                memberTimelineList.innerHTML = '';
+            }
             loginNavBtn.textContent = user ? user.displayName : 'Login';
             loginNavBtn.dataset.target = user ? 'view-my-page' : 'view-login';
             mobileLoginBtn.textContent = user ? user.displayName : 'Login';
@@ -1282,6 +1307,14 @@
         const myPageStatus = document.getElementById('my-page-status');
         const myPageForm = document.getElementById('my-page-form');
         const myPageError = document.getElementById('my-page-error');
+        const myTimelineSection = document.getElementById('my-timeline-section');
+        const myTimelineForm = document.getElementById('my-timeline-form');
+        const myTimelineInput = document.getElementById('my-timeline-input');
+        const myTimelineList = document.getElementById('my-timeline-list');
+        const peopleStatus = document.getElementById('people-status');
+        const peopleList = document.getElementById('people-list');
+        const memberTimelineStatus = document.getElementById('member-timeline-status');
+        const memberTimelineList = document.getElementById('member-timeline-list');
         const smBoardList = document.getElementById('sm-board-list');
         const smBoardStatus = document.getElementById('sm-board-status');
         const smPagination = document.getElementById('sm-pagination');
@@ -1304,6 +1337,7 @@
         let galleryEditingId = null;
         let galleryNewFiles = [];
         let galleryRemovedPhotoIds = [];
+        let viewedTimelineUsername = null;
         let smCurrentPage = 1;
         let smSearch = '';
         let smCurrentPost = null;
@@ -1849,6 +1883,192 @@
             document.getElementById('my-password').value = '';
         }
 
+        function formatTimelineDate(value) {
+            const date = new Date(String(value || '').replace(' ', 'T') + 'Z');
+            if (Number.isNaN(date.getTime())) return '';
+            const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+            if (seconds < 60) return '방금 전';
+            if (seconds < 3600) return `${Math.floor(seconds / 60)}분 전`;
+            if (seconds < 86400) return `${Math.floor(seconds / 3600)}시간 전`;
+            if (seconds < 604800) return `${Math.floor(seconds / 86400)}일 전`;
+            return date.toLocaleDateString('ko-KR');
+        }
+
+        function renderTimeline(profile, items, container, countElement, context) {
+            container.innerHTML = '';
+            countElement.textContent = `${items.length} posts`;
+            if (!items.length) {
+                const empty = document.createElement('p');
+                empty.className = 'py-14 text-center text-sm opacity-45';
+                empty.textContent = context === 'self' ? '첫 번째 근황을 남겨보세요.' : '아직 작성한 타임라인 글이 없습니다.';
+                container.appendChild(empty);
+                return;
+            }
+            items.forEach(post => {
+                const article = document.createElement('article');
+                article.className = 'flex gap-4 py-6 border-b border-[var(--border-light)]';
+                const avatar = document.createElement('div');
+                avatar.className = 'w-12 h-12 shrink-0 rounded-full bg-[var(--accent-red)] text-white flex items-center justify-center font-serif-en italic text-xl';
+                avatar.textContent = (profile.displayName || profile.username).trim().charAt(0).toUpperCase();
+                const body = document.createElement('div');
+                body.className = 'min-w-0 flex-1';
+                const header = document.createElement('div');
+                header.className = 'flex items-start justify-between gap-3';
+                const identity = document.createElement('p');
+                identity.className = 'min-w-0 text-sm';
+                const name = document.createElement('strong');
+                name.textContent = profile.displayName;
+                const username = document.createElement('span');
+                username.className = 'opacity-45 ml-2 break-all';
+                username.textContent = `@${profile.username} · ${formatTimelineDate(post.createdAt)}`;
+                identity.append(name, username);
+                header.appendChild(identity);
+                if (post.canDelete) {
+                    const remove = document.createElement('button');
+                    remove.type = 'button';
+                    remove.className = 'shrink-0 opacity-35 hover:opacity-100 hover:text-[var(--accent-red)]';
+                    remove.title = '글 삭제';
+                    remove.innerHTML = '<i class="ph ph-trash"></i>';
+                    remove.addEventListener('click', () => deleteTimelinePost(post.id, context));
+                    header.appendChild(remove);
+                }
+                const content = document.createElement('p');
+                content.className = 'mt-3 whitespace-pre-wrap break-words leading-relaxed';
+                content.textContent = post.content;
+                body.append(header, content);
+                article.append(avatar, body);
+                container.appendChild(article);
+            });
+        }
+
+        async function loadMyTimeline() {
+            try {
+                const response = await fetch(`/api/timeline.php?action=profile&username=${encodeURIComponent(siteUser.username)}`, { headers: { Accept: 'application/json' }, cache: 'no-store' });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '타임라인을 불러오지 못했습니다.');
+                myTimelineSection.classList.remove('hidden');
+                renderTimeline(payload.profile, payload.items, myTimelineList, document.getElementById('my-timeline-count'), 'self');
+            } catch (error) {
+                myTimelineSection.classList.remove('hidden');
+                myTimelineList.innerHTML = `<p class="py-12 text-center text-sm text-[var(--accent-red)]"></p>`;
+                myTimelineList.firstElementChild.textContent = error.message;
+            }
+        }
+
+        async function deleteTimelinePost(id, context) {
+            if (!window.confirm('이 타임라인 글을 삭제하시겠습니까?')) return;
+            const body = new FormData();
+            body.append('action', 'delete');
+            body.append('id', String(id));
+            try {
+                const response = await fetch('/api/timeline.php', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken || '' }, body });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '글을 삭제하지 못했습니다.');
+                showToast('타임라인 글을 삭제했습니다.', true);
+                if (context === 'self') await loadMyTimeline();
+                else await openMemberTimeline(viewedTimelineUsername, false);
+            } catch (error) {
+                showToast(error.message, false);
+            }
+        }
+
+        myTimelineInput?.addEventListener('input', () => {
+            document.getElementById('my-timeline-length').textContent = `${myTimelineInput.value.length} / 500`;
+        });
+
+        myTimelineForm?.addEventListener('submit', async event => {
+            event.preventDefault();
+            const errorElement = document.getElementById('my-timeline-error');
+            const submit = document.getElementById('my-timeline-submit');
+            const content = myTimelineInput.value.trim();
+            errorElement.classList.add('hidden');
+            if (!content) return;
+            submit.disabled = true;
+            const body = new FormData();
+            body.append('action', 'create');
+            body.append('content', content);
+            try {
+                const response = await fetch('/api/timeline.php', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken || '' }, body });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '글을 등록하지 못했습니다.');
+                myTimelineForm.reset();
+                document.getElementById('my-timeline-length').textContent = '0 / 500';
+                await loadMyTimeline();
+                showToast('타임라인에 글을 남겼습니다.', true);
+            } catch (error) {
+                errorElement.textContent = error.message;
+                errorElement.classList.remove('hidden');
+            } finally {
+                submit.disabled = false;
+            }
+        });
+
+        async function loadPeopleDirectory() {
+            peopleStatus.textContent = '회원 목록을 불러오는 중입니다.';
+            peopleStatus.classList.remove('hidden');
+            peopleList.innerHTML = '';
+            try {
+                const response = await fetch('/api/timeline.php?action=members', { headers: { Accept: 'application/json' }, cache: 'no-store' });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '회원 목록을 불러오지 못했습니다.');
+                peopleStatus.classList.add('hidden');
+                payload.items.forEach(profile => {
+                    const card = document.createElement('button');
+                    card.type = 'button';
+                    card.className = 'text-left bg-white/35 border border-[var(--border-light)] p-6 hover:border-[var(--accent-red)] hover:-translate-y-1 transition-all';
+                    const top = document.createElement('div');
+                    top.className = 'flex items-center gap-4';
+                    const avatar = document.createElement('span');
+                    avatar.className = 'w-14 h-14 rounded-full bg-[var(--accent-red)] text-white flex items-center justify-center text-2xl font-serif-en italic';
+                    avatar.textContent = (profile.displayName || profile.username).trim().charAt(0).toUpperCase();
+                    const identity = document.createElement('span');
+                    identity.className = 'min-w-0';
+                    const name = document.createElement('strong');
+                    name.className = 'block text-xl font-serif-ko truncate';
+                    name.textContent = profile.displayName;
+                    const username = document.createElement('span');
+                    username.className = 'block text-xs opacity-45 mt-1 truncate';
+                    username.textContent = `@${profile.username}`;
+                    identity.append(name, username);
+                    top.append(avatar, identity);
+                    const bio = document.createElement('p');
+                    bio.className = 'text-sm opacity-60 mt-5 line-clamp-2 min-h-[2.5rem]';
+                    bio.textContent = profile.bio || '아직 자기소개가 없습니다.';
+                    const meta = document.createElement('p');
+                    meta.className = 'text-xs opacity-40 mt-5 pt-4 border-t border-[var(--border-light)]';
+                    meta.textContent = `${profile.region || '지역 미입력'} · Timeline ${profile.postCount}`;
+                    card.append(top, bio, meta);
+                    card.addEventListener('click', () => openMemberTimeline(profile.username));
+                    peopleList.appendChild(card);
+                });
+            } catch (error) {
+                peopleStatus.textContent = error.message;
+            }
+        }
+
+        async function openMemberTimeline(username, navigate = true) {
+            viewedTimelineUsername = username;
+            memberTimelineStatus.textContent = '타임라인을 불러오는 중입니다.';
+            memberTimelineStatus.classList.remove('hidden');
+            memberTimelineList.innerHTML = '';
+            try {
+                const response = await fetch(`/api/timeline.php?action=profile&username=${encodeURIComponent(username)}`, { headers: { Accept: 'application/json' }, cache: 'no-store' });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '회원 타임라인을 불러오지 못했습니다.');
+                const profile = payload.profile;
+                document.getElementById('member-profile-avatar').textContent = (profile.displayName || profile.username).trim().charAt(0).toUpperCase();
+                document.getElementById('member-profile-name').textContent = profile.displayName;
+                document.getElementById('member-profile-username').textContent = `@${profile.username}`;
+                document.getElementById('member-profile-meta').textContent = [profile.region, profile.personality, profile.relationshipStyle].filter(Boolean).join(' · ') || '공개 프로필 정보가 없습니다.';
+                document.getElementById('member-profile-bio').textContent = profile.bio || '';
+                memberTimelineStatus.classList.add('hidden');
+                renderTimeline(profile, payload.items, memberTimelineList, document.getElementById('member-timeline-count'), 'member');
+                if (navigate) document.getElementById('member-profile-view-trigger').click();
+            } catch (error) {
+                memberTimelineStatus.textContent = error.message;
+            }
+        }
+
         async function loadMyProfile() {
             if (!siteUser) return;
             myPageStatus.textContent = '프로필을 불러오는 중입니다.';
@@ -1862,6 +2082,7 @@
                 fillMyProfile(payload.profile);
                 myPageStatus.classList.add('hidden');
                 myPageForm.classList.remove('hidden');
+                await loadMyTimeline();
             } catch (error) {
                 myPageStatus.textContent = error.message;
             }
