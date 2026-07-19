@@ -66,6 +66,7 @@ if ($receivedCsrf === '' || !hash_equals(site_csrf_token(), $receivedCsrf)) {
 
 $body = json_decode((string) file_get_contents('php://input'), true);
 $body = is_array($body) ? $body : [];
+$username = trim((string) ($body['username'] ?? ''));
 $displayName = trim((string) ($body['displayName'] ?? ''));
 $birthYearValue = trim((string) ($body['birthYear'] ?? ''));
 $birthYear = $birthYearValue === '' ? null : (int) $birthYearValue;
@@ -75,6 +76,9 @@ $relationshipStyle = trim((string) ($body['relationshipStyle'] ?? ''));
 $bio = trim((string) ($body['bio'] ?? ''));
 $password = (string) ($body['password'] ?? '');
 
+if (!preg_match('/^[A-Za-z0-9._-]{3,32}$/', $username)) {
+    profile_json(['error' => '아이디는 영문, 숫자, 점, 밑줄, 하이픈으로 3~32자여야 합니다.'], 422);
+}
 if ($displayName === '' || mb_strlen($displayName) > 60) {
     profile_json(['error' => '표시 이름은 1~60자로 입력해주세요.'], 422);
 }
@@ -96,6 +100,7 @@ if ($password !== '' && (strlen($password) < 10 || strlen($password) > 128)) {
 }
 
 $sql = 'UPDATE users SET
+            username = :username,
             display_name = :display_name,
             birth_year = :birth_year,
             region = :region,
@@ -104,6 +109,7 @@ $sql = 'UPDATE users SET
             bio = :bio,
             updated_at = CURRENT_TIMESTAMP';
 $params = [
+    ':username' => $username,
     ':display_name' => $displayName,
     ':birth_year' => $birthYear,
     ':region' => $region,
@@ -117,6 +123,13 @@ if ($password !== '') {
     $params[':password_hash'] = password_hash($password, PASSWORD_DEFAULT);
 }
 $sql .= ' WHERE id = :id';
-$pdo->prepare($sql)->execute($params);
+try {
+    $pdo->prepare($sql)->execute($params);
+} catch (PDOException $error) {
+    if ($error->getCode() === '23000') {
+        profile_json(['error' => '이미 사용 중인 아이디입니다.'], 409);
+    }
+    throw $error;
+}
 
 profile_json(['ok' => true, 'profile' => profile_row($pdo, $user['id'])]);

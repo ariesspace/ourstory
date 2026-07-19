@@ -407,7 +407,8 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-7">
                     <div>
                         <label for="my-username" class="block text-xs tracking-widest uppercase opacity-60 mb-3">로그인 ID</label>
-                        <input type="text" id="my-username" class="w-full bg-transparent border-b border-[var(--border-light)] py-3 opacity-50" readonly>
+                        <input type="text" id="my-username" minlength="3" maxlength="32" pattern="[A-Za-z0-9._-]+" autocomplete="username" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" required>
+                        <p class="text-xs opacity-40 mt-2">영문, 숫자, 점, 밑줄, 하이픈 · 3~32자</p>
                     </div>
                     <div>
                         <label for="my-role" class="block text-xs tracking-widest uppercase opacity-60 mb-3">권한</label>
@@ -439,9 +440,15 @@
                     </div>
                 </div>
                 <input type="hidden" id="my-bio">
-                <div>
-                    <label for="my-password" class="block text-xs tracking-widest uppercase opacity-60 mb-3">새 비밀번호 <span class="normal-case opacity-50">(선택)</span></label>
-                    <input type="password" id="my-password" minlength="10" maxlength="128" autocomplete="new-password" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" placeholder="변경할 때만 입력하세요">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-7">
+                    <div>
+                        <label for="my-password" class="block text-xs tracking-widest uppercase opacity-60 mb-3">새 비밀번호 <span class="normal-case opacity-50">(선택)</span></label>
+                        <input type="password" id="my-password" minlength="10" maxlength="128" autocomplete="new-password" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" placeholder="변경할 때만 입력하세요">
+                    </div>
+                    <div>
+                        <label for="my-password-confirm" class="block text-xs tracking-widest uppercase opacity-60 mb-3">새 비밀번호 확인</label>
+                        <input type="password" id="my-password-confirm" minlength="10" maxlength="128" autocomplete="new-password" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" placeholder="한 번 더 입력하세요">
+                    </div>
                 </div>
                 <p id="my-page-error" class="hidden text-sm text-[var(--accent-red)] text-center"></p>
                 <div class="flex items-center justify-end gap-4 pt-4">
@@ -589,10 +596,6 @@
                         <label for="new-relationship-style" class="block text-xs tracking-widest uppercase opacity-60 mb-3">연애 성향 (선택)</label>
                         <input type="text" id="new-relationship-style" maxlength="120" class="w-full bg-transparent border-b border-[var(--border-light)] py-3">
                     </div>
-                </div>
-                <div>
-                    <label for="new-bio" class="block text-xs tracking-widest uppercase opacity-60 mb-3">자기소개 (선택)</label>
-                    <textarea id="new-bio" maxlength="1000" rows="4" class="w-full bg-transparent border border-[var(--border-light)] p-4 resize-y"></textarea>
                 </div>
                 <div>
                     <div class="flex items-center justify-between gap-4 mb-3">
@@ -2594,6 +2597,7 @@
             document.getElementById('my-relationship-style').value = profile.relationshipStyle || '';
             document.getElementById('my-bio').value = profile.bio || '';
             document.getElementById('my-password').value = '';
+            document.getElementById('my-password-confirm').value = '';
             myAvatarFallback.textContent = profileInitial(profile);
             if (profile.avatarUrl) {
                 myAvatarPreview.src = `${profile.avatarUrl}&v=${cacheBust ? Date.now() : '1'}`;
@@ -2923,6 +2927,13 @@
             event.preventDefault();
             const submitButton = document.getElementById('my-page-submit');
             myPageError.classList.add('hidden');
+            const password = document.getElementById('my-password').value;
+            const passwordConfirm = document.getElementById('my-password-confirm').value;
+            if (password !== passwordConfirm) {
+                myPageError.textContent = '새 비밀번호가 서로 일치하지 않습니다.';
+                myPageError.classList.remove('hidden');
+                return;
+            }
             submitButton.disabled = true;
 
             try {
@@ -2934,13 +2945,14 @@
                         'X-CSRF-Token': csrfToken || ''
                     },
                     body: JSON.stringify({
+                        username: document.getElementById('my-username').value.trim(),
                         displayName: document.getElementById('my-display-name').value.trim(),
                         birthYear: document.getElementById('my-birth-year').value,
                         region: document.getElementById('my-region').value.trim(),
                         personality: document.getElementById('my-personality').value.trim(),
                         relationshipStyle: document.getElementById('my-relationship-style').value.trim(),
                         bio: document.getElementById('my-bio').value.trim(),
-                        password: document.getElementById('my-password').value
+                        password
                     })
                 });
                 const payload = await response.json();
@@ -3140,7 +3152,6 @@
                         region: document.getElementById('new-region').value.trim(),
                         personality: document.getElementById('new-personality').value.trim(),
                         relationshipStyle: document.getElementById('new-relationship-style').value.trim(),
-                        bio: document.getElementById('new-bio').value.trim(),
                         password: document.getElementById('new-password').value,
                         role: document.getElementById('new-role').value
                     })
