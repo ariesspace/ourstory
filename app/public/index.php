@@ -758,6 +758,12 @@
                     <i class="ph ph-plus mr-2"></i>Add Bar
                 </button>
             </div>
+            <div class="mb-7 border-b border-[var(--text-dark)] flex items-center gap-3">
+                <i class="ph ph-magnifying-glass text-xl opacity-45" aria-hidden="true"></i>
+                <label for="sm-bar-search" class="sr-only">SM Bar 검색</label>
+                <input type="search" id="sm-bar-search" class="w-full bg-transparent py-4 outline-none placeholder:opacity-40" placeholder="Bar 이름, 지역, 주소, 입장료 또는 트위터 검색">
+                <span id="sm-bar-search-count" class="shrink-0 text-xs tracking-widest uppercase opacity-45"></span>
+            </div>
             <div class="overflow-x-auto border-t-2 border-[var(--text-dark)]">
                 <table class="w-full min-w-[860px] text-sm">
                     <thead class="border-b border-[var(--border-light)] text-xs tracking-widest uppercase opacity-60">
@@ -1465,6 +1471,8 @@
         const smBarModal = document.getElementById('sm-bar-modal');
         const smBarForm = document.getElementById('sm-bar-form');
         const smBarFormError = document.getElementById('sm-bar-form-error');
+        const smBarSearch = document.getElementById('sm-bar-search');
+        const smBarSearchCount = document.getElementById('sm-bar-search-count');
 
         let calendarDate = new Date();
         let selectedDateKey = formatDateKey(calendarDate);
@@ -1680,14 +1688,20 @@
 
         function renderSmBars() {
             smBarList.innerHTML = '';
-            smBarStatus.classList.toggle('hidden', smBarItems.length > 0);
-            if (!smBarItems.length) {
-                smBarStatus.textContent = '아직 등록된 SM Bar 정보가 없습니다.';
+            const query = smBarSearch.value.trim().toLocaleLowerCase('ko-KR');
+            const items = query
+                ? smBarItems.filter(item => [item.name, item.region, item.address, item.entranceFee, item.twitterAccount, item.description]
+                    .some(value => String(value || '').toLocaleLowerCase('ko-KR').includes(query)))
+                : smBarItems;
+            smBarSearchCount.textContent = `${items.length} / ${smBarItems.length}`;
+            smBarStatus.classList.toggle('hidden', items.length > 0);
+            if (!items.length) {
+                smBarStatus.textContent = query ? '검색 결과가 없습니다.' : '아직 등록된 SM Bar 정보가 없습니다.';
                 return;
             }
-            smBarItems.forEach((item, index) => {
+            items.forEach((item, index) => {
                 const row = document.createElement('tr');
-                row.className = 'border-b border-[var(--border-light)] cursor-pointer hover:bg-white/30 transition-colors';
+                row.className = `border-b border-[var(--border-light)] cursor-pointer hover:bg-white/30 transition-colors ${item.isHidden ? 'opacity-55' : ''}`;
                 row.setAttribute('tabindex', '0');
                 row.setAttribute('aria-expanded', 'false');
                 const number = document.createElement('td');
@@ -1704,9 +1718,17 @@
                 const nameStrong = document.createElement('strong');
                 nameStrong.className = 'text-base font-serif-ko';
                 nameStrong.textContent = item.name;
+                if (item.isHidden) {
+                    const badge = document.createElement('span');
+                    badge.className = 'text-[0.65rem] tracking-widest uppercase text-[var(--accent-red)]';
+                    badge.textContent = '숨김';
+                    nameLine.append(cocktail, nameStrong, badge);
+                } else {
+                    nameLine.append(cocktail, nameStrong);
+                }
                 const caret = document.createElement('i');
                 caret.className = 'ph ph-caret-down ml-auto opacity-35 transition-transform';
-                nameLine.append(cocktail, nameStrong, caret);
+                nameLine.appendChild(caret);
                 name.appendChild(nameLine);
                 const region = document.createElement('td');
                 region.className = 'py-5 px-3 text-center';
@@ -1732,6 +1754,15 @@
                 const manage = document.createElement('td');
                 manage.className = 'py-5 text-center whitespace-nowrap';
                 if (item.canEdit) {
+                    const visibility = document.createElement('button');
+                    visibility.type = 'button';
+                    visibility.className = 'p-2 hover:text-[var(--accent-red)]';
+                    visibility.title = item.isHidden ? '다시 표시' : '숨기기';
+                    visibility.innerHTML = item.isHidden ? '<i class="ph ph-eye"></i>' : '<i class="ph ph-eye-slash"></i>';
+                    visibility.addEventListener('click', event => {
+                        event.stopPropagation();
+                        setSmBarVisibility(item);
+                    });
                     const edit = document.createElement('button');
                     edit.type = 'button';
                     edit.className = 'p-2 hover:text-[var(--accent-red)]';
@@ -1750,7 +1781,7 @@
                         event.stopPropagation();
                         deleteSmBar(item);
                     });
-                    manage.append(edit, remove);
+                    manage.append(visibility, edit, remove);
                 }
                 row.append(number, name, region, fee, address, link, manage);
 
@@ -1795,6 +1826,8 @@
             });
         }
 
+        smBarSearch?.addEventListener('input', renderSmBars);
+
         async function loadSmBars() {
             smBarStatus.textContent = '목록을 불러오는 중입니다.';
             smBarStatus.classList.remove('hidden');
@@ -1808,6 +1841,24 @@
                 renderSmBars();
             } catch (error) {
                 smBarStatus.textContent = error.message;
+            }
+        }
+
+        async function setSmBarVisibility(item) {
+            const action = item.isHidden ? 'show' : 'hide';
+            const message = item.isHidden ? `${item.name} 항목을 다시 표시하시겠습니까?` : `${item.name} 항목을 목록에서 숨기시겠습니까?`;
+            if (!window.confirm(message)) return;
+            const body = new FormData();
+            body.append('action', action);
+            body.append('id', String(item.id));
+            try {
+                const response = await fetch('/api/sm-bars.php', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken || '' }, body });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || 'SM Bar 표시 상태를 변경하지 못했습니다.');
+                await loadSmBars();
+                showToast(action === 'hide' ? 'SM Bar 정보를 숨겼습니다.' : 'SM Bar 정보를 다시 표시했습니다.', true);
+            } catch (error) {
+                showToast(error.message, false);
             }
         }
 

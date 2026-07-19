@@ -75,11 +75,22 @@ $user = site_current_user($pdo);
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
 if ($method === 'GET') {
-    $rows = $pdo->query(
-        'SELECT b.*, COALESCE(u.display_name, \'탈퇴한 회원\') AS author_name
+    $visibility = 'WHERE b.is_hidden = 0';
+    $params = [];
+    if (sm_bars_is_manager($user)) {
+        $visibility = '';
+    } elseif ($user) {
+        $visibility = 'WHERE b.is_hidden = 0 OR b.created_by = :viewer_id';
+        $params[':viewer_id'] = $user['id'];
+    }
+    $stmt = $pdo->prepare(
+        "SELECT b.*, COALESCE(u.display_name, '탈퇴한 회원') AS author_name
          FROM sm_bars b LEFT JOIN users u ON u.id = b.created_by
-         ORDER BY b.region COLLATE NOCASE, b.name COLLATE NOCASE, b.id DESC'
-    )->fetchAll();
+         {$visibility}
+         ORDER BY b.region COLLATE NOCASE, b.name COLLATE NOCASE, b.id DESC"
+    );
+    $stmt->execute($params);
+    $rows = $stmt->fetchAll();
     $items = array_map(static fn(array $row): array => [
         'id' => (int) $row['id'],
         'name' => $row['name'],
@@ -90,6 +101,7 @@ if ($method === 'GET') {
         'twitterUrl' => $row['twitter_account'] !== '' ? 'https://x.com/' . ltrim($row['twitter_account'], '@') : '',
         'entranceFee' => $row['entrance_fee'],
         'description' => $row['description'],
+        'isHidden' => (bool) $row['is_hidden'],
         'authorName' => $row['author_name'],
         'createdAt' => $row['created_at'],
         'updatedAt' => $row['updated_at'],
@@ -110,7 +122,7 @@ $action = (string) ($_POST['action'] ?? 'create');
 $id = max(0, (int) ($_POST['id'] ?? 0));
 
 $existing = null;
-if (in_array($action, ['update', 'delete'], true)) {
+if (in_array($action, ['update', 'delete', 'hide', 'show'], true)) {
     $stmt = $pdo->prepare('SELECT * FROM sm_bars WHERE id = :id');
     $stmt->execute([':id' => $id]);
     $existing = $stmt->fetch();
@@ -125,6 +137,12 @@ if (in_array($action, ['update', 'delete'], true)) {
 if ($action === 'delete') {
     $stmt = $pdo->prepare('DELETE FROM sm_bars WHERE id = :id');
     $stmt->execute([':id' => $id]);
+    sm_bars_json(['ok' => true]);
+}
+
+if (in_array($action, ['hide', 'show'], true)) {
+    $stmt = $pdo->prepare('UPDATE sm_bars SET is_hidden = :is_hidden, updated_at = CURRENT_TIMESTAMP WHERE id = :id');
+    $stmt->execute([':is_hidden' => $action === 'hide' ? 1 : 0, ':id' => $id]);
     sm_bars_json(['ok' => true]);
 }
 

@@ -145,6 +145,7 @@ function site_migrate(PDO $pdo): void
             twitter_account TEXT NOT NULL DEFAULT \'\',
             entrance_fee TEXT NOT NULL DEFAULT \'\',
             description TEXT NOT NULL DEFAULT \'\',
+            is_hidden INTEGER NOT NULL DEFAULT 0,
             created_by INTEGER,
             created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -156,6 +157,9 @@ function site_migrate(PDO $pdo): void
         if (!in_array($column, $smBarColumns, true)) {
             $pdo->exec("ALTER TABLE sm_bars ADD COLUMN {$column} TEXT NOT NULL DEFAULT ''");
         }
+    }
+    if (!in_array('is_hidden', $smBarColumns, true)) {
+        $pdo->exec('ALTER TABLE sm_bars ADD COLUMN is_hidden INTEGER NOT NULL DEFAULT 0');
     }
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_sm_bars_region_name ON sm_bars (region, name)');
 
