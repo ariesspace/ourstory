@@ -103,7 +103,21 @@ if ($viewer) {
 }
 
 usort($items, static fn(array $a, array $b): int => strcmp((string) $b['occurredAt'], (string) $a['occurredAt']));
-$items = array_slice($items, 0, 12);
+$balancedItems = [];
+$typeCounts = [];
+foreach ($items as $item) {
+    $type = (string) $item['type'];
+    $typeCounts[$type] = $typeCounts[$type] ?? 0;
+    if ($typeCounts[$type] >= 4) {
+        continue;
+    }
+    $balancedItems[] = $item;
+    $typeCounts[$type]++;
+    if (count($balancedItems) >= 12) {
+        break;
+    }
+}
+$items = $balancedItems;
 
 $counts = [
     'smInfo' => (int) $pdo->query('SELECT COUNT(*) FROM sm_posts')->fetchColumn(),
