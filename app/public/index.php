@@ -720,6 +720,13 @@
                 </div>
             </div>
 
+            <div class="mb-7 border-b border-[var(--text-dark)] flex items-center gap-3">
+                <i class="ph ph-magnifying-glass text-xl opacity-45" aria-hidden="true"></i>
+                <label for="intro-search" class="sr-only">자기소개 검색</label>
+                <input type="search" id="intro-search" class="w-full bg-transparent py-4 outline-none placeholder:opacity-40" placeholder="닉네임, 출생년도, 성향, MBTI 또는 답변 검색">
+                <span id="intro-search-count" class="shrink-0 text-xs tracking-widest uppercase opacity-45"></span>
+            </div>
+
             <p id="intro-status" class="py-16 text-center text-sm opacity-50 font-serif-ko">자기소개를 불러오는 중입니다.</p>
             <div id="intro-list" class="border-t-2 border-[var(--text-dark)]"></div>
         </section>
@@ -1416,6 +1423,8 @@
         const introList = document.getElementById('intro-list');
         const introStatus = document.getElementById('intro-status');
         const introRefreshBtn = document.getElementById('intro-refresh-btn');
+        const introSearch = document.getElementById('intro-search');
+        const introSearchCount = document.getElementById('intro-search-count');
         const membersStatus = document.getElementById('members-status');
         const membersTableWrap = document.getElementById('members-table-wrap');
         const membersTableBody = document.getElementById('members-table-body');
@@ -1481,6 +1490,8 @@
         let smCurrentPage = 1;
         let smSearch = '';
         let smBarItems = [];
+        let introductionItems = [];
+        let introductionCanManage = false;
         let smCurrentPost = null;
         let smEditingPostId = null;
         let smInlineUploads = [];
@@ -1509,7 +1520,7 @@
             introList.innerHTML = '';
 
             if (!items.length) {
-                introStatus.textContent = '아직 등록된 자기소개가 없습니다.';
+                introStatus.textContent = introSearch.value.trim() ? '검색 결과가 없습니다.' : '아직 등록된 자기소개가 없습니다.';
                 introStatus.classList.remove('hidden');
                 return;
             }
@@ -1598,6 +1609,18 @@
             });
         }
 
+        function filterIntroductions() {
+            const query = introSearch.value.trim().toLocaleLowerCase('ko-KR');
+            const filtered = query
+                ? introductionItems.filter(item => {
+                    const searchable = [item.submittedAt, ...(Array.isArray(item.fields) ? item.fields.flatMap(field => [field.label, formatIntroductionAnswer(field)]) : [])];
+                    return searchable.some(value => String(value || '').toLocaleLowerCase('ko-KR').includes(query));
+                })
+                : introductionItems;
+            introSearchCount.textContent = `${filtered.length} / ${introductionItems.length}`;
+            renderIntroductions(filtered, introductionCanManage);
+        }
+
         async function manageIntroduction(action, submissionId) {
             const message = action === 'delete'
                 ? '이 자기소개를 영구 삭제하시겠습니까? 삭제 후에는 복구할 수 없습니다.'
@@ -1627,7 +1650,9 @@
                 const response = await fetch('/api/tally-introductions.php', { headers: { Accept: 'application/json' }, cache: 'no-store' });
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const payload = await response.json();
-                renderIntroductions(Array.isArray(payload.items) ? payload.items : [], Boolean(payload.canManage));
+                introductionItems = Array.isArray(payload.items) ? payload.items : [];
+                introductionCanManage = Boolean(payload.canManage);
+                filterIntroductions();
             } catch (error) {
                 console.error('Introduction Load Error:', error);
                 introList.innerHTML = '';
@@ -1636,6 +1661,7 @@
         }
 
         introRefreshBtn?.addEventListener('click', loadIntroductions);
+        introSearch?.addEventListener('input', filterIntroductions);
 
         function closeSmBarModal() {
             smBarModal.classList.add('hidden');
