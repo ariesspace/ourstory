@@ -728,7 +728,7 @@
                         <button type="button" id="sm-image-btn" class="px-3 h-10 hover:bg-white/70 flex items-center gap-2" title="본문 이미지"><i class="ph ph-image"></i><span class="text-xs">Image</span></button>
                         <button type="button" data-command="removeFormat" class="w-10 h-10 hover:bg-white/70" title="서식 지우기"><i class="ph ph-eraser"></i></button>
                     </div>
-                    <div id="sm-content-editor" class="sm-editor-area min-h-[420px] p-6 md:p-8 leading-loose" contenteditable="true" data-placeholder="내용을 입력하세요. 이미지 버튼으로 본문 안에 그림을 넣을 수 있습니다."></div>
+                    <div id="sm-content-editor" class="sm-editor-area min-h-[420px] p-6 md:p-8 leading-loose" contenteditable="true" data-placeholder="내용을 입력하세요. Image 버튼, 붙여넣기(Ctrl+V), 드래그로 본문에 그림을 넣을 수 있습니다."></div>
                 </div>
                 <input type="file" id="sm-inline-image-input" accept="image/jpeg,image/png,image/gif,image/webp" multiple class="hidden">
                 <div class="border border-dashed border-[var(--border-light)] p-5">
@@ -1556,16 +1556,21 @@
             smInlineImageInput.click();
         });
 
-        smInlineImageInput?.addEventListener('change', () => {
-            const files = Array.from(smInlineImageInput.files || []);
-            if (smInlineUploads.length + smFileUploads.length + files.length > 10) {
+        function insertSmInlineImages(files, initialRange = null) {
+            const imageFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
+            if (!imageFiles.length) return;
+            if (smInlineUploads.length + smFileUploads.length + imageFiles.length > 10) {
                 showToast('첨부파일은 최대 10개까지 등록할 수 있습니다.', false);
-                smInlineImageInput.value = '';
                 return;
             }
-            files.forEach(file => {
+            let insertionRange = initialRange && smContentEditor.contains(initialRange.commonAncestorContainer) ? initialRange : null;
+            imageFiles.forEach(file => {
                 if (file.size > 10485760) {
                     showToast(`${file.name}: 10MB 이하 파일만 가능합니다.`, false);
+                    return;
+                }
+                if (!['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(file.type)) {
+                    showToast(`${file.name}: JPG, PNG, GIF, WEBP 이미지만 가능합니다.`, false);
                     return;
                 }
                 const key = `img_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
@@ -1581,24 +1586,85 @@
                 const caption = document.createElement('figcaption');
                 caption.textContent = file.name;
                 figure.append(image, caption);
-                const range = smSavedRange && smContentEditor.contains(smSavedRange.commonAncestorContainer) ? smSavedRange : null;
-                if (range) {
-                    range.deleteContents();
-                    range.insertNode(figure);
-                    range.setStartAfter(figure);
-                    range.collapse(true);
+                if (insertionRange) {
+                    insertionRange.deleteContents();
+                    insertionRange.insertNode(figure);
+                    insertionRange.setStartAfter(figure);
+                    insertionRange.collapse(true);
                     const selection = window.getSelection();
                     selection.removeAllRanges();
-                    selection.addRange(range);
+                    selection.addRange(insertionRange);
                 } else {
                     smContentEditor.appendChild(figure);
                 }
-                smContentEditor.appendChild(document.createElement('p')).appendChild(document.createElement('br'));
             });
+            const paragraph = document.createElement('p');
+            paragraph.appendChild(document.createElement('br'));
+            smContentEditor.appendChild(paragraph);
+            smContentEditor.focus();
+        }
+
+        smInlineImageInput?.addEventListener('change', () => {
+            insertSmInlineImages(Array.from(smInlineImageInput.files || []), smSavedRange);
             smInlineImageInput.value = '';
             smSavedRange = null;
-            smContentEditor.focus();
         });
+
+        smContentEditor?.addEventListener('paste', event => {
+            const imageFiles = Array.from(event.clipboardData?.files || []).filter(file => file.type.startsWith('image/'));
+            if (!imageFiles.length) return;
+            event.preventDefault();
+            const selection = window.getSelection();
+            const range = selection?.rangeCount ? selection.getRangeAt(0).cloneRange() : null;
+            insertSmInlineImages(imageFiles, range);
+        });
+
+        smContentEditor?.addEventListener('dragover', event => {
+            if (Array.from(event.dataTransfer?.files || []).some(file => file.type.startsWith('image/'))) {
+                event.preventDefault();
+            }
+        });
+
+        smContentEditor?.addEventListener('drop', event => {
+            const imageFiles = Array.from(event.dataTransfer?.files || []).filter(file => file.type.startsWith('image/'));
+            if (!imageFiles.length) return;
+            event.preventDefault();
+            insertSmInlineImages(imageFiles);
+        });
+
+        async function registerPastedDataImages() {
+            const dataImages = Array.from(smContentEditor.querySelectorAll('img[src^="data:image/"]'))
+                .filter(image => !image.closest('figure[data-upload-key]'));
+            for (const image of dataImages) {
+                const response = await fetch(image.src);
+                const blob = await response.blob();
+                const extension = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/gif': 'gif', 'image/webp': 'webp' }[blob.type];
+                if (!extension || blob.size > 10485760) {
+                    throw new Error('붙여 넣은 이미지는 JPG, PNG, GIF, WEBP 형식과 10MB 이하만 가능합니다.');
+                }
+                if (smInlineUploads.length + smFileUploads.length >= 10) {
+                    throw new Error('첨부파일은 최대 10개까지 등록할 수 있습니다.');
+                }
+                const file = new File([blob], `pasted-image-${Date.now()}.${extension}`, { type: blob.type });
+                const key = `img_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+                const url = URL.createObjectURL(file);
+                smInlineUploads.push({ key, file, url });
+                let figure = image.closest('figure');
+                if (!figure) {
+                    figure = document.createElement('figure');
+                    image.parentNode.insertBefore(figure, image);
+                    figure.appendChild(image);
+                }
+                figure.dataset.uploadKey = key;
+                figure.contentEditable = 'false';
+                image.src = url;
+                if (!figure.querySelector('figcaption')) {
+                    const caption = document.createElement('figcaption');
+                    caption.textContent = file.name;
+                    figure.appendChild(caption);
+                }
+            }
+        }
 
         function renderSmSelectedFiles() {
             smSelectedFiles.innerHTML = '';
@@ -1676,9 +1742,25 @@
                 return;
             }
             const title = document.getElementById('sm-title-input').value.trim();
+            smEditorError.classList.add('hidden');
+            try {
+                await registerPastedDataImages();
+            } catch (error) {
+                smEditorError.textContent = error.message;
+                smEditorError.classList.remove('hidden');
+                return;
+            }
+            const unsupportedImage = Array.from(smContentEditor.querySelectorAll('img')).find(image => {
+                if (image.closest('figure[data-upload-key]')) return false;
+                return !/^\/api\/sm-board\.php\?action=file(?:&|&amp;)id=\d+/.test(image.getAttribute('src') || '');
+            });
+            if (unsupportedImage) {
+                smEditorError.textContent = '붙여 넣은 외부 이미지는 저장할 수 없습니다. Image 버튼을 눌러 원본 파일을 첨부해주세요.';
+                smEditorError.classList.remove('hidden');
+                return;
+            }
             const activeInlineUploads = smInlineUploads.filter(upload => smContentEditor.querySelector(`figure[data-upload-key="${upload.key}"]`));
             const hasContent = smContentEditor.textContent.trim() || smContentEditor.querySelector('img');
-            smEditorError.classList.add('hidden');
             if (!title || !hasContent) {
                 smEditorError.textContent = '제목과 본문 내용을 입력해주세요.';
                 smEditorError.classList.remove('hidden');
