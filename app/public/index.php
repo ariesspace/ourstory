@@ -91,6 +91,28 @@
             pointer-events: auto;
         }
 
+        #mobile-menu {
+            position: fixed;
+            top: 88px;
+            left: 0;
+            width: 100%;
+            max-height: calc(100vh - 88px);
+            overflow-y: auto;
+            background-color: var(--bg-cream);
+            border-top: 1px solid var(--border-light);
+            border-bottom: 1px solid var(--border-light);
+            z-index: 40;
+            transform: translateY(-16px);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        #mobile-menu.open {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
 
         input:focus, textarea:focus { outline: none; }
 
@@ -128,13 +150,18 @@
     <header class="fixed top-0 left-0 w-full z-50 transition-all duration-300" id="main-header">
         <div class="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center relative z-50">
 
-            <nav class="flex gap-10 text-sm tracking-widest uppercase hidden md:flex w-1/3 pl-4">
-                <button class="nav-link active uppercase" data-menu="journal">Journal</button>
-                <button class="nav-link uppercase" data-menu="members">Members</button>
-                <button class="nav-link uppercase" data-menu="schedule">Schedule</button>
-            </nav>
+            <div class="w-1/3 flex items-center md:pl-4">
+                <button type="button" id="mobile-menu-toggle" class="md:hidden w-10 h-10 flex items-center justify-center border border-[var(--border-light)] rounded-full" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mobile-menu">
+                    <i class="ph ph-list text-xl" id="mobile-menu-icon"></i>
+                </button>
+                <nav class="gap-10 text-sm tracking-widest uppercase hidden md:flex">
+                    <button class="nav-link active uppercase" data-menu="journal">Journal</button>
+                    <button class="nav-link uppercase" data-menu="members">Members</button>
+                    <button class="nav-link uppercase" data-menu="schedule">Schedule</button>
+                </nav>
+            </div>
 
-            <div class="text-3xl font-serif-en italic tracking-tighter w-1/3 text-center cursor-pointer view-trigger" data-target="view-read">
+            <div class="text-2xl sm:text-3xl font-serif-en italic tracking-tighter whitespace-nowrap w-1/3 text-center cursor-pointer view-trigger" data-target="view-read">
                 :our story
             </div>
 
@@ -215,6 +242,27 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="md:hidden px-6 py-8" aria-hidden="true">
+            <div class="space-y-8">
+                <section>
+                    <p class="font-serif-en italic text-xl mb-4">Journal</p>
+                    <div class="grid gap-2">
+                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-read">Latest Updates</button>
+                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-write">Write New Story</button>
+                    </div>
+                </section>
+                <section>
+                    <p class="font-serif-en italic text-xl mb-4">Community</p>
+                    <div class="grid gap-2">
+                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-people">All Members</button>
+                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-schedule">Monthly Schedule</button>
+                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-gallery">Activity Album</button>
+                    </div>
+                </section>
+                <button type="button" class="view-trigger w-full py-3 text-sm tracking-widest uppercase border border-[var(--text-dark)]" data-target="view-login">Login</button>
             </div>
         </div>
     </header>
@@ -516,16 +564,20 @@
         const menuOverlay = document.getElementById('menu-overlay');
         const menuImage = document.getElementById('menu-image');
         const submenuContents = document.querySelectorAll('.submenu-content');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const mobileMenuIcon = document.getElementById('mobile-menu-icon');
         const viewTriggers = document.querySelectorAll('.view-trigger');
         const views = document.querySelectorAll('main > section[id^="view-"]');
 
         let isMenuOpen = false;
+        let isMobileMenuOpen = false;
 
         const dateOptions = { year: 'numeric', month: 'short', day: '2-digit' };
         document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', dateOptions).toUpperCase();
 
         function updateHeaderBg() {
-            if (window.scrollY > 10 || isMenuOpen) {
+            if (window.scrollY > 10 || isMenuOpen || isMobileMenuOpen) {
                 header.classList.add('bg-[var(--bg-cream)]', 'shadow-sm');
                 header.classList.remove('bg-transparent');
             } else {
@@ -542,6 +594,38 @@
             isMenuOpen = false;
             updateHeaderBg();
         }
+
+        function closeMobileMenu() {
+            mobileMenu.classList.remove('open');
+            mobileMenu.setAttribute('aria-hidden', 'true');
+            mobileMenuToggle.setAttribute('aria-expanded', 'false');
+            mobileMenuToggle.setAttribute('aria-label', '메뉴 열기');
+            mobileMenuIcon.classList.remove('ph-x');
+            mobileMenuIcon.classList.add('ph-list');
+            menuOverlay.classList.remove('opacity-100');
+            menuOverlay.classList.add('pointer-events-none');
+            isMobileMenuOpen = false;
+            updateHeaderBg();
+        }
+
+        mobileMenuToggle.addEventListener('click', () => {
+            if (isMobileMenuOpen) {
+                closeMobileMenu();
+                return;
+            }
+
+            closeMenu();
+            mobileMenu.classList.add('open');
+            mobileMenu.setAttribute('aria-hidden', 'false');
+            mobileMenuToggle.setAttribute('aria-expanded', 'true');
+            mobileMenuToggle.setAttribute('aria-label', '메뉴 닫기');
+            mobileMenuIcon.classList.remove('ph-list');
+            mobileMenuIcon.classList.add('ph-x');
+            menuOverlay.classList.remove('pointer-events-none');
+            menuOverlay.classList.add('opacity-100');
+            isMobileMenuOpen = true;
+            updateHeaderBg();
+        });
 
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
@@ -583,6 +667,7 @@
                 const targetId = trigger.getAttribute('data-target');
 
                 if (isMenuOpen) closeMenu();
+                if (isMobileMenuOpen) closeMobileMenu();
 
                 views.forEach(view => {
                     if (view.id === targetId) {
@@ -598,7 +683,14 @@
             });
         });
 
-        menuOverlay.addEventListener('click', closeMenu);
+        menuOverlay.addEventListener('click', () => {
+            if (isMenuOpen) closeMenu();
+            if (isMobileMenuOpen) closeMobileMenu();
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768 && isMobileMenuOpen) closeMobileMenu();
+        });
 
         function showToast(message, isSuccess = true) {
             const toast = document.getElementById('toast');
