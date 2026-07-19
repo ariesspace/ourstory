@@ -1705,6 +1705,35 @@
         introRefreshBtn?.addEventListener('click', loadIntroductions);
         introSearch?.addEventListener('input', filterIntroductions);
 
+        function membershipPhotoUrls(field) {
+            if (!/사진|프로필|file\s*upload|photo|image/i.test(field.label || '')) return [];
+            const urls = [];
+            const collect = value => {
+                if (!value) return;
+                if (Array.isArray(value)) {
+                    value.forEach(collect);
+                    return;
+                }
+                if (typeof value === 'object') {
+                    Object.values(value).forEach(collect);
+                    return;
+                }
+                const text = String(value).trim();
+                if (/^https?:\/\//i.test(text)) urls.push(text);
+            };
+            collect(field.value);
+            return [...new Set(urls)];
+        }
+
+        function openMembershipPhoto(url, name) {
+            profilePhotoModalImage.src = url;
+            profilePhotoModalImage.alt = `${name} 가입 신청 사진`;
+            profilePhotoModal.classList.remove('hidden');
+            profilePhotoModal.classList.add('flex');
+            document.body.classList.add('overflow-hidden');
+            profilePhotoModalClose.focus();
+        }
+
         function renderMembershipApplications(items, canManage = false) {
             membershipList.innerHTML = '';
             if (!items.length) {
@@ -1713,45 +1742,80 @@
                 return;
             }
             membershipStatus.classList.add('hidden');
-            items.forEach((item, index) => {
+            membershipList.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 border-t-2 border-[var(--text-dark)] pt-6';
+            items.forEach(item => {
                 const fields = (Array.isArray(item.fields) ? item.fields : [])
-                    .map(field => ({ ...field, displayValue: formatIntroductionAnswer(field) }))
-                    .filter(field => field.displayValue);
+                    .map(field => ({ ...field, displayValue: formatIntroductionAnswer(field), photoUrls: membershipPhotoUrls(field) }))
+                    .filter(field => field.displayValue || field.photoUrls.length);
                 const identity = fields.find(field => /이름|닉네임|name|nickname/i.test(field.label || ''));
-                const contact = fields.find(field => /연락처|전화|phone|email|이메일/i.test(field.label || ''));
+                const region = fields.find(field => /^(지역|region)$/i.test((field.label || '').trim()));
+                const birthYear = fields.find(field => /년생|출생|birth/i.test(field.label || ''));
+                const tendency = fields.find(field => /주\s*성향/i.test(field.label || ''));
+                const photos = fields.flatMap(field => field.photoUrls);
+                const name = identity?.displayValue || '이름 미입력';
+
                 const card = document.createElement('article');
-                card.className = 'border-b border-[var(--border-light)]';
-                const summary = document.createElement('button');
-                summary.type = 'button';
-                summary.className = 'w-full grid grid-cols-[3rem_1fr_auto] md:grid-cols-[4rem_1.2fr_1fr_auto_1.5rem] items-center gap-3 md:gap-5 py-5 text-left hover:text-[var(--accent-red)] transition-colors';
-                const sequence = document.createElement('span');
-                sequence.className = 'text-xs tracking-widest opacity-40 text-center';
-                sequence.textContent = String(items.length - index).padStart(2, '0');
-                const title = document.createElement('strong');
-                title.className = 'font-serif-ko text-lg truncate';
-                title.textContent = identity?.displayValue || '이름 미입력 신청서';
+                card.className = 'min-w-0 border border-[var(--border-light)] bg-white/30 overflow-hidden flex flex-col';
+                const photoButton = document.createElement('button');
+                photoButton.type = 'button';
+                photoButton.className = 'relative w-full aspect-square overflow-hidden bg-[var(--accent-red)]/10 flex items-center justify-center';
+                photoButton.setAttribute('aria-label', `${name} 사진 확대`);
+                if (photos.length) {
+                    const image = document.createElement('img');
+                    image.src = photos[0];
+                    image.alt = `${name} 가입 신청 사진`;
+                    image.loading = 'lazy';
+                    image.className = 'w-full h-full object-cover hover:scale-105 transition-transform duration-500';
+                    const zoom = document.createElement('span');
+                    zoom.className = 'absolute right-2 bottom-2 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center';
+                    zoom.innerHTML = '<i class="ph ph-magnifying-glass-plus"></i>';
+                    photoButton.append(image, zoom);
+                    image.addEventListener('error', () => {
+                        photoButton.replaceChildren();
+                        const fallback = document.createElement('span');
+                        fallback.className = 'text-4xl font-serif-en italic text-[var(--accent-red)] opacity-70';
+                        fallback.textContent = name.charAt(0).toUpperCase() || '?';
+                        photoButton.appendChild(fallback);
+                        photoButton.disabled = true;
+                    }, { once: true });
+                    photoButton.addEventListener('click', () => openMembershipPhoto(photos[0], name));
+                } else {
+                    const fallback = document.createElement('span');
+                    fallback.className = 'text-4xl font-serif-en italic text-[var(--accent-red)] opacity-70';
+                    fallback.textContent = name.charAt(0).toUpperCase() || '?';
+                    photoButton.appendChild(fallback);
+                    photoButton.disabled = true;
+                }
+
+                const body = document.createElement('div');
+                body.className = 'p-4 flex flex-col flex-1';
+                const titleLine = document.createElement('div');
+                titleLine.className = 'flex items-start justify-between gap-2';
+                const title = document.createElement('h3');
+                title.className = 'font-serif-ko text-lg font-bold truncate';
+                title.textContent = name;
                 if (item.isHidden) {
                     const badge = document.createElement('span');
-                    badge.className = 'ml-2 text-[0.65rem] tracking-widest uppercase text-[var(--accent-red)]';
+                    badge.className = 'shrink-0 text-[0.6rem] tracking-widest uppercase text-[var(--accent-red)]';
                     badge.textContent = '숨김';
-                    title.appendChild(badge);
+                    titleLine.append(title, badge);
+                } else {
+                    titleLine.appendChild(title);
                 }
-                const contactValue = document.createElement('span');
-                contactValue.className = 'hidden md:block text-sm opacity-55 truncate';
-                contactValue.textContent = contact?.displayValue || item.formName || '-';
-                const date = document.createElement('time');
-                date.className = 'text-xs opacity-40 whitespace-nowrap';
-                const submittedAt = new Date(item.submittedAt);
-                date.textContent = Number.isNaN(submittedAt.getTime()) ? '' : submittedAt.toLocaleDateString('ko-KR');
-                const arrow = document.createElement('i');
-                arrow.className = 'ph ph-caret-down hidden md:block transition-transform';
-                const mobileMeta = document.createElement('span');
-                mobileMeta.className = 'md:hidden col-start-2 col-span-2 text-xs opacity-45 truncate';
-                mobileMeta.textContent = contact?.displayValue || item.formName || '';
-                summary.append(sequence, title, contactValue, date, arrow, mobileMeta);
+                const meta = document.createElement('p');
+                meta.className = 'mt-3 text-xs leading-5 opacity-60 min-h-[2.5rem]';
+                const birthLabel = birthYear?.displayValue
+                    ? (/^\d{4}$/.test(birthYear.displayValue) ? `${birthYear.displayValue}년생` : birthYear.displayValue)
+                    : '';
+                meta.textContent = [region?.displayValue, birthLabel, tendency?.displayValue].filter(Boolean).join(' · ') || '기본 정보 미입력';
+                const detailsButton = document.createElement('button');
+                detailsButton.type = 'button';
+                detailsButton.className = 'mt-4 pt-3 border-t border-[var(--border-light)] text-[0.65rem] tracking-widest uppercase flex items-center justify-between hover:text-[var(--accent-red)]';
+                detailsButton.innerHTML = '<span>전체 답변</span><i class="ph ph-caret-down transition-transform"></i>';
+                body.append(titleLine, meta, detailsButton);
 
                 const answers = document.createElement('dl');
-                answers.className = 'hidden grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5 bg-white/30 px-6 sm:px-10 py-8 border-t border-[var(--border-light)]';
+                answers.className = 'hidden col-span-full grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5 bg-white/50 px-5 py-6 border-t border-[var(--border-light)]';
                 fields.forEach(field => {
                     const group = document.createElement('div');
                     group.className = 'border-t border-[var(--border-light)] pt-3';
@@ -1760,7 +1824,7 @@
                     label.textContent = field.label || 'Answer';
                     const value = document.createElement('dd');
                     value.className = 'font-serif-ko text-sm leading-relaxed whitespace-pre-wrap break-words';
-                    value.textContent = field.displayValue;
+                    value.textContent = field.photoUrls.length ? `첨부 사진 ${field.photoUrls.length}장` : field.displayValue;
                     group.append(label, value);
                     answers.appendChild(group);
                 });
@@ -1769,25 +1833,25 @@
                     actions.className = 'sm:col-span-2 flex justify-end gap-3 pt-4 border-t border-[var(--border-light)]';
                     const visibility = document.createElement('button');
                     visibility.type = 'button';
-                    visibility.className = 'border border-[var(--text-dark)] px-5 py-3 text-xs tracking-widest uppercase';
+                    visibility.className = 'border border-[var(--text-dark)] px-4 py-2 text-xs tracking-widest uppercase';
                     visibility.textContent = item.isHidden ? '다시 표시' : '숨기기';
                     visibility.addEventListener('click', () => manageMembershipApplication(item.isHidden ? 'show' : 'hide', item.submissionId));
                     const remove = document.createElement('button');
                     remove.type = 'button';
-                    remove.className = 'bg-[var(--accent-red)] text-white px-5 py-3 text-xs tracking-widest uppercase';
+                    remove.className = 'bg-[var(--accent-red)] text-white px-4 py-2 text-xs tracking-widest uppercase';
                     remove.textContent = '삭제';
                     remove.addEventListener('click', () => manageMembershipApplication('delete', item.submissionId));
                     actions.append(visibility, remove);
                     answers.appendChild(actions);
                 }
-                summary.addEventListener('click', () => {
+                detailsButton.addEventListener('click', () => {
                     const willOpen = answers.classList.contains('hidden');
                     answers.classList.toggle('hidden', !willOpen);
-                    arrow.classList.toggle('rotate-180', willOpen);
-                    summary.setAttribute('aria-expanded', String(willOpen));
+                    detailsButton.querySelector('i')?.classList.toggle('rotate-180', willOpen);
+                    detailsButton.setAttribute('aria-expanded', String(willOpen));
                 });
-                summary.setAttribute('aria-expanded', 'false');
-                card.append(summary, answers);
+                detailsButton.setAttribute('aria-expanded', 'false');
+                card.append(photoButton, body, answers);
                 membershipList.appendChild(card);
             });
         }
