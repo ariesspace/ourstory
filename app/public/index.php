@@ -194,7 +194,7 @@
                                 </h4>
                                 <ul class="space-y-4 text-sm opacity-70">
                                     <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-read">Latest Updates</li>
-                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-people">Self Introduce</li>
+                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-introduce">Self Introduce</li>
                                     <li class="hover:text-[var(--accent-red)] cursor-pointer opacity-50">Monthly Archive</li>
                                 </ul>
                             </div>
@@ -252,7 +252,7 @@
                     <p class="font-serif-en italic text-xl mb-4">Journal</p>
                     <div class="grid gap-2">
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-read">Latest Updates</button>
-                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-people">Self Introduce</button>
+                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-introduce">Self Introduce</button>
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-write">Write New Story</button>
                     </div>
                 </section>
@@ -363,6 +363,33 @@
                     </button>
                 </div>
             </form>
+        </section>
+
+        <section id="view-introduce" class="w-full view-hidden fade-in">
+            <div class="w-full py-16 md:py-20 mb-10 flex flex-col justify-center items-center text-center border-b border-[var(--border-light)]">
+                <span class="text-xs tracking-[0.3em] uppercase opacity-50 font-bold mb-5">Journal</span>
+                <h1 class="text-5xl md:text-8xl font-serif-en italic tracking-tighter">Self Introduce</h1>
+                <p class="mt-6 text-sm opacity-60 font-serif-ko leading-relaxed px-4">우리의 이야기를 들려주세요. 아래 양식을 작성하면 Tally에 안전하게 제출됩니다.</p>
+            </div>
+
+            <div class="max-w-4xl mx-auto bg-white/35 backdrop-blur-sm border border-[var(--border-light)] rounded-sm shadow-sm px-3 py-6 sm:px-8 sm:py-10">
+                <iframe
+                    data-tally-src="https://tally.so/embed/m66BrY?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+                    loading="lazy"
+                    width="100%"
+                    height="720"
+                    frameborder="0"
+                    marginheight="0"
+                    marginwidth="0"
+                    title="Self Introduce form"
+                ></iframe>
+                <noscript>
+                    <p class="text-center text-sm">
+                        JavaScript를 사용할 수 없어 폼을 표시하지 못했습니다.
+                        <a href="https://tally.so/r/m66BrY" target="_blank" rel="noopener noreferrer" class="underline text-[var(--accent-red)]">Tally에서 폼 열기</a>
+                    </p>
+                </noscript>
+            </div>
         </section>
 
         <section id="view-people" class="w-full view-hidden fade-in">
@@ -555,6 +582,8 @@
         </div>
     </div>
 
+    <script src="https://tally.so/widgets/embed.js" defer></script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -701,6 +730,19 @@
             toast.style.opacity = '1';
             setTimeout(() => { toast.style.opacity = '0'; }, 3000);
         }
+
+        window.addEventListener('message', (event) => {
+            if (event.origin !== 'https://tally.so' || typeof event.data !== 'string' || !event.data.includes('Tally.FormSubmitted')) return;
+
+            try {
+                const submission = JSON.parse(event.data);
+                if (submission?.payload?.formId === 'm66BrY') {
+                    showToast('자기소개가 등록되었습니다.', true);
+                }
+            } catch (error) {
+                console.error('Tally Submission Event Error:', error);
+            }
+        });
 
         document.getElementById('login-form').addEventListener('submit', (e) => {
             e.preventDefault();
