@@ -630,7 +630,8 @@
                     기록이 모여<br>우리가 되는 시간.
                 </h1>
                 <p class="self-end text-sm tracking-widest uppercase opacity-60 font-serif-en text-right">
-                    Putting a Moment of Peace<br>to Cities Around the World
+                    <span class="block whitespace-nowrap">Putting a Moment of Peace</span>
+                    <span class="block whitespace-nowrap">to Cities Around the World</span>
                 </p>
             </div>
 
