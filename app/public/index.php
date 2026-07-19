@@ -758,22 +758,7 @@
                     <i class="ph ph-plus mr-2"></i>Add Bar
                 </button>
             </div>
-            <div class="overflow-x-auto border-t-2 border-[var(--text-dark)]">
-                <table class="w-full min-w-[900px] text-sm">
-                    <thead class="border-b border-[var(--border-light)] text-xs tracking-widest uppercase opacity-60">
-                        <tr>
-                            <th class="w-20 py-4 text-center">No.</th>
-                            <th class="py-4 text-left">Bar Name</th>
-                            <th class="w-36 py-4 text-center">Region</th>
-                            <th class="w-32 py-4 text-center">Entrance Fee</th>
-                            <th class="py-4 text-left">Address / Information</th>
-                            <th class="w-36 py-4 text-center">Social / Link</th>
-                            <th class="w-24 py-4 text-center">Manage</th>
-                        </tr>
-                    </thead>
-                    <tbody id="sm-bar-list"></tbody>
-                </table>
-            </div>
+            <div id="sm-bar-list" class="border-t-2 border-[var(--text-dark)]"></div>
             <p id="sm-bar-status" class="py-16 text-center text-sm opacity-50">목록을 불러오는 중입니다.</p>
         </section>
 
@@ -1690,49 +1675,46 @@
                 return;
             }
             smBarItems.forEach((item, index) => {
-                const row = document.createElement('tr');
-                row.className = 'border-b border-[var(--border-light)] align-top';
-                const number = document.createElement('td');
-                number.className = 'py-5 text-center opacity-45';
-                number.textContent = String(index + 1);
-                const name = document.createElement('td');
-                name.className = 'py-5 pr-5';
-                const nameLine = document.createElement('div');
-                nameLine.className = 'flex items-center gap-3';
+                const row = document.createElement('article');
+                row.className = 'flex items-start gap-3 sm:gap-5 py-5 border-b border-[var(--border-light)]';
+                const number = document.createElement('span');
+                number.className = 'w-7 shrink-0 pt-1 text-xs tracking-widest opacity-35 text-center';
+                number.textContent = String(index + 1).padStart(2, '0');
                 const cocktail = document.createElement('span');
-                cocktail.className = 'text-xl shrink-0';
+                cocktail.className = 'text-xl shrink-0 pt-0.5';
                 cocktail.setAttribute('aria-hidden', 'true');
                 cocktail.textContent = '🍹';
+                const content = document.createElement('div');
+                content.className = 'min-w-0 flex-1 grid grid-cols-1 md:grid-cols-[minmax(9rem,0.7fr)_minmax(0,1.5fr)_auto] gap-3 md:gap-7';
+                const identity = document.createElement('div');
+                identity.className = 'min-w-0';
                 const nameStrong = document.createElement('strong');
-                nameStrong.className = 'block text-base';
+                nameStrong.className = 'block text-lg font-serif-ko truncate';
                 nameStrong.textContent = item.name;
-                nameLine.append(cocktail, nameStrong);
                 const author = document.createElement('span');
-                author.className = 'block text-xs opacity-40 mt-2 ml-9';
+                author.className = 'block text-xs opacity-40 mt-1';
                 author.textContent = `작성자 ${item.authorName}`;
-                name.append(nameLine, author);
-                const region = document.createElement('td');
-                region.className = 'py-5 px-3 text-center';
-                region.textContent = item.region || '-';
-                const entranceFee = document.createElement('td');
-                entranceFee.className = 'py-5 px-3 text-center';
-                entranceFee.textContent = item.entranceFee || '-';
-                const info = document.createElement('td');
-                info.className = 'py-5 pr-5';
+                const meta = document.createElement('span');
+                meta.className = 'block text-xs opacity-55 mt-2';
+                meta.textContent = [item.region, item.entranceFee].filter(Boolean).join(' · ') || '정보 미입력';
+                identity.append(nameStrong, author, meta);
+                const info = document.createElement('div');
+                info.className = 'min-w-0';
                 const address = document.createElement('p');
+                address.className = 'truncate';
                 address.textContent = item.address || '-';
                 const description = document.createElement('p');
-                description.className = 'text-xs opacity-55 mt-2 whitespace-pre-wrap';
+                description.className = 'text-xs opacity-55 mt-2 whitespace-pre-wrap line-clamp-2';
                 description.textContent = item.description || '';
                 info.append(address, description);
-                const link = document.createElement('td');
-                link.className = 'py-5 text-center space-y-2';
+                const link = document.createElement('div');
+                link.className = 'md:text-right space-x-3 md:space-x-0 md:space-y-2 text-sm';
                 if (item.twitterUrl) {
                     const twitter = document.createElement('a');
                     twitter.href = item.twitterUrl;
                     twitter.target = '_blank';
                     twitter.rel = 'noopener noreferrer';
-                    twitter.className = 'block underline underline-offset-4';
+                    twitter.className = 'inline-block md:block underline underline-offset-4';
                     twitter.textContent = item.twitterAccount;
                     link.appendChild(twitter);
                 }
@@ -1745,9 +1727,9 @@
                     anchor.innerHTML = 'Website <i class="ph ph-arrow-up-right"></i>';
                     link.appendChild(anchor);
                 }
-                if (!item.twitterUrl && !item.websiteUrl) link.textContent = '-';
-                const manage = document.createElement('td');
-                manage.className = 'py-5 text-center';
+                content.append(identity, info, link);
+                const manage = document.createElement('div');
+                manage.className = 'shrink-0 flex items-center';
                 if (item.canEdit) {
                     const edit = document.createElement('button');
                     edit.type = 'button';
@@ -1762,8 +1744,8 @@
                     remove.innerHTML = '<i class="ph ph-trash"></i>';
                     remove.addEventListener('click', () => deleteSmBar(item));
                     manage.append(edit, remove);
-                } else manage.textContent = '-';
-                row.append(number, name, region, entranceFee, info, link, manage);
+                }
+                row.append(number, cocktail, content, manage);
                 smBarList.appendChild(row);
             });
         }
