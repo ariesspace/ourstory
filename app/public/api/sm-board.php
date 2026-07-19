@@ -239,8 +239,9 @@ if ($action === 'delete') {
     }
     $files = $pdo->prepare('SELECT stored_name FROM sm_attachments WHERE post_id = :id');
     $files->execute([':id' => $id]);
+    $storedFiles = $files->fetchAll();
     $pdo->prepare('DELETE FROM sm_posts WHERE id = :id')->execute([':id' => $id]);
-    foreach ($files->fetchAll() as $file) {
+    foreach ($storedFiles as $file) {
         $path = sm_upload_dir() . '/' . $file['stored_name'];
         if (is_file($path)) {
             unlink($path);
