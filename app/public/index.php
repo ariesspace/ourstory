@@ -1707,10 +1707,7 @@
                 const caret = document.createElement('i');
                 caret.className = 'ph ph-caret-down ml-auto opacity-35 transition-transform';
                 nameLine.append(cocktail, nameStrong, caret);
-                const author = document.createElement('span');
-                author.className = 'block text-xs opacity-40 mt-2 ml-9';
-                author.textContent = `작성자 ${item.authorName}`;
-                name.append(nameLine, author);
+                name.appendChild(nameLine);
                 const region = document.createElement('td');
                 region.className = 'py-5 px-3 text-center';
                 region.textContent = item.region || '-';
