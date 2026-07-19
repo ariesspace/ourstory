@@ -91,6 +91,23 @@
             pointer-events: auto;
         }
 
+        .sm-editor-area:empty::before {
+            content: attr(data-placeholder);
+            color: rgba(47, 42, 42, 0.35);
+            pointer-events: none;
+        }
+        .sm-editor-area:focus { outline: none; }
+        .sm-editor-area h2, .sm-rich-content h2 { font-size: 1.75rem; font-weight: 700; margin: 1.6rem 0 0.8rem; }
+        .sm-editor-area h3, .sm-rich-content h3 { font-size: 1.35rem; font-weight: 700; margin: 1.4rem 0 0.7rem; }
+        .sm-editor-area p, .sm-rich-content p { margin: 0.8rem 0; }
+        .sm-editor-area ul, .sm-rich-content ul { list-style: disc; padding-left: 1.6rem; margin: 0.8rem 0; }
+        .sm-editor-area ol, .sm-rich-content ol { list-style: decimal; padding-left: 1.6rem; margin: 0.8rem 0; }
+        .sm-editor-area blockquote, .sm-rich-content blockquote { border-left: 3px solid var(--accent-red); padding-left: 1rem; opacity: 0.75; margin: 1.2rem 0; }
+        .sm-editor-area a, .sm-rich-content a { color: var(--accent-red); text-decoration: underline; }
+        .sm-editor-area figure, .sm-rich-content figure { margin: 1.5rem 0; }
+        .sm-editor-area img, .sm-rich-content img { display: block; max-width: 100%; max-height: 720px; object-fit: contain; border-radius: 2px; }
+        .sm-editor-area figcaption, .sm-rich-content figcaption { margin-top: 0.5rem; font-size: 0.75rem; opacity: 0.5; text-align: center; }
+
         #mobile-menu {
             position: fixed;
             top: 88px;
@@ -159,7 +176,7 @@
                     <button class="nav-link uppercase" data-menu="members">Members</button>
                     <button class="nav-link uppercase" data-menu="schedule">Schedule</button>
                     <button class="nav-link uppercase hidden" data-menu="system" id="system-nav-link">System</button>
-                    <button class="view-trigger uppercase hidden" data-target="view-my-page" id="my-page-nav-link">My Page</button>
+                    <button class="nav-link view-trigger uppercase hidden" data-target="view-my-page" id="my-page-nav-link">My Page</button>
                 </nav>
             </div>
 
@@ -197,6 +214,7 @@
                                 <ul class="space-y-4 text-sm opacity-70">
                                     <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-read">Latest Updates</li>
                                     <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-introduce">Self Introduce</li>
+                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-sm-board">SM 정보</li>
                                     <li class="hover:text-[var(--accent-red)] cursor-pointer opacity-50">Monthly Archive</li>
                                 </ul>
                             </div>
@@ -275,6 +293,7 @@
                     <div class="grid gap-2">
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-read">Latest Updates</button>
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-introduce">Self Introduce</button>
+                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-sm-board">SM 정보</button>
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-write">Write New Story</button>
                     </div>
                 </section>
@@ -639,6 +658,95 @@
             <div id="intro-list" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
         </section>
 
+        <section id="view-sm-board" class="w-full view-hidden fade-in">
+            <div class="py-14 md:py-20 mb-10 border-b border-[var(--border-light)] flex flex-col md:flex-row md:items-end md:justify-between gap-8">
+                <div>
+                    <span class="text-xs tracking-[0.3em] uppercase opacity-50 font-bold">Journal</span>
+                    <h1 class="text-5xl md:text-8xl font-serif-en italic tracking-tighter mt-3">SM Information</h1>
+                    <p class="mt-5 text-sm opacity-60">정보와 자료를 글, 이미지, 첨부파일로 공유하는 게시판입니다.</p>
+                </div>
+                <button type="button" id="sm-write-btn" class="view-trigger hidden bg-[var(--accent-red)] text-white px-7 py-3 text-xs tracking-widest uppercase" data-target="view-sm-editor">
+                    <i class="ph ph-pencil-simple mr-2"></i>글쓰기
+                </button>
+            </div>
+            <form id="sm-search-form" class="flex gap-3 mb-6 max-w-lg ml-auto">
+                <input type="search" id="sm-search-input" maxlength="100" class="flex-1 bg-white/30 border border-[var(--border-light)] px-4 py-3 text-sm" placeholder="제목, 내용, 작성자 검색">
+                <button type="submit" class="border border-[var(--text-dark)] px-5 py-3 text-xs tracking-widest uppercase">Search</button>
+            </form>
+            <div class="overflow-x-auto border-t-2 border-[var(--text-dark)]">
+                <table class="w-full min-w-[720px] text-sm">
+                    <thead class="border-b border-[var(--border-light)] text-xs tracking-widest uppercase opacity-60">
+                        <tr><th class="w-20 py-4 text-center">No.</th><th class="py-4 text-left">제목</th><th class="w-32 py-4 text-center">작성자</th><th class="w-28 py-4 text-center">작성일</th><th class="w-20 py-4 text-center">조회</th></tr>
+                    </thead>
+                    <tbody id="sm-board-list"></tbody>
+                </table>
+            </div>
+            <p id="sm-board-status" class="py-16 text-center text-sm opacity-50">게시글을 불러오는 중입니다.</p>
+            <div id="sm-pagination" class="flex justify-center items-center gap-2 mt-8"></div>
+            <button type="button" id="sm-detail-view-trigger" class="view-trigger hidden" data-target="view-sm-detail"></button>
+            <button type="button" id="sm-editor-view-trigger" class="view-trigger hidden" data-target="view-sm-editor"></button>
+        </section>
+
+        <section id="view-sm-detail" class="w-full max-w-5xl mx-auto view-hidden fade-in py-8">
+            <button type="button" class="view-trigger text-xs tracking-widest uppercase opacity-60 mb-10" data-target="view-sm-board"><i class="ph ph-arrow-left mr-2"></i>목록으로</button>
+            <article class="border-t-2 border-[var(--text-dark)]">
+                <header class="py-8 border-b border-[var(--border-light)]">
+                    <h1 id="sm-detail-title" class="text-3xl md:text-5xl font-serif-ko font-bold leading-tight"></h1>
+                    <div class="flex flex-wrap gap-x-6 gap-y-2 mt-5 text-xs opacity-55">
+                        <span id="sm-detail-author"></span><span id="sm-detail-date"></span><span id="sm-detail-views"></span>
+                    </div>
+                </header>
+                <div id="sm-detail-content" class="sm-rich-content min-h-[260px] py-10 text-base md:text-lg leading-loose"></div>
+                <div id="sm-detail-files" class="hidden border-y border-[var(--border-light)] py-6"></div>
+            </article>
+            <div class="flex justify-between items-center mt-8">
+                <button type="button" class="view-trigger text-xs tracking-widest uppercase opacity-60" data-target="view-sm-board">List</button>
+                <div id="sm-detail-actions" class="hidden gap-3">
+                    <button type="button" id="sm-edit-btn" class="border border-[var(--text-dark)] px-5 py-3 text-xs tracking-widest uppercase">Edit</button>
+                    <button type="button" id="sm-delete-btn" class="bg-[var(--accent-red)] text-white px-5 py-3 text-xs tracking-widest uppercase">Delete</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-sm-editor" class="w-full max-w-5xl mx-auto view-hidden fade-in py-8">
+            <div class="mb-10">
+                <span class="text-xs tracking-[0.3em] uppercase opacity-50 font-bold">SM Information</span>
+                <h1 id="sm-editor-heading" class="text-4xl md:text-6xl font-serif-en italic mt-3">Write Post</h1>
+            </div>
+            <form id="sm-editor-form" class="space-y-7">
+                <input type="text" id="sm-title-input" maxlength="150" required class="w-full bg-transparent text-3xl md:text-4xl font-serif-ko font-bold border-b border-[var(--border-light)] pb-4" placeholder="제목을 입력하세요">
+                <div class="border border-[var(--border-light)] bg-white/30">
+                    <div id="sm-editor-toolbar" class="flex flex-wrap gap-1 p-3 border-b border-[var(--border-light)]" aria-label="에디터 도구">
+                        <button type="button" data-command="bold" class="w-10 h-10 hover:bg-white/70" title="굵게"><i class="ph ph-text-b"></i></button>
+                        <button type="button" data-command="italic" class="w-10 h-10 hover:bg-white/70" title="기울임"><i class="ph ph-text-italic"></i></button>
+                        <button type="button" data-command="underline" class="w-10 h-10 hover:bg-white/70" title="밑줄"><i class="ph ph-text-underline"></i></button>
+                        <button type="button" data-block="h2" class="px-3 h-10 hover:bg-white/70 font-bold" title="큰 제목">H2</button>
+                        <button type="button" data-block="h3" class="px-3 h-10 hover:bg-white/70 font-bold" title="작은 제목">H3</button>
+                        <button type="button" data-command="insertUnorderedList" class="w-10 h-10 hover:bg-white/70" title="글머리 목록"><i class="ph ph-list-bullets"></i></button>
+                        <button type="button" data-command="insertOrderedList" class="w-10 h-10 hover:bg-white/70" title="번호 목록"><i class="ph ph-list-numbers"></i></button>
+                        <button type="button" id="sm-link-btn" class="w-10 h-10 hover:bg-white/70" title="링크"><i class="ph ph-link"></i></button>
+                        <button type="button" id="sm-image-btn" class="px-3 h-10 hover:bg-white/70 flex items-center gap-2" title="본문 이미지"><i class="ph ph-image"></i><span class="text-xs">Image</span></button>
+                        <button type="button" data-command="removeFormat" class="w-10 h-10 hover:bg-white/70" title="서식 지우기"><i class="ph ph-eraser"></i></button>
+                    </div>
+                    <div id="sm-content-editor" class="sm-editor-area min-h-[420px] p-6 md:p-8 leading-loose" contenteditable="true" data-placeholder="내용을 입력하세요. 이미지 버튼으로 본문 안에 그림을 넣을 수 있습니다."></div>
+                </div>
+                <input type="file" id="sm-inline-image-input" accept="image/jpeg,image/png,image/gif,image/webp" multiple class="hidden">
+                <div class="border border-dashed border-[var(--border-light)] p-5">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div><p class="font-bold text-sm">파일 첨부</p><p class="text-xs opacity-50 mt-1">이미지, PDF, 문서, 스프레드시트, 프레젠테이션, ZIP · 파일당 최대 10MB</p></div>
+                        <label for="sm-file-input" class="cursor-pointer border border-[var(--text-dark)] px-5 py-3 text-xs tracking-widest uppercase text-center"><i class="ph ph-paperclip mr-2"></i>Select Files</label>
+                    </div>
+                    <input type="file" id="sm-file-input" multiple class="hidden" accept="image/*,.pdf,.txt,.csv,.zip,.docx,.xlsx,.pptx">
+                    <div id="sm-selected-files" class="mt-4 grid gap-2"></div>
+                </div>
+                <p id="sm-editor-error" class="hidden text-sm text-[var(--accent-red)] text-center"></p>
+                <div class="flex justify-between items-center border-t border-[var(--border-light)] pt-7">
+                    <button type="button" class="view-trigger text-xs tracking-widest uppercase opacity-60" data-target="view-sm-board">Cancel</button>
+                    <button type="submit" id="sm-publish-btn" class="bg-[var(--accent-red)] text-white px-8 py-4 text-xs font-bold tracking-widest uppercase">Publish</button>
+                </div>
+            </form>
+        </section>
+
         <section id="view-people" class="w-full view-hidden fade-in">
             <div class="w-full bg-[var(--accent-red)] text-white py-32 mb-16 flex justify-center items-center rounded-sm shadow-xl">
                 <h1 class="text-8xl font-serif-en italic transform -rotate-90 md:rotate-0 tracking-tighter opacity-90">:m</h1>
@@ -835,7 +943,8 @@
         import { getFirestore, collection, addDoc, onSnapshot, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const header = document.getElementById('main-header');
-        const navLinks = document.querySelectorAll('.nav-link');
+        const navLinks = document.querySelectorAll('.nav-link[data-menu]');
+        const desktopNavItems = document.querySelectorAll('nav .nav-link');
         const megaMenu = document.getElementById('mega-menu');
         const menuOverlay = document.getElementById('menu-overlay');
         const menuImage = document.getElementById('menu-image');
@@ -924,7 +1033,7 @@
                     return;
                 }
 
-                navLinks.forEach(l => l.classList.remove('active'));
+                desktopNavItems.forEach(l => l.classList.remove('active'));
                 link.classList.add('active');
 
                 submenuContents.forEach(content => content.classList.add('hidden'));
@@ -953,12 +1062,21 @@
             trigger.addEventListener('click', () => {
                 let targetId = trigger.getAttribute('data-target');
 
+                if (trigger.id === 'my-page-nav-link') {
+                    desktopNavItems.forEach(item => item.classList.remove('active'));
+                    trigger.classList.add('active');
+                }
+
                 if (targetId?.startsWith('view-system-') && !['superuser', 'admin'].includes(siteUser?.role)) {
                     showToast('관리자 로그인이 필요합니다.', false);
                     targetId = 'view-login';
                 }
                 if (targetId === 'view-my-page' && !siteUser) {
                     showToast('로그인이 필요합니다.', false);
+                    targetId = 'view-login';
+                }
+                if (targetId === 'view-sm-editor' && !siteUser) {
+                    showToast('게시글 작성은 로그인이 필요합니다.', false);
                     targetId = 'view-login';
                 }
 
@@ -980,6 +1098,7 @@
                 if (targetId === 'view-introduce') loadIntroductions();
                 if (targetId === 'view-system-members') loadMembers();
                 if (targetId === 'view-my-page') loadMyProfile();
+                if (targetId === 'view-sm-board') loadSmBoard();
             });
         });
 
@@ -1009,6 +1128,7 @@
             myPageNavLink.classList.toggle('hidden', !user);
             mobileSystemSection.classList.toggle('hidden', !isManager);
             mobileMyPageSection.classList.toggle('hidden', !user);
+            document.getElementById('sm-write-btn').classList.toggle('hidden', !user);
             loginNavBtn.textContent = user ? user.displayName : 'Login';
             loginNavBtn.dataset.target = user ? 'view-my-page' : 'view-login';
             mobileLoginBtn.textContent = user ? user.displayName : 'Login';
@@ -1129,6 +1249,17 @@
         const myPageStatus = document.getElementById('my-page-status');
         const myPageForm = document.getElementById('my-page-form');
         const myPageError = document.getElementById('my-page-error');
+        const smBoardList = document.getElementById('sm-board-list');
+        const smBoardStatus = document.getElementById('sm-board-status');
+        const smPagination = document.getElementById('sm-pagination');
+        const smSearchForm = document.getElementById('sm-search-form');
+        const smEditorForm = document.getElementById('sm-editor-form');
+        const smContentEditor = document.getElementById('sm-content-editor');
+        const smInlineImageInput = document.getElementById('sm-inline-image-input');
+        const smFileInput = document.getElementById('sm-file-input');
+        const smSelectedFiles = document.getElementById('sm-selected-files');
+        const smEditorError = document.getElementById('sm-editor-error');
+        const smPublishBtn = document.getElementById('sm-publish-btn');
 
         let calendarDate = new Date();
         let selectedDateKey = formatDateKey(calendarDate);
@@ -1136,6 +1267,12 @@
             '2026-07-14': ['우리들의 이야기 일정 메뉴 추가', '첫 모임 기록 정리']
         };
         let localGalleryItems = getSampleGalleryItems();
+        let smCurrentPage = 1;
+        let smSearch = '';
+        let smCurrentPost = null;
+        let smEditingPostId = null;
+        let smInlineUploads = [];
+        let smFileUploads = [];
 
         function formatIntroductionAnswer(field) {
             const options = new Map((Array.isArray(field.options) ? field.options : []).map(option => [String(option.id), option.text]));
@@ -1228,6 +1365,358 @@
         }
 
         introRefreshBtn?.addEventListener('click', loadIntroductions);
+
+        function smFormatDate(value) {
+            const date = new Date(String(value || '').replace(' ', 'T') + 'Z');
+            return Number.isNaN(date.getTime()) ? '' : date.toLocaleDateString('ko-KR');
+        }
+
+        function smFormatFileSize(bytes) {
+            if (bytes < 1024) return `${bytes} B`;
+            if (bytes < 1048576) return `${(bytes / 1024).toFixed(1)} KB`;
+            return `${(bytes / 1048576).toFixed(1)} MB`;
+        }
+
+        function renderSmPagination(totalPages) {
+            smPagination.innerHTML = '';
+            if (totalPages <= 1) return;
+            const start = Math.max(1, smCurrentPage - 2);
+            const end = Math.min(totalPages, start + 4);
+            for (let page = start; page <= end; page += 1) {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.textContent = String(page);
+                button.className = `w-9 h-9 border text-xs ${page === smCurrentPage ? 'bg-[var(--text-dark)] text-white border-[var(--text-dark)]' : 'border-[var(--border-light)]'}`;
+                button.addEventListener('click', () => {
+                    smCurrentPage = page;
+                    loadSmBoard();
+                });
+                smPagination.appendChild(button);
+            }
+        }
+
+        async function loadSmBoard() {
+            if (!smBoardList) return;
+            smBoardStatus.textContent = '게시글을 불러오는 중입니다.';
+            smBoardStatus.classList.remove('hidden');
+            smBoardList.innerHTML = '';
+            smPagination.innerHTML = '';
+            try {
+                const params = new URLSearchParams({ action: 'list', page: String(smCurrentPage) });
+                if (smSearch) params.set('search', smSearch);
+                const response = await fetch(`/api/sm-board.php?${params}`, { headers: { Accept: 'application/json' }, cache: 'no-store' });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '게시글을 불러오지 못했습니다.');
+                if (!payload.items.length) {
+                    smBoardStatus.textContent = smSearch ? '검색 결과가 없습니다.' : '아직 등록된 게시글이 없습니다.';
+                    return;
+                }
+                smBoardStatus.classList.add('hidden');
+                payload.items.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.className = 'border-b border-[var(--border-light)] hover:bg-white/35 cursor-pointer transition-colors';
+                    const number = document.createElement('td');
+                    number.className = 'py-5 text-center opacity-45';
+                    number.textContent = String(item.id);
+                    const titleCell = document.createElement('td');
+                    titleCell.className = 'py-5 pr-4';
+                    const title = document.createElement('p');
+                    title.className = 'font-bold font-serif-ko text-base';
+                    title.textContent = item.title;
+                    if (item.attachmentCount > 0) {
+                        const clip = document.createElement('i');
+                        clip.className = 'ph ph-paperclip ml-2 text-[var(--accent-red)]';
+                        clip.title = `첨부파일 ${item.attachmentCount}개`;
+                        title.appendChild(clip);
+                    }
+                    const summary = document.createElement('p');
+                    summary.className = 'text-xs opacity-45 mt-2 line-clamp-1';
+                    summary.textContent = item.summary;
+                    titleCell.append(title, summary);
+                    const author = document.createElement('td');
+                    author.className = 'py-5 text-center';
+                    author.textContent = item.authorName;
+                    const date = document.createElement('td');
+                    date.className = 'py-5 text-center opacity-55';
+                    date.textContent = smFormatDate(item.createdAt);
+                    const views = document.createElement('td');
+                    views.className = 'py-5 text-center opacity-55';
+                    views.textContent = String(item.viewCount);
+                    row.append(number, titleCell, author, date, views);
+                    row.addEventListener('click', () => openSmPost(item.id));
+                    smBoardList.appendChild(row);
+                });
+                renderSmPagination(payload.totalPages);
+            } catch (error) {
+                smBoardStatus.textContent = error.message;
+            }
+        }
+
+        async function openSmPost(id) {
+            try {
+                const response = await fetch(`/api/sm-board.php?action=detail&id=${encodeURIComponent(id)}`, { headers: { Accept: 'application/json' }, cache: 'no-store' });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '게시글을 불러오지 못했습니다.');
+                smCurrentPost = payload.post;
+                document.getElementById('sm-detail-title').textContent = payload.post.title;
+                document.getElementById('sm-detail-author').textContent = `작성자 ${payload.post.authorName}`;
+                document.getElementById('sm-detail-date').textContent = `작성일 ${smFormatDate(payload.post.createdAt)}`;
+                document.getElementById('sm-detail-views').textContent = `조회 ${payload.post.viewCount}`;
+                document.getElementById('sm-detail-content').innerHTML = payload.post.contentHtml;
+
+                const filesWrap = document.getElementById('sm-detail-files');
+                const files = payload.post.attachments.filter(file => !file.isInline);
+                filesWrap.innerHTML = '';
+                filesWrap.classList.toggle('hidden', files.length === 0);
+                if (files.length) {
+                    const heading = document.createElement('p');
+                    heading.className = 'text-xs tracking-widest uppercase opacity-50 mb-3';
+                    heading.textContent = `Attachments ${files.length}`;
+                    filesWrap.appendChild(heading);
+                    files.forEach(file => {
+                        const link = document.createElement('a');
+                        link.href = file.url;
+                        link.className = 'flex items-center gap-3 py-2 hover:text-[var(--accent-red)]';
+                        link.setAttribute('download', file.name);
+                        const icon = document.createElement('i');
+                        icon.className = 'ph ph-file-arrow-down text-xl';
+                        const name = document.createElement('span');
+                        name.className = 'text-sm break-all';
+                        name.textContent = `${file.name} (${smFormatFileSize(file.size)})`;
+                        link.append(icon, name);
+                        filesWrap.appendChild(link);
+                    });
+                }
+                const actions = document.getElementById('sm-detail-actions');
+                actions.classList.toggle('hidden', !payload.post.canEdit);
+                actions.classList.toggle('flex', payload.post.canEdit);
+                document.getElementById('sm-detail-view-trigger').click();
+            } catch (error) {
+                showToast(error.message, false);
+            }
+        }
+
+        smSearchForm?.addEventListener('submit', event => {
+            event.preventDefault();
+            smSearch = document.getElementById('sm-search-input').value.trim();
+            smCurrentPage = 1;
+            loadSmBoard();
+        });
+
+        function clearSmUploadObjects() {
+            smInlineUploads.forEach(upload => URL.revokeObjectURL(upload.url));
+            smInlineUploads = [];
+            smFileUploads = [];
+        }
+
+        function resetSmEditor() {
+            clearSmUploadObjects();
+            smEditingPostId = null;
+            document.getElementById('sm-editor-heading').textContent = 'Write Post';
+            document.getElementById('sm-title-input').value = '';
+            smContentEditor.innerHTML = '';
+            smSelectedFiles.innerHTML = '';
+            smInlineImageInput.value = '';
+            smFileInput.value = '';
+            smEditorError.classList.add('hidden');
+            smPublishBtn.querySelector('span')?.remove();
+            smPublishBtn.textContent = 'Publish';
+        }
+
+        document.getElementById('sm-write-btn')?.addEventListener('click', resetSmEditor);
+
+        document.getElementById('sm-editor-toolbar')?.addEventListener('mousedown', event => event.preventDefault());
+        document.getElementById('sm-editor-toolbar')?.addEventListener('click', event => {
+            const button = event.target.closest('button');
+            if (!button) return;
+            if (button.dataset.command) {
+                document.execCommand(button.dataset.command, false);
+                smContentEditor.focus();
+            } else if (button.dataset.block) {
+                document.execCommand('formatBlock', false, button.dataset.block);
+                smContentEditor.focus();
+            }
+        });
+
+        document.getElementById('sm-link-btn')?.addEventListener('click', () => {
+            const url = window.prompt('연결할 주소를 입력하세요. (https://...)');
+            if (!url) return;
+            if (!/^https?:\/\//i.test(url)) {
+                showToast('http:// 또는 https:// 주소를 입력해주세요.', false);
+                return;
+            }
+            document.execCommand('createLink', false, url);
+            smContentEditor.focus();
+        });
+
+        let smSavedRange = null;
+        document.getElementById('sm-image-btn')?.addEventListener('click', () => {
+            const selection = window.getSelection();
+            smSavedRange = selection?.rangeCount ? selection.getRangeAt(0).cloneRange() : null;
+            smInlineImageInput.click();
+        });
+
+        smInlineImageInput?.addEventListener('change', () => {
+            const files = Array.from(smInlineImageInput.files || []);
+            if (smInlineUploads.length + smFileUploads.length + files.length > 10) {
+                showToast('첨부파일은 최대 10개까지 등록할 수 있습니다.', false);
+                smInlineImageInput.value = '';
+                return;
+            }
+            files.forEach(file => {
+                if (file.size > 10485760) {
+                    showToast(`${file.name}: 10MB 이하 파일만 가능합니다.`, false);
+                    return;
+                }
+                const key = `img_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+                const url = URL.createObjectURL(file);
+                smInlineUploads.push({ key, file, url });
+                const figure = document.createElement('figure');
+                figure.dataset.uploadKey = key;
+                figure.contentEditable = 'false';
+                figure.title = '이미지를 삭제하려면 선택 후 Delete 키를 누르세요.';
+                const image = document.createElement('img');
+                image.src = url;
+                image.alt = file.name;
+                const caption = document.createElement('figcaption');
+                caption.textContent = file.name;
+                figure.append(image, caption);
+                const range = smSavedRange && smContentEditor.contains(smSavedRange.commonAncestorContainer) ? smSavedRange : null;
+                if (range) {
+                    range.deleteContents();
+                    range.insertNode(figure);
+                    range.setStartAfter(figure);
+                    range.collapse(true);
+                    const selection = window.getSelection();
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                } else {
+                    smContentEditor.appendChild(figure);
+                }
+                smContentEditor.appendChild(document.createElement('p')).appendChild(document.createElement('br'));
+            });
+            smInlineImageInput.value = '';
+            smSavedRange = null;
+            smContentEditor.focus();
+        });
+
+        function renderSmSelectedFiles() {
+            smSelectedFiles.innerHTML = '';
+            smFileUploads.forEach((file, index) => {
+                const row = document.createElement('div');
+                row.className = 'flex items-center justify-between gap-4 bg-white/45 px-4 py-3';
+                const label = document.createElement('span');
+                label.className = 'text-xs break-all';
+                label.textContent = `${file.name} · ${smFormatFileSize(file.size)}`;
+                const remove = document.createElement('button');
+                remove.type = 'button';
+                remove.className = 'text-[var(--accent-red)]';
+                remove.innerHTML = '<i class="ph ph-x"></i>';
+                remove.addEventListener('click', () => {
+                    smFileUploads.splice(index, 1);
+                    renderSmSelectedFiles();
+                });
+                row.append(label, remove);
+                smSelectedFiles.appendChild(row);
+            });
+        }
+
+        smFileInput?.addEventListener('change', () => {
+            const files = Array.from(smFileInput.files || []);
+            if (smInlineUploads.length + smFileUploads.length + files.length > 10) {
+                showToast('첨부파일은 최대 10개까지 등록할 수 있습니다.', false);
+                smFileInput.value = '';
+                return;
+            }
+            files.forEach(file => {
+                if (file.size > 10485760) {
+                    showToast(`${file.name}: 10MB 이하 파일만 가능합니다.`, false);
+                } else {
+                    smFileUploads.push(file);
+                }
+            });
+            smFileInput.value = '';
+            renderSmSelectedFiles();
+        });
+
+        document.getElementById('sm-edit-btn')?.addEventListener('click', () => {
+            if (!smCurrentPost?.canEdit) return;
+            clearSmUploadObjects();
+            smEditingPostId = smCurrentPost.id;
+            document.getElementById('sm-editor-heading').textContent = 'Edit Post';
+            document.getElementById('sm-title-input').value = smCurrentPost.title;
+            smContentEditor.innerHTML = smCurrentPost.contentHtml;
+            smSelectedFiles.innerHTML = '';
+            smEditorError.classList.add('hidden');
+            smPublishBtn.textContent = 'Save Changes';
+            document.getElementById('sm-editor-view-trigger').click();
+        });
+
+        document.getElementById('sm-delete-btn')?.addEventListener('click', async () => {
+            if (!smCurrentPost?.canEdit || !window.confirm('이 게시글과 첨부파일을 삭제하시겠습니까?')) return;
+            const body = new FormData();
+            body.append('action', 'delete');
+            body.append('id', String(smCurrentPost.id));
+            try {
+                const response = await fetch('/api/sm-board.php', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken || '' }, body });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '삭제하지 못했습니다.');
+                showToast('게시글을 삭제했습니다.', true);
+                smCurrentPost = null;
+                document.querySelector('.view-trigger[data-target="view-sm-board"]').click();
+            } catch (error) {
+                showToast(error.message, false);
+            }
+        });
+
+        smEditorForm?.addEventListener('submit', async event => {
+            event.preventDefault();
+            if (!siteUser) {
+                showToast('로그인이 필요합니다.', false);
+                return;
+            }
+            const title = document.getElementById('sm-title-input').value.trim();
+            const activeInlineUploads = smInlineUploads.filter(upload => smContentEditor.querySelector(`figure[data-upload-key="${upload.key}"]`));
+            const hasContent = smContentEditor.textContent.trim() || smContentEditor.querySelector('img');
+            smEditorError.classList.add('hidden');
+            if (!title || !hasContent) {
+                smEditorError.textContent = '제목과 본문 내용을 입력해주세요.';
+                smEditorError.classList.remove('hidden');
+                return;
+            }
+            const body = new FormData();
+            body.append('action', smEditingPostId ? 'update' : 'create');
+            if (smEditingPostId) body.append('id', String(smEditingPostId));
+            body.append('title', title);
+            body.append('contentHtml', smContentEditor.innerHTML);
+            activeInlineUploads.forEach(upload => {
+                body.append('uploads[]', upload.file, upload.file.name);
+                body.append('uploadKeys[]', upload.key);
+                body.append('inlineFlags[]', '1');
+            });
+            smFileUploads.forEach(file => {
+                body.append('uploads[]', file, file.name);
+                body.append('uploadKeys[]', '');
+                body.append('inlineFlags[]', '0');
+            });
+            smPublishBtn.disabled = true;
+            smPublishBtn.textContent = 'Saving...';
+            try {
+                const response = await fetch('/api/sm-board.php', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken || '' }, body });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '게시글을 저장하지 못했습니다.');
+                showToast(smEditingPostId ? '게시글을 수정했습니다.' : '게시글을 등록했습니다.', true);
+                clearSmUploadObjects();
+                smEditingPostId = null;
+                await openSmPost(payload.id);
+            } catch (error) {
+                smEditorError.textContent = error.message;
+                smEditorError.classList.remove('hidden');
+            } finally {
+                smPublishBtn.disabled = false;
+                smPublishBtn.textContent = smEditingPostId ? 'Save Changes' : 'Publish';
+            }
+        });
 
         function fillMyProfile(profile) {
             document.getElementById('my-username').value = profile.username || '';
