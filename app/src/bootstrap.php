@@ -66,6 +66,24 @@ function site_migrate(PDO $pdo): void
             caption TEXT NOT NULL
         )'
     );
+
+    $pdo->exec(
+        'CREATE TABLE IF NOT EXISTS tally_introductions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            submission_id TEXT NOT NULL UNIQUE,
+            respondent_id TEXT NOT NULL DEFAULT \'\',
+            form_id TEXT NOT NULL,
+            form_name TEXT NOT NULL DEFAULT \'\',
+            submitted_at TEXT NOT NULL,
+            fields_json TEXT NOT NULL,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )'
+    );
+
+    $pdo->exec(
+        'CREATE INDEX IF NOT EXISTS idx_tally_introductions_submitted_at
+         ON tally_introductions (submitted_at DESC)'
+    );
 }
 
 function site_seed(PDO $pdo): void

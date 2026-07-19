@@ -369,27 +369,24 @@
             <div class="w-full py-16 md:py-20 mb-10 flex flex-col justify-center items-center text-center border-b border-[var(--border-light)]">
                 <span class="text-xs tracking-[0.3em] uppercase opacity-50 font-bold mb-5">Journal</span>
                 <h1 class="text-5xl md:text-8xl font-serif-en italic tracking-tighter">Self Introduce</h1>
-                <p class="mt-6 text-sm opacity-60 font-serif-ko leading-relaxed px-4">우리의 이야기를 들려주세요. 아래 양식을 작성하면 Tally에 안전하게 제출됩니다.</p>
+                <p class="mt-6 text-sm opacity-60 font-serif-ko leading-relaxed px-4">Tally로 접수된 자기소개가 이곳에 자동으로 기록됩니다.</p>
             </div>
 
-            <div class="max-w-4xl mx-auto bg-white/35 backdrop-blur-sm border border-[var(--border-light)] rounded-sm shadow-sm px-3 py-6 sm:px-8 sm:py-10">
-                <iframe
-                    data-tally-src="https://tally.so/embed/m66BrY?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
-                    loading="lazy"
-                    width="100%"
-                    height="720"
-                    frameborder="0"
-                    marginheight="0"
-                    marginwidth="0"
-                    title="Self Introduce form"
-                ></iframe>
-                <noscript>
-                    <p class="text-center text-sm">
-                        JavaScript를 사용할 수 없어 폼을 표시하지 못했습니다.
-                        <a href="https://tally.so/r/m66BrY" target="_blank" rel="noopener noreferrer" class="underline text-[var(--accent-red)]">Tally에서 폼 열기</a>
-                    </p>
-                </noscript>
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+                <div>
+                    <h2 class="text-xl font-bold tracking-widest uppercase">Introductions</h2>
+                    <p class="text-xs opacity-45 mt-2">새 응답은 Tally 웹훅을 통해 자동 반영됩니다.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button type="button" id="intro-refresh-btn" class="w-10 h-10 border border-[var(--border-light)] rounded-full flex items-center justify-center hover:border-[var(--accent-red)] transition-colors" aria-label="자기소개 새로고침">
+                        <i class="ph ph-arrow-clockwise"></i>
+                    </button>
+                    <a href="https://tally.so/r/m66BrY" target="_blank" rel="noopener noreferrer" class="bg-[var(--accent-red)] text-white px-6 py-3 text-xs tracking-widest uppercase hover:bg-red-700 transition-colors">Write Introduction</a>
+                </div>
             </div>
+
+            <p id="intro-status" class="py-16 text-center text-sm opacity-50 font-serif-ko">자기소개를 불러오는 중입니다.</p>
+            <div id="intro-list" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
         </section>
 
         <section id="view-people" class="w-full view-hidden fade-in">
@@ -582,8 +579,6 @@
         </div>
     </div>
 
-    <script src="https://tally.so/widgets/embed.js" defer></script>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -711,6 +706,8 @@
                         view.classList.add('view-hidden');
                     }
                 });
+
+                if (targetId === 'view-introduce') loadIntroductions();
             });
         });
 
@@ -730,19 +727,6 @@
             toast.style.opacity = '1';
             setTimeout(() => { toast.style.opacity = '0'; }, 3000);
         }
-
-        window.addEventListener('message', (event) => {
-            if (event.origin !== 'https://tally.so' || typeof event.data !== 'string' || !event.data.includes('Tally.FormSubmitted')) return;
-
-            try {
-                const submission = JSON.parse(event.data);
-                if (submission?.payload?.formId === 'm66BrY') {
-                    showToast('자기소개가 등록되었습니다.', true);
-                }
-            } catch (error) {
-                console.error('Tally Submission Event Error:', error);
-            }
-        });
 
         document.getElementById('login-form').addEventListener('submit', (e) => {
             e.preventDefault();
@@ -781,6 +765,9 @@
         const galleryModalDate = document.getElementById('gallery-modal-date');
         const galleryModalTitle = document.getElementById('gallery-modal-title');
         const galleryModalContent = document.getElementById('gallery-modal-content');
+        const introList = document.getElementById('intro-list');
+        const introStatus = document.getElementById('intro-status');
+        const introRefreshBtn = document.getElementById('intro-refresh-btn');
 
         let calendarDate = new Date();
         let selectedDateKey = formatDateKey(calendarDate);
@@ -788,6 +775,98 @@
             '2026-07-14': ['우리들의 이야기 일정 메뉴 추가', '첫 모임 기록 정리']
         };
         let localGalleryItems = getSampleGalleryItems();
+
+        function formatIntroductionAnswer(field) {
+            const options = new Map((Array.isArray(field.options) ? field.options : []).map(option => [String(option.id), option.text]));
+
+            const flatten = (value) => {
+                if (value === null || typeof value === 'undefined' || value === '') return [];
+                if (Array.isArray(value)) return value.flatMap(flatten);
+                if (typeof value === 'object') {
+                    if (value.name) return [String(value.name)];
+                    if (value.text) return [String(value.text)];
+                    return Object.values(value).flatMap(flatten);
+                }
+
+                const text = String(value);
+                return [options.get(text) || text];
+            };
+
+            return flatten(field.value).filter(Boolean).join(', ');
+        }
+
+        function renderIntroductions(items) {
+            introList.innerHTML = '';
+
+            if (!items.length) {
+                introStatus.textContent = '아직 등록된 자기소개가 없습니다.';
+                introStatus.classList.remove('hidden');
+                return;
+            }
+
+            introStatus.classList.add('hidden');
+            items.forEach((item, index) => {
+                const fields = (Array.isArray(item.fields) ? item.fields : [])
+                    .map(field => ({ ...field, displayValue: formatIntroductionAnswer(field) }))
+                    .filter(field => field.displayValue);
+                const nickname = fields.find(field => /닉네임|nickname/i.test(field.label || ''));
+                const card = document.createElement('article');
+                card.className = 'bg-white/35 backdrop-blur-sm border border-[var(--border-light)] rounded-sm shadow-sm p-6 sm:p-8';
+
+                const meta = document.createElement('div');
+                meta.className = 'flex items-center justify-between gap-4 mb-6';
+                const sequence = document.createElement('span');
+                sequence.className = 'text-xs tracking-widest uppercase opacity-40';
+                sequence.textContent = `Introduction ${String(index + 1).padStart(2, '0')}`;
+                const date = document.createElement('time');
+                date.className = 'text-xs opacity-40';
+                const submittedAt = new Date(item.submittedAt);
+                date.textContent = Number.isNaN(submittedAt.getTime()) ? '' : submittedAt.toLocaleDateString('ko-KR');
+                meta.append(sequence, date);
+
+                const title = document.createElement('h3');
+                title.className = 'text-3xl font-serif-ko font-bold mb-7';
+                title.textContent = nickname?.displayValue || '익명의 자기소개';
+
+                const answers = document.createElement('dl');
+                answers.className = 'grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5';
+                fields.filter(field => field !== nickname).forEach(field => {
+                    const group = document.createElement('div');
+                    group.className = 'border-t border-[var(--border-light)] pt-3';
+                    const label = document.createElement('dt');
+                    label.className = 'text-xs opacity-45 mb-2 leading-relaxed';
+                    label.textContent = field.label || 'Answer';
+                    const value = document.createElement('dd');
+                    value.className = 'font-serif-ko text-sm leading-relaxed whitespace-pre-wrap break-words';
+                    value.textContent = field.displayValue;
+                    group.append(label, value);
+                    answers.appendChild(group);
+                });
+
+                card.append(meta, title, answers);
+                introList.appendChild(card);
+            });
+        }
+
+        async function loadIntroductions() {
+            if (!introList || !introStatus) return;
+
+            introStatus.textContent = '자기소개를 불러오는 중입니다.';
+            introStatus.classList.remove('hidden');
+
+            try {
+                const response = await fetch('/api/tally-introductions.php', { headers: { Accept: 'application/json' }, cache: 'no-store' });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const payload = await response.json();
+                renderIntroductions(Array.isArray(payload.items) ? payload.items : []);
+            } catch (error) {
+                console.error('Introduction Load Error:', error);
+                introList.innerHTML = '';
+                introStatus.textContent = '자기소개를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.';
+            }
+        }
+
+        introRefreshBtn?.addEventListener('click', loadIntroductions);
 
         async function initAuth() {
             if (!auth) {
