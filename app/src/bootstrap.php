@@ -132,6 +132,22 @@ function site_migrate(PDO $pdo): void
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_sm_attachments_post_id ON sm_attachments (post_id)');
 
     $pdo->exec(
+        'CREATE TABLE IF NOT EXISTS sm_bars (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            region TEXT NOT NULL DEFAULT \'\',
+            address TEXT NOT NULL DEFAULT \'\',
+            website_url TEXT NOT NULL DEFAULT \'\',
+            description TEXT NOT NULL DEFAULT \'\',
+            created_by INTEGER,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
+        )'
+    );
+    $pdo->exec('CREATE INDEX IF NOT EXISTS idx_sm_bars_region_name ON sm_bars (region, name)');
+
+    $pdo->exec(
         'CREATE TABLE IF NOT EXISTS activity_albums (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,

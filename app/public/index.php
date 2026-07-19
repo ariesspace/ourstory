@@ -760,7 +760,9 @@
                     <h1 class="text-5xl md:text-8xl font-serif-en italic tracking-tighter mt-3">SM Bar List</h1>
                     <p class="mt-5 text-sm opacity-60">지역별 SM Bar 정보를 한눈에 확인하는 목록입니다.</p>
                 </div>
-                <span class="text-xs tracking-widest uppercase opacity-45">Directory</span>
+                <button type="button" id="sm-bar-add-btn" class="hidden bg-[var(--accent-red)] text-white px-7 py-3 text-xs tracking-widest uppercase">
+                    <i class="ph ph-plus mr-2"></i>Add Bar
+                </button>
             </div>
             <div class="overflow-x-auto border-t-2 border-[var(--text-dark)]">
                 <table class="w-full min-w-[680px] text-sm">
@@ -770,15 +772,14 @@
                             <th class="py-4 text-left">Bar Name</th>
                             <th class="w-36 py-4 text-center">Region</th>
                             <th class="py-4 text-left">Address / Information</th>
+                            <th class="w-28 py-4 text-center">Link</th>
+                            <th class="w-24 py-4 text-center">Manage</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="4" class="py-20 text-center text-sm opacity-45">아직 등록된 SM Bar 정보가 없습니다.</td>
-                        </tr>
-                    </tbody>
+                    <tbody id="sm-bar-list"></tbody>
                 </table>
             </div>
+            <p id="sm-bar-status" class="py-16 text-center text-sm opacity-50">목록을 불러오는 중입니다.</p>
         </section>
 
         <section id="view-sm-detail" class="w-full max-w-5xl mx-auto view-hidden fade-in py-8">
@@ -1058,6 +1059,32 @@
         <img id="profile-photo-modal-image" src="" alt="" class="max-w-full max-h-full object-contain shadow-2xl">
     </div>
 
+    <div id="sm-bar-modal" class="fixed inset-0 z-[90] hidden items-center justify-center bg-black/60 p-4" role="dialog" aria-modal="true" aria-labelledby="sm-bar-modal-title">
+        <div class="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-[var(--bg-cream)] border border-[var(--border-light)] p-6 sm:p-10 shadow-2xl relative">
+            <button type="button" id="sm-bar-modal-close" class="absolute top-5 right-5 w-10 h-10 flex items-center justify-center" aria-label="닫기"><i class="ph ph-x text-xl"></i></button>
+            <span class="text-xs tracking-[0.25em] uppercase opacity-45">Information</span>
+            <h2 id="sm-bar-modal-title" class="text-4xl font-serif-en italic mt-2 mb-8">Add SM Bar</h2>
+            <form id="sm-bar-form" class="space-y-6">
+                <input type="hidden" id="sm-bar-id">
+                <div>
+                    <label for="sm-bar-name" class="block text-xs tracking-widest uppercase opacity-60 mb-2">Bar Name *</label>
+                    <input type="text" id="sm-bar-name" maxlength="120" required class="w-full bg-transparent border-b border-[var(--border-light)] py-3">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div><label for="sm-bar-region" class="block text-xs tracking-widest uppercase opacity-60 mb-2">Region</label><input type="text" id="sm-bar-region" maxlength="80" class="w-full bg-transparent border-b border-[var(--border-light)] py-3"></div>
+                    <div><label for="sm-bar-website" class="block text-xs tracking-widest uppercase opacity-60 mb-2">Website</label><input type="url" id="sm-bar-website" maxlength="500" placeholder="https://" class="w-full bg-transparent border-b border-[var(--border-light)] py-3"></div>
+                </div>
+                <div><label for="sm-bar-address" class="block text-xs tracking-widest uppercase opacity-60 mb-2">Address</label><input type="text" id="sm-bar-address" maxlength="250" class="w-full bg-transparent border-b border-[var(--border-light)] py-3"></div>
+                <div><label for="sm-bar-description" class="block text-xs tracking-widest uppercase opacity-60 mb-2">Information</label><textarea id="sm-bar-description" maxlength="1000" rows="5" class="w-full bg-transparent border border-[var(--border-light)] p-4 resize-y"></textarea></div>
+                <p id="sm-bar-form-error" class="hidden text-sm text-[var(--accent-red)] text-center"></p>
+                <div class="flex justify-end gap-3 pt-3">
+                    <button type="button" id="sm-bar-cancel" class="px-6 py-3 text-xs tracking-widest uppercase opacity-60">Cancel</button>
+                    <button type="submit" id="sm-bar-submit" class="bg-[var(--accent-red)] text-white px-7 py-3 text-xs tracking-widest uppercase">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -1235,6 +1262,7 @@
                 if (targetId === 'view-my-page') loadMyProfile();
                 if (targetId === 'view-my-timeline') loadMyTimeline();
                 if (targetId === 'view-sm-board') loadSmBoard();
+                if (targetId === 'view-sm-bar-list') loadSmBars();
                 if (targetId === 'view-gallery') loadActivityAlbums();
                 if (targetId === 'view-people') loadPeopleDirectory();
             });
@@ -1267,6 +1295,7 @@
             mobileSystemSection.classList.toggle('hidden', !isManager);
             mobileMyPageSection.classList.toggle('hidden', !user);
             document.getElementById('sm-write-btn').classList.toggle('hidden', !user);
+            document.getElementById('sm-bar-add-btn').classList.toggle('hidden', !user);
             document.getElementById('gallery-write-btn').classList.toggle('hidden', !user);
             if (!user) {
                 myTimelineSection.classList.add('hidden');
@@ -1430,6 +1459,12 @@
         const smSelectedFiles = document.getElementById('sm-selected-files');
         const smEditorError = document.getElementById('sm-editor-error');
         const smPublishBtn = document.getElementById('sm-publish-btn');
+        const smBarList = document.getElementById('sm-bar-list');
+        const smBarStatus = document.getElementById('sm-bar-status');
+        const smBarAddBtn = document.getElementById('sm-bar-add-btn');
+        const smBarModal = document.getElementById('sm-bar-modal');
+        const smBarForm = document.getElementById('sm-bar-form');
+        const smBarFormError = document.getElementById('sm-bar-form-error');
 
         let calendarDate = new Date();
         let selectedDateKey = formatDateKey(calendarDate);
@@ -1445,6 +1480,7 @@
         let viewedTimelineUsername = null;
         let smCurrentPage = 1;
         let smSearch = '';
+        let smBarItems = [];
         let smCurrentPost = null;
         let smEditingPostId = null;
         let smInlineUploads = [];
@@ -1541,6 +1577,162 @@
         }
 
         introRefreshBtn?.addEventListener('click', loadIntroductions);
+
+        function closeSmBarModal() {
+            smBarModal.classList.add('hidden');
+            smBarModal.classList.remove('flex');
+            smBarForm.reset();
+            document.getElementById('sm-bar-id').value = '';
+            smBarFormError.classList.add('hidden');
+        }
+
+        function openSmBarModal(item = null) {
+            smBarForm.reset();
+            smBarFormError.classList.add('hidden');
+            document.getElementById('sm-bar-modal-title').textContent = item ? 'Edit SM Bar' : 'Add SM Bar';
+            document.getElementById('sm-bar-id').value = item?.id || '';
+            document.getElementById('sm-bar-name').value = item?.name || '';
+            document.getElementById('sm-bar-region').value = item?.region || '';
+            document.getElementById('sm-bar-address').value = item?.address || '';
+            document.getElementById('sm-bar-website').value = item?.websiteUrl || '';
+            document.getElementById('sm-bar-description').value = item?.description || '';
+            smBarModal.classList.remove('hidden');
+            smBarModal.classList.add('flex');
+            document.getElementById('sm-bar-name').focus();
+        }
+
+        function renderSmBars() {
+            smBarList.innerHTML = '';
+            smBarStatus.classList.toggle('hidden', smBarItems.length > 0);
+            if (!smBarItems.length) {
+                smBarStatus.textContent = '아직 등록된 SM Bar 정보가 없습니다.';
+                return;
+            }
+            smBarItems.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.className = 'border-b border-[var(--border-light)] align-top';
+                const number = document.createElement('td');
+                number.className = 'py-5 text-center opacity-45';
+                number.textContent = String(index + 1);
+                const name = document.createElement('td');
+                name.className = 'py-5 pr-5';
+                const nameStrong = document.createElement('strong');
+                nameStrong.className = 'block text-base';
+                nameStrong.textContent = item.name;
+                const author = document.createElement('span');
+                author.className = 'block text-xs opacity-40 mt-2';
+                author.textContent = `작성자 ${item.authorName}`;
+                name.append(nameStrong, author);
+                const region = document.createElement('td');
+                region.className = 'py-5 px-3 text-center';
+                region.textContent = item.region || '-';
+                const info = document.createElement('td');
+                info.className = 'py-5 pr-5';
+                const address = document.createElement('p');
+                address.textContent = item.address || '-';
+                const description = document.createElement('p');
+                description.className = 'text-xs opacity-55 mt-2 whitespace-pre-wrap';
+                description.textContent = item.description || '';
+                info.append(address, description);
+                const link = document.createElement('td');
+                link.className = 'py-5 text-center';
+                if (item.websiteUrl) {
+                    const anchor = document.createElement('a');
+                    anchor.href = item.websiteUrl;
+                    anchor.target = '_blank';
+                    anchor.rel = 'noopener noreferrer';
+                    anchor.className = 'inline-flex items-center gap-1 underline underline-offset-4';
+                    anchor.innerHTML = 'Open <i class="ph ph-arrow-up-right"></i>';
+                    link.appendChild(anchor);
+                } else link.textContent = '-';
+                const manage = document.createElement('td');
+                manage.className = 'py-5 text-center';
+                if (item.canEdit) {
+                    const edit = document.createElement('button');
+                    edit.type = 'button';
+                    edit.className = 'p-2 hover:text-[var(--accent-red)]';
+                    edit.title = '수정';
+                    edit.innerHTML = '<i class="ph ph-pencil-simple"></i>';
+                    edit.addEventListener('click', () => openSmBarModal(item));
+                    const remove = document.createElement('button');
+                    remove.type = 'button';
+                    remove.className = 'p-2 hover:text-[var(--accent-red)]';
+                    remove.title = '삭제';
+                    remove.innerHTML = '<i class="ph ph-trash"></i>';
+                    remove.addEventListener('click', () => deleteSmBar(item));
+                    manage.append(edit, remove);
+                } else manage.textContent = '-';
+                row.append(number, name, region, info, link, manage);
+                smBarList.appendChild(row);
+            });
+        }
+
+        async function loadSmBars() {
+            smBarStatus.textContent = '목록을 불러오는 중입니다.';
+            smBarStatus.classList.remove('hidden');
+            smBarList.innerHTML = '';
+            try {
+                const response = await fetch('/api/sm-bars.php', { headers: { Accept: 'application/json' }, cache: 'no-store' });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || 'SM Bar 목록을 불러오지 못했습니다.');
+                smBarItems = payload.items;
+                smBarAddBtn.classList.toggle('hidden', !payload.canCreate);
+                renderSmBars();
+            } catch (error) {
+                smBarStatus.textContent = error.message;
+            }
+        }
+
+        async function deleteSmBar(item) {
+            if (!window.confirm(`${item.name} 항목을 삭제하시겠습니까?`)) return;
+            const body = new FormData();
+            body.append('action', 'delete');
+            body.append('id', String(item.id));
+            try {
+                const response = await fetch('/api/sm-bars.php', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken || '' }, body });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || 'SM Bar 정보를 삭제하지 못했습니다.');
+                await loadSmBars();
+                showToast('SM Bar 정보를 삭제했습니다.', true);
+            } catch (error) {
+                showToast(error.message, false);
+            }
+        }
+
+        smBarAddBtn?.addEventListener('click', () => openSmBarModal());
+        document.getElementById('sm-bar-modal-close')?.addEventListener('click', closeSmBarModal);
+        document.getElementById('sm-bar-cancel')?.addEventListener('click', closeSmBarModal);
+        smBarModal?.addEventListener('click', event => {
+            if (event.target === smBarModal) closeSmBarModal();
+        });
+        smBarForm?.addEventListener('submit', async event => {
+            event.preventDefault();
+            smBarFormError.classList.add('hidden');
+            const id = document.getElementById('sm-bar-id').value;
+            const body = new FormData();
+            body.append('action', id ? 'update' : 'create');
+            if (id) body.append('id', id);
+            body.append('name', document.getElementById('sm-bar-name').value.trim());
+            body.append('region', document.getElementById('sm-bar-region').value.trim());
+            body.append('address', document.getElementById('sm-bar-address').value.trim());
+            body.append('websiteUrl', document.getElementById('sm-bar-website').value.trim());
+            body.append('description', document.getElementById('sm-bar-description').value.trim());
+            const submit = document.getElementById('sm-bar-submit');
+            submit.disabled = true;
+            try {
+                const response = await fetch('/api/sm-bars.php', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken || '' }, body });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || 'SM Bar 정보를 저장하지 못했습니다.');
+                closeSmBarModal();
+                await loadSmBars();
+                showToast(id ? 'SM Bar 정보를 수정했습니다.' : 'SM Bar 정보를 등록했습니다.', true);
+            } catch (error) {
+                smBarFormError.textContent = error.message;
+                smBarFormError.classList.remove('hidden');
+            } finally {
+                submit.disabled = false;
+            }
+        });
 
         function smFormatDate(value) {
             const date = new Date(String(value || '').replace(' ', 'T') + 'Z');
@@ -3116,6 +3308,9 @@
             }
             if (event.key === 'Escape' && !profilePhotoModal?.classList.contains('hidden')) {
                 closeProfilePhoto();
+            }
+            if (event.key === 'Escape' && !smBarModal?.classList.contains('hidden')) {
+                closeSmBarModal();
             }
         });
 
