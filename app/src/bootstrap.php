@@ -142,6 +142,8 @@ function site_migrate(PDO $pdo): void
             region TEXT NOT NULL DEFAULT \'\',
             address TEXT NOT NULL DEFAULT \'\',
             website_url TEXT NOT NULL DEFAULT \'\',
+            twitter_account TEXT NOT NULL DEFAULT \'\',
+            entrance_fee TEXT NOT NULL DEFAULT \'\',
             description TEXT NOT NULL DEFAULT \'\',
             created_by INTEGER,
             created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -149,6 +151,12 @@ function site_migrate(PDO $pdo): void
             FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
         )'
     );
+    $smBarColumns = array_column($pdo->query('PRAGMA table_info(sm_bars)')->fetchAll(), 'name');
+    foreach (['twitter_account', 'entrance_fee'] as $column) {
+        if (!in_array($column, $smBarColumns, true)) {
+            $pdo->exec("ALTER TABLE sm_bars ADD COLUMN {$column} TEXT NOT NULL DEFAULT ''");
+        }
+    }
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_sm_bars_region_name ON sm_bars (region, name)');
 
     $pdo->exec(

@@ -759,14 +759,15 @@
                 </button>
             </div>
             <div class="overflow-x-auto border-t-2 border-[var(--text-dark)]">
-                <table class="w-full min-w-[680px] text-sm">
+                <table class="w-full min-w-[900px] text-sm">
                     <thead class="border-b border-[var(--border-light)] text-xs tracking-widest uppercase opacity-60">
                         <tr>
                             <th class="w-20 py-4 text-center">No.</th>
                             <th class="py-4 text-left">Bar Name</th>
                             <th class="w-36 py-4 text-center">Region</th>
+                            <th class="w-32 py-4 text-center">Entrance Fee</th>
                             <th class="py-4 text-left">Address / Information</th>
-                            <th class="w-28 py-4 text-center">Link</th>
+                            <th class="w-36 py-4 text-center">Social / Link</th>
                             <th class="w-24 py-4 text-center">Manage</th>
                         </tr>
                     </thead>
@@ -1066,9 +1067,13 @@
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div><label for="sm-bar-region" class="block text-xs tracking-widest uppercase opacity-60 mb-2">Region</label><input type="text" id="sm-bar-region" maxlength="80" class="w-full bg-transparent border-b border-[var(--border-light)] py-3"></div>
-                    <div><label for="sm-bar-website" class="block text-xs tracking-widest uppercase opacity-60 mb-2">Website</label><input type="url" id="sm-bar-website" maxlength="500" placeholder="https://" class="w-full bg-transparent border-b border-[var(--border-light)] py-3"></div>
+                    <div><label for="sm-bar-entrance-fee" class="block text-xs tracking-widest uppercase opacity-60 mb-2">Entrance Fee</label><input type="text" id="sm-bar-entrance-fee" maxlength="100" placeholder="예: 20,000원 / 무료" class="w-full bg-transparent border-b border-[var(--border-light)] py-3"></div>
                 </div>
                 <div><label for="sm-bar-address" class="block text-xs tracking-widest uppercase opacity-60 mb-2">Address</label><input type="text" id="sm-bar-address" maxlength="250" class="w-full bg-transparent border-b border-[var(--border-light)] py-3"></div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div><label for="sm-bar-twitter" class="block text-xs tracking-widest uppercase opacity-60 mb-2">Twitter / X</label><input type="text" id="sm-bar-twitter" maxlength="100" placeholder="@BarMA_Official" class="w-full bg-transparent border-b border-[var(--border-light)] py-3"></div>
+                    <div><label for="sm-bar-website" class="block text-xs tracking-widest uppercase opacity-60 mb-2">Website</label><input type="text" id="sm-bar-website" maxlength="500" placeholder="https:// 또는 @계정" class="w-full bg-transparent border-b border-[var(--border-light)] py-3"></div>
+                </div>
                 <div><label for="sm-bar-description" class="block text-xs tracking-widest uppercase opacity-60 mb-2">Information</label><textarea id="sm-bar-description" maxlength="1000" rows="5" class="w-full bg-transparent border border-[var(--border-light)] p-4 resize-y"></textarea></div>
                 <p id="sm-bar-form-error" class="hidden text-sm text-[var(--accent-red)] text-center"></p>
                 <div class="flex justify-end gap-3 pt-3">
@@ -1668,6 +1673,8 @@
             document.getElementById('sm-bar-name').value = item?.name || '';
             document.getElementById('sm-bar-region').value = item?.region || '';
             document.getElementById('sm-bar-address').value = item?.address || '';
+            document.getElementById('sm-bar-entrance-fee').value = item?.entranceFee || '';
+            document.getElementById('sm-bar-twitter').value = item?.twitterAccount || '';
             document.getElementById('sm-bar-website').value = item?.websiteUrl || '';
             document.getElementById('sm-bar-description').value = item?.description || '';
             smBarModal.classList.remove('hidden');
@@ -1700,6 +1707,9 @@
                 const region = document.createElement('td');
                 region.className = 'py-5 px-3 text-center';
                 region.textContent = item.region || '-';
+                const entranceFee = document.createElement('td');
+                entranceFee.className = 'py-5 px-3 text-center';
+                entranceFee.textContent = item.entranceFee || '-';
                 const info = document.createElement('td');
                 info.className = 'py-5 pr-5';
                 const address = document.createElement('p');
@@ -1709,16 +1719,26 @@
                 description.textContent = item.description || '';
                 info.append(address, description);
                 const link = document.createElement('td');
-                link.className = 'py-5 text-center';
+                link.className = 'py-5 text-center space-y-2';
+                if (item.twitterUrl) {
+                    const twitter = document.createElement('a');
+                    twitter.href = item.twitterUrl;
+                    twitter.target = '_blank';
+                    twitter.rel = 'noopener noreferrer';
+                    twitter.className = 'block underline underline-offset-4';
+                    twitter.textContent = item.twitterAccount;
+                    link.appendChild(twitter);
+                }
                 if (item.websiteUrl) {
                     const anchor = document.createElement('a');
                     anchor.href = item.websiteUrl;
                     anchor.target = '_blank';
                     anchor.rel = 'noopener noreferrer';
                     anchor.className = 'inline-flex items-center gap-1 underline underline-offset-4';
-                    anchor.innerHTML = 'Open <i class="ph ph-arrow-up-right"></i>';
+                    anchor.innerHTML = 'Website <i class="ph ph-arrow-up-right"></i>';
                     link.appendChild(anchor);
-                } else link.textContent = '-';
+                }
+                if (!item.twitterUrl && !item.websiteUrl) link.textContent = '-';
                 const manage = document.createElement('td');
                 manage.className = 'py-5 text-center';
                 if (item.canEdit) {
@@ -1736,7 +1756,7 @@
                     remove.addEventListener('click', () => deleteSmBar(item));
                     manage.append(edit, remove);
                 } else manage.textContent = '-';
-                row.append(number, name, region, info, link, manage);
+                row.append(number, name, region, entranceFee, info, link, manage);
                 smBarList.appendChild(row);
             });
         }
@@ -1789,6 +1809,8 @@
             body.append('name', document.getElementById('sm-bar-name').value.trim());
             body.append('region', document.getElementById('sm-bar-region').value.trim());
             body.append('address', document.getElementById('sm-bar-address').value.trim());
+            body.append('entranceFee', document.getElementById('sm-bar-entrance-fee').value.trim());
+            body.append('twitterAccount', document.getElementById('sm-bar-twitter').value.trim());
             body.append('websiteUrl', document.getElementById('sm-bar-website').value.trim());
             body.append('description', document.getElementById('sm-bar-description').value.trim());
             const submit = document.getElementById('sm-bar-submit');

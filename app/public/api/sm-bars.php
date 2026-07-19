@@ -37,20 +37,37 @@ function sm_bars_values(): array
     $region = trim((string) ($_POST['region'] ?? ''));
     $address = trim((string) ($_POST['address'] ?? ''));
     $website = trim((string) ($_POST['websiteUrl'] ?? ''));
+    $twitter = trim((string) ($_POST['twitterAccount'] ?? ''));
+    $entranceFee = trim((string) ($_POST['entranceFee'] ?? ''));
     $description = trim((string) ($_POST['description'] ?? ''));
 
     if ($name === '' || mb_strlen($name) > 120) {
         sm_bars_json(['error' => 'Bar 이름은 1~120자로 입력해 주세요.'], 422);
     }
-    foreach ([[$region, 80, '지역'], [$address, 250, '주소'], [$description, 1000, '소개']] as [$value, $limit, $label]) {
+    foreach ([[$region, 80, '지역'], [$address, 250, '주소'], [$entranceFee, 100, '입장료'], [$description, 1000, '소개']] as [$value, $limit, $label]) {
         if (mb_strlen($value) > $limit) {
             sm_bars_json(['error' => "{$label}은(는) {$limit}자 이내로 입력해 주세요."], 422);
         }
     }
+    if ($twitter === '' && ($website[0] ?? '') === '@') {
+        $twitter = $website;
+        $website = '';
+    } elseif ($twitter === '' && preg_match('#^https?://(?:www\.)?(?:x|twitter)\.com/#i', $website)) {
+        $twitter = $website;
+        $website = '';
+    }
+    if ($twitter !== '' && preg_match('#^https?://(?:www\.)?(?:x|twitter)\.com/([^/?#]+)#i', $twitter, $match)) {
+        $twitter = $match[1];
+    }
+    $twitter = ltrim($twitter, '@');
+    if ($twitter !== '' && !preg_match('/^[A-Za-z0-9_]{1,15}$/', $twitter)) {
+        sm_bars_json(['error' => '트위터/X 계정은 @아이디 또는 X/Twitter 주소로 입력해 주세요.'], 422);
+    }
+    $twitter = $twitter === '' ? '' : '@' . $twitter;
     if ($website !== '' && (mb_strlen($website) > 500 || !filter_var($website, FILTER_VALIDATE_URL) || !preg_match('/^https?:\/\//i', $website))) {
         sm_bars_json(['error' => '웹사이트는 http:// 또는 https://로 시작하는 올바른 주소를 입력해 주세요.'], 422);
     }
-    return [$name, $region, $address, $website, $description];
+    return [$name, $region, $address, $website, $twitter, $entranceFee, $description];
 }
 
 $pdo = site_db();
@@ -69,6 +86,9 @@ if ($method === 'GET') {
         'region' => $row['region'],
         'address' => $row['address'],
         'websiteUrl' => $row['website_url'],
+        'twitterAccount' => $row['twitter_account'],
+        'twitterUrl' => $row['twitter_account'] !== '' ? 'https://x.com/' . ltrim($row['twitter_account'], '@') : '',
+        'entranceFee' => $row['entrance_fee'],
         'description' => $row['description'],
         'authorName' => $row['author_name'],
         'createdAt' => $row['created_at'],
@@ -111,21 +131,22 @@ if ($action === 'delete') {
 if (!in_array($action, ['create', 'update'], true)) {
     sm_bars_json(['error' => '지원하지 않는 요청입니다.'], 400);
 }
-[$name, $region, $address, $website, $description] = sm_bars_values();
+[$name, $region, $address, $website, $twitter, $entranceFee, $description] = sm_bars_values();
 if ($action === 'create') {
     $stmt = $pdo->prepare(
-        'INSERT INTO sm_bars (name, region, address, website_url, description, created_by)
-         VALUES (:name, :region, :address, :website, :description, :created_by)'
+        'INSERT INTO sm_bars (name, region, address, website_url, twitter_account, entrance_fee, description, created_by)
+         VALUES (:name, :region, :address, :website, :twitter, :entrance_fee, :description, :created_by)'
     );
-    $stmt->execute([':name' => $name, ':region' => $region, ':address' => $address, ':website' => $website, ':description' => $description, ':created_by' => $user['id']]);
+    $stmt->execute([':name' => $name, ':region' => $region, ':address' => $address, ':website' => $website, ':twitter' => $twitter, ':entrance_fee' => $entranceFee, ':description' => $description, ':created_by' => $user['id']]);
     sm_bars_json(['ok' => true, 'id' => (int) $pdo->lastInsertId()], 201);
 }
 
 $stmt = $pdo->prepare(
     'UPDATE sm_bars SET name = :name, region = :region, address = :address,
-     website_url = :website, description = :description, updated_at = CURRENT_TIMESTAMP WHERE id = :id'
+     website_url = :website, twitter_account = :twitter, entrance_fee = :entrance_fee,
+     description = :description, updated_at = CURRENT_TIMESTAMP WHERE id = :id'
 );
-$stmt->execute([':name' => $name, ':region' => $region, ':address' => $address, ':website' => $website, ':description' => $description, ':id' => $id]);
+$stmt->execute([':name' => $name, ':region' => $region, ':address' => $address, ':website' => $website, ':twitter' => $twitter, ':entrance_fee' => $entranceFee, ':description' => $description, ':id' => $id]);
 if ($stmt->rowCount() !== 1 && !$pdo->query('SELECT changes()')->fetchColumn()) {
     $exists = $pdo->prepare('SELECT 1 FROM sm_bars WHERE id = :id');
     $exists->execute([':id' => $id]);
