@@ -447,10 +447,7 @@
                         <input type="text" id="my-relationship-style" maxlength="120" class="w-full bg-transparent border-b border-[var(--border-light)] py-3">
                     </div>
                 </div>
-                <div>
-                    <label for="my-bio" class="block text-xs tracking-widest uppercase opacity-60 mb-3">자기소개 <span class="normal-case opacity-50">(선택)</span></label>
-                    <textarea id="my-bio" maxlength="1000" rows="5" class="w-full bg-transparent border border-[var(--border-light)] p-4 resize-y"></textarea>
-                </div>
+                <input type="hidden" id="my-bio">
                 <div>
                     <label for="my-password" class="block text-xs tracking-widest uppercase opacity-60 mb-3">새 비밀번호 <span class="normal-case opacity-50">(선택)</span></label>
                     <input type="password" id="my-password" minlength="10" maxlength="128" autocomplete="new-password" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" placeholder="변경할 때만 입력하세요">
