@@ -130,6 +130,34 @@ function site_migrate(PDO $pdo): void
     );
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_sm_posts_created_at ON sm_posts (created_at DESC)');
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_sm_attachments_post_id ON sm_attachments (post_id)');
+
+    $pdo->exec(
+        'CREATE TABLE IF NOT EXISTS activity_albums (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            title TEXT NOT NULL,
+            description TEXT NOT NULL,
+            view_count INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )'
+    );
+    $pdo->exec(
+        'CREATE TABLE IF NOT EXISTS activity_album_photos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            album_id INTEGER NOT NULL,
+            original_name TEXT NOT NULL,
+            stored_name TEXT NOT NULL UNIQUE,
+            mime_type TEXT NOT NULL,
+            file_size INTEGER NOT NULL,
+            sort_order INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (album_id) REFERENCES activity_albums(id) ON DELETE CASCADE
+        )'
+    );
+    $pdo->exec('CREATE INDEX IF NOT EXISTS idx_activity_albums_created_at ON activity_albums (created_at DESC)');
+    $pdo->exec('CREATE INDEX IF NOT EXISTS idx_activity_album_photos_album_id ON activity_album_photos (album_id, sort_order, id)');
 }
 
 function site_migrate_user_roles(PDO $pdo): void

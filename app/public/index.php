@@ -853,9 +853,9 @@
                         함께한 순간들을 사진과 짧은 기록으로 남기는 공간
                     </p>
                 </div>
-                <button type="button" class="view-trigger bg-[var(--accent-red)] text-white px-8 py-3 text-xs tracking-widest uppercase hover:bg-red-700 transition-colors flex items-center gap-2" data-target="view-gallery-write">
+                <button type="button" id="gallery-write-btn" class="view-trigger hidden bg-[var(--accent-red)] text-white px-8 py-3 text-xs tracking-widest uppercase hover:bg-red-700 transition-colors flex items-center gap-2" data-target="view-gallery-write">
                     <i class="ph ph-plus"></i>
-                    Add Photo
+                    New Album
                 </button>
             </div>
 
@@ -865,12 +865,15 @@
                     <p class="text-sm tracking-widest uppercase">Loading gallery...</p>
                 </div>
             </div>
+            <p id="gallery-status" class="hidden py-20 text-center text-sm opacity-50"></p>
+            <div id="gallery-pagination" class="flex justify-center items-center gap-2 mt-10"></div>
+            <button type="button" id="gallery-editor-view-trigger" class="view-trigger hidden" data-target="view-gallery-write"></button>
         </section>
 
         <section id="view-gallery-write" class="w-full max-w-4xl mx-auto view-hidden fade-in py-10">
             <div class="text-center mb-16">
                 <span class="text-[var(--accent-red)] text-4xl font-serif-en italic">:g</span>
-                <h2 class="mt-4 text-sm tracking-widest uppercase opacity-60">Add Activity Photo</h2>
+                <h2 id="gallery-editor-heading" class="mt-4 text-sm tracking-widest uppercase opacity-60">Create Activity Album</h2>
             </div>
 
             <form id="gallery-form" class="flex flex-col gap-8">
@@ -883,29 +886,32 @@
                 >
                 <label for="gallery-image-input" class="group cursor-pointer border border-dashed border-[var(--border-light)] bg-white/25 min-h-[180px] flex flex-col items-center justify-center gap-3 text-center transition-colors hover:border-[var(--accent-red)]">
                     <i class="ph ph-image-square text-4xl text-[var(--accent-red)]"></i>
-                    <span class="text-sm tracking-widest uppercase opacity-60">Select Photo File</span>
-                    <span id="gallery-file-name" class="text-xs opacity-45 font-serif-ko">활동 사진을 선택해주세요</span>
+                    <span class="text-sm tracking-widest uppercase opacity-60">Select Photos</span>
+                    <span id="gallery-file-name" class="text-xs opacity-45 font-serif-ko">사진 1~10장 · 장당 8MB, 전체 25MB 이하</span>
                 </label>
                 <input
                     type="file"
                     id="gallery-image-input"
-                    accept="image/*"
+                    accept="image/jpeg,image/png,image/gif,image/webp"
+                    multiple
                     class="hidden"
-                    required
                 >
+                <div id="gallery-existing-photos" class="hidden grid grid-cols-2 sm:grid-cols-4 gap-4"></div>
+                <div id="gallery-preview" class="grid grid-cols-2 sm:grid-cols-4 gap-4"></div>
                 <textarea
                     id="gallery-content-input"
                     placeholder="사진에 담긴 활동 이야기를 적어주세요..."
                     class="w-full min-h-[220px] bg-white/30 resize-none text-lg leading-loose text-gray-700 placeholder-gray-400 border border-[var(--border-light)] p-6 focus:border-[var(--accent-red)] transition-colors"
                     required
                 ></textarea>
+                <p id="gallery-form-error" class="hidden text-sm text-[var(--accent-red)] text-center"></p>
 
                 <div class="flex justify-between items-center border-t border-[var(--border-light)] pt-8 mt-4">
                     <button type="button" class="view-trigger text-sm tracking-widest uppercase opacity-50 hover:opacity-100 transition-opacity" data-target="view-gallery">
                         Cancel
                     </button>
                     <button type="submit" id="gallery-submit-btn" class="bg-[var(--accent-red)] text-white px-10 py-4 text-sm font-bold tracking-widest uppercase hover:bg-red-700 transition-colors flex items-center gap-3">
-                        <span>Publish Photo</span>
+                        <span>Publish Album</span>
                         <i class="ph ph-arrow-right"></i>
                     </button>
                 </div>
@@ -923,19 +929,29 @@
         <span id="toast-message">Message</span>
     </div>
 
-    <div id="gallery-modal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-black/50 p-6">
-        <div class="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto bg-[var(--bg-cream)] border border-[var(--border-light)] shadow-2xl rounded-sm">
+    <div id="gallery-modal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-black/60 p-3 sm:p-6">
+        <div class="relative w-full max-w-6xl max-h-[94vh] overflow-y-auto bg-[var(--bg-cream)] border border-[var(--border-light)] shadow-2xl rounded-sm">
             <button type="button" id="gallery-modal-close" class="absolute top-5 right-5 z-10 w-10 h-10 rounded-full bg-white/80 hover:bg-[var(--accent-red)] hover:text-white transition-colors flex items-center justify-center" aria-label="Close gallery detail">
                 <i class="ph ph-x text-lg"></i>
             </button>
             <div class="grid grid-cols-1 lg:grid-cols-2">
-                <div class="min-h-[320px] bg-gray-100">
-                    <img id="gallery-modal-image" src="" alt="" class="w-full h-full object-cover">
+                <div class="bg-gray-100 p-4 sm:p-6">
+                    <div class="aspect-[4/3] bg-white/50 flex items-center justify-center overflow-hidden">
+                        <img id="gallery-modal-image" src="" alt="" class="w-full h-full object-contain">
+                    </div>
+                    <div id="gallery-modal-thumbnails" class="grid grid-cols-5 gap-2 mt-3"></div>
                 </div>
                 <div class="p-8 md:p-12 flex flex-col justify-center">
                     <p id="gallery-modal-date" class="text-xs tracking-widest uppercase opacity-45 font-serif-en mb-4"></p>
                     <h3 id="gallery-modal-title" class="text-4xl font-serif-ko font-bold leading-tight mb-6"></h3>
                     <p id="gallery-modal-content" class="text-base leading-loose opacity-75 whitespace-pre-line font-serif-ko"></p>
+                    <div class="flex flex-wrap gap-5 mt-8 pt-5 border-t border-[var(--border-light)] text-xs opacity-50">
+                        <span id="gallery-modal-author"></span><span id="gallery-modal-count"></span><span id="gallery-modal-views"></span>
+                    </div>
+                    <div id="gallery-modal-actions" class="hidden gap-3 mt-8">
+                        <button type="button" id="gallery-edit-btn" class="border border-[var(--text-dark)] px-5 py-3 text-xs tracking-widest uppercase">Edit</button>
+                        <button type="button" id="gallery-delete-btn" class="bg-[var(--accent-red)] text-white px-5 py-3 text-xs tracking-widest uppercase">Delete</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1083,6 +1099,10 @@
                     showToast('게시글 작성은 로그인이 필요합니다.', false);
                     targetId = 'view-login';
                 }
+                if (targetId === 'view-gallery-write' && !siteUser) {
+                    showToast('앨범 작성은 로그인이 필요합니다.', false);
+                    targetId = 'view-login';
+                }
 
                 if (isMenuOpen) closeMenu();
                 if (isMobileMenuOpen) closeMobileMenu();
@@ -1103,6 +1123,7 @@
                 if (targetId === 'view-system-members') loadMembers();
                 if (targetId === 'view-my-page') loadMyProfile();
                 if (targetId === 'view-sm-board') loadSmBoard();
+                if (targetId === 'view-gallery') loadActivityAlbums();
             });
         });
 
@@ -1133,6 +1154,7 @@
             mobileSystemSection.classList.toggle('hidden', !isManager);
             mobileMyPageSection.classList.toggle('hidden', !user);
             document.getElementById('sm-write-btn').classList.toggle('hidden', !user);
+            document.getElementById('gallery-write-btn').classList.toggle('hidden', !user);
             loginNavBtn.textContent = user ? user.displayName : 'Login';
             loginNavBtn.dataset.target = user ? 'view-my-page' : 'view-login';
             mobileLoginBtn.textContent = user ? user.displayName : 'Login';
@@ -1231,12 +1253,19 @@
         const gallerySubmitBtn = document.getElementById('gallery-submit-btn');
         const galleryImageInput = document.getElementById('gallery-image-input');
         const galleryFileName = document.getElementById('gallery-file-name');
+        const galleryPreview = document.getElementById('gallery-preview');
+        const galleryExistingPhotos = document.getElementById('gallery-existing-photos');
+        const galleryStatus = document.getElementById('gallery-status');
+        const galleryPagination = document.getElementById('gallery-pagination');
+        const galleryFormError = document.getElementById('gallery-form-error');
         const galleryModal = document.getElementById('gallery-modal');
         const galleryModalClose = document.getElementById('gallery-modal-close');
         const galleryModalImage = document.getElementById('gallery-modal-image');
         const galleryModalDate = document.getElementById('gallery-modal-date');
         const galleryModalTitle = document.getElementById('gallery-modal-title');
         const galleryModalContent = document.getElementById('gallery-modal-content');
+        const galleryModalThumbnails = document.getElementById('gallery-modal-thumbnails');
+        const galleryModalActions = document.getElementById('gallery-modal-actions');
         const introList = document.getElementById('intro-list');
         const introStatus = document.getElementById('intro-status');
         const introRefreshBtn = document.getElementById('intro-refresh-btn');
@@ -1270,7 +1299,11 @@
         const localSchedules = {
             '2026-07-14': ['우리들의 이야기 일정 메뉴 추가', '첫 모임 기록 정리']
         };
-        let localGalleryItems = getSampleGalleryItems();
+        let galleryPage = 1;
+        let galleryCurrentAlbum = null;
+        let galleryEditingId = null;
+        let galleryNewFiles = [];
+        let galleryRemovedPhotoIds = [];
         let smCurrentPage = 1;
         let smSearch = '';
         let smCurrentPost = null;
@@ -2115,116 +2148,130 @@
             ];
         }
 
-        function getSampleGalleryItems() {
-            const now = new Date();
-            return [
-                {
-                    id: 'gallery-1',
-                    title: '첫 모임의 오후',
-                    content: '가볍게 인사를 나누고 앞으로 남길 이야기들을 함께 정리했던 시간.',
-                    imageUrl: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=900',
-                    createdAt: now.getTime() - 86400000
-                },
-                {
-                    id: 'gallery-2',
-                    title: '기록을 나누는 책상',
-                    content: '노트와 커피, 그리고 조용히 이어지는 대화가 있던 날.',
-                    imageUrl: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&q=80&w=900',
-                    createdAt: now.getTime() - 86400000 * 4
-                },
-                {
-                    id: 'gallery-3',
-                    title: '작은 산책',
-                    content: '모임 뒤 함께 걸으며 찍은 느린 풍경.',
-                    imageUrl: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&q=80&w=900',
-                    createdAt: now.getTime() - 86400000 * 7
-                }
-            ];
+        function renderGalleryPagination(totalPages) {
+            galleryPagination.innerHTML = '';
+            if (totalPages <= 1) return;
+            for (let page = 1; page <= totalPages; page += 1) {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.textContent = String(page);
+                button.className = `w-9 h-9 border text-xs ${page === galleryPage ? 'bg-[var(--text-dark)] text-white border-[var(--text-dark)]' : 'border-[var(--border-light)]'}`;
+                button.addEventListener('click', () => {
+                    galleryPage = page;
+                    loadActivityAlbums();
+                });
+                galleryPagination.appendChild(button);
+            }
         }
 
         function renderGallery(items) {
             if (!galleryList) return;
-
             galleryList.innerHTML = '';
-
             if (items.length === 0) {
-                galleryList.innerHTML = '<p class="col-span-full py-20 text-center text-sm opacity-50 font-serif-ko">아직 등록된 사진이 없습니다.</p>';
+                galleryStatus.textContent = '아직 등록된 활동 앨범이 없습니다.';
+                galleryStatus.classList.remove('hidden');
                 return;
             }
-
+            galleryStatus.classList.add('hidden');
             items.forEach((item) => {
-                const dateStr = new Date(item.createdAt).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: '2-digit'
-                }).toUpperCase();
                 const card = document.createElement('article');
-                card.className = 'group bg-white/35 border border-[var(--border-light)] rounded-sm overflow-hidden shadow-sm hover:-translate-y-1 transition-transform';
+                card.className = 'group bg-white/35 border border-[var(--border-light)] rounded-sm overflow-hidden shadow-sm hover:-translate-y-1 transition-transform cursor-pointer';
                 card.tabIndex = 0;
                 card.setAttribute('role', 'button');
                 card.setAttribute('aria-label', `${item.title} 자세히 보기`);
-
                 const imageWrap = document.createElement('div');
-                imageWrap.className = 'aspect-[4/3] bg-gray-100 overflow-hidden';
-
+                imageWrap.className = 'aspect-[4/3] bg-gray-100 overflow-hidden relative';
                 const image = document.createElement('img');
-                image.src = item.imageUrl;
+                image.src = item.coverUrl;
                 image.alt = item.title;
                 image.loading = 'lazy';
                 image.className = 'w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700';
-                image.onerror = () => {
-                    image.src = 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=900';
-                };
-
+                const count = document.createElement('span');
+                count.className = 'absolute right-3 bottom-3 bg-black/65 text-white px-3 py-1 text-xs flex items-center gap-1';
+                count.innerHTML = `<i class="ph ph-images"></i> ${item.photoCount}`;
                 const body = document.createElement('div');
                 body.className = 'p-6';
-
                 const meta = document.createElement('p');
                 meta.className = 'text-xs tracking-widest uppercase opacity-45 font-serif-en mb-3';
-                meta.textContent = dateStr;
-
+                meta.textContent = `${smFormatDate(item.createdAt)} · ${item.authorName} · VIEW ${item.viewCount}`;
                 const title = document.createElement('h3');
                 title.className = 'text-2xl font-serif-ko font-bold mb-3 group-hover:text-[var(--accent-red)] transition-colors';
                 title.textContent = item.title;
-
                 const content = document.createElement('p');
                 content.className = 'text-sm opacity-70 leading-relaxed line-clamp-3';
-                content.textContent = item.content;
-
-                imageWrap.appendChild(image);
+                content.textContent = item.description;
+                imageWrap.append(image, count);
                 body.append(meta, title, content);
                 card.append(imageWrap, body);
-                card.addEventListener('click', () => openGalleryModal(item, dateStr));
+                card.addEventListener('click', () => openGalleryModal(item.id));
                 card.addEventListener('keydown', (event) => {
                     if (event.key === 'Enter' || event.key === ' ') {
                         event.preventDefault();
-                        openGalleryModal(item, dateStr);
+                        openGalleryModal(item.id);
                     }
                 });
                 galleryList.appendChild(card);
             });
         }
 
-        function readImageFile(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = () => reject(reader.error);
-                reader.readAsDataURL(file);
-            });
+        async function loadActivityAlbums() {
+            galleryList.innerHTML = '';
+            galleryStatus.textContent = '앨범을 불러오는 중입니다.';
+            galleryStatus.classList.remove('hidden');
+            galleryPagination.innerHTML = '';
+            try {
+                const response = await fetch(`/api/activity-albums.php?action=list&page=${galleryPage}`, { headers: { Accept: 'application/json' }, cache: 'no-store' });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '앨범을 불러오지 못했습니다.');
+                renderGallery(payload.items || []);
+                renderGalleryPagination(payload.totalPages || 1);
+            } catch (error) {
+                galleryStatus.textContent = error.message;
+            }
         }
 
-        function openGalleryModal(item, dateStr) {
-            if (!galleryModal) return;
+        function selectGalleryPhoto(photo, button = null) {
+            galleryModalImage.src = photo.url;
+            galleryModalImage.alt = photo.name;
+            galleryModalThumbnails.querySelectorAll('button').forEach(item => item.classList.remove('ring-2', 'ring-[var(--accent-red)]'));
+            button?.classList.add('ring-2', 'ring-[var(--accent-red)]');
+        }
 
-            galleryModalImage.src = item.imageUrl;
-            galleryModalImage.alt = item.title;
-            galleryModalDate.textContent = dateStr;
-            galleryModalTitle.textContent = item.title;
-            galleryModalContent.textContent = item.content;
-            galleryModal.classList.remove('hidden');
-            galleryModal.classList.add('flex');
-            document.body.style.overflow = 'hidden';
+        async function openGalleryModal(id) {
+            try {
+                const response = await fetch(`/api/activity-albums.php?action=detail&id=${encodeURIComponent(id)}`, { headers: { Accept: 'application/json' }, cache: 'no-store' });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '앨범을 불러오지 못했습니다.');
+                const album = payload.album;
+                galleryCurrentAlbum = album;
+                galleryModalDate.textContent = smFormatDate(album.createdAt);
+                galleryModalTitle.textContent = album.title;
+                galleryModalContent.textContent = album.description;
+                document.getElementById('gallery-modal-author').textContent = `작성자 ${album.authorName}`;
+                document.getElementById('gallery-modal-count').textContent = `사진 ${album.photos.length}장`;
+                document.getElementById('gallery-modal-views').textContent = `조회 ${album.viewCount}`;
+                galleryModalThumbnails.innerHTML = '';
+                album.photos.forEach((photo, index) => {
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = 'aspect-square bg-white overflow-hidden';
+                    const image = document.createElement('img');
+                    image.src = photo.url;
+                    image.alt = photo.name;
+                    image.className = 'w-full h-full object-cover';
+                    button.appendChild(image);
+                    button.addEventListener('click', () => selectGalleryPhoto(photo, button));
+                    galleryModalThumbnails.appendChild(button);
+                    if (index === 0) selectGalleryPhoto(photo, button);
+                });
+                galleryModalActions.classList.toggle('hidden', !album.canEdit);
+                galleryModalActions.classList.toggle('flex', album.canEdit);
+                galleryModal.classList.remove('hidden');
+                galleryModal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+            } catch (error) {
+                showToast(error.message, false);
+            }
         }
 
         function closeGalleryModal() {
@@ -2455,9 +2502,104 @@
             showToast("일정이 저장되었습니다.", true);
         });
 
+        function clearGalleryNewFiles() {
+            galleryNewFiles.forEach(item => URL.revokeObjectURL(item.url));
+            galleryNewFiles = [];
+        }
+
+        function renderGalleryNewFiles() {
+            galleryPreview.innerHTML = '';
+            galleryNewFiles.forEach((item, index) => {
+                const wrap = document.createElement('div');
+                wrap.className = 'relative aspect-square bg-gray-100 overflow-hidden';
+                const image = document.createElement('img');
+                image.src = item.url;
+                image.alt = item.file.name;
+                image.className = 'w-full h-full object-cover';
+                const remove = document.createElement('button');
+                remove.type = 'button';
+                remove.className = 'absolute top-2 right-2 w-8 h-8 rounded-full bg-black/65 text-white';
+                remove.innerHTML = '<i class="ph ph-x"></i>';
+                remove.addEventListener('click', () => {
+                    URL.revokeObjectURL(item.url);
+                    galleryNewFiles.splice(index, 1);
+                    renderGalleryNewFiles();
+                });
+                wrap.append(image, remove);
+                galleryPreview.appendChild(wrap);
+            });
+            galleryFileName.textContent = galleryNewFiles.length ? `새 사진 ${galleryNewFiles.length}장 선택됨` : '사진 1~10장 · 장당 8MB, 전체 25MB 이하';
+        }
+
+        function renderGalleryExistingPhotos() {
+            galleryExistingPhotos.innerHTML = '';
+            const photos = galleryCurrentAlbum?.photos || [];
+            galleryExistingPhotos.classList.toggle('hidden', photos.length === 0);
+            photos.forEach(photo => {
+                const removed = galleryRemovedPhotoIds.includes(photo.id);
+                const wrap = document.createElement('div');
+                wrap.className = `relative aspect-square bg-gray-100 overflow-hidden ${removed ? 'opacity-30' : ''}`;
+                const image = document.createElement('img');
+                image.src = photo.url;
+                image.alt = photo.name;
+                image.className = 'w-full h-full object-cover';
+                const toggle = document.createElement('button');
+                toggle.type = 'button';
+                toggle.className = `absolute inset-x-2 bottom-2 py-2 text-xs ${removed ? 'bg-white text-black' : 'bg-black/70 text-white'}`;
+                toggle.textContent = removed ? '삭제 취소' : '사진 삭제';
+                toggle.addEventListener('click', () => {
+                    galleryRemovedPhotoIds = removed
+                        ? galleryRemovedPhotoIds.filter(id => id !== photo.id)
+                        : [...galleryRemovedPhotoIds, photo.id];
+                    renderGalleryExistingPhotos();
+                });
+                wrap.append(image, toggle);
+                galleryExistingPhotos.appendChild(wrap);
+            });
+        }
+
+        function resetGalleryEditor() {
+            clearGalleryNewFiles();
+            galleryEditingId = null;
+            galleryRemovedPhotoIds = [];
+            galleryForm.reset();
+            galleryPreview.innerHTML = '';
+            galleryExistingPhotos.innerHTML = '';
+            galleryExistingPhotos.classList.add('hidden');
+            galleryFormError.classList.add('hidden');
+            galleryFileName.textContent = '사진 1~10장 · 장당 8MB, 전체 25MB 이하';
+            document.getElementById('gallery-editor-heading').textContent = 'Create Activity Album';
+            gallerySubmitBtn.innerHTML = '<span>Publish Album</span><i class="ph ph-arrow-right"></i>';
+        }
+
+        document.getElementById('gallery-write-btn')?.addEventListener('click', resetGalleryEditor);
+
         galleryImageInput?.addEventListener('change', () => {
-            const file = galleryImageInput.files?.[0];
-            galleryFileName.textContent = file ? file.name : '활동 사진을 선택해주세요';
+            const selected = Array.from(galleryImageInput.files || []);
+            const activeExisting = galleryEditingId ? (galleryCurrentAlbum.photos.length - galleryRemovedPhotoIds.length) : 0;
+            if (activeExisting + galleryNewFiles.length + selected.length > 10) {
+                showToast('앨범에는 사진을 최대 10장까지 등록할 수 있습니다.', false);
+                galleryImageInput.value = '';
+                return;
+            }
+            const selectedBytes = selected.reduce((total, file) => total + file.size, 0);
+            const currentBytes = galleryNewFiles.reduce((total, item) => total + item.file.size, 0);
+            if (selectedBytes + currentBytes > 26214400) {
+                showToast('새로 첨부하는 사진의 전체 용량은 25MB 이하여야 합니다.', false);
+                galleryImageInput.value = '';
+                return;
+            }
+            selected.forEach(file => {
+                if (!['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(file.type)) {
+                    showToast(`${file.name}: JPG, PNG, GIF, WEBP 사진만 가능합니다.`, false);
+                } else if (file.size > 8388608) {
+                    showToast(`${file.name}: 사진은 장당 8MB 이하여야 합니다.`, false);
+                } else {
+                    galleryNewFiles.push({ file, url: URL.createObjectURL(file) });
+                }
+            });
+            galleryImageInput.value = '';
+            renderGalleryNewFiles();
         });
 
         galleryModalClose?.addEventListener('click', closeGalleryModal);
@@ -2472,40 +2614,80 @@
             }
         });
 
+        document.getElementById('gallery-edit-btn')?.addEventListener('click', () => {
+            if (!galleryCurrentAlbum?.canEdit) return;
+            clearGalleryNewFiles();
+            galleryEditingId = galleryCurrentAlbum.id;
+            galleryRemovedPhotoIds = [];
+            galleryForm.reset();
+            document.getElementById('gallery-title-input').value = galleryCurrentAlbum.title;
+            document.getElementById('gallery-content-input').value = galleryCurrentAlbum.description;
+            document.getElementById('gallery-editor-heading').textContent = 'Edit Activity Album';
+            gallerySubmitBtn.innerHTML = '<span>Save Changes</span><i class="ph ph-arrow-right"></i>';
+            galleryFormError.classList.add('hidden');
+            renderGalleryExistingPhotos();
+            renderGalleryNewFiles();
+            closeGalleryModal();
+            document.getElementById('gallery-editor-view-trigger').click();
+        });
+
+        document.getElementById('gallery-delete-btn')?.addEventListener('click', async () => {
+            if (!galleryCurrentAlbum?.canEdit || !window.confirm('이 앨범과 모든 사진을 삭제하시겠습니까?')) return;
+            const body = new FormData();
+            body.append('action', 'delete');
+            body.append('id', String(galleryCurrentAlbum.id));
+            try {
+                const response = await fetch('/api/activity-albums.php', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken || '' }, body });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '앨범을 삭제하지 못했습니다.');
+                closeGalleryModal();
+                showToast('앨범을 삭제했습니다.', true);
+                loadActivityAlbums();
+            } catch (error) {
+                showToast(error.message, false);
+            }
+        });
+
         galleryForm?.addEventListener('submit', async (e) => {
             e.preventDefault();
-
             const title = document.getElementById('gallery-title-input').value.trim();
-            const imageFile = galleryImageInput.files?.[0];
             const content = document.getElementById('gallery-content-input').value.trim();
-
-            if (!title || !imageFile || !content) return;
-
+            const activeExisting = galleryEditingId ? galleryCurrentAlbum.photos.length - galleryRemovedPhotoIds.length : 0;
+            galleryFormError.classList.add('hidden');
+            if (!title || !content || activeExisting + galleryNewFiles.length < 1) {
+                galleryFormError.textContent = '제목, 앨범 이야기, 사진을 1장 이상 등록해주세요.';
+                galleryFormError.classList.remove('hidden');
+                return;
+            }
             gallerySubmitBtn.disabled = true;
             gallerySubmitBtn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> <span>Publishing...</span>';
-
             try {
-                const imageUrl = await readImageFile(imageFile);
-
-                localGalleryItems.unshift({
-                    id: `gallery-${Date.now()}`,
-                    title,
-                    imageUrl,
-                    content,
-                    createdAt: Date.now()
+                const body = new FormData();
+                body.append('action', galleryEditingId ? 'update' : 'create');
+                if (galleryEditingId) body.append('id', String(galleryEditingId));
+                body.append('title', title);
+                body.append('description', content);
+                body.append('removePhotoIds', JSON.stringify(galleryRemovedPhotoIds));
+                galleryNewFiles.forEach(item => body.append('photos[]', item.file, item.file.name));
+                const response = await fetch('/api/activity-albums.php', {
+                    method: 'POST', headers: { 'X-CSRF-Token': csrfToken || '' }, body
                 });
-
-                galleryForm.reset();
-                galleryFileName.textContent = '활동 사진을 선택해주세요';
-                renderGallery(localGalleryItems);
-                showToast("앨범 게시글이 등록되었습니다.", true);
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '앨범을 저장하지 못했습니다.');
+                showToast(galleryEditingId ? '앨범을 수정했습니다.' : '앨범을 등록했습니다.', true);
+                resetGalleryEditor();
                 document.querySelector('.view-trigger[data-target="view-gallery"]').click();
+                await openGalleryModal(payload.id);
             } catch (error) {
-                console.error("Image Read Error:", error);
-                showToast("사진을 불러오지 못했습니다.", false);
+                galleryFormError.textContent = error.message;
+                galleryFormError.classList.remove('hidden');
             } finally {
                 gallerySubmitBtn.disabled = false;
-                gallerySubmitBtn.innerHTML = '<span>Publish Photo</span><i class="ph ph-arrow-right"></i>';
+                if (!galleryFormError.classList.contains('hidden')) {
+                    gallerySubmitBtn.innerHTML = galleryEditingId
+                        ? '<span>Save Changes</span><i class="ph ph-arrow-right"></i>'
+                        : '<span>Publish Album</span><i class="ph ph-arrow-right"></i>';
+                }
             }
         });
 
@@ -2513,7 +2695,6 @@
         initAuth();
         renderCalendar();
         renderSchedules();
-        renderGallery(localGalleryItems);
         if (auth) {
             onAuthStateChanged(auth, (user) => {
                 if (user) {
