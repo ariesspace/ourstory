@@ -758,7 +758,22 @@
                     <i class="ph ph-plus mr-2"></i>Add Bar
                 </button>
             </div>
-            <div id="sm-bar-list" class="border-t-2 border-[var(--text-dark)]"></div>
+            <div class="overflow-x-auto border-t-2 border-[var(--text-dark)]">
+                <table class="w-full min-w-[860px] text-sm">
+                    <thead class="border-b border-[var(--border-light)] text-xs tracking-widest uppercase opacity-60">
+                        <tr>
+                            <th class="w-16 py-4 text-center">No.</th>
+                            <th class="py-4 text-left">Bar Name</th>
+                            <th class="w-28 py-4 text-center">Region</th>
+                            <th class="w-36 py-4 text-center">Entrance Fee</th>
+                            <th class="py-4 text-left">Address</th>
+                            <th class="w-40 py-4 text-center">Twitter / X</th>
+                            <th class="w-24 py-4 text-center">Manage</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sm-bar-list"></tbody>
+                </table>
+            </div>
             <p id="sm-bar-status" class="py-16 text-center text-sm opacity-50">목록을 불러오는 중입니다.</p>
         </section>
 
@@ -1671,69 +1686,115 @@
                 return;
             }
             smBarItems.forEach((item, index) => {
-                const row = document.createElement('article');
-                row.className = 'flex items-start gap-3 sm:gap-5 py-5 border-b border-[var(--border-light)]';
-                const number = document.createElement('span');
-                number.className = 'w-7 shrink-0 pt-1 text-xs tracking-widest opacity-35 text-center';
-                number.textContent = String(index + 1).padStart(2, '0');
+                const row = document.createElement('tr');
+                row.className = 'border-b border-[var(--border-light)] cursor-pointer hover:bg-white/30 transition-colors';
+                row.setAttribute('tabindex', '0');
+                row.setAttribute('aria-expanded', 'false');
+                const number = document.createElement('td');
+                number.className = 'py-5 text-center text-xs tracking-widest opacity-35';
+                number.textContent = String(index + 1);
+                const name = document.createElement('td');
+                name.className = 'py-5 pr-4';
+                const nameLine = document.createElement('div');
+                nameLine.className = 'flex items-center gap-3';
                 const cocktail = document.createElement('span');
-                cocktail.className = 'text-xl shrink-0 pt-0.5';
+                cocktail.className = 'text-xl shrink-0';
                 cocktail.setAttribute('aria-hidden', 'true');
                 cocktail.textContent = '🍹';
-                const content = document.createElement('div');
-                content.className = 'min-w-0 flex-1 grid grid-cols-1 md:grid-cols-[minmax(9rem,0.7fr)_minmax(0,1.5fr)_auto] gap-3 md:gap-7';
-                const identity = document.createElement('div');
-                identity.className = 'min-w-0';
                 const nameStrong = document.createElement('strong');
-                nameStrong.className = 'block text-lg font-serif-ko truncate';
+                nameStrong.className = 'text-base font-serif-ko';
                 nameStrong.textContent = item.name;
+                const caret = document.createElement('i');
+                caret.className = 'ph ph-caret-down ml-auto opacity-35 transition-transform';
+                nameLine.append(cocktail, nameStrong, caret);
                 const author = document.createElement('span');
-                author.className = 'block text-xs opacity-40 mt-1';
+                author.className = 'block text-xs opacity-40 mt-2 ml-9';
                 author.textContent = `작성자 ${item.authorName}`;
-                const meta = document.createElement('span');
-                meta.className = 'block text-xs opacity-55 mt-2';
-                meta.textContent = [item.region, item.entranceFee].filter(Boolean).join(' · ') || '정보 미입력';
-                identity.append(nameStrong, author, meta);
-                const info = document.createElement('div');
-                info.className = 'min-w-0';
-                const address = document.createElement('p');
-                address.className = 'truncate';
+                name.append(nameLine, author);
+                const region = document.createElement('td');
+                region.className = 'py-5 px-3 text-center';
+                region.textContent = item.region || '-';
+                const fee = document.createElement('td');
+                fee.className = 'py-5 px-3 text-center';
+                fee.textContent = item.entranceFee || '-';
+                const address = document.createElement('td');
+                address.className = 'py-5 pr-5 max-w-[22rem] truncate';
                 address.textContent = item.address || '-';
-                const description = document.createElement('p');
-                description.className = 'text-xs opacity-55 mt-2 whitespace-pre-wrap line-clamp-2';
-                description.textContent = item.description || '';
-                info.append(address, description);
-                const link = document.createElement('div');
-                link.className = 'md:text-right space-x-3 md:space-x-0 md:space-y-2 text-sm';
+                const link = document.createElement('td');
+                link.className = 'py-5 text-center';
                 if (item.twitterUrl) {
                     const twitter = document.createElement('a');
                     twitter.href = item.twitterUrl;
                     twitter.target = '_blank';
                     twitter.rel = 'noopener noreferrer';
-                    twitter.className = 'inline-block md:block underline underline-offset-4';
+                    twitter.className = 'underline underline-offset-4';
                     twitter.textContent = item.twitterAccount;
+                    twitter.addEventListener('click', event => event.stopPropagation());
                     link.appendChild(twitter);
-                }
-                content.append(identity, info, link);
-                const manage = document.createElement('div');
-                manage.className = 'shrink-0 flex items-center';
+                } else link.textContent = '-';
+                const manage = document.createElement('td');
+                manage.className = 'py-5 text-center whitespace-nowrap';
                 if (item.canEdit) {
                     const edit = document.createElement('button');
                     edit.type = 'button';
                     edit.className = 'p-2 hover:text-[var(--accent-red)]';
                     edit.title = '수정';
                     edit.innerHTML = '<i class="ph ph-pencil-simple"></i>';
-                    edit.addEventListener('click', () => openSmBarModal(item));
+                    edit.addEventListener('click', event => {
+                        event.stopPropagation();
+                        openSmBarModal(item);
+                    });
                     const remove = document.createElement('button');
                     remove.type = 'button';
                     remove.className = 'p-2 hover:text-[var(--accent-red)]';
                     remove.title = '삭제';
                     remove.innerHTML = '<i class="ph ph-trash"></i>';
-                    remove.addEventListener('click', () => deleteSmBar(item));
+                    remove.addEventListener('click', event => {
+                        event.stopPropagation();
+                        deleteSmBar(item);
+                    });
                     manage.append(edit, remove);
                 }
-                row.append(number, cocktail, content, manage);
-                smBarList.appendChild(row);
+                row.append(number, name, region, fee, address, link, manage);
+
+                const detailRow = document.createElement('tr');
+                detailRow.className = 'hidden border-b border-[var(--border-light)] bg-white/25';
+                const detailCell = document.createElement('td');
+                detailCell.colSpan = 7;
+                detailCell.className = 'px-6 sm:px-16 py-7';
+                const detail = document.createElement('div');
+                detail.className = 'grid grid-cols-1 md:grid-cols-[10rem_1fr] gap-4 md:gap-8';
+                const detailTitle = document.createElement('p');
+                detailTitle.className = 'text-xs tracking-[0.2em] uppercase opacity-45';
+                detailTitle.textContent = 'Additional Information';
+                const detailContent = document.createElement('div');
+                const fullAddress = document.createElement('p');
+                fullAddress.className = 'font-medium';
+                fullAddress.textContent = item.address || '주소 정보가 없습니다.';
+                const description = document.createElement('p');
+                description.className = 'mt-4 text-sm opacity-65 leading-relaxed whitespace-pre-wrap';
+                description.textContent = item.description || '추가 정보가 없습니다.';
+                const detailMeta = document.createElement('p');
+                detailMeta.className = 'mt-5 text-xs opacity-45';
+                detailMeta.textContent = [item.region, item.entranceFee, item.twitterAccount].filter(Boolean).join(' · ');
+                detailContent.append(fullAddress, description, detailMeta);
+                detail.append(detailTitle, detailContent);
+                detailCell.appendChild(detail);
+                detailRow.appendChild(detailCell);
+
+                const toggleDetail = () => {
+                    const willOpen = detailRow.classList.contains('hidden');
+                    detailRow.classList.toggle('hidden', !willOpen);
+                    caret.classList.toggle('rotate-180', willOpen);
+                    row.setAttribute('aria-expanded', String(willOpen));
+                };
+                row.addEventListener('click', toggleDetail);
+                row.addEventListener('keydown', event => {
+                    if (event.key !== 'Enter' && event.key !== ' ') return;
+                    event.preventDefault();
+                    toggleDetail();
+                });
+                smBarList.append(row, detailRow);
             });
         }
 
