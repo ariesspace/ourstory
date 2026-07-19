@@ -4,6 +4,5 @@
 }
 
 http://49.247.137.213 {
-    encode zstd gzip
-    reverse_proxy web:80
+    redir https://49-247-137-213.sslip.io{uri} permanent
 }
