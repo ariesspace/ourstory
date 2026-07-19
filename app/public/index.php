@@ -218,16 +218,17 @@
                                 <ul class="space-y-4 text-sm opacity-70">
                                     <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-read">Latest Updates</li>
                                     <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-introduce">Self Introduce</li>
-                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-sm-board">SM 정보</li>
+                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-write">Write New Story</li>
                                     <li class="hover:text-[var(--accent-red)] cursor-pointer opacity-50">Monthly Archive</li>
                                 </ul>
                             </div>
                             <div>
                                 <h4 class="font-serif-en italic text-xl mb-4 border-b border-[var(--border-light)] pb-2 flex items-center gap-2">
-                                    <i class="ph ph-pencil-simple"></i> create
+                                    <i class="ph ph-info"></i> information
                                 </h4>
                                 <ul class="space-y-4 text-sm opacity-70">
-                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-write">Write New Story</li>
+                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-sm-board">SM 정보</li>
+                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-sm-bar-list">SM Bar List</li>
                                 </ul>
                             </div>
                         </div>
@@ -315,10 +316,13 @@
                 <section>
                     <p class="font-serif-en italic text-xl mb-4">Journal</p>
                     <div class="grid gap-2">
+                        <p class="pt-1 pb-2 text-[0.65rem] tracking-[0.25em] uppercase text-[var(--accent-red)] font-bold">Records</p>
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-read">Latest Updates</button>
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-introduce">Self Introduce</button>
-                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-sm-board">SM 정보</button>
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-write">Write New Story</button>
+                        <p class="pt-5 pb-2 text-[0.65rem] tracking-[0.25em] uppercase text-[var(--accent-red)] font-bold">Information</p>
+                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-sm-board">SM 정보</button>
+                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-sm-bar-list">SM Bar List</button>
                     </div>
                 </section>
                 <section>
@@ -747,6 +751,34 @@
             <div id="sm-pagination" class="flex justify-center items-center gap-2 mt-8"></div>
             <button type="button" id="sm-detail-view-trigger" class="view-trigger hidden" data-target="view-sm-detail"></button>
             <button type="button" id="sm-editor-view-trigger" class="view-trigger hidden" data-target="view-sm-editor"></button>
+        </section>
+
+        <section id="view-sm-bar-list" class="w-full view-hidden fade-in">
+            <div class="py-14 md:py-20 mb-10 border-b border-[var(--border-light)] flex flex-col md:flex-row md:items-end md:justify-between gap-8">
+                <div>
+                    <span class="text-xs tracking-[0.3em] uppercase opacity-50 font-bold">Information</span>
+                    <h1 class="text-5xl md:text-8xl font-serif-en italic tracking-tighter mt-3">SM Bar List</h1>
+                    <p class="mt-5 text-sm opacity-60">지역별 SM Bar 정보를 한눈에 확인하는 목록입니다.</p>
+                </div>
+                <span class="text-xs tracking-widest uppercase opacity-45">Directory</span>
+            </div>
+            <div class="overflow-x-auto border-t-2 border-[var(--text-dark)]">
+                <table class="w-full min-w-[680px] text-sm">
+                    <thead class="border-b border-[var(--border-light)] text-xs tracking-widest uppercase opacity-60">
+                        <tr>
+                            <th class="w-20 py-4 text-center">No.</th>
+                            <th class="py-4 text-left">Bar Name</th>
+                            <th class="w-36 py-4 text-center">Region</th>
+                            <th class="py-4 text-left">Address / Information</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="4" class="py-20 text-center text-sm opacity-45">아직 등록된 SM Bar 정보가 없습니다.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
 
         <section id="view-sm-detail" class="w-full max-w-5xl mx-auto view-hidden fade-in py-8">
