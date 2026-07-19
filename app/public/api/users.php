@@ -50,6 +50,32 @@ function users_validate_account(array $body, bool $passwordRequired): array
     return [$username, $displayName, $password, $role];
 }
 
+function users_profile_fields(array $body): array
+{
+    $birthYearValue = trim((string) ($body['birthYear'] ?? ''));
+    $birthYear = $birthYearValue === '' ? null : (int) $birthYearValue;
+    $region = trim((string) ($body['region'] ?? ''));
+    $personality = trim((string) ($body['personality'] ?? ''));
+    $relationshipStyle = trim((string) ($body['relationshipStyle'] ?? ''));
+    $bio = trim((string) ($body['bio'] ?? ''));
+
+    if ($birthYear !== null && ($birthYear < 1900 || $birthYear > (int) date('Y'))) {
+        users_json(['error' => '출생연도를 올바르게 입력해주세요.'], 422);
+    }
+    foreach ([
+        '지역' => [$region, 80],
+        '개인 성향' => [$personality, 120],
+        '연애 성향' => [$relationshipStyle, 120],
+        '자기소개' => [$bio, 1000],
+    ] as $label => [$value, $limit]) {
+        if (mb_strlen($value) > $limit) {
+            users_json(['error' => "{$label}은(는) {$limit}자 이내로 입력해주세요."], 422);
+        }
+    }
+
+    return [$birthYear, $region, $personality, $relationshipStyle, $bio];
+}
+
 $pdo = site_db();
 $actor = site_current_user($pdo);
 if (!$actor || !in_array($actor['role'], ['superuser', 'admin'], true)) {
@@ -59,7 +85,8 @@ if (!$actor || !in_array($actor['role'], ['superuser', 'admin'], true)) {
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 if ($method === 'GET') {
     $rows = $pdo->query(
-        'SELECT id, username, display_name, role, is_active, created_at, last_login_at
+        'SELECT id, username, display_name, role, is_active, birth_year, region,
+                personality, relationship_style, bio, created_at, last_login_at
          FROM users
          ORDER BY CASE role WHEN \'superuser\' THEN 1 WHEN \'admin\' THEN 2 ELSE 3 END, created_at DESC, id DESC'
     )->fetchAll();
@@ -71,6 +98,11 @@ if ($method === 'GET') {
             'displayName' => $row['display_name'],
             'role' => $row['role'],
             'isActive' => (bool) $row['is_active'],
+            'birthYear' => $row['birth_year'] !== null ? (int) $row['birth_year'] : null,
+            'region' => $row['region'],
+            'personality' => $row['personality'],
+            'relationshipStyle' => $row['relationship_style'],
+            'bio' => $row['bio'],
             'createdAt' => $row['created_at'],
             'lastLoginAt' => $row['last_login_at'],
             'canEdit' => $canEdit,
@@ -89,20 +121,28 @@ $body = users_body();
 
 if ($method === 'POST') {
     [$username, $displayName, $password, $role] = users_validate_account($body, true);
+    [$birthYear, $region, $personality, $relationshipStyle, $bio] = users_profile_fields($body);
     if ($actor['role'] !== 'superuser' && $role !== 'member') {
         users_json(['error' => 'Admin은 Member 계정만 생성할 수 있습니다.'], 403);
     }
 
     try {
         $stmt = $pdo->prepare(
-            'INSERT INTO users (username, password_hash, display_name, role)
-             VALUES (:username, :password_hash, :display_name, :role)'
+            'INSERT INTO users
+                (username, password_hash, display_name, role, birth_year, region, personality, relationship_style, bio)
+             VALUES
+                (:username, :password_hash, :display_name, :role, :birth_year, :region, :personality, :relationship_style, :bio)'
         );
         $stmt->execute([
             ':username' => $username,
             ':password_hash' => password_hash($password, PASSWORD_DEFAULT),
             ':display_name' => $displayName,
             ':role' => $role,
+            ':birth_year' => $birthYear,
+            ':region' => $region,
+            ':personality' => $personality,
+            ':relationship_style' => $relationshipStyle,
+            ':bio' => $bio,
         ]);
     } catch (PDOException $error) {
         if ($error->getCode() === '23000') {
@@ -126,6 +166,7 @@ if ($actor['role'] !== 'superuser' && $target['role'] !== 'member') {
 }
 
 [$username, $displayName, $password, $role] = users_validate_account($body, false);
+[$birthYear, $region, $personality, $relationshipStyle, $bio] = users_profile_fields($body);
 $isActive = filter_var($body['isActive'] ?? true, FILTER_VALIDATE_BOOL);
 if ($actor['role'] !== 'superuser' && $role !== 'member') {
     users_json(['error' => 'Admin은 Member 권한만 지정할 수 있습니다.'], 403);
@@ -145,12 +186,22 @@ $sql = 'UPDATE users SET
             display_name = :display_name,
             role = :role,
             is_active = :is_active,
+            birth_year = :birth_year,
+            region = :region,
+            personality = :personality,
+            relationship_style = :relationship_style,
+            bio = :bio,
             updated_at = CURRENT_TIMESTAMP';
 $params = [
     ':username' => $username,
     ':display_name' => $displayName,
     ':role' => $role,
     ':is_active' => $isActive ? 1 : 0,
+    ':birth_year' => $birthYear,
+    ':region' => $region,
+    ':personality' => $personality,
+    ':relationship_style' => $relationshipStyle,
+    ':bio' => $bio,
     ':id' => $targetId,
 ];
 if ($password !== '') {

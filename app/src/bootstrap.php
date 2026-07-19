@@ -100,6 +100,7 @@ function site_migrate(PDO $pdo): void
     );
 
     site_migrate_user_roles($pdo);
+    site_migrate_user_profile_columns($pdo);
 }
 
 function site_migrate_user_roles(PDO $pdo): void
@@ -142,6 +143,28 @@ function site_migrate_user_roles(PDO $pdo): void
     } catch (Throwable $error) {
         $pdo->rollBack();
         throw $error;
+    }
+}
+
+function site_migrate_user_profile_columns(PDO $pdo): void
+{
+    $columns = [];
+    foreach ($pdo->query('PRAGMA table_info(users)') as $column) {
+        $columns[$column['name']] = true;
+    }
+
+    $definitions = [
+        'birth_year' => 'INTEGER',
+        'region' => "TEXT NOT NULL DEFAULT ''",
+        'personality' => "TEXT NOT NULL DEFAULT ''",
+        'relationship_style' => "TEXT NOT NULL DEFAULT ''",
+        'bio' => "TEXT NOT NULL DEFAULT ''",
+    ];
+
+    foreach ($definitions as $name => $definition) {
+        if (!isset($columns[$name])) {
+            $pdo->exec("ALTER TABLE users ADD COLUMN {$name} {$definition}");
+        }
     }
 }
 

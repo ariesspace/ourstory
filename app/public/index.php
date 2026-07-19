@@ -168,7 +168,7 @@
 
             <div class="flex justify-end items-center gap-6 text-sm tracking-widest w-1/3">
                 <span id="current-date" class="hidden lg:block opacity-70"></span>
-                <button class="hidden lg:block opacity-70 hover:opacity-100 transition-opacity uppercase tracking-widest text-xs view-trigger" data-target="view-login" id="login-nav-btn">
+                <button class="hidden md:block opacity-70 hover:opacity-100 transition-opacity uppercase tracking-widest text-xs view-trigger" data-target="view-login" id="login-nav-btn">
                     Login
                 </button>
                 <button class="view-trigger flex items-center justify-center w-10 h-10 bg-[var(--accent-red)] text-white rounded-full hover:scale-110 transition-transform" data-target="view-write" title="Write a story">
@@ -334,6 +334,64 @@
             </div>
         </section>
 
+        <section id="view-my-page" class="w-full max-w-3xl mx-auto view-hidden fade-in py-8">
+            <div class="text-center mb-12">
+                <span class="text-xs tracking-[0.3em] uppercase opacity-50 font-bold">Account</span>
+                <h1 class="text-5xl md:text-7xl font-serif-en italic tracking-tighter mt-3">My Page</h1>
+                <p class="text-sm opacity-55 mt-5">내 계정과 선택형 프로필 정보를 관리합니다.</p>
+            </div>
+            <p id="my-page-status" class="py-14 text-center text-sm opacity-50">프로필을 불러오는 중입니다.</p>
+            <form id="my-page-form" class="hidden bg-white/35 border border-[var(--border-light)] rounded-sm shadow-sm p-6 sm:p-10 space-y-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-7">
+                    <div>
+                        <label for="my-username" class="block text-xs tracking-widest uppercase opacity-60 mb-3">로그인 ID</label>
+                        <input type="text" id="my-username" class="w-full bg-transparent border-b border-[var(--border-light)] py-3 opacity-50" readonly>
+                    </div>
+                    <div>
+                        <label for="my-role" class="block text-xs tracking-widest uppercase opacity-60 mb-3">권한</label>
+                        <input type="text" id="my-role" class="w-full bg-transparent border-b border-[var(--border-light)] py-3 opacity-50" readonly>
+                    </div>
+                </div>
+                <div>
+                    <label for="my-display-name" class="block text-xs tracking-widest uppercase opacity-60 mb-3">표시 이름</label>
+                    <input type="text" id="my-display-name" maxlength="60" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" required>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-7">
+                    <div>
+                        <label for="my-birth-year" class="block text-xs tracking-widest uppercase opacity-60 mb-3">출생연도 <span class="normal-case opacity-50">(선택)</span></label>
+                        <input type="number" id="my-birth-year" min="1900" max="2100" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" placeholder="예: 1995">
+                    </div>
+                    <div>
+                        <label for="my-region" class="block text-xs tracking-widest uppercase opacity-60 mb-3">지역 <span class="normal-case opacity-50">(선택)</span></label>
+                        <input type="text" id="my-region" maxlength="80" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" placeholder="예: 서울">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-7">
+                    <div>
+                        <label for="my-personality" class="block text-xs tracking-widest uppercase opacity-60 mb-3">개인 성향 <span class="normal-case opacity-50">(선택)</span></label>
+                        <input type="text" id="my-personality" maxlength="120" class="w-full bg-transparent border-b border-[var(--border-light)] py-3">
+                    </div>
+                    <div>
+                        <label for="my-relationship-style" class="block text-xs tracking-widest uppercase opacity-60 mb-3">연애 성향 <span class="normal-case opacity-50">(선택)</span></label>
+                        <input type="text" id="my-relationship-style" maxlength="120" class="w-full bg-transparent border-b border-[var(--border-light)] py-3">
+                    </div>
+                </div>
+                <div>
+                    <label for="my-bio" class="block text-xs tracking-widest uppercase opacity-60 mb-3">자기소개 <span class="normal-case opacity-50">(선택)</span></label>
+                    <textarea id="my-bio" maxlength="1000" rows="5" class="w-full bg-transparent border border-[var(--border-light)] p-4 resize-y"></textarea>
+                </div>
+                <div>
+                    <label for="my-password" class="block text-xs tracking-widest uppercase opacity-60 mb-3">새 비밀번호 <span class="normal-case opacity-50">(선택)</span></label>
+                    <input type="password" id="my-password" minlength="10" maxlength="128" autocomplete="new-password" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" placeholder="변경할 때만 입력하세요">
+                </div>
+                <p id="my-page-error" class="hidden text-sm text-[var(--accent-red)] text-center"></p>
+                <div class="flex items-center justify-between gap-4 pt-4">
+                    <button type="button" class="logout-trigger text-sm tracking-widest uppercase opacity-50">Logout</button>
+                    <button type="submit" id="my-page-submit" class="bg-[var(--accent-red)] text-white px-8 py-4 text-sm tracking-widest uppercase">Save Profile</button>
+                </div>
+            </form>
+        </section>
+
         <section id="view-system-members" class="w-full view-hidden fade-in">
             <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12 border-b border-[var(--border-light)] pb-10">
                 <div>
@@ -373,6 +431,30 @@
                         <label for="edit-display-name" class="block text-xs tracking-widest uppercase opacity-60 mb-2">표시 이름</label>
                         <input type="text" id="edit-display-name" maxlength="60" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" required>
                     </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label for="edit-birth-year" class="block text-xs tracking-widest uppercase opacity-60 mb-2">출생연도 (선택)</label>
+                            <input type="number" id="edit-birth-year" min="1900" max="2100" class="w-full bg-transparent border-b border-[var(--border-light)] py-3">
+                        </div>
+                        <div>
+                            <label for="edit-region" class="block text-xs tracking-widest uppercase opacity-60 mb-2">지역 (선택)</label>
+                            <input type="text" id="edit-region" maxlength="80" class="w-full bg-transparent border-b border-[var(--border-light)] py-3">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label for="edit-personality" class="block text-xs tracking-widest uppercase opacity-60 mb-2">개인 성향 (선택)</label>
+                            <input type="text" id="edit-personality" maxlength="120" class="w-full bg-transparent border-b border-[var(--border-light)] py-3">
+                        </div>
+                        <div>
+                            <label for="edit-relationship-style" class="block text-xs tracking-widest uppercase opacity-60 mb-2">연애 성향 (선택)</label>
+                            <input type="text" id="edit-relationship-style" maxlength="120" class="w-full bg-transparent border-b border-[var(--border-light)] py-3">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="edit-bio" class="block text-xs tracking-widest uppercase opacity-60 mb-2">자기소개 (선택)</label>
+                        <textarea id="edit-bio" maxlength="1000" rows="4" class="w-full bg-transparent border border-[var(--border-light)] p-3 resize-y"></textarea>
+                    </div>
                     <div>
                         <label for="edit-password" class="block text-xs tracking-widest uppercase opacity-60 mb-2">새 비밀번호</label>
                         <input type="text" id="edit-password" minlength="10" maxlength="128" autocomplete="off" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" placeholder="변경하지 않으려면 비워두세요">
@@ -408,6 +490,30 @@
                 <div>
                     <label for="new-display-name" class="block text-xs tracking-widest uppercase opacity-60 mb-3">표시 이름</label>
                     <input type="text" id="new-display-name" maxlength="60" class="w-full bg-transparent border-b border-[var(--border-light)] py-3 focus:border-[var(--accent-red)]" required>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-7">
+                    <div>
+                        <label for="new-birth-year" class="block text-xs tracking-widest uppercase opacity-60 mb-3">출생연도 (선택)</label>
+                        <input type="number" id="new-birth-year" min="1900" max="2100" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" placeholder="예: 1995">
+                    </div>
+                    <div>
+                        <label for="new-region" class="block text-xs tracking-widest uppercase opacity-60 mb-3">지역 (선택)</label>
+                        <input type="text" id="new-region" maxlength="80" class="w-full bg-transparent border-b border-[var(--border-light)] py-3">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-7">
+                    <div>
+                        <label for="new-personality" class="block text-xs tracking-widest uppercase opacity-60 mb-3">개인 성향 (선택)</label>
+                        <input type="text" id="new-personality" maxlength="120" class="w-full bg-transparent border-b border-[var(--border-light)] py-3">
+                    </div>
+                    <div>
+                        <label for="new-relationship-style" class="block text-xs tracking-widest uppercase opacity-60 mb-3">연애 성향 (선택)</label>
+                        <input type="text" id="new-relationship-style" maxlength="120" class="w-full bg-transparent border-b border-[var(--border-light)] py-3">
+                    </div>
+                </div>
+                <div>
+                    <label for="new-bio" class="block text-xs tracking-widest uppercase opacity-60 mb-3">자기소개 (선택)</label>
+                    <textarea id="new-bio" maxlength="1000" rows="4" class="w-full bg-transparent border border-[var(--border-light)] p-4 resize-y"></textarea>
                 </div>
                 <div>
                     <div class="flex items-center justify-between gap-4 mb-3">
@@ -842,6 +948,10 @@
                     showToast('관리자 로그인이 필요합니다.', false);
                     targetId = 'view-login';
                 }
+                if (targetId === 'view-my-page' && !siteUser) {
+                    showToast('로그인이 필요합니다.', false);
+                    targetId = 'view-login';
+                }
 
                 if (isMenuOpen) closeMenu();
                 if (isMobileMenuOpen) closeMobileMenu();
@@ -860,6 +970,7 @@
 
                 if (targetId === 'view-introduce') loadIntroductions();
                 if (targetId === 'view-system-members') loadMembers();
+                if (targetId === 'view-my-page') loadMyProfile();
             });
         });
 
@@ -888,9 +999,9 @@
             systemNavLink.classList.toggle('hidden', !isManager);
             mobileSystemSection.classList.toggle('hidden', !isManager);
             loginNavBtn.textContent = user ? user.displayName : 'Login';
-            loginNavBtn.dataset.target = isManager ? 'view-system-members' : 'view-login';
+            loginNavBtn.dataset.target = user ? 'view-my-page' : 'view-login';
             mobileLoginBtn.textContent = user ? user.displayName : 'Login';
-            mobileLoginBtn.dataset.target = isManager ? 'view-system-members' : 'view-login';
+            mobileLoginBtn.dataset.target = user ? 'view-my-page' : 'view-login';
 
             document.querySelectorAll('#new-role option, #edit-role option').forEach(option => {
                 option.hidden = user?.role !== 'superuser' && option.value !== 'member';
@@ -933,7 +1044,7 @@
                 applySiteAuth(payload.user, payload.csrfToken);
                 loginForm.reset();
                 showToast(`${payload.user.displayName}님, 환영합니다.`, true);
-                document.querySelector('.view-trigger[data-target="view-system-members"]').click();
+                loginNavBtn.click();
             } catch (error) {
                 errorElement.textContent = error.message;
                 errorElement.classList.remove('hidden');
@@ -1004,6 +1115,9 @@
         const memberEditModal = document.getElementById('member-edit-modal');
         const memberEditForm = document.getElementById('member-edit-form');
         const memberEditError = document.getElementById('member-edit-error');
+        const myPageStatus = document.getElementById('my-page-status');
+        const myPageForm = document.getElementById('my-page-form');
+        const myPageError = document.getElementById('my-page-error');
 
         let calendarDate = new Date();
         let selectedDateKey = formatDateKey(calendarDate);
@@ -1104,6 +1218,74 @@
 
         introRefreshBtn?.addEventListener('click', loadIntroductions);
 
+        function fillMyProfile(profile) {
+            document.getElementById('my-username').value = profile.username || '';
+            document.getElementById('my-role').value = profile.role || '';
+            document.getElementById('my-display-name').value = profile.displayName || '';
+            document.getElementById('my-birth-year').value = profile.birthYear || '';
+            document.getElementById('my-region').value = profile.region || '';
+            document.getElementById('my-personality').value = profile.personality || '';
+            document.getElementById('my-relationship-style').value = profile.relationshipStyle || '';
+            document.getElementById('my-bio').value = profile.bio || '';
+            document.getElementById('my-password').value = '';
+        }
+
+        async function loadMyProfile() {
+            if (!siteUser) return;
+            myPageStatus.textContent = '프로필을 불러오는 중입니다.';
+            myPageStatus.classList.remove('hidden');
+            myPageForm.classList.add('hidden');
+
+            try {
+                const response = await fetch('/api/profile.php', { headers: { Accept: 'application/json' }, cache: 'no-store' });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '프로필을 불러오지 못했습니다.');
+                fillMyProfile(payload.profile);
+                myPageStatus.classList.add('hidden');
+                myPageForm.classList.remove('hidden');
+            } catch (error) {
+                myPageStatus.textContent = error.message;
+            }
+        }
+
+        myPageForm?.addEventListener('submit', async event => {
+            event.preventDefault();
+            const submitButton = document.getElementById('my-page-submit');
+            myPageError.classList.add('hidden');
+            submitButton.disabled = true;
+
+            try {
+                const response = await fetch('/api/profile.php', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        'X-CSRF-Token': csrfToken || ''
+                    },
+                    body: JSON.stringify({
+                        displayName: document.getElementById('my-display-name').value.trim(),
+                        birthYear: document.getElementById('my-birth-year').value,
+                        region: document.getElementById('my-region').value.trim(),
+                        personality: document.getElementById('my-personality').value.trim(),
+                        relationshipStyle: document.getElementById('my-relationship-style').value.trim(),
+                        bio: document.getElementById('my-bio').value.trim(),
+                        password: document.getElementById('my-password').value
+                    })
+                });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '프로필 저장에 실패했습니다.');
+
+                fillMyProfile(payload.profile);
+                await loadSiteSession();
+                showToast('내 정보가 저장되었습니다.', true);
+            } catch (error) {
+                myPageError.textContent = error.message;
+                myPageError.classList.remove('hidden');
+            } finally {
+                submitButton.disabled = false;
+            }
+        });
+
         function formatMemberDate(value) {
             if (!value) return '-';
             const date = new Date(value.includes('T') ? value : `${value.replace(' ', 'T')}Z`);
@@ -1119,6 +1301,11 @@
             document.getElementById('edit-user-id').value = member.id;
             document.getElementById('edit-username').value = member.username;
             document.getElementById('edit-display-name').value = member.displayName;
+            document.getElementById('edit-birth-year').value = member.birthYear || '';
+            document.getElementById('edit-region').value = member.region || '';
+            document.getElementById('edit-personality').value = member.personality || '';
+            document.getElementById('edit-relationship-style').value = member.relationshipStyle || '';
+            document.getElementById('edit-bio').value = member.bio || '';
             document.getElementById('edit-password').value = '';
             document.getElementById('edit-role').value = member.role;
             document.getElementById('edit-is-active').checked = member.isActive;
@@ -1235,6 +1422,11 @@
                         id: Number(document.getElementById('edit-user-id').value),
                         username: document.getElementById('edit-username').value.trim(),
                         displayName: document.getElementById('edit-display-name').value.trim(),
+                        birthYear: document.getElementById('edit-birth-year').value,
+                        region: document.getElementById('edit-region').value.trim(),
+                        personality: document.getElementById('edit-personality').value.trim(),
+                        relationshipStyle: document.getElementById('edit-relationship-style').value.trim(),
+                        bio: document.getElementById('edit-bio').value.trim(),
                         password: document.getElementById('edit-password').value,
                         role: document.getElementById('edit-role').value,
                         isActive: document.getElementById('edit-is-active').checked
@@ -1273,6 +1465,11 @@
                     body: JSON.stringify({
                         username: document.getElementById('new-username').value.trim(),
                         displayName: document.getElementById('new-display-name').value.trim(),
+                        birthYear: document.getElementById('new-birth-year').value,
+                        region: document.getElementById('new-region').value.trim(),
+                        personality: document.getElementById('new-personality').value.trim(),
+                        relationshipStyle: document.getElementById('new-relationship-style').value.trim(),
+                        bio: document.getElementById('new-bio').value.trim(),
                         password: document.getElementById('new-password').value,
                         role: document.getElementById('new-role').value
                     })
