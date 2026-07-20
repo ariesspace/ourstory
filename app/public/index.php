@@ -563,35 +563,38 @@
         </section>
 
         <section id="view-system-members" class="w-full view-hidden fade-in">
-            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12 border-b border-[var(--border-light)] pb-10">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-5 mb-7 md:mb-12 border-b border-[var(--border-light)] pb-6 md:pb-10">
                 <div>
                     <span class="text-xs tracking-[0.3em] uppercase opacity-50 font-bold">System</span>
-                    <h1 class="text-5xl md:text-7xl font-serif-en italic tracking-tighter mt-3">Member Management</h1>
+                    <h1 class="text-3xl sm:text-5xl md:text-7xl font-serif-en italic tracking-tighter mt-2 md:mt-3">Member Management</h1>
                 </div>
                 <div class="flex gap-3">
-                    <button type="button" id="members-refresh-btn" class="w-11 h-11 border border-[var(--border-light)] rounded-full flex items-center justify-center hover:border-[var(--accent-red)]" aria-label="회원 목록 새로고침"><i class="ph ph-arrow-clockwise"></i></button>
-                    <button type="button" class="view-trigger bg-[var(--accent-red)] text-white px-6 py-3 text-xs tracking-widest uppercase" data-target="view-system-add">회원 추가</button>
+                    <button type="button" id="members-refresh-btn" class="w-10 h-10 md:w-11 md:h-11 border border-[var(--border-light)] rounded-full flex items-center justify-center hover:border-[var(--accent-red)]" aria-label="회원 목록 새로고침"><i class="ph ph-arrow-clockwise"></i></button>
+                    <button type="button" class="view-trigger bg-[var(--accent-red)] text-white px-5 md:px-6 py-2.5 md:py-3 text-xs tracking-widest uppercase" data-target="view-system-add">회원 추가</button>
                 </div>
             </div>
             <p id="members-status" class="py-14 text-center text-sm opacity-50">회원 목록을 불러오는 중입니다.</p>
-            <div id="members-table-wrap" class="hidden overflow-x-auto bg-white/35 border border-[var(--border-light)] rounded-sm shadow-sm">
-                <table class="w-full min-w-[760px] text-left">
-                    <thead class="text-xs tracking-widest uppercase opacity-50 border-b border-[var(--border-light)]">
-                        <tr><th class="p-5">ID</th><th class="p-5">이름</th><th class="p-5">권한</th><th class="p-5">상태</th><th class="p-5">생성일</th><th class="p-5">최근 로그인</th><th class="p-5">관리</th></tr>
-                    </thead>
-                    <tbody id="members-table-body"></tbody>
-                </table>
+            <div id="members-table-wrap" class="hidden">
+                <div id="members-mobile-list" class="md:hidden grid gap-3"></div>
+                <div class="hidden md:block overflow-x-auto bg-white/35 border border-[var(--border-light)] rounded-sm shadow-sm">
+                    <table class="w-full min-w-[760px] text-left">
+                        <thead class="text-xs tracking-widest uppercase opacity-50 border-b border-[var(--border-light)]">
+                            <tr><th class="p-5">ID</th><th class="p-5">이름</th><th class="p-5">권한</th><th class="p-5">상태</th><th class="p-5">생성일</th><th class="p-5">최근 로그인</th><th class="p-5">관리</th></tr>
+                        </thead>
+                        <tbody id="members-table-body"></tbody>
+                    </table>
+                </div>
             </div>
         </section>
 
         <div id="member-edit-modal" class="fixed inset-0 z-[80] hidden items-center justify-center bg-black/50 p-4 sm:p-6">
-            <div class="relative w-full max-w-2xl max-h-[92vh] overflow-y-auto bg-[var(--bg-cream)] border border-[var(--border-light)] shadow-2xl rounded-sm p-6 sm:p-10">
+            <div class="relative w-full max-w-2xl max-h-[92vh] overflow-y-auto bg-[var(--bg-cream)] border border-[var(--border-light)] shadow-2xl rounded-sm p-5 sm:p-10">
                 <button type="button" id="member-edit-close" class="absolute top-5 right-5 w-10 h-10 rounded-full border border-[var(--border-light)] flex items-center justify-center" aria-label="회원 수정 닫기"><i class="ph ph-x"></i></button>
                 <div class="mb-9 pr-12">
                     <span class="text-xs tracking-[0.3em] uppercase opacity-50">System</span>
-                    <h2 class="text-4xl font-serif-en italic mt-2">Edit Member</h2>
+                    <h2 class="text-3xl sm:text-4xl font-serif-en italic mt-2">Edit Member</h2>
                 </div>
-                <form id="member-edit-form" class="space-y-7">
+                <form id="member-edit-form" class="space-y-5 sm:space-y-7">
                     <input type="hidden" id="edit-user-id">
                     <div>
                         <label for="edit-username" class="block text-xs tracking-widest uppercase opacity-60 mb-2">로그인 ID</label>
@@ -1827,6 +1830,7 @@
         const membersStatus = document.getElementById('members-status');
         const membersTableWrap = document.getElementById('members-table-wrap');
         const membersTableBody = document.getElementById('members-table-body');
+        const membersMobileList = document.getElementById('members-mobile-list');
         const membersRefreshBtn = document.getElementById('members-refresh-btn');
         const memberAddForm = document.getElementById('member-add-form');
         const memberAddError = document.getElementById('member-add-error');
@@ -3632,6 +3636,7 @@
 
         function renderMembers(items) {
             membersTableBody.innerHTML = '';
+            membersMobileList.innerHTML = '';
             items.forEach(member => {
                 const row = document.createElement('tr');
                 row.className = 'border-b border-[var(--border-light)] last:border-0';
@@ -3684,6 +3689,76 @@
                     row.addEventListener('click', () => openMemberEditor(member));
                 }
                 membersTableBody.appendChild(row);
+
+                const card = document.createElement('article');
+                card.className = 'border border-[var(--border-light)] bg-white/35 px-4 py-4';
+                const cardTop = document.createElement('div');
+                cardTop.className = 'flex items-start gap-3';
+                const initial = document.createElement('span');
+                initial.className = 'w-10 h-10 shrink-0 rounded-full bg-[var(--text-dark)] text-white flex items-center justify-center font-serif-ko font-bold';
+                initial.textContent = (member.displayName || member.username || '?').trim().charAt(0).toUpperCase();
+                const identity = document.createElement('div');
+                identity.className = 'min-w-0 flex-1';
+                const identityLine = document.createElement('div');
+                identityLine.className = 'flex flex-wrap items-center gap-x-2 gap-y-1';
+                const memberName = document.createElement('strong');
+                memberName.className = 'font-serif-ko text-base truncate';
+                memberName.textContent = member.displayName;
+                const memberId = document.createElement('span');
+                memberId.className = 'text-xs opacity-45 truncate';
+                memberId.textContent = `@${member.username}`;
+                identityLine.append(memberName, memberId);
+                const badges = document.createElement('div');
+                badges.className = 'mt-2 flex flex-wrap gap-2';
+                const roleBadge = document.createElement('span');
+                roleBadge.className = 'border border-[var(--border-light)] px-2 py-1 text-[0.6rem] tracking-widest uppercase opacity-65';
+                roleBadge.textContent = member.role;
+                const stateBadge = document.createElement('span');
+                stateBadge.className = member.isActive
+                    ? 'px-2 py-1 text-[0.6rem] tracking-widest uppercase bg-green-700/10 text-green-800'
+                    : 'px-2 py-1 text-[0.6rem] tracking-widest uppercase bg-[var(--accent-red)]/10 text-[var(--accent-red)]';
+                stateBadge.textContent = member.isActive ? '활성' : '비활성';
+                badges.append(roleBadge, stateBadge);
+                identity.append(identityLine, badges);
+                cardTop.append(initial, identity);
+
+                const meta = document.createElement('p');
+                meta.className = 'mt-4 text-xs leading-relaxed opacity-45 truncate';
+                const birth = member.birthYear ? `${member.birthYear}년생` : '';
+                const profileMeta = [birth, member.region].filter(Boolean).join(' · ') || '선택 정보 없음';
+                meta.textContent = `${profileMeta} · 최근 로그인 ${formatMemberDate(member.lastLoginAt)}`;
+
+                const cardActions = document.createElement('div');
+                cardActions.className = 'mt-4 pt-3 border-t border-[var(--border-light)] flex items-center justify-end gap-2';
+                if (member.canEdit) {
+                    const mobileEdit = document.createElement('button');
+                    mobileEdit.type = 'button';
+                    mobileEdit.className = 'border border-[var(--text-dark)] px-4 py-2 text-xs tracking-widest';
+                    mobileEdit.textContent = '수정';
+                    mobileEdit.addEventListener('click', event => {
+                        event.stopPropagation();
+                        openMemberEditor(member);
+                    });
+                    cardActions.appendChild(mobileEdit);
+                } else {
+                    const noAccess = document.createElement('span');
+                    noAccess.className = 'mr-auto text-xs opacity-30';
+                    noAccess.textContent = '수정 권한 없음';
+                    cardActions.appendChild(noAccess);
+                }
+                if (member.canDelete) {
+                    const mobileDelete = document.createElement('button');
+                    mobileDelete.type = 'button';
+                    mobileDelete.className = 'bg-[var(--accent-red)] text-white px-4 py-2 text-xs tracking-widest';
+                    mobileDelete.textContent = '삭제';
+                    mobileDelete.addEventListener('click', event => {
+                        event.stopPropagation();
+                        deleteMember(member);
+                    });
+                    cardActions.appendChild(mobileDelete);
+                }
+                card.append(cardTop, meta, cardActions);
+                membersMobileList.appendChild(card);
             });
             membersStatus.classList.add('hidden');
             membersTableWrap.classList.remove('hidden');
