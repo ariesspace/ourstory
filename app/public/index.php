@@ -164,6 +164,86 @@
             border-color: var(--accent-red);
             background: rgba(255,255,255,0.7);
         }
+
+        @media (max-width: 767px) {
+            #view-schedule .schedule-hero {
+                padding-top: 1.75rem;
+                padding-bottom: 1.75rem;
+                margin-bottom: 1.25rem;
+            }
+            #view-schedule .schedule-hero .text-center {
+                gap: 0.75rem;
+            }
+            #view-schedule .schedule-hero span {
+                font-size: 0.625rem;
+            }
+            #view-schedule .schedule-hero h1 {
+                font-size: 2.4rem;
+                line-height: 1;
+            }
+            #view-schedule .schedule-hero p {
+                display: none;
+            }
+            #view-schedule .schedule-layout {
+                display: block;
+                margin-bottom: 2rem;
+                padding-left: 0.5rem;
+                padding-right: 0.5rem;
+            }
+            #view-schedule .schedule-month-bar {
+                margin-bottom: 1rem;
+            }
+            #view-schedule .schedule-month-bar button {
+                padding: 0.35rem;
+            }
+            #view-schedule .schedule-month-bar i {
+                font-size: 1.25rem;
+            }
+            #calendar-month-year {
+                font-size: 1.85rem;
+                letter-spacing: 0.04em;
+            }
+            #view-schedule .schedule-weekdays {
+                gap: 0;
+                margin-bottom: 0.35rem;
+                font-size: 0.56rem;
+                letter-spacing: 0.08em;
+            }
+            #calendar-grid {
+                row-gap: 0.15rem;
+                column-gap: 0;
+                font-size: 0.95rem;
+            }
+            #view-schedule .schedule-detail {
+                display: none;
+            }
+        }
+
+        @media (min-width: 768px) and (max-width: 1023px) {
+            #view-schedule .schedule-hero {
+                padding-top: 4rem;
+                padding-bottom: 4rem;
+                margin-bottom: 3rem;
+            }
+            #view-schedule .schedule-hero h1 {
+                font-size: 5rem;
+            }
+            #view-schedule .schedule-hero p {
+                margin-top: 0;
+            }
+            #calendar-grid {
+                row-gap: 1.25rem;
+            }
+            #view-schedule .schedule-detail {
+                display: none;
+            }
+        }
+
+        @media (max-width: 1023px) {
+            #view-schedule .schedule-layout {
+                max-width: 42rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -915,7 +995,7 @@
         </section>
 
         <section id="view-schedule" class="w-full view-hidden fade-in">
-            <div class="w-full py-20 mb-16 flex flex-col justify-center items-center relative border-b border-[var(--border-light)]">
+            <div class="schedule-hero w-full py-20 mb-16 flex flex-col justify-center items-center relative border-b border-[var(--border-light)]">
                 <div class="text-center flex flex-col items-center gap-6">
                     <span class="text-xs tracking-[0.3em] uppercase opacity-50 font-bold">Our Timeline</span>
                     <h1 class="text-6xl md:text-8xl font-serif-en italic tracking-tighter text-[var(--text-dark)] flex items-baseline justify-center">
@@ -927,9 +1007,9 @@
                 </div>
             </div>
 
-            <div class="flex flex-col lg:flex-row gap-12 mb-20 max-w-6xl mx-auto px-4">
+            <div class="schedule-layout flex flex-col lg:flex-row gap-12 mb-20 max-w-6xl mx-auto px-4">
                 <div class="w-full lg:w-2/3">
-                    <div class="flex justify-between items-center mb-10">
+                    <div class="schedule-month-bar flex justify-between items-center mb-10">
                         <button id="prev-month" class="p-2 hover:text-[var(--accent-red)] transition-colors" type="button" aria-label="Previous month">
                             <i class="ph ph-caret-left text-2xl"></i>
                         </button>
@@ -939,14 +1019,14 @@
                         </button>
                     </div>
 
-                    <div class="grid grid-cols-7 gap-4 mb-6 text-center text-xs tracking-widest uppercase opacity-40 font-bold">
+                    <div class="schedule-weekdays grid grid-cols-7 gap-4 mb-6 text-center text-xs tracking-widest uppercase opacity-40 font-bold">
                         <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
                     </div>
 
                     <div id="calendar-grid" class="grid grid-cols-7 gap-y-8 gap-x-4 text-center font-serif-en text-xl"></div>
                 </div>
 
-                <div class="w-full lg:w-1/3 flex flex-col border-l border-[var(--border-light)] pl-0 lg:pl-12 pt-10 lg:pt-0 min-h-[400px]">
+                <div class="schedule-detail w-full lg:w-1/3 flex flex-col border-l border-[var(--border-light)] pl-0 lg:pl-12 pt-10 lg:pt-0 min-h-[400px]">
                     <h3 id="selected-date-display" class="text-2xl font-bold font-serif-en italic mb-8 pb-4 border-b border-[var(--border-light)]">
                         2026. 07. 14
                     </h3>
@@ -955,7 +1035,7 @@
                         <p class="text-sm opacity-50 italic font-serif-ko">일정을 불러오는 중입니다...</p>
                     </div>
 
-                    <div class="mt-auto bg-white/40 p-6 rounded-sm border border-[var(--border-light)] shadow-sm">
+                    <div class="schedule-form-card mt-auto bg-white/40 p-6 rounded-sm border border-[var(--border-light)] shadow-sm">
                         <h4 class="text-sm tracking-widest uppercase font-bold mb-4 flex items-center gap-2">
                             <i class="ph ph-plus-circle text-lg"></i> Add Event
                         </h4>
@@ -1081,6 +1161,33 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <div id="schedule-modal" class="fixed inset-0 z-[72] hidden items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true" aria-labelledby="schedule-modal-date">
+        <div class="relative w-full max-w-md bg-[var(--bg-cream)] border border-[var(--border-light)] shadow-2xl rounded-sm p-6">
+            <button type="button" id="schedule-modal-close" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/70 hover:bg-[var(--accent-red)] hover:text-white transition-colors flex items-center justify-center" aria-label="일정 닫기">
+                <i class="ph ph-x"></i>
+            </button>
+            <p class="text-xs tracking-[0.3em] uppercase opacity-45 font-serif-en">Schedule</p>
+            <h3 id="schedule-modal-date" class="mt-3 text-3xl font-serif-en italic"></h3>
+            <div id="schedule-modal-list" class="mt-7 border-t border-[var(--border-light)] divide-y divide-[var(--border-light)]"></div>
+            <button type="button" id="schedule-add-open" class="mt-6 ml-auto w-11 h-11 rounded-full bg-[var(--accent-red)] text-white flex items-center justify-center hover:scale-105 transition-transform" aria-label="일정 추가">
+                <i class="ph ph-plus text-xl"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="schedule-add-modal" class="fixed inset-0 z-[82] hidden items-center justify-center bg-black/55 p-4" role="dialog" aria-modal="true" aria-labelledby="schedule-add-date">
+        <form id="schedule-modal-form" class="relative w-full max-w-sm bg-[var(--bg-cream)] border border-[var(--border-light)] shadow-2xl rounded-sm p-6">
+            <button type="button" id="schedule-add-close" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/70 hover:bg-[var(--accent-red)] hover:text-white transition-colors flex items-center justify-center" aria-label="일정 추가 닫기">
+                <i class="ph ph-x"></i>
+            </button>
+            <p class="text-xs tracking-[0.3em] uppercase opacity-45 font-serif-en">Add Event</p>
+            <h3 id="schedule-add-date" class="mt-3 text-2xl font-serif-en italic"></h3>
+            <label for="schedule-modal-title" class="sr-only">일정 제목</label>
+            <input type="text" id="schedule-modal-title" placeholder="일정 제목을 입력하세요" class="mt-8 w-full bg-transparent border-b border-[var(--border-light)] py-3 text-sm focus:border-[var(--accent-red)] transition-colors" required>
+            <button type="submit" class="mt-7 w-full bg-[var(--text-dark)] text-[var(--bg-cream)] text-xs tracking-widest uppercase py-3 hover:bg-[var(--accent-red)] transition-colors">Save Event</button>
+        </form>
     </div>
 
     <div id="membership-detail-modal" class="fixed inset-0 z-[85] hidden items-center justify-center bg-black/65 p-4" role="dialog" aria-modal="true" aria-labelledby="membership-detail-title">
@@ -1449,6 +1556,16 @@
         const scheduleList = document.getElementById('schedule-list');
         const scheduleForm = document.getElementById('schedule-form');
         const scheduleTitle = document.getElementById('schedule-title');
+        const scheduleModal = document.getElementById('schedule-modal');
+        const scheduleModalClose = document.getElementById('schedule-modal-close');
+        const scheduleModalDate = document.getElementById('schedule-modal-date');
+        const scheduleModalList = document.getElementById('schedule-modal-list');
+        const scheduleAddOpen = document.getElementById('schedule-add-open');
+        const scheduleAddModal = document.getElementById('schedule-add-modal');
+        const scheduleAddClose = document.getElementById('schedule-add-close');
+        const scheduleAddDate = document.getElementById('schedule-add-date');
+        const scheduleModalForm = document.getElementById('schedule-modal-form');
+        const scheduleModalTitle = document.getElementById('schedule-modal-title');
         const prevMonthBtn = document.getElementById('prev-month');
         const nextMonthBtn = document.getElementById('next-month');
         const galleryList = document.getElementById('gallery-list');
@@ -3781,11 +3898,11 @@
                 const dayButton = document.createElement('button');
 
                 dayButton.type = 'button';
-                dayButton.className = 'relative min-h-16 flex items-center justify-center transition-colors hover:text-[var(--accent-red)]';
+                dayButton.className = 'relative min-h-8 sm:min-h-10 md:min-h-16 flex items-center justify-center transition-colors hover:text-[var(--accent-red)]';
 
                 const dayNumber = document.createElement('span');
                 dayNumber.className = [
-                    'w-9 h-9 rounded-full flex items-center justify-center transition-colors',
+                    'w-6 h-6 sm:w-7 sm:h-7 md:w-9 md:h-9 rounded-full flex items-center justify-center transition-colors',
                     isSelected ? 'bg-[var(--text-dark)] text-white shadow-md' : ''
                 ].join(' ');
                 dayNumber.textContent = String(day);
@@ -3793,7 +3910,7 @@
 
                 if (hasSchedule) {
                     const dot = document.createElement('span');
-                    dot.className = 'absolute left-1/2 top-1/2 mt-5 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[var(--accent-red)]';
+                    dot.className = 'absolute left-1/2 top-1/2 mt-3 sm:mt-4 md:mt-5 -translate-x-1/2 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-[var(--accent-red)]';
                     dayButton.appendChild(dot);
                 }
 
@@ -3801,6 +3918,7 @@
                     selectedDateKey = dateKey;
                     renderCalendar();
                     renderSchedules();
+                    openScheduleModal();
                 });
 
                 calendarGrid.appendChild(dayButton);
@@ -3832,6 +3950,93 @@
             });
         }
 
+        function renderScheduleModal() {
+            if (!scheduleModalList || !scheduleModalDate) return;
+
+            const [year, month, day] = selectedDateKey.split('-');
+            const items = localSchedules[selectedDateKey] || [];
+
+            scheduleModalDate.textContent = `${year}. ${month}. ${day}`;
+            if (scheduleAddDate) scheduleAddDate.textContent = `${year}. ${month}. ${day}`;
+            scheduleModalList.innerHTML = '';
+
+            if (items.length === 0) {
+                const empty = document.createElement('p');
+                empty.className = 'py-8 text-sm opacity-50 font-serif-ko text-center';
+                empty.textContent = '등록된 일정이 없습니다.';
+                scheduleModalList.appendChild(empty);
+                return;
+            }
+
+            items.forEach((item, index) => {
+                const row = document.createElement('article');
+                row.className = 'py-4 flex items-start gap-4';
+
+                const number = document.createElement('span');
+                number.className = 'shrink-0 text-xs tracking-widest opacity-40 font-serif-en pt-1';
+                number.textContent = String(index + 1).padStart(2, '0');
+
+                const title = document.createElement('p');
+                title.className = 'text-base leading-relaxed font-serif-ko';
+                title.textContent = item;
+
+                row.append(number, title);
+                scheduleModalList.appendChild(row);
+            });
+        }
+
+        function openScheduleModal() {
+            if (!scheduleModal) return;
+            renderScheduleModal();
+            scheduleModal.classList.remove('hidden');
+            scheduleModal.classList.add('flex');
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function closeScheduleModal() {
+            if (!scheduleModal) return;
+            scheduleModal.classList.add('hidden');
+            scheduleModal.classList.remove('flex');
+            if (scheduleAddModal?.classList.contains('hidden')) {
+                document.body.classList.remove('overflow-hidden');
+            }
+        }
+
+        function openScheduleAddModal() {
+            if (!scheduleAddModal) return;
+            if (scheduleAddDate) {
+                const [year, month, day] = selectedDateKey.split('-');
+                scheduleAddDate.textContent = `${year}. ${month}. ${day}`;
+            }
+            scheduleAddModal.classList.remove('hidden');
+            scheduleAddModal.classList.add('flex');
+            document.body.classList.add('overflow-hidden');
+            setTimeout(() => scheduleModalTitle?.focus(), 0);
+        }
+
+        function closeScheduleAddModal() {
+            if (!scheduleAddModal) return;
+            scheduleAddModal.classList.add('hidden');
+            scheduleAddModal.classList.remove('flex');
+            scheduleModalForm?.reset();
+            if (scheduleModal?.classList.contains('hidden')) {
+                document.body.classList.remove('overflow-hidden');
+            }
+        }
+
+        function saveScheduleTitle(title) {
+            const cleanTitle = title.trim();
+            if (!cleanTitle) return false;
+
+            if (!localSchedules[selectedDateKey]) localSchedules[selectedDateKey] = [];
+            localSchedules[selectedDateKey].push(cleanTitle);
+            renderCalendar();
+            renderSchedules();
+            renderScheduleModal();
+            showToast("일정이 저장되었습니다.", true);
+            return true;
+        }
+
         prevMonthBtn?.addEventListener('click', () => {
             calendarDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth() - 1, 1);
             renderCalendar();
@@ -3844,19 +4049,28 @@
 
         scheduleForm?.addEventListener('submit', (e) => {
             e.preventDefault();
-            const title = scheduleTitle.value.trim();
-
-            if (!title) return;
-
-            if (!localSchedules[selectedDateKey]) {
-                localSchedules[selectedDateKey] = [];
+            if (saveScheduleTitle(scheduleTitle.value)) {
+                scheduleForm.reset();
             }
+        });
 
-            localSchedules[selectedDateKey].push(title);
-            scheduleForm.reset();
-            renderCalendar();
-            renderSchedules();
-            showToast("일정이 저장되었습니다.", true);
+        scheduleModalClose?.addEventListener('click', closeScheduleModal);
+        scheduleModal?.addEventListener('click', (event) => {
+            if (event.target === scheduleModal) closeScheduleModal();
+        });
+
+        scheduleAddOpen?.addEventListener('click', openScheduleAddModal);
+        scheduleAddClose?.addEventListener('click', closeScheduleAddModal);
+        scheduleAddModal?.addEventListener('click', (event) => {
+            if (event.target === scheduleAddModal) closeScheduleAddModal();
+        });
+
+        scheduleModalForm?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (saveScheduleTitle(scheduleModalTitle.value)) {
+                closeScheduleAddModal();
+                openScheduleModal();
+            }
         });
 
         function clearGalleryNewFiles() {
