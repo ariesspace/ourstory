@@ -300,6 +300,7 @@
                                     <i class="ph ph-book-open"></i> records
                                 </h4>
                                 <ul class="space-y-4 text-sm opacity-70">
+                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-notice">Notice</li>
                                     <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-introduce">Self Introduce</li>
                                     <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-write">Write New Story</li>
                                     <li class="hover:text-[var(--accent-red)] cursor-pointer opacity-50">Monthly Archive</li>
@@ -389,6 +390,7 @@
                     <p class="font-serif-en italic text-xl mb-4">Journal</p>
                     <div class="grid gap-2">
                         <p class="pt-1 pb-2 text-[0.65rem] tracking-[0.25em] uppercase text-[var(--accent-red)] font-bold">Records</p>
+                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-notice">Notice</button>
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-introduce">Self Introduce</button>
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-write">Write New Story</button>
                         <p class="pt-5 pb-2 text-[0.65rem] tracking-[0.25em] uppercase text-[var(--accent-red)] font-bold">Information</p>
@@ -726,6 +728,87 @@
                     <p class="text-sm tracking-widest uppercase">Loading updates...</p>
                 </div>
             </div>
+        </section>
+
+        <section id="view-notice" class="w-full max-w-4xl mx-auto view-hidden fade-in py-8 md:py-12">
+            <article class="bg-white/30 border border-[var(--border-light)] shadow-sm px-5 py-8 sm:px-8 md:px-12 md:py-14">
+                <div class="border-b border-[var(--border-light)] pb-8 mb-10">
+                    <span class="text-xs tracking-[0.3em] uppercase opacity-45 font-serif-en">Notice</span>
+                    <h1 class="mt-4 text-3xl sm:text-4xl md:text-5xl font-serif-ko font-bold leading-tight">[공지] 필독</h1>
+                    <p class="mt-6 text-base leading-loose opacity-75 font-serif-ko">
+                        저희 단톡방은 특이하고 특수한 단톡방입니다.<br>
+                        그러므로 서로의 다름을 이해하고 인정해 주세요.<br>
+                        또한 모르면 공부해 보세요. 새로운 세상을 알 수 있습니다.
+                    </p>
+                </div>
+
+                <div class="space-y-10 text-[0.95rem] sm:text-base leading-loose font-serif-ko">
+                    <section>
+                        <h2 class="text-xl sm:text-2xl font-bold mb-4">Ⅰ. 닉네임 규정</h2>
+                        <p>닉네임은 '이름 / 지역 / 나이(연도) / 성향 / 연애 유형 / 유무'로 작성해 주세요.</p>
+                        <ol class="mt-3 space-y-2 list-[lower-roman] pl-6">
+                            <li>연애 유형은 모노, 논모노, 폴리 등 본인이 추구하는 유형을 적어주세요.</li>
+                            <li>연애 유무는 독점적 연애 중이시라면 하트, 독점적 디엣/파트너이시라면 동물, 그 외 진행 중이시라면 다른 이모지 사용을 부탁드립니다.</li>
+                            <li>오픈프로필 사용이 가능합니다.</li>
+                        </ol>
+                    </section>
+
+                    <section>
+                        <h2 class="text-xl sm:text-2xl font-bold mb-4">Ⅱ. 모임</h2>
+                        <ol class="space-y-3 list-[lower-roman] pl-6">
+                            <li>모임은 누구나 만들고 주최할 수 있습니다.<br>단, 모임에서 일어나는 사건이나 사고에 대해 운영진은 책임지지 않습니다.</li>
+                            <li>
+                                모임 주최 방식은 아래와 같습니다.
+                                <ol class="mt-2 space-y-2 list-decimal pl-6">
+                                    <li>모임 양식 작성</li>
+                                    <li>
+                                        일정 등록 및 단톡방 생성
+                                        <ol class="mt-2 space-y-1 list-[hangul] pl-6">
+                                            <li>단톡방은 운영진이 생성해 드립니다.</li>
+                                            <li>단톡방은 모임 관련된 이야기만 할 수 있으며, 주로 모임 장소 및 당일 위치 확인, 정산에만 사용합니다.</li>
+                                            <li>모임 종료 및 정산 완료 후 단톡방은 폐쇄됩니다.</li>
+                                        </ol>
+                                    </li>
+                                    <li>모임 내 있었던 일에 대하여 단톡방에 이야기하는 것은 좋으나, 모임에 참여하지 않은 사람들을 위해 배려해 주세요.</li>
+                                </ol>
+                            </li>
+                        </ol>
+                    </section>
+
+                    <section>
+                        <h2 class="text-xl sm:text-2xl font-bold mb-4">Ⅲ. 보이스룸 규정</h2>
+                        <ol class="space-y-2 list-[lower-roman] pl-6">
+                            <li>디스코드는 생성 불가능합니다.</li>
+                            <li>보이스룸은 누구나 열 수 있습니다.</li>
+                            <li>보이스룸은 현재 단톡방에 있는 인원만 참여 가능하며, 외부인 참여는 불가능합니다. (애인, 파트너, 기존 인원 등)<br>단, 정지당한 인원은 제외합니다. (보이스룸 참가 가능)</li>
+                        </ol>
+                    </section>
+
+                    <section>
+                        <h2 class="text-xl sm:text-2xl font-bold mb-4">Ⅳ. ETC</h2>
+                        <ol class="space-y-3 list-[lower-roman] pl-6">
+                            <li>
+                                합의되지 않은 관계는 인정하지 않습니다. 이 경우 경고 혹은 강퇴가 될 수 있습니다. 사례는 아래와 같습니다.
+                                <ol class="mt-2 space-y-2 list-decimal pl-6">
+                                    <li>합의되지 않은 반말, 욕설, 과한 친목</li>
+                                    <li>상대가 거절했음에도 불구하고 진행된 과도한 플러팅</li>
+                                    <li>합의되지 않은 관계성<br>(오픈릴이어도 합의가 되지 않았다면 바람입니다.)</li>
+                                    <li>법에 위반되는 사례</li>
+                                    <li>분쟁/제보 발생의 경우<br>분쟁 혹은 제보가 발생된 경우 운영진 측에서 사실 확인에 들어갈 수 있습니다. 이 경우 소환되는 경우도 있으니 참고해 주세요.</li>
+                                </ol>
+                            </li>
+                            <li>활동이 저조한 경우 내보내질 수 있습니다.</li>
+                            <li>이유 없이 나간 경우 재입장이 불가능합니다. 사유가 있는 경우 꼭 운영진에게 공유 부탁드립니다.</li>
+                            <li>저희는 바이, 호모플렉시블, 레즈비언을 차별하지 않습니다. 여성을 좋아하면 되는 여성애자면 입장이 가능하오니 참고 부탁드립니다.</li>
+                            <li>공지는 언제든지 수정될 수 있습니다. 공지 미숙지로 인해 얻는 불이익이 없도록 가끔 확인해 주세요.</li>
+                        </ol>
+                    </section>
+                </div>
+
+                <p class="mt-12 pt-8 border-t border-[var(--border-light)] text-sm sm:text-base leading-loose opacity-75 font-serif-ko">
+                    이 외 추가로 건의할 내용이나 제보할 내용이 있는 경우 운영진에게 개인톡 부탁드립니다.
+                </p>
+            </article>
         </section>
 
         <section id="view-write" class="w-full max-w-4xl mx-auto view-hidden fade-in py-10">
