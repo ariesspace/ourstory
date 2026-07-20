@@ -524,14 +524,17 @@
                     </div>
                 </div>
                 <input type="hidden" id="my-bio">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-7">
-                    <div>
-                        <label for="my-password" class="block text-xs tracking-widest uppercase opacity-60 mb-3">새 비밀번호 <span class="normal-case opacity-50">(선택)</span></label>
-                        <input type="password" id="my-password" minlength="10" maxlength="128" autocomplete="new-password" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" placeholder="변경할 때만 입력하세요">
-                    </div>
-                    <div>
-                        <label for="my-password-confirm" class="block text-xs tracking-widest uppercase opacity-60 mb-3">새 비밀번호 확인</label>
-                        <input type="password" id="my-password-confirm" minlength="10" maxlength="128" autocomplete="new-password" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" placeholder="한 번 더 입력하세요">
+                <div class="border-t border-[var(--border-light)] pt-6">
+                    <button type="button" id="my-password-toggle" class="border border-[var(--text-dark)] px-5 py-3 text-sm font-medium hover:border-[var(--accent-red)] hover:text-[var(--accent-red)] transition-colors" aria-expanded="false" aria-controls="my-password-section">비밀번호 변경</button>
+                    <div id="my-password-section" class="hidden mt-6 grid grid-cols-1 sm:grid-cols-2 gap-7 bg-white/25 border border-[var(--border-light)] p-5 sm:p-6">
+                        <div>
+                            <label for="my-password" class="block text-xs tracking-widest uppercase opacity-60 mb-3">새 비밀번호</label>
+                            <input type="password" id="my-password" minlength="10" maxlength="128" autocomplete="new-password" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" placeholder="10자 이상 입력하세요">
+                        </div>
+                        <div>
+                            <label for="my-password-confirm" class="block text-xs tracking-widest uppercase opacity-60 mb-3">새 비밀번호 확인</label>
+                            <input type="password" id="my-password-confirm" minlength="10" maxlength="128" autocomplete="new-password" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" placeholder="한 번 더 입력하세요">
+                        </div>
                     </div>
                 </div>
                 <p id="my-page-error" class="hidden text-sm text-[var(--accent-red)] text-center"></p>
@@ -1730,6 +1733,7 @@
         initialPasswordGo?.addEventListener('click', () => {
             closeInitialPasswordReminder();
             document.querySelector('.view-trigger[data-target="view-my-page"]')?.click();
+            setMyPasswordEditorOpen(true);
             setTimeout(() => document.getElementById('my-password')?.focus(), 350);
         });
 
@@ -1841,6 +1845,8 @@
         const myPageStatus = document.getElementById('my-page-status');
         const myPageForm = document.getElementById('my-page-form');
         const myPageError = document.getElementById('my-page-error');
+        const myPasswordToggle = document.getElementById('my-password-toggle');
+        const myPasswordSection = document.getElementById('my-password-section');
         const myAvatarInput = document.getElementById('my-avatar-input');
         const myAvatarPreviewWrap = document.getElementById('my-avatar-preview-wrap');
         const myAvatarPreview = document.getElementById('my-avatar-preview');
@@ -3187,6 +3193,17 @@
             };
         }
 
+        function setMyPasswordEditorOpen(open) {
+            if (!myPasswordSection || !myPasswordToggle) return;
+            myPasswordSection.classList.toggle('hidden', !open);
+            myPasswordToggle.setAttribute('aria-expanded', String(open));
+            myPasswordToggle.textContent = open ? '비밀번호 변경 취소' : '비밀번호 변경';
+            if (!open) {
+                document.getElementById('my-password').value = '';
+                document.getElementById('my-password-confirm').value = '';
+            }
+        }
+
         function fillMyProfile(profile, cacheBust = false) {
             document.getElementById('my-username').value = profile.username || '';
             document.getElementById('my-role').value = profile.role || '';
@@ -3230,6 +3247,12 @@
                 myAvatarPreviewWrap.onkeydown = null;
             }
         }
+
+        myPasswordToggle?.addEventListener('click', () => {
+            const willOpen = myPasswordSection.classList.contains('hidden');
+            setMyPasswordEditorOpen(willOpen);
+            if (willOpen) setTimeout(() => document.getElementById('my-password')?.focus(), 0);
+        });
 
         function formatTimelineDate(value) {
             const date = new Date(String(value || '').replace(' ', 'T') + 'Z');
@@ -3560,6 +3583,7 @@
 
                 fillMyProfile(payload.profile);
                 await loadSiteSession();
+                setMyPasswordEditorOpen(false);
                 showToast('내 정보가 저장되었습니다.', true);
             } catch (error) {
                 myPageError.textContent = error.message;
