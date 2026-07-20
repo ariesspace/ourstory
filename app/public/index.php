@@ -1147,6 +1147,17 @@
                     </div>
                 </div>
             </div>
+
+            <div class="max-w-6xl mx-auto px-4 mb-20">
+                <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 pb-5 border-b border-[var(--text-dark)]">
+                    <div>
+                        <p class="text-[0.65rem] tracking-[0.3em] uppercase opacity-45 font-serif-en">Monthly Events</p>
+                        <h2 id="monthly-schedule-title" class="mt-2 text-2xl sm:text-3xl font-serif-ko font-bold"></h2>
+                    </div>
+                    <span id="monthly-schedule-count" class="text-xs tracking-widest uppercase opacity-45"></span>
+                </div>
+                <div id="monthly-schedule-list" class="divide-y divide-[var(--border-light)]"></div>
+            </div>
         </section>
 
         <section id="view-gallery" class="w-full view-hidden fade-in">
@@ -1657,6 +1668,9 @@
         const scheduleList = document.getElementById('schedule-list');
         const scheduleForm = document.getElementById('schedule-form');
         const scheduleTitle = document.getElementById('schedule-title');
+        const monthlyScheduleTitle = document.getElementById('monthly-schedule-title');
+        const monthlyScheduleCount = document.getElementById('monthly-schedule-count');
+        const monthlyScheduleList = document.getElementById('monthly-schedule-list');
         const scheduleModal = document.getElementById('schedule-modal');
         const scheduleModalClose = document.getElementById('schedule-modal-close');
         const scheduleModalDate = document.getElementById('schedule-modal-date');
@@ -4043,6 +4057,60 @@
 
                 calendarGrid.appendChild(dayButton);
             }
+
+            renderMonthlySchedules();
+        }
+
+        function renderMonthlySchedules() {
+            if (!monthlyScheduleTitle || !monthlyScheduleCount || !monthlyScheduleList) return;
+
+            const year = calendarDate.getFullYear();
+            const month = calendarDate.getMonth();
+            const monthPrefix = `${year}-${String(month + 1).padStart(2, '0')}-`;
+            const entries = Object.entries(localSchedules)
+                .filter(([dateKey]) => dateKey.startsWith(monthPrefix))
+                .flatMap(([dateKey, items]) => items.map((title, index) => ({ dateKey, title, index })))
+                .sort((a, b) => a.dateKey.localeCompare(b.dateKey) || a.index - b.index);
+
+            monthlyScheduleTitle.textContent = `${month + 1}월 일정`;
+            monthlyScheduleCount.textContent = `${entries.length} Events`;
+            monthlyScheduleList.replaceChildren();
+
+            if (!entries.length) {
+                const empty = document.createElement('p');
+                empty.className = 'py-12 text-center text-sm opacity-45 font-serif-ko';
+                empty.textContent = '이 달에 등록된 일정이 없습니다.';
+                monthlyScheduleList.appendChild(empty);
+                return;
+            }
+
+            entries.forEach(entry => {
+                const row = document.createElement('button');
+                row.type = 'button';
+                row.className = 'group relative w-full grid grid-cols-[6.5rem_minmax(0,1fr)_auto] sm:grid-cols-[8rem_minmax(0,1fr)_auto] gap-3 sm:gap-6 items-center py-5 text-left hover:bg-white/30 transition-colors';
+                row.setAttribute('aria-label', `${entry.dateKey} ${entry.title} 일정 보기`);
+
+                const accent = document.createElement('span');
+                accent.className = 'absolute left-0 top-4 bottom-4 w-px bg-[var(--accent-red)] opacity-55 group-hover:w-0.5 group-hover:opacity-100 transition-all';
+                const date = document.createElement('time');
+                date.className = 'pl-4 text-xs sm:text-sm text-[var(--accent-red)] font-serif-en tracking-wide whitespace-nowrap';
+                date.dateTime = entry.dateKey;
+                date.textContent = entry.dateKey.replaceAll('-', '.');
+                const title = document.createElement('strong');
+                title.className = 'min-w-0 font-serif-ko text-sm sm:text-base font-bold truncate group-hover:text-[var(--accent-red)] transition-colors';
+                title.textContent = entry.title;
+                const arrow = document.createElement('i');
+                arrow.className = 'ph ph-arrow-up-right text-base opacity-30 group-hover:opacity-100 group-hover:text-[var(--accent-red)] transition-all';
+
+                row.append(accent, date, title, arrow);
+                row.addEventListener('click', () => {
+                    selectedDateKey = entry.dateKey;
+                    renderCalendar();
+                    renderSchedules();
+                    openScheduleModal();
+                });
+                monthlyScheduleList.appendChild(row);
+            });
         }
 
         function renderSchedules() {
