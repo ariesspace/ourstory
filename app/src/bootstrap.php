@@ -220,6 +220,17 @@ function site_migrate(PDO $pdo): void
         )'
     );
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_timeline_posts_user_created ON timeline_posts (user_id, created_at DESC, id DESC)');
+
+    $pdo->exec(
+        'CREATE TABLE IF NOT EXISTS anonymous_posts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            content TEXT NOT NULL,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )'
+    );
+    $pdo->exec('CREATE INDEX IF NOT EXISTS idx_anonymous_posts_created ON anonymous_posts (created_at DESC, id DESC)');
 }
 
 function site_migrate_user_roles(PDO $pdo): void
