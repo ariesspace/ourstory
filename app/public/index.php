@@ -713,11 +713,11 @@
 
         <section id="view-read" class="w-full fade-in">
             <div class="mb-14 md:mb-20 grid grid-cols-1 lg:grid-cols-[minmax(0,1.05fr)_minmax(320px,0.55fr)] gap-8 lg:gap-12 items-stretch">
-                <div class="relative overflow-hidden border border-[var(--border-light)] min-h-[420px] md:min-h-[520px] flex flex-col justify-between px-6 py-8 sm:px-10 sm:py-12 bg-[linear-gradient(145deg,rgba(255,255,255,0.82)_0%,rgba(233,214,229,0.42)_48%,rgba(206,213,239,0.34)_100%)]">
+                <div class="relative overflow-hidden min-h-[340px] md:min-h-[520px] flex flex-col justify-between px-0 py-6 sm:px-8 sm:py-10 lg:px-10 lg:py-12 lg:border lg:border-[var(--border-light)] bg-transparent lg:bg-[linear-gradient(145deg,rgba(255,255,255,0.82)_0%,rgba(233,214,229,0.42)_48%,rgba(206,213,239,0.34)_100%)]">
                     <div class="relative">
                         <span class="text-xs tracking-[0.35em] uppercase opacity-45 font-serif-en">Open Notice · Private Archive</span>
-                        <h1 class="mt-8 text-5xl sm:text-6xl md:text-8xl font-serif-ko font-light leading-[1.12] tracking-tight">
-                            우리들의<br>이야기
+                        <h1 class="mt-8 text-4xl sm:text-5xl md:text-7xl font-serif-ko font-light leading-[1.16] tracking-tight">
+                            기록이 모여<br>우리가 되는 시간.
                         </h1>
                     </div>
                     <div class="relative max-w-xl">
@@ -731,7 +731,7 @@
                     </div>
                 </div>
 
-                <aside class="border border-[var(--border-light)] bg-[var(--bg-cream)]/70 px-6 py-8 sm:px-8 sm:py-10 flex flex-col justify-between">
+                <aside class="border-t border-[var(--border-light)] lg:border lg:border-[var(--border-light)] bg-transparent lg:bg-[var(--bg-cream)]/70 px-0 pt-8 pb-0 sm:px-8 sm:py-10 flex flex-col justify-between">
                     <div>
                         <p class="text-xs tracking-[0.3em] uppercase opacity-45 font-serif-en">Today's Page</p>
                         <h2 class="mt-5 text-3xl sm:text-4xl font-serif-ko leading-snug">
@@ -742,11 +742,11 @@
                         </p>
                     </div>
                     <div class="mt-10 grid grid-cols-2 gap-3 text-center">
-                        <button type="button" class="view-trigger border border-[var(--border-light)] bg-white/40 px-4 py-5 hover:border-[var(--accent-red)] transition-colors" data-target="view-gallery">
+                        <button type="button" class="view-trigger border border-[var(--border-light)] bg-white/20 lg:bg-white/40 px-4 py-5 hover:border-[var(--accent-red)] transition-colors" data-target="view-gallery">
                             <span class="block text-2xl font-serif-en italic">Album</span>
                             <span class="mt-2 block text-[0.65rem] tracking-widest uppercase opacity-45">moments</span>
                         </button>
-                        <button type="button" class="view-trigger border border-[var(--border-light)] bg-white/40 px-4 py-5 hover:border-[var(--accent-red)] transition-colors" data-target="view-sm-board">
+                        <button type="button" class="view-trigger border border-[var(--border-light)] bg-white/20 lg:bg-white/40 px-4 py-5 hover:border-[var(--accent-red)] transition-colors" data-target="view-sm-board">
                             <span class="block text-2xl font-serif-en italic">Board</span>
                             <span class="mt-2 block text-[0.65rem] tracking-widest uppercase opacity-45">records</span>
                         </button>
