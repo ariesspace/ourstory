@@ -712,46 +712,32 @@
         </section>
 
         <section id="view-read" class="w-full fade-in">
-            <div class="mb-14 md:mb-20 grid grid-cols-1 lg:grid-cols-[minmax(0,1.05fr)_minmax(320px,0.55fr)] gap-8 lg:gap-12 items-stretch">
-                <div class="relative overflow-hidden min-h-[340px] md:min-h-[520px] flex flex-col justify-between px-0 py-6 sm:px-8 sm:py-10 lg:px-10 lg:py-12 lg:border lg:border-[var(--border-light)] bg-transparent lg:bg-[linear-gradient(145deg,rgba(255,255,255,0.82)_0%,rgba(233,214,229,0.42)_48%,rgba(206,213,239,0.34)_100%)]">
-                    <div class="relative">
-                        <span class="text-xs tracking-[0.35em] uppercase opacity-45 font-serif-en">Open Notice · Private Archive</span>
-                        <h1 class="mt-8 text-4xl sm:text-5xl md:text-7xl font-serif-ko font-light leading-[1.16] tracking-tight">
-                            기록이 모여<br>우리가 되는 시간
+            <div class="mb-14 md:mb-20 border-y border-[var(--border-light)] py-10 sm:py-14 md:py-16">
+                <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)] gap-10 lg:gap-16 lg:items-end">
+                    <div>
+                        <div class="flex items-center gap-4">
+                            <span class="w-9 h-px bg-[var(--accent-red)]" aria-hidden="true"></span>
+                            <span class="text-[0.65rem] tracking-[0.32em] uppercase opacity-50 font-serif-en">Private Community Archive</span>
+                        </div>
+                        <h1 class="mt-7 text-[2.65rem] sm:text-6xl md:text-7xl font-serif-ko font-light leading-[1.2] tracking-[-0.04em]">
+                            기록이 모여,<br><span class="text-[var(--accent-red)]">우리</span>가 되는 시간
                         </h1>
                     </div>
-                    <div class="relative max-w-xl">
-                        <p class="text-base sm:text-lg leading-loose opacity-70 font-serif-ko">
-                            서로의 다름을 존중하고, 조용히 기록하며, 함께 머무는 사람들의 작은 아카이브입니다.
+
+                    <div class="lg:border-l lg:border-[var(--border-light)] lg:pl-10">
+                        <p class="text-sm sm:text-base leading-[1.9] opacity-65 font-serif-ko break-words sm:break-keep">
+                            서로의 다름을 존중하며 함께 머무는 사람들의 이야기와 순간을 차곡차곡 기록합니다.
                         </p>
-                        <div class="mt-8 flex flex-wrap gap-3">
-                            <button type="button" class="view-trigger bg-[var(--text-dark)] text-[var(--bg-cream)] px-6 py-3 text-xs tracking-widest uppercase hover:bg-[var(--accent-red)] transition-colors" data-target="view-notice">필독 공지</button>
-                            <button type="button" class="view-trigger border border-[var(--text-dark)] px-6 py-3 text-xs tracking-widest uppercase hover:border-[var(--accent-red)] hover:text-[var(--accent-red)] transition-colors" data-target="view-schedule">일정 보기</button>
+                        <div class="mt-7 flex flex-wrap items-center gap-x-7 gap-y-4">
+                            <button type="button" class="view-trigger group text-xs tracking-widest uppercase flex items-center gap-2 hover:text-[var(--accent-red)] transition-colors" data-target="view-notice">
+                                <span>필독 공지</span><i class="ph ph-arrow-up-right group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"></i>
+                            </button>
+                            <button type="button" class="view-trigger group text-xs tracking-widest uppercase flex items-center gap-2 hover:text-[var(--accent-red)] transition-colors" data-target="view-schedule">
+                                <span>일정 보기</span><i class="ph ph-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
-
-                <aside class="border-t border-[var(--border-light)] lg:border lg:border-[var(--border-light)] bg-transparent lg:bg-[var(--bg-cream)]/70 px-0 pt-8 pb-0 sm:px-8 sm:py-10 flex flex-col justify-between">
-                    <div>
-                        <p class="text-xs tracking-[0.3em] uppercase opacity-45 font-serif-en">Today's Page</p>
-                        <h2 class="mt-5 text-3xl sm:text-4xl font-serif-ko leading-snug">
-                            안전하고 다정한<br>우리만의 쉼터
-                        </h2>
-                        <p class="mt-6 text-sm leading-loose opacity-65 font-serif-ko">
-                            공지는 로그인 없이 확인할 수 있고, 기록과 앨범은 회원 공간 안에서 이어집니다.
-                        </p>
-                    </div>
-                    <div class="mt-10 grid grid-cols-2 gap-3 text-center">
-                        <button type="button" class="view-trigger border border-[var(--border-light)] bg-white/20 lg:bg-white/40 px-4 py-5 hover:border-[var(--accent-red)] transition-colors" data-target="view-gallery">
-                            <span class="block text-2xl font-serif-en italic">Album</span>
-                            <span class="mt-2 block text-[0.65rem] tracking-widest uppercase opacity-45">moments</span>
-                        </button>
-                        <button type="button" class="view-trigger border border-[var(--border-light)] bg-white/20 lg:bg-white/40 px-4 py-5 hover:border-[var(--accent-red)] transition-colors" data-target="view-sm-board">
-                            <span class="block text-2xl font-serif-en italic">Board</span>
-                            <span class="mt-2 block text-[0.65rem] tracking-widest uppercase opacity-45">records</span>
-                        </button>
-                    </div>
-                </aside>
             </div>
 
             <div id="latest-dashboard">
