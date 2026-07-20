@@ -280,6 +280,7 @@ function site_migrate_user_profile_columns(PDO $pdo): void
         'bio' => "TEXT NOT NULL DEFAULT ''",
         'avatar_stored_name' => "TEXT NOT NULL DEFAULT ''",
         'avatar_mime_type' => "TEXT NOT NULL DEFAULT ''",
+        'must_change_password' => 'INTEGER NOT NULL DEFAULT 0',
     ];
 
     foreach ($definitions as $name => $definition) {
@@ -390,7 +391,7 @@ function site_current_user(PDO $pdo): ?array
     }
 
     $stmt = $pdo->prepare(
-        'SELECT id, username, display_name, role
+        'SELECT id, username, display_name, role, must_change_password
          FROM users
          WHERE id = :id AND is_active = 1'
     );
@@ -407,6 +408,7 @@ function site_current_user(PDO $pdo): ?array
         'username' => $user['username'],
         'displayName' => $user['display_name'],
         'role' => $user['role'],
+        'mustChangePassword' => (bool) $user['must_change_password'],
     ];
 }
 

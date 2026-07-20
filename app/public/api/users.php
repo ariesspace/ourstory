@@ -133,9 +133,9 @@ if ($method === 'POST') {
     try {
         $stmt = $pdo->prepare(
             'INSERT INTO users
-                (username, password_hash, display_name, role, birth_year, region, personality, relationship_style, bio)
+                (username, password_hash, display_name, role, birth_year, region, personality, relationship_style, bio, must_change_password)
              VALUES
-                (:username, :password_hash, :display_name, :role, :birth_year, :region, :personality, :relationship_style, :bio)'
+                (:username, :password_hash, :display_name, :role, :birth_year, :region, :personality, :relationship_style, :bio, 1)'
         );
         $stmt->execute([
             ':username' => $username,
@@ -222,7 +222,7 @@ $params = [
     ':id' => $targetId,
 ];
 if ($password !== '') {
-    $sql .= ', password_hash = :password_hash';
+    $sql .= ', password_hash = :password_hash, must_change_password = 1';
     $params[':password_hash'] = password_hash($password, PASSWORD_DEFAULT);
 }
 $sql .= ' WHERE id = :id';

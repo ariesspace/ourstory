@@ -1247,6 +1247,24 @@
         <span id="toast-message">Message</span>
     </div>
 
+    <div id="initial-password-modal" class="fixed inset-0 z-[95] hidden items-center justify-center bg-black/55 p-4" role="dialog" aria-modal="true" aria-labelledby="initial-password-title">
+        <div class="relative w-full max-w-md bg-[var(--bg-cream)] border border-[var(--border-light)] shadow-2xl p-7 sm:p-10">
+            <button type="button" id="initial-password-close" class="absolute top-4 right-4 w-9 h-9 rounded-full border border-[var(--border-light)] flex items-center justify-center hover:bg-[var(--accent-red)] hover:text-white transition-colors" aria-label="초기 비밀번호 안내 닫기">
+                <i class="ph ph-x"></i>
+            </button>
+            <div class="w-12 h-12 rounded-full bg-[var(--accent-red)] text-white flex items-center justify-center">
+                <i class="ph ph-key text-2xl"></i>
+            </div>
+            <p class="mt-7 text-[0.65rem] tracking-[0.3em] uppercase opacity-45 font-serif-en">Security Notice</p>
+            <h2 id="initial-password-title" class="mt-3 text-3xl sm:text-4xl font-serif-ko font-bold leading-snug">초기 비밀번호를<br>변경해 주세요.</h2>
+            <p class="mt-5 text-sm leading-loose opacity-65 font-serif-ko">현재 초기 비밀번호를 사용하고 있습니다. 계정을 안전하게 보호하기 위해 My Page에서 본인만의 새 비밀번호로 변경해 주세요.</p>
+            <div class="mt-8 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
+                <button type="button" id="initial-password-later" class="px-5 py-3 text-xs tracking-widest uppercase opacity-55">나중에</button>
+                <button type="button" id="initial-password-go" class="bg-[var(--accent-red)] text-white px-6 py-3 text-xs tracking-widest uppercase">My Page로 이동</button>
+            </div>
+        </div>
+    </div>
+
     <div id="gallery-modal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-black/60 p-3 sm:p-6">
         <div class="relative w-full max-w-6xl max-h-[94vh] overflow-y-auto bg-[var(--bg-cream)] border border-[var(--border-light)] shadow-2xl rounded-sm">
             <button type="button" id="gallery-modal-close" class="absolute top-5 right-5 z-10 w-10 h-10 rounded-full bg-white/80 hover:bg-[var(--accent-red)] hover:text-white transition-colors flex items-center justify-center" aria-label="Close gallery detail">
@@ -1377,11 +1395,16 @@
         const logoutTriggers = document.querySelectorAll('.logout-trigger');
         const viewTriggers = document.querySelectorAll('.view-trigger');
         const views = document.querySelectorAll('main > section[id^="view-"]');
+        const initialPasswordModal = document.getElementById('initial-password-modal');
+        const initialPasswordClose = document.getElementById('initial-password-close');
+        const initialPasswordLater = document.getElementById('initial-password-later');
+        const initialPasswordGo = document.getElementById('initial-password-go');
 
         let isMenuOpen = false;
         let isMobileMenuOpen = false;
         let siteUser = null;
         let csrfToken = null;
+        let passwordReminderShownFor = null;
 
         const dateOptions = { year: 'numeric', month: 'short', day: '2-digit' };
         document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', dateOptions).toUpperCase();
@@ -1559,6 +1582,21 @@
             setTimeout(() => { toast.style.opacity = '0'; }, 3000);
         }
 
+        function openInitialPasswordReminder(user) {
+            if (!user?.mustChangePassword || passwordReminderShownFor === user.id) return;
+            passwordReminderShownFor = user.id;
+            initialPasswordModal.classList.remove('hidden');
+            initialPasswordModal.classList.add('flex');
+            document.body.classList.add('overflow-hidden');
+            initialPasswordGo.focus();
+        }
+
+        function closeInitialPasswordReminder() {
+            initialPasswordModal.classList.add('hidden');
+            initialPasswordModal.classList.remove('flex');
+            document.body.classList.remove('overflow-hidden');
+        }
+
         function applySiteAuth(user, token = null) {
             siteUser = user;
             csrfToken = token;
@@ -1576,6 +1614,12 @@
                 myTimelineSection.classList.add('hidden');
                 peopleList.innerHTML = '';
                 memberTimelineList.innerHTML = '';
+                passwordReminderShownFor = null;
+                closeInitialPasswordReminder();
+            } else if (user.mustChangePassword) {
+                setTimeout(() => openInitialPasswordReminder(user), 0);
+            } else {
+                closeInitialPasswordReminder();
             }
             loginNavBtn.textContent = user ? user.displayName : 'Login';
             loginNavBtn.dataset.target = user ? 'view-my-page' : 'view-login';
@@ -1630,6 +1674,17 @@
             } finally {
                 submitButton.disabled = false;
             }
+        });
+
+        initialPasswordClose?.addEventListener('click', closeInitialPasswordReminder);
+        initialPasswordLater?.addEventListener('click', closeInitialPasswordReminder);
+        initialPasswordModal?.addEventListener('click', event => {
+            if (event.target === initialPasswordModal) closeInitialPasswordReminder();
+        });
+        initialPasswordGo?.addEventListener('click', () => {
+            closeInitialPasswordReminder();
+            document.querySelector('.view-trigger[data-target="view-my-page"]')?.click();
+            setTimeout(() => document.getElementById('my-password')?.focus(), 350);
         });
 
         logoutTriggers.forEach(button => {
@@ -4369,6 +4424,7 @@
         });
         window.addEventListener('keydown', (event) => {
             if (event.key !== 'Escape') return;
+            if (!initialPasswordModal?.classList.contains('hidden')) return closeInitialPasswordReminder();
             if (!profilePhotoModal?.classList.contains('hidden')) return closeProfilePhoto();
             if (!membershipDetailModal?.classList.contains('hidden')) return closeMembershipDetail();
             if (!galleryModal?.classList.contains('hidden')) return closeGalleryModal();

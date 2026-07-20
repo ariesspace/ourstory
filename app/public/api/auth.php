@@ -62,7 +62,7 @@ if ((int) $attempt['count'] >= 5) {
 $username = trim((string) ($body['username'] ?? ''));
 $password = (string) ($body['password'] ?? '');
 $stmt = $pdo->prepare(
-    'SELECT id, username, password_hash, display_name, role
+    'SELECT id, username, password_hash, display_name, role, must_change_password
      FROM users
      WHERE username = :username AND is_active = 1'
 );
@@ -85,5 +85,6 @@ $publicUser = [
     'username' => $user['username'],
     'displayName' => $user['display_name'],
     'role' => $user['role'],
+    'mustChangePassword' => (bool) $user['must_change_password'],
 ];
 auth_json(['user' => $publicUser, 'csrfToken' => site_csrf_token()]);

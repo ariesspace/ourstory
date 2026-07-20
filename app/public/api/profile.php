@@ -17,7 +17,7 @@ function profile_row(PDO $pdo, int $userId): array
 {
     $stmt = $pdo->prepare(
         'SELECT id, username, display_name, role, birth_year, region, personality,
-                relationship_style, bio, avatar_stored_name
+                relationship_style, bio, avatar_stored_name, must_change_password
          FROM users
          WHERE id = :id AND is_active = 1'
     );
@@ -32,6 +32,7 @@ function profile_row(PDO $pdo, int $userId): array
         'username' => $row['username'],
         'displayName' => $row['display_name'],
         'role' => $row['role'],
+        'mustChangePassword' => (bool) $row['must_change_password'],
         'birthYear' => $row['birth_year'] !== null ? (int) $row['birth_year'] : null,
         'region' => $row['region'],
         'personality' => $row['personality'],
@@ -119,7 +120,7 @@ $params = [
     ':id' => $user['id'],
 ];
 if ($password !== '') {
-    $sql .= ', password_hash = :password_hash';
+    $sql .= ', password_hash = :password_hash, must_change_password = 0';
     $params[':password_hash'] = password_hash($password, PASSWORD_DEFAULT);
 }
 $sql .= ' WHERE id = :id';
