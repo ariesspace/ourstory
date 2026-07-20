@@ -717,7 +717,7 @@
                     <div class="relative">
                         <span class="text-xs tracking-[0.35em] uppercase opacity-45 font-serif-en">Open Notice · Private Archive</span>
                         <h1 class="mt-8 text-4xl sm:text-5xl md:text-7xl font-serif-ko font-light leading-[1.16] tracking-tight">
-                            기록이 모여<br>우리가 되는 시간.
+                            기록이 모여<br>우리가 되는 시간
                         </h1>
                     </div>
                     <div class="relative max-w-xl">
@@ -3622,14 +3622,14 @@
                 { type: 'album', title: 'Activity Album', target: 'view-gallery' }
             ];
             const header = document.createElement('div');
-            header.className = 'mb-8 md:mb-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 border-b border-[var(--border-light)] pb-6';
+            header.className = 'mb-7 md:mb-9 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4';
             const headingWrap = document.createElement('div');
             const eyebrow = document.createElement('p');
             eyebrow.className = 'text-xs tracking-[0.3em] uppercase opacity-45 font-serif-en';
-            eyebrow.textContent = 'Latest Archive';
+            eyebrow.textContent = 'New Pages';
             const headingTitle = document.createElement('h2');
             headingTitle.className = 'mt-3 text-2xl sm:text-3xl font-serif-ko font-bold';
-            headingTitle.textContent = '새로 남겨진 기록들';
+            headingTitle.textContent = '오늘의 새 기록';
             headingWrap.append(eyebrow, headingTitle);
             const noticeLink = document.createElement('button');
             noticeLink.type = 'button';
@@ -3640,13 +3640,13 @@
             latestDashboard.appendChild(header);
 
             const grid = document.createElement('div');
-            grid.className = 'grid grid-cols-1 lg:grid-cols-3 border-y border-[var(--border-light)] bg-white/20';
+            grid.className = 'grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10';
 
             columns.forEach(column => {
                 const section = document.createElement('section');
-                section.className = 'p-5 sm:p-6 lg:border-r lg:last:border-r-0 border-[var(--border-light)]';
+                section.className = 'border-t border-[var(--border-light)] pt-5';
                 const heading = document.createElement('div');
-                heading.className = 'flex items-end justify-between gap-4 pb-4 border-b border-[var(--border-light)]';
+                heading.className = 'flex items-end justify-between gap-4 pb-3';
                 const title = document.createElement('h2');
                 title.className = 'text-xl font-serif-ko font-bold';
                 title.textContent = column.title;
@@ -3686,9 +3686,9 @@
             const timelineItems = items.filter(item => item.type === 'timeline').slice(0, 4);
             if (timelineItems.length) {
                 const timeline = document.createElement('section');
-                timeline.className = 'mt-12 md:mt-14 bg-white/20 border-y border-[var(--border-light)] p-5 sm:p-6';
+                timeline.className = 'mt-12 md:mt-14 border-t border-[var(--border-light)] pt-5';
                 const heading = document.createElement('div');
-                heading.className = 'flex items-end justify-between gap-4 pb-4 border-b border-[var(--border-light)]';
+                heading.className = 'flex items-end justify-between gap-4 pb-3';
                 const title = document.createElement('h2');
                 title.className = 'text-2xl font-serif-ko font-bold';
                 title.textContent = 'Recent Timeline';
