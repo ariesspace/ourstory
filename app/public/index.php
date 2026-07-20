@@ -712,14 +712,46 @@
         </section>
 
         <section id="view-read" class="w-full fade-in">
-            <div class="mb-14 md:mb-20 border-b border-[var(--border-light)] pb-12 md:pb-16 flex flex-col md:flex-row items-start md:items-end justify-between gap-8">
-                <h1 class="w-full text-4xl sm:text-5xl md:text-7xl font-serif-ko font-light leading-tight tracking-tight">
-                    기록이 모여<br>우리가 되는 시간.
-                </h1>
-                <p class="self-end text-sm tracking-widest uppercase opacity-60 font-serif-en text-right">
-                    <span class="block whitespace-nowrap">Putting a Moment of Peace</span>
-                    <span class="block whitespace-nowrap">to Cities Around the World</span>
-                </p>
+            <div class="mb-14 md:mb-20 grid grid-cols-1 lg:grid-cols-[minmax(0,1.05fr)_minmax(320px,0.55fr)] gap-8 lg:gap-12 items-stretch">
+                <div class="relative overflow-hidden border border-[var(--border-light)] min-h-[420px] md:min-h-[520px] flex flex-col justify-between px-6 py-8 sm:px-10 sm:py-12 bg-[linear-gradient(145deg,rgba(255,255,255,0.82)_0%,rgba(233,214,229,0.42)_48%,rgba(206,213,239,0.34)_100%)]">
+                    <div class="relative">
+                        <span class="text-xs tracking-[0.35em] uppercase opacity-45 font-serif-en">Open Notice · Private Archive</span>
+                        <h1 class="mt-8 text-5xl sm:text-6xl md:text-8xl font-serif-ko font-light leading-[1.12] tracking-tight">
+                            우리들의<br>이야기
+                        </h1>
+                    </div>
+                    <div class="relative max-w-xl">
+                        <p class="text-base sm:text-lg leading-loose opacity-70 font-serif-ko">
+                            서로의 다름을 존중하고, 조용히 기록하며, 함께 머무는 사람들의 작은 아카이브입니다.
+                        </p>
+                        <div class="mt-8 flex flex-wrap gap-3">
+                            <button type="button" class="view-trigger bg-[var(--text-dark)] text-[var(--bg-cream)] px-6 py-3 text-xs tracking-widest uppercase hover:bg-[var(--accent-red)] transition-colors" data-target="view-notice">필독 공지</button>
+                            <button type="button" class="view-trigger border border-[var(--text-dark)] px-6 py-3 text-xs tracking-widest uppercase hover:border-[var(--accent-red)] hover:text-[var(--accent-red)] transition-colors" data-target="view-schedule">일정 보기</button>
+                        </div>
+                    </div>
+                </div>
+
+                <aside class="border border-[var(--border-light)] bg-[var(--bg-cream)]/70 px-6 py-8 sm:px-8 sm:py-10 flex flex-col justify-between">
+                    <div>
+                        <p class="text-xs tracking-[0.3em] uppercase opacity-45 font-serif-en">Today's Page</p>
+                        <h2 class="mt-5 text-3xl sm:text-4xl font-serif-ko leading-snug">
+                            안전하고 다정한<br>우리만의 쉼터
+                        </h2>
+                        <p class="mt-6 text-sm leading-loose opacity-65 font-serif-ko">
+                            공지는 로그인 없이 확인할 수 있고, 기록과 앨범은 회원 공간 안에서 이어집니다.
+                        </p>
+                    </div>
+                    <div class="mt-10 grid grid-cols-2 gap-3 text-center">
+                        <button type="button" class="view-trigger border border-[var(--border-light)] bg-white/40 px-4 py-5 hover:border-[var(--accent-red)] transition-colors" data-target="view-gallery">
+                            <span class="block text-2xl font-serif-en italic">Album</span>
+                            <span class="mt-2 block text-[0.65rem] tracking-widest uppercase opacity-45">moments</span>
+                        </button>
+                        <button type="button" class="view-trigger border border-[var(--border-light)] bg-white/40 px-4 py-5 hover:border-[var(--accent-red)] transition-colors" data-target="view-sm-board">
+                            <span class="block text-2xl font-serif-en italic">Board</span>
+                            <span class="mt-2 block text-[0.65rem] tracking-widest uppercase opacity-45">records</span>
+                        </button>
+                    </div>
+                </aside>
             </div>
 
             <div id="latest-dashboard">
@@ -3589,15 +3621,34 @@
                 { type: 'sm-bar', title: 'SM Bar List', target: 'view-sm-bar-list' },
                 { type: 'album', title: 'Activity Album', target: 'view-gallery' }
             ];
+            const header = document.createElement('div');
+            header.className = 'mb-8 md:mb-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 border-b border-[var(--border-light)] pb-6';
+            const headingWrap = document.createElement('div');
+            const eyebrow = document.createElement('p');
+            eyebrow.className = 'text-xs tracking-[0.3em] uppercase opacity-45 font-serif-en';
+            eyebrow.textContent = 'Latest Archive';
+            const headingTitle = document.createElement('h2');
+            headingTitle.className = 'mt-3 text-2xl sm:text-3xl font-serif-ko font-bold';
+            headingTitle.textContent = '새로 남겨진 기록들';
+            headingWrap.append(eyebrow, headingTitle);
+            const noticeLink = document.createElement('button');
+            noticeLink.type = 'button';
+            noticeLink.className = 'self-start sm:self-auto border border-[var(--text-dark)] px-5 py-3 text-xs tracking-widest uppercase hover:border-[var(--accent-red)] hover:text-[var(--accent-red)] transition-colors';
+            noticeLink.textContent = 'Notice';
+            noticeLink.addEventListener('click', () => document.querySelector('.view-trigger[data-target="view-notice"]')?.click());
+            header.append(headingWrap, noticeLink);
+            latestDashboard.appendChild(header);
+
             const grid = document.createElement('div');
-            grid.className = 'grid grid-cols-1 lg:grid-cols-3 gap-y-12 lg:gap-x-10';
+            grid.className = 'grid grid-cols-1 lg:grid-cols-3 border-y border-[var(--border-light)] bg-white/20';
 
             columns.forEach(column => {
                 const section = document.createElement('section');
+                section.className = 'p-5 sm:p-6 lg:border-r lg:last:border-r-0 border-[var(--border-light)]';
                 const heading = document.createElement('div');
-                heading.className = 'flex items-end justify-between gap-4 pb-4 border-b border-[var(--text-dark)]';
+                heading.className = 'flex items-end justify-between gap-4 pb-4 border-b border-[var(--border-light)]';
                 const title = document.createElement('h2');
-                title.className = 'text-2xl font-serif-ko font-bold';
+                title.className = 'text-xl font-serif-ko font-bold';
                 title.textContent = column.title;
                 const more = document.createElement('button');
                 more.type = 'button';
@@ -3610,13 +3661,13 @@
                 const entries = items.filter(item => item.type === column.type).slice(0, 4);
                 if (!entries.length) {
                     const empty = document.createElement('p');
-                    empty.className = 'py-12 text-center text-sm opacity-40 border-b border-[var(--border-light)]';
+                    empty.className = 'py-10 text-center text-sm opacity-40';
                     empty.textContent = '아직 등록된 내용이 없습니다.';
                     list.appendChild(empty);
                 }
                 entries.forEach((item, index) => {
                     const row = document.createElement('article');
-                    row.className = 'group grid grid-cols-[minmax(0,1fr)_auto] gap-4 items-center py-4 border-b border-[var(--border-light)] cursor-pointer';
+                    row.className = 'group grid grid-cols-[minmax(0,1fr)_auto] gap-4 items-center py-4 border-b border-[var(--border-light)] last:border-b-0 cursor-pointer';
                     const itemTitle = document.createElement('h3');
                     itemTitle.className = `${index === 0 ? 'text-[var(--accent-red)] font-bold' : ''} text-sm md:text-[0.95rem] truncate group-hover:text-[var(--accent-red)] transition-colors`;
                     itemTitle.textContent = item.title;
@@ -3635,9 +3686,9 @@
             const timelineItems = items.filter(item => item.type === 'timeline').slice(0, 4);
             if (timelineItems.length) {
                 const timeline = document.createElement('section');
-                timeline.className = 'mt-16 md:mt-20';
+                timeline.className = 'mt-12 md:mt-14 bg-white/20 border-y border-[var(--border-light)] p-5 sm:p-6';
                 const heading = document.createElement('div');
-                heading.className = 'flex items-end justify-between gap-4 pb-4 border-b border-[var(--text-dark)]';
+                heading.className = 'flex items-end justify-between gap-4 pb-4 border-b border-[var(--border-light)]';
                 const title = document.createElement('h2');
                 title.className = 'text-2xl font-serif-ko font-bold';
                 title.textContent = 'Recent Timeline';
