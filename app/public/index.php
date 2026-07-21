@@ -72,7 +72,7 @@
 
         #mega-menu {
             position: fixed;
-            top: 90px;
+            top: 80px;
             left: 0;
             width: 100%;
             background-color: var(--bg-cream);
@@ -134,6 +134,16 @@
             font-weight: 600;
         }
 
+        .mobile-menu-kicker {
+            padding: 0.15rem 0 0.45rem;
+            font-size: 0.62rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--accent-red);
+            font-weight: 700;
+            overflow-wrap: anywhere;
+        }
+
 
         input:focus, textarea:focus { outline: none; }
 
@@ -178,6 +188,23 @@
         }
 
         @media (max-width: 767px) {
+            #mega-menu {
+                display: none;
+            }
+            #mobile-menu {
+                top: 80px;
+                max-height: calc(100vh - 80px);
+                padding-left: 1.25rem;
+                padding-right: 1.25rem;
+            }
+            #mobile-menu section > p {
+                margin-bottom: 0.75rem;
+            }
+            #mobile-menu .view-trigger {
+                font-size: 0.95rem;
+                padding-top: 0.7rem;
+                padding-bottom: 0.7rem;
+            }
             #view-schedule .schedule-hero {
                 padding-top: 1.75rem;
                 padding-bottom: 1.75rem;
@@ -310,16 +337,16 @@
             <div id="scroll-progress-bar" class="h-full w-0 bg-[var(--accent-red)] transition-[width] duration-150 ease-out"></div>
         </div>
 
-        <div id="mega-menu" class="h-[400px]">
-            <div class="max-w-7xl mx-auto h-full flex">
-                <div class="w-1/2 h-full p-8">
+        <div id="mega-menu" class="h-[340px]">
+            <div class="max-w-[1400px] mx-auto h-full flex px-6 lg:px-12">
+                <div class="w-[44%] h-full py-7 pr-10">
                     <div class="w-full h-full overflow-hidden relative group rounded-sm bg-gray-100">
                         <img id="menu-image" src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&q=80&w=800" alt="Menu Image" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105">
                         <div class="absolute inset-0 bg-black/10"></div>
                     </div>
                 </div>
 
-                <div class="w-1/2 h-full p-16 flex flex-col justify-center">
+                <div class="w-[56%] h-full py-10 pl-10 flex flex-col justify-center">
                     <div id="submenu-journal" class="submenu-content hidden">
                         <div class="grid grid-cols-2 gap-x-12 gap-y-8">
                             <div>
@@ -417,12 +444,12 @@
                 <section>
                     <p class="font-serif-en italic text-xl mb-4">Journal</p>
                     <div class="grid gap-2">
-                        <p class="pt-1 pb-2 text-[0.65rem] tracking-[0.25em] uppercase text-[var(--accent-red)] font-bold">Records</p>
+                        <p class="mobile-menu-kicker">Records</p>
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-notice">Notice</button>
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-introduce">Self Introduce</button>
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-anonymous">Anonymous Talk</button>
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-write">Write New Story</button>
-                        <p class="pt-5 pb-2 text-[0.65rem] tracking-[0.25em] uppercase text-[var(--accent-red)] font-bold">Information</p>
+                        <p class="mobile-menu-kicker pt-4">Information</p>
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-sm-board">SM 정보</button>
                         <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-sm-bar-list">SM Bar List</button>
                     </div>
@@ -455,7 +482,7 @@
         </div>
     </header>
 
-    <div id="menu-overlay" class="fixed inset-0 bg-black/20 z-30 opacity-0 pointer-events-none transition-opacity duration-500"></div>
+    <div id="menu-overlay" class="fixed left-0 right-0 top-20 bottom-0 bg-black/10 z-30 opacity-0 pointer-events-none transition-opacity duration-500"></div>
 
     <div class="h-32"></div>
 
@@ -769,11 +796,11 @@
             <div class="mb-10 md:mb-16 border-y border-[var(--border-light)] py-8 sm:py-12 md:py-16">
                 <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)] gap-7 lg:gap-16 lg:items-end">
                     <div>
-                        <div class="flex items-center gap-4">
-                            <span class="w-9 h-px bg-[var(--accent-red)]" aria-hidden="true"></span>
-                            <span class="text-[0.65rem] tracking-[0.32em] uppercase opacity-50 font-serif-en">Private Community Archive</span>
+                        <div class="flex items-center gap-3 sm:gap-4">
+                            <span class="w-6 sm:w-9 h-px bg-[var(--accent-red)]" aria-hidden="true"></span>
+                            <span class="text-[0.6rem] sm:text-[0.65rem] tracking-[0.16em] sm:tracking-[0.32em] uppercase opacity-50 font-serif-en break-keep">Private Community Archive</span>
                         </div>
-                        <h1 class="mt-6 text-[2.15rem] sm:text-6xl md:text-7xl font-serif-ko font-light leading-[1.22] tracking-[-0.04em]">
+                        <h1 class="mt-5 sm:mt-6 text-[2.45rem] sm:text-6xl md:text-7xl font-serif-ko font-light leading-[1.2] tracking-[-0.02em] sm:tracking-[-0.04em] break-keep">
                             기록이 모여,<br><span class="text-[var(--accent-red)]">우리</span>가 되는 시간
                         </h1>
                     </div>
