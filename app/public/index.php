@@ -166,7 +166,7 @@
         }
 
         #site-loader {
-            transition: transform 0.85s cubic-bezier(0.76, 0, 0.24, 1), opacity 0.85s ease;
+            transition: transform 1.05s cubic-bezier(0.76, 0, 0.24, 1), opacity 1.05s ease;
         }
         #site-loader.loader-hidden {
             transform: translateY(-100%);
@@ -1508,6 +1508,8 @@
         let siteUser = null;
         let csrfToken = null;
         let passwordReminderShownFor = null;
+        let currentViewId = 'view-read';
+        let isRestoringHistory = false;
 
         const dateOptions = { year: 'numeric', month: 'short', day: '2-digit' };
         document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', dateOptions).toUpperCase();
@@ -1609,6 +1611,7 @@
 
         function showView(targetId, options = {}) {
             const { remember = true, scroll = true } = options;
+            currentViewId = targetId;
 
             views.forEach(view => {
                 if (view.id === targetId) {
@@ -1686,12 +1689,16 @@
 
         function navigateToView(targetId, options = {}) {
             const resolvedTargetId = resolveViewAccess(targetId);
+            const shouldPushHistory = options.history !== false && !isRestoringHistory;
 
             if (isMenuOpen) closeMenu();
             if (isMobileMenuOpen) closeMobileMenu();
 
             showView(resolvedTargetId, options);
             loadViewData(resolvedTargetId);
+            if (shouldPushHistory && history.state?.view !== resolvedTargetId) {
+                history.pushState({ view: resolvedTargetId }, '', `#${resolvedTargetId.replace(/^view-/, '')}`);
+            }
         }
 
         viewTriggers.forEach(trigger => {
@@ -1790,17 +1797,31 @@
 
         async function bootstrapInitialView() {
             const user = await loadSiteSession();
-            const storedView = localStorage.getItem(lastViewKey);
+            const hashView = location.hash ? `view-${location.hash.slice(1)}` : '';
+            const storedView = hashView || localStorage.getItem(lastViewKey);
             const targetId = views.some(view => view.id === storedView) ? storedView : 'view-read';
 
             if (!user && targetId !== 'view-read' && targetId !== 'view-notice') {
                 localStorage.setItem(pendingAuthViewKey, targetId);
                 showView('view-login', { remember: false, scroll: false });
+                history.replaceState({ view: 'view-login' }, '', '#login');
                 return;
             }
 
-            navigateToView(targetId, { scroll: false });
+            navigateToView(targetId, { scroll: false, history: false });
+            history.replaceState({ view: targetId }, '', `#${targetId.replace(/^view-/, '')}`);
         }
+
+        window.addEventListener('popstate', event => {
+            if (!galleryModal?.classList.contains('hidden')) {
+                closeGalleryModal({ history: false });
+            }
+            const targetId = event.state?.view || 'view-read';
+            if (!views.some(view => view.id === targetId)) return;
+            isRestoringHistory = true;
+            navigateToView(targetId, { history: false, scroll: false });
+            isRestoringHistory = false;
+        });
 
         document.getElementById('login-form').addEventListener('submit', async (event) => {
             event.preventDefault();
@@ -4183,9 +4204,6 @@
                                 ${index === 0 ? '<span class="shrink-0 bg-black/[0.04] px-2 py-0.5 rounded text-[0.58rem] font-bold tracking-widest uppercase opacity-55">HOT</span>' : ''}
                                 <h4 class="min-w-0 truncate text-[0.98rem] sm:text-lg font-bold leading-snug tracking-[-0.02em] group-hover:text-[var(--accent-red)] transition-colors">${escapeHtml(meta.title)}</h4>
                             </div>
-                            <div class="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs sm:text-sm opacity-42">
-                                <span>by.${escapeHtml(meta.author)}</span>
-                            </div>
                         </div>
                         <time class="shrink-0 text-xs sm:text-sm opacity-35">${index === 0 ? latestArchiveDate(item.occurredAt) : latestShortDate(item.occurredAt)}</time>
                     </div>
@@ -4452,7 +4470,7 @@
             button?.classList.add('ring-2', 'ring-[var(--accent-red)]');
         }
 
-        async function openGalleryModal(id) {
+        async function openGalleryModal(id, options = {}) {
             try {
                 const response = await fetch(`/api/activity-albums.php?action=detail&id=${encodeURIComponent(id)}`, { headers: { Accept: 'application/json' }, cache: 'no-store' });
                 const payload = await response.json();
@@ -4484,13 +4502,20 @@
                 galleryModal.classList.remove('hidden');
                 galleryModal.classList.add('flex');
                 document.body.style.overflow = 'hidden';
+                if (options.history !== false && history.state?.modal !== 'gallery') {
+                    history.pushState({ view: currentViewId, modal: 'gallery', id }, '', `${location.hash || `#${currentViewId.replace(/^view-/, '')}`}`);
+                }
             } catch (error) {
                 showToast(error.message, false);
             }
         }
 
-        function closeGalleryModal() {
+        function closeGalleryModal(options = {}) {
             if (!galleryModal) return;
+            if (options.history !== false && history.state?.modal === 'gallery') {
+                history.back();
+                return;
+            }
 
             galleryModal.classList.add('hidden');
             galleryModal.classList.remove('flex');
@@ -5057,7 +5082,7 @@
 
             return new Promise(resolve => {
                 const startedAt = performance.now();
-                const duration = 850;
+                const duration = 1700;
                 const tick = now => {
                     const ratio = Math.min((now - startedAt) / duration, 1);
                     progress.textContent = String(Math.round(ratio * 100));
@@ -5071,7 +5096,7 @@
                     setTimeout(() => {
                         loader.remove();
                         resolve();
-                    }, 900);
+                    }, 1100);
                 };
                 requestAnimationFrame(tick);
             });
