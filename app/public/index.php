@@ -295,26 +295,27 @@
         }
         .index-menu-links button {
             display: flex;
-            align-items: baseline;
-            justify-content: space-between;
+            align-items: center;
+            justify-content: flex-start;
             gap: 2rem;
-            padding: 1.6rem 0;
-            border-bottom: 1px solid var(--border-light);
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(2.5rem, 5vw, 4.2rem);
-            font-style: italic;
-            line-height: 1;
+            padding: 1.05rem 0;
+            font-family: 'Space Mono', monospace;
+            font-size: clamp(1.15rem, 2.2vw, 1.55rem);
+            letter-spacing: 0.18em;
+            line-height: 1.25;
+            text-transform: uppercase;
             text-align: left;
             opacity: 0;
             transform: translateX(-18px);
             transition: opacity 0.45s ease, transform 0.45s ease, padding 0.35s ease, color 0.35s ease;
         }
         .index-menu-links button em {
-            font-family: 'Playfair Display', serif;
+            min-width: 1.4rem;
+            font-family: 'Space Mono', monospace;
             font-size: 0.78rem;
             font-style: normal;
-            letter-spacing: 0.12em;
-            opacity: 0.45;
+            letter-spacing: 0.08em;
+            opacity: 0.58;
         }
         #index-menu.open {
             transform: translateX(0);
@@ -332,8 +333,7 @@
         #index-menu.open .index-menu-links button:nth-child(7) { transition-delay: 0.48s; }
         .index-menu-links button:hover {
             color: var(--accent-red);
-            padding-left: 1rem;
-            padding-right: 1rem;
+            padding-left: 0.65rem;
         }
 
         #site-loader {
@@ -478,6 +478,22 @@
         .login-doc-button:hover {
             transform: translateY(-2px);
             background: #2a2825;
+        }
+        .login-modal {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.45s ease;
+        }
+        .login-modal.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .login-modal .login-document {
+            transform: translateY(18px) scale(0.98);
+            transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .login-modal.open .login-document {
+            transform: translateY(0) scale(1);
         }
 
         @media (max-width: 767px) {
@@ -649,61 +665,58 @@
     </header>
 
     <div id="menu-overlay" class="fixed inset-0 bg-black/20 backdrop-blur-[3px] z-[80] opacity-0 pointer-events-none transition-opacity duration-500"></div>
-    <aside id="index-menu" class="fixed top-0 left-0 z-[90] h-screen w-[min(86vw,520px)] -translate-x-full bg-white border-r border-[var(--border-light)] px-8 sm:px-12 py-9 flex flex-col transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)]">
-        <div class="flex justify-between items-center border-b border-[var(--text-dark)] pb-8 mb-8">
-            <span class="font-serif-en text-xs tracking-[0.28em] uppercase opacity-55">Index</span>
+    <aside id="index-menu" class="fixed top-0 left-0 z-[90] h-screen w-[min(86vw,560px)] -translate-x-full bg-white border-r border-[var(--border-light)] px-8 sm:px-14 lg:px-20 py-16 flex flex-col transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)]">
+        <div class="flex justify-between items-center border-b border-[var(--border-light)] pb-7 mb-16">
+            <span class="font-mono text-xs tracking-[0.32em] uppercase opacity-55">Archive Directory</span>
             <button type="button" id="index-menu-close" class="font-serif-en text-xs tracking-[0.28em] uppercase opacity-55 hover:opacity-100">[ Close - ]</button>
         </div>
         <nav class="index-menu-links flex flex-col">
-            <button type="button" class="view-trigger" data-target="view-notice"><span>Notice</span><em>01</em></button>
-            <button type="button" class="view-trigger" data-target="view-sm-board"><span>Archive</span><em>02</em></button>
-            <button type="button" class="view-trigger" data-target="view-people"><span>Members</span><em>03</em></button>
-            <button type="button" class="view-trigger" data-target="view-schedule"><span>Schedule</span><em>04</em></button>
-            <button type="button" class="view-trigger" data-target="view-gallery"><span>Gallery</span><em>05</em></button>
-            <button type="button" class="view-trigger hidden" data-target="view-system-members" id="system-nav-link"><span>System</span><em>06</em></button>
-            <button type="button" class="view-trigger hidden" data-target="view-my-page" id="my-page-nav-link"><span>My Page</span><em>07</em></button>
+            <button type="button" class="view-trigger" data-target="view-sm-board"><em>01</em><span>Archive</span></button>
+            <button type="button" class="view-trigger" data-target="view-people"><em>02</em><span>Members</span></button>
+            <button type="button" class="view-trigger" data-target="view-schedule"><em>03</em><span>Schedule</span></button>
+            <button type="button" class="view-trigger hidden" data-target="view-system-members" id="system-nav-link"><em>04</em><span>System</span></button>
+            <button type="button" class="view-trigger hidden" data-target="view-my-page" id="my-page-nav-link"><em>05</em><span>My Page</span></button>
         </nav>
-        <button type="button" id="mobile-login-btn" class="view-trigger mt-auto border border-[var(--text-dark)] py-4 font-serif-en text-xs tracking-[0.25em] uppercase" data-target="view-login">Login</button>
+        <button type="button" id="mobile-login-btn" class="mt-auto border border-[var(--text-dark)] py-4 font-mono text-xs tracking-[0.25em] uppercase hover:bg-[var(--text-dark)] hover:text-white transition-colors">Login</button>
     </aside>
+
+    <div id="login-modal" class="login-modal fixed inset-0 z-[120] flex items-center justify-center bg-[#30302f]/94 p-4" role="dialog" aria-modal="true" aria-labelledby="login-modal-title">
+        <div class="login-document relative">
+            <button type="button" id="login-modal-close" class="absolute -top-12 right-0 text-[#f8f7f3] font-mono text-xs tracking-[0.22em] uppercase opacity-70 hover:opacity-100">[ Close ]</button>
+            <div class="login-document-inner">
+                <div class="login-doc-meta flex justify-between mb-12">
+                    <span>DOC NO. 2026-X</span>
+                    <span>[ X ]</span>
+                </div>
+
+                <div class="text-center mb-14">
+                    <p class="login-doc-label mb-8">Confidential</p>
+                    <h1 id="login-modal-title" class="font-document italic text-4xl md:text-5xl leading-tight">Private Exhibition<br>Access</h1>
+                    <div class="w-10 h-px bg-[#1b1b1a] mx-auto mt-9"></div>
+                </div>
+
+                <form id="login-form" class="flex flex-col gap-9">
+                    <div>
+                        <label for="user-id" class="login-doc-label">Identity [ID]</label>
+                        <input type="text" id="user-id" class="login-doc-input" placeholder="Enter your identity..." autocomplete="username" required>
+                    </div>
+                    <div>
+                        <label for="password" class="login-doc-label">Passcode [Key]</label>
+                        <input type="password" id="password" class="login-doc-input" placeholder="Enter your passcode..." autocomplete="current-password" required>
+                    </div>
+
+                    <button type="submit" class="login-doc-button mt-7">Unseal &amp; Enter</button>
+                    <p id="login-error" class="hidden text-sm text-[var(--accent-red)] text-center"></p>
+                </form>
+
+                <p class="login-doc-meta text-center mt-10">Strictly for authorized personnel only.</p>
+            </div>
+        </div>
+    </div>
 
     <div class="h-32"></div>
 
     <main class="flex-grow w-full max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-14 py-4 relative z-10">
-
-        <section id="view-login" class="w-full view-hidden fade-in">
-            <div class="login-vault">
-                <div class="login-document">
-                    <div class="login-document-inner">
-                        <div class="login-doc-meta flex justify-between mb-12">
-                            <span>DOC NO. 2026-X</span>
-                            <span>[ X ]</span>
-                        </div>
-
-                        <div class="text-center mb-14">
-                            <p class="login-doc-label mb-8">Confidential</p>
-                            <h1 class="font-document italic text-4xl md:text-5xl leading-tight">Private Exhibition<br>Access</h1>
-                            <div class="w-10 h-px bg-[#1b1b1a] mx-auto mt-9"></div>
-                        </div>
-
-                        <form id="login-form" class="flex flex-col gap-9">
-                            <div>
-                                <label for="user-id" class="login-doc-label">Identity [ID]</label>
-                                <input type="text" id="user-id" class="login-doc-input" placeholder="Enter your identity..." autocomplete="username" required>
-                            </div>
-                            <div>
-                                <label for="password" class="login-doc-label">Passcode [Key]</label>
-                                <input type="password" id="password" class="login-doc-input" placeholder="Enter your passcode..." autocomplete="current-password" required>
-                            </div>
-
-                            <button type="submit" class="login-doc-button mt-7">Unseal &amp; Enter</button>
-                            <p id="login-error" class="hidden text-sm text-[var(--accent-red)] text-center"></p>
-                        </form>
-
-                        <p class="login-doc-meta text-center mt-10">Strictly for authorized personnel only.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
 
         <section id="view-my-page" class="my-page-shell view-hidden fade-in border-y border-[var(--border-light)] overflow-hidden bg-[var(--bg-cream)]/28">
             <div class="max-w-[1500px] mx-auto grid grid-cols-1 lg:grid-cols-[390px_minmax(0,1fr)] min-h-[calc(100vh-8rem)] px-6 lg:px-12 xl:px-16">
@@ -1758,6 +1771,8 @@
         const loginNavBtn = document.getElementById('login-nav-btn');
         const mobileLoginBtn = document.getElementById('mobile-login-btn');
         const headerLogoutBtn = document.getElementById('header-logout-btn');
+        const loginModal = document.getElementById('login-modal');
+        const loginModalClose = document.getElementById('login-modal-close');
         const logoutTriggers = document.querySelectorAll('.logout-trigger');
         const viewTriggers = document.querySelectorAll('.view-trigger');
         const views = document.querySelectorAll('main > section[id^="view-"]');
@@ -1822,6 +1837,45 @@
         indexMenuOpen?.addEventListener('click', openMenu);
         indexMenuClose?.addEventListener('click', closeMenu);
 
+        function openLoginModal() {
+            closeMenu();
+            loginModal.classList.add('open');
+            document.body.classList.add('overflow-hidden');
+            document.getElementById('login-error')?.classList.add('hidden');
+            setTimeout(() => document.getElementById('user-id')?.focus(), 120);
+        }
+
+        function closeLoginModal() {
+            loginModal.classList.remove('open');
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        loginModalClose?.addEventListener('click', closeLoginModal);
+        loginModal?.addEventListener('click', event => {
+            if (event.target === loginModal) closeLoginModal();
+        });
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && loginModal?.classList.contains('open')) {
+                closeLoginModal();
+            }
+        });
+        loginNavBtn?.addEventListener('click', event => {
+            if (!siteUser) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                openLoginModal();
+            }
+        });
+        mobileLoginBtn?.addEventListener('click', event => {
+            if (!siteUser) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                openLoginModal();
+            } else {
+                navigateToView('view-my-page');
+            }
+        });
+
         function rememberView(targetId) {
             if (!targetId || targetId === 'view-login') return;
             localStorage.setItem(lastViewKey, targetId);
@@ -1830,7 +1884,7 @@
         function showView(targetId, options = {}) {
             const { remember = true, scroll = true } = options;
             currentViewId = targetId;
-            document.body.classList.toggle('login-mode', targetId === 'view-login');
+            document.body.classList.remove('login-mode');
 
             views.forEach(view => {
                 if (view.id === targetId) {
@@ -1866,42 +1920,50 @@
             if (targetId?.startsWith('view-system-') && !['superuser', 'admin'].includes(siteUser?.role)) {
                 showToast('관리자 로그인이 필요합니다.', false);
                 localStorage.setItem(pendingAuthViewKey, targetId);
-                return 'view-login';
+                openLoginModal();
+                return null;
             }
             if (targetId === 'view-my-page' && !siteUser) {
                 showToast('로그인이 필요합니다.', false);
                 localStorage.setItem(pendingAuthViewKey, targetId);
-                return 'view-login';
+                openLoginModal();
+                return null;
             }
             if (targetId === 'view-my-timeline' && !siteUser) {
                 showToast('로그인이 필요합니다.', false);
                 localStorage.setItem(pendingAuthViewKey, targetId);
-                return 'view-login';
+                openLoginModal();
+                return null;
             }
             if (targetId === 'view-anonymous' && !siteUser) {
                 showToast('익명 게시판은 회원 로그인 후 이용할 수 있습니다.', false);
                 localStorage.setItem(pendingAuthViewKey, targetId);
-                return 'view-login';
+                openLoginModal();
+                return null;
             }
             if (targetId === 'view-membership-archive' && !siteUser) {
                 showToast('가입 신청 기록은 회원 로그인 후 볼 수 있습니다.', false);
                 localStorage.setItem(pendingAuthViewKey, targetId);
-                return 'view-login';
+                openLoginModal();
+                return null;
             }
             if (targetId === 'view-sm-editor' && !siteUser) {
                 showToast('게시글 작성은 로그인이 필요합니다.', false);
                 localStorage.setItem(pendingAuthViewKey, targetId);
-                return 'view-login';
+                openLoginModal();
+                return null;
             }
             if (targetId === 'view-gallery-write' && !siteUser) {
                 showToast('앨범 작성은 로그인이 필요합니다.', false);
                 localStorage.setItem(pendingAuthViewKey, targetId);
-                return 'view-login';
+                openLoginModal();
+                return null;
             }
             if (['view-people', 'view-member-profile'].includes(targetId) && !siteUser) {
                 showToast('회원 타임라인은 로그인이 필요합니다.', false);
                 localStorage.setItem(pendingAuthViewKey, targetId);
-                return 'view-login';
+                openLoginModal();
+                return null;
             }
 
             return targetId;
@@ -1909,6 +1971,7 @@
 
         function navigateToView(targetId, options = {}) {
             const resolvedTargetId = resolveViewAccess(targetId);
+            if (!resolvedTargetId) return;
             const shouldPushHistory = options.history !== false && !isRestoringHistory;
 
             if (isMenuOpen) closeMenu();
@@ -1948,6 +2011,10 @@
         viewTriggers.forEach(trigger => {
             trigger.addEventListener('click', async () => {
                 const targetId = trigger.getAttribute('data-target');
+                if (targetId === 'view-login') {
+                    openLoginModal();
+                    return;
+                }
 
                 if (targetId && targetId !== currentViewId && !trigger.classList.contains('hidden')) {
                     await runPageTransition();
@@ -2013,7 +2080,6 @@
             loginNavBtn.textContent = user ? user.displayName : 'Login';
             loginNavBtn.dataset.target = user ? 'view-my-page' : 'view-login';
             mobileLoginBtn.textContent = user ? user.displayName : 'Login';
-            mobileLoginBtn.dataset.target = user ? 'view-my-page' : 'view-login';
 
             document.querySelectorAll('#new-role option, #edit-role option').forEach(option => {
                 option.hidden = user?.role !== 'superuser' && option.value !== 'member';
@@ -2042,8 +2108,9 @@
 
             if (!user && targetId !== 'view-read' && targetId !== 'view-notice') {
                 localStorage.setItem(pendingAuthViewKey, targetId);
-                showView('view-login', { remember: false, scroll: false });
-                history.replaceState({ view: 'view-login' }, '', '#login');
+                showView('view-read', { remember: false, scroll: false });
+                history.replaceState({ view: 'view-read' }, '', '#read');
+                openLoginModal();
                 return;
             }
 
@@ -2086,6 +2153,7 @@
 
                 applySiteAuth(payload.user, payload.csrfToken);
                 loginForm.reset();
+                closeLoginModal();
                 showToast(`${payload.user.displayName}님, 환영합니다.`, true);
                 const targetId = localStorage.getItem(pendingAuthViewKey) || localStorage.getItem(lastViewKey) || 'view-read';
                 localStorage.removeItem(pendingAuthViewKey);
