@@ -4205,7 +4205,7 @@
                 </div>
             `;
             const albumMedia = document.createElement(album ? 'article' : 'div');
-            albumMedia.className = 'relative z-10 flex flex-col h-full';
+            albumMedia.className = 'relative z-10';
             if (album) {
                 const cover = document.createElement('div');
                 cover.className = 'relative aspect-[16/10] bg-black/[0.04] rounded-lg overflow-hidden mb-5 flex-shrink-0 flex items-center justify-center transition-all duration-500 group-hover:shadow-lg';
@@ -4213,7 +4213,6 @@
                     ? `<img src="${album.imageUrl}" alt="" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"><div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"><span class="bg-white/90 text-[var(--text-dark)] px-4 py-2 rounded-full text-sm font-medium tracking-wide translate-y-4 group-hover:translate-y-0 transition-transform duration-300">자세히 보기</span></div>`
                     : '<div class="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center"><i class="ph ph-image text-6xl text-gray-300 transition-transform duration-500 group-hover:scale-110"></i></div><div class="absolute inset-0 bg-black/35 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"><span class="bg-white/90 text-[var(--text-dark)] px-4 py-2 rounded-full text-sm font-medium tracking-wide translate-y-4 group-hover:translate-y-0 transition-transform duration-300">자세히 보기</span></div>';
                 const info = document.createElement('div');
-                info.className = 'mt-auto';
                 info.innerHTML = `
                     <div class="flex items-center justify-between gap-5 mb-2">
                         <span class="text-xs tracking-[0.22em] uppercase text-[var(--accent-red)] font-bold">New Photo</span>
