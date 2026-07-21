@@ -4046,6 +4046,32 @@
             return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
         }
 
+        function latestArchiveDate(value) {
+            if (!value) return '';
+            const normalized = value.includes('T') ? value : `${value.replace(' ', 'T')}Z`;
+            const date = new Date(normalized);
+            if (Number.isNaN(date.getTime())) return value;
+            return `${date.getFullYear()}. ${String(date.getMonth() + 1).padStart(2, '0')}. ${String(date.getDate()).padStart(2, '0')}`;
+        }
+
+        function latestShortDate(value) {
+            if (!value) return '';
+            const normalized = value.includes('T') ? value : `${value.replace(' ', 'T')}Z`;
+            const date = new Date(normalized);
+            if (Number.isNaN(date.getTime())) return value;
+            return `${String(date.getMonth() + 1).padStart(2, '0')}. ${String(date.getDate()).padStart(2, '0')}`;
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, character => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            }[character]));
+        }
+
         function openLatestItem(item) {
             if (item.type === 'sm-info') {
                 openSmPost(item.id);
@@ -4076,72 +4102,141 @@
 
         function renderLatestDashboard(items) {
             latestDashboard.innerHTML = '';
-            const columns = [
-                { type: 'sm-info', title: 'SM 정보', target: 'view-sm-board' },
-                { type: 'sm-bar', title: 'SM Bar List', target: 'view-sm-bar-list' },
-                { type: 'album', title: 'Activity Album', target: 'view-gallery' }
-            ];
+
             const header = document.createElement('div');
-            header.className = 'mb-7 md:mb-9 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4';
+            header.className = 'mb-16 md:mb-24 flex items-start justify-between gap-6';
             const headingWrap = document.createElement('div');
             const eyebrow = document.createElement('p');
-            eyebrow.className = 'text-xs tracking-[0.3em] uppercase opacity-45 font-serif-en';
-            eyebrow.textContent = 'New Pages';
+            eyebrow.className = 'flex items-center gap-4 text-[0.72rem] tracking-[0.32em] uppercase opacity-55 font-bold';
+            eyebrow.innerHTML = '<span class="w-2 h-2 rounded-full bg-[var(--accent-red)] opacity-65"></span><span>Latest Updates</span>';
             const headingTitle = document.createElement('h2');
-            headingTitle.className = 'mt-3 text-2xl sm:text-3xl font-serif-ko font-bold';
+            headingTitle.className = 'mt-6 text-4xl sm:text-5xl md:text-6xl font-serif-ko font-light tracking-[-0.06em]';
             headingTitle.textContent = '오늘의 새 기록';
             headingWrap.append(eyebrow, headingTitle);
-            const noticeLink = document.createElement('button');
-            noticeLink.type = 'button';
-            noticeLink.className = 'self-start sm:self-auto border border-[var(--text-dark)] px-5 py-3 text-xs tracking-widest uppercase hover:border-[var(--accent-red)] hover:text-[var(--accent-red)] transition-colors';
-            noticeLink.textContent = 'Notice';
-            noticeLink.addEventListener('click', () => document.querySelector('.view-trigger[data-target="view-notice"]')?.click());
-            header.append(headingWrap, noticeLink);
+            const allLink = document.createElement('button');
+            allLink.type = 'button';
+            allLink.className = 'mt-8 shrink-0 text-sm font-bold tracking-widest hover:text-[var(--accent-red)] transition-colors flex items-center gap-2';
+            allLink.innerHTML = '<span>전체보기</span><i class="ph ph-arrow-right text-lg"></i>';
+            allLink.addEventListener('click', () => document.querySelector('.view-trigger[data-target="view-sm-board"]')?.click());
+            header.append(headingWrap, allLink);
             latestDashboard.appendChild(header);
 
-            const grid = document.createElement('div');
-            grid.className = 'grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10';
+            const layout = document.createElement('div');
+            layout.className = 'grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16';
 
-            columns.forEach(column => {
-                const section = document.createElement('section');
-                section.className = 'border-t border-[var(--border-light)] pt-5';
-                const heading = document.createElement('div');
-                heading.className = 'flex items-end justify-between gap-4 pb-3';
-                const title = document.createElement('h2');
-                title.className = 'text-xl font-serif-ko font-bold';
-                title.textContent = column.title;
-                const more = document.createElement('button');
-                more.type = 'button';
-                more.className = 'shrink-0 text-xs tracking-widest opacity-55 hover:text-[var(--accent-red)] hover:opacity-100 transition-colors';
-                more.textContent = '더보기';
-                more.addEventListener('click', () => document.querySelector(`.view-trigger[data-target="${column.target}"]`)?.click());
-                heading.append(title, more);
+            const left = document.createElement('div');
+            left.className = 'lg:col-span-7 flex flex-col gap-20';
 
-                const list = document.createElement('div');
-                const entries = items.filter(item => item.type === column.type).slice(0, 4);
-                if (!entries.length) {
-                    const empty = document.createElement('p');
-                    empty.className = 'py-10 text-center text-sm opacity-40';
-                    empty.textContent = '아직 등록된 내용이 없습니다.';
-                    list.appendChild(empty);
+            const smItems = items.filter(item => item.type === 'sm-info').slice(0, 3);
+            const smSection = document.createElement('section');
+            smSection.innerHTML = `
+                <div class="flex items-baseline justify-between border-b-2 border-[var(--text-dark)] pb-5 mb-8">
+                    <h3 class="font-serif-ko text-2xl sm:text-3xl">SM 정보</h3>
+                    <span class="text-xs tracking-widest opacity-45">${smItems.length} POSTS</span>
+                </div>
+            `;
+            const smList = document.createElement('div');
+            smList.className = 'flex flex-col';
+            if (!smItems.length) {
+                smList.innerHTML = '<p class="py-12 text-center text-sm opacity-40">아직 등록된 SM 정보가 없습니다.</p>';
+            }
+            smItems.forEach((item, index) => {
+                const row = document.createElement('article');
+                row.className = index === 0
+                    ? 'group cursor-pointer border-b border-[var(--border-light)] pb-8 mb-2'
+                    : 'group cursor-pointer border-b border-[var(--border-light)] py-5';
+                if (index === 0) {
+                    row.innerHTML = `
+                        <div class="flex items-start justify-between gap-6">
+                            <h4 class="text-2xl sm:text-3xl font-bold tracking-tight group-hover:text-[var(--accent-red)] transition-colors">${escapeHtml(item.title)}</h4>
+                            <span class="mt-2 shrink-0 text-sm opacity-45">by.${escapeHtml(item.authorName || 'OUR STORY')}</span>
+                        </div>
+                        <div class="mt-6 flex items-center gap-5 text-sm opacity-55">
+                            <span class="bg-black/[0.04] px-3 py-2 rounded text-xs font-bold tracking-widest">HOT</span>
+                            <time>${latestArchiveDate(item.occurredAt)}</time>
+                        </div>
+                    `;
+                } else {
+                    row.innerHTML = `
+                        <div class="flex items-center justify-between gap-5">
+                            <h4 class="text-base sm:text-lg font-bold opacity-55 group-hover:opacity-100 group-hover:text-[var(--text-dark)] transition-colors truncate">${escapeHtml(item.title)}<span class="ml-3 text-sm font-normal opacity-70">${item.authorName ? `by.${escapeHtml(item.authorName)}` : ''}</span></h4>
+                            <time class="shrink-0 text-xs opacity-35">${latestShortDate(item.occurredAt)}</time>
+                        </div>
+                    `;
                 }
-                entries.forEach((item, index) => {
-                    const row = document.createElement('article');
-                    row.className = 'group grid grid-cols-[minmax(0,1fr)_auto] gap-4 items-center py-4 border-b border-[var(--border-light)] last:border-b-0 cursor-pointer';
-                    const itemTitle = document.createElement('h3');
-                    itemTitle.className = `${index === 0 ? 'text-[var(--accent-red)] font-bold' : ''} text-sm md:text-[0.95rem] truncate group-hover:text-[var(--accent-red)] transition-colors`;
-                    itemTitle.textContent = item.title;
-                    const date = document.createElement('time');
-                    date.className = 'text-[0.65rem] opacity-40 whitespace-nowrap font-serif-en';
-                    date.textContent = latestDate(item.occurredAt);
-                    row.append(itemTitle, date);
-                    makeLatestInteractive(row, item);
-                    list.appendChild(row);
-                });
-                section.append(heading, list);
-                grid.appendChild(section);
+                makeLatestInteractive(row, item);
+                smList.appendChild(row);
             });
-            latestDashboard.appendChild(grid);
+            smSection.appendChild(smList);
+            left.appendChild(smSection);
+
+            const barItems = items.filter(item => item.type === 'sm-bar').slice(0, 3);
+            const barSection = document.createElement('section');
+            barSection.innerHTML = '<h3 class="font-serif-ko text-2xl opacity-45 border-b border-[var(--border-light)] pb-5 mb-7">SM Bar List</h3>';
+            const barGrid = document.createElement('div');
+            barGrid.className = 'grid grid-cols-2 sm:grid-cols-4 gap-4';
+            barItems.forEach((item, index) => {
+                const card = document.createElement('article');
+                card.className = 'group min-h-[128px] cursor-pointer border border-[var(--border-light)] bg-white/45 p-5 hover:border-[var(--accent-red)] hover:bg-white transition-colors';
+                card.innerHTML = `
+                    <div class="w-9 h-9 rounded-full ${index === 0 ? 'bg-red-50 text-[var(--accent-red)]' : 'bg-black/[0.03] text-black/30'} flex items-center justify-center mb-5 group-hover:bg-[var(--accent-red)] group-hover:text-white transition-colors">
+                        <i class="ph ph-map-pin"></i>
+                    </div>
+                    <h4 class="font-bold truncate">${escapeHtml(item.title)}</h4>
+                    <time class="mt-2 block text-[0.65rem] tracking-widest opacity-40">UPDATED ${latestShortDate(item.occurredAt)}</time>
+                `;
+                makeLatestInteractive(card, item);
+                barGrid.appendChild(card);
+            });
+            const moreBar = document.createElement('button');
+            moreBar.type = 'button';
+            moreBar.className = 'min-h-[128px] border border-dashed border-[var(--border-light)] text-black/40 flex flex-col items-center justify-center gap-3 hover:text-[var(--accent-red)] hover:border-[var(--accent-red)] transition-colors';
+            moreBar.innerHTML = '<i class="ph ph-plus text-2xl"></i><span class="text-sm font-bold">더보기</span>';
+            moreBar.addEventListener('click', () => document.querySelector('.view-trigger[data-target="view-sm-bar-list"]')?.click());
+            barGrid.appendChild(moreBar);
+            barSection.appendChild(barGrid);
+            left.appendChild(barSection);
+
+            const right = document.createElement('section');
+            right.className = 'lg:col-span-5 border border-[var(--border-light)] bg-white/60 p-7 sm:p-9 relative overflow-hidden';
+            const albumItems = items.filter(item => item.type === 'album');
+            const album = albumItems[0] || null;
+            right.innerHTML = `
+                <div class="absolute -top-6 -right-6 w-28 h-28 bg-red-50 rotate-12 opacity-80 pointer-events-none"></div>
+                <div class="relative z-10 flex items-center justify-between mb-8">
+                    <h3 class="font-serif-en text-3xl sm:text-4xl">Activity Album</h3>
+                    <div class="flex items-center gap-2">
+                        <button type="button" class="w-9 h-9 rounded-full border border-[var(--border-light)] flex items-center justify-center text-black/35" aria-label="이전 앨범"><i class="ph ph-caret-left"></i></button>
+                        <button type="button" class="w-9 h-9 rounded-full border border-[var(--border-light)] flex items-center justify-center text-black/35" aria-label="다음 앨범"><i class="ph ph-caret-right"></i></button>
+                    </div>
+                </div>
+            `;
+            const albumMedia = document.createElement(album ? 'article' : 'div');
+            albumMedia.className = 'relative z-10';
+            if (album) {
+                const cover = document.createElement('div');
+                cover.className = 'aspect-[4/3] bg-black/[0.04] overflow-hidden mb-8 flex items-center justify-center';
+                cover.innerHTML = album.imageUrl
+                    ? `<img src="${album.imageUrl}" alt="" class="w-full h-full object-cover">`
+                    : '<i class="ph ph-image text-6xl text-black/15"></i>';
+                const info = document.createElement('div');
+                info.innerHTML = `
+                    <div class="flex items-center justify-between gap-5 mb-4">
+                        <span class="text-xs tracking-[0.22em] uppercase text-[var(--accent-red)] font-bold">New Photo</span>
+                        <time class="text-sm opacity-45">${latestArchiveDate(album.occurredAt)}</time>
+                    </div>
+                    <h4 class="text-2xl font-bold mb-5">${escapeHtml(album.title)}</h4>
+                    <p class="text-sm leading-loose opacity-55">${escapeHtml(album.summary || '새로운 활동 사진이 업로드되었습니다.')}</p>
+                `;
+                albumMedia.append(cover, info);
+                makeLatestInteractive(albumMedia, album);
+            } else {
+                albumMedia.innerHTML = '<div class="aspect-[4/3] bg-black/[0.04] flex items-center justify-center mb-8"><i class="ph ph-image text-6xl text-black/15"></i></div><p class="text-sm opacity-45">아직 등록된 앨범이 없습니다.</p>';
+            }
+            right.appendChild(albumMedia);
+
+            layout.append(left, right);
+            latestDashboard.appendChild(layout);
 
             const timelineItems = items.filter(item => item.type === 'timeline').slice(0, 4);
             if (timelineItems.length) {
