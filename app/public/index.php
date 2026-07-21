@@ -531,9 +531,9 @@
         </section>
 
         <section id="view-my-page" class="my-page-shell view-hidden fade-in border-y border-[var(--border-light)] overflow-hidden bg-[var(--bg-cream)]/28">
-            <div class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-[320px_minmax(0,1fr)] min-h-[calc(100vh-8rem)] px-6 lg:px-12">
-                <aside class="hidden lg:block border-r border-[var(--border-light)] bg-[var(--bg-cream)]/45 pr-12 py-16">
-                    <nav class="space-y-0 text-sm tracking-[0.08em]">
+            <div class="max-w-[1500px] mx-auto grid grid-cols-1 lg:grid-cols-[390px_minmax(0,1fr)] min-h-[calc(100vh-8rem)] px-6 lg:px-12 xl:px-16">
+                <aside class="hidden lg:block border-r border-[var(--border-light)] bg-[var(--bg-cream)]/45 pr-14 xl:pr-16 py-16">
+                    <nav class="space-y-0 text-base tracking-[0.07em]">
                         <button type="button" class="w-full flex items-center justify-between border-b border-[var(--border-light)] py-5 text-left font-semibold">
                             <span>Profile Settings</span>
                             <i class="ph ph-caret-right text-[var(--accent-red)]"></i>
@@ -555,7 +555,7 @@
 
                 <div class="min-w-0 overflow-hidden pl-0 lg:pl-14 xl:pl-20 py-10 lg:py-16">
                     <div class="border-b border-[var(--border-light)] pb-7 mb-10 flex items-baseline gap-4 overflow-hidden">
-                        <h1 class="min-w-0 shrink font-serif-en text-[clamp(3rem,5.2vw,5.8rem)] tracking-tight uppercase leading-none truncate">Account Info</h1>
+                        <h1 class="min-w-0 shrink font-serif-en text-[clamp(2.8rem,4.1vw,4.9rem)] tracking-tight uppercase leading-none truncate">Account Info</h1>
                         <span class="hidden 2xl:inline shrink-0 text-[10px] tracking-[0.25em] font-semibold uppercase opacity-45">[ Profile ]</span>
                     </div>
                     <p id="my-page-status" class="py-14 text-center text-sm opacity-50">프로필을 불러오는 중입니다.</p>
