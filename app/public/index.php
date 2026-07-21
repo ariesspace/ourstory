@@ -165,6 +165,18 @@
             background: rgba(255,255,255,0.7);
         }
 
+        #site-loader {
+            transition: transform 0.85s cubic-bezier(0.76, 0, 0.24, 1), opacity 0.85s ease;
+        }
+        #site-loader.loader-hidden {
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+        body.loading-lock {
+            overflow: hidden;
+        }
+
         @media (max-width: 767px) {
             #view-schedule .schedule-hero {
                 padding-top: 1.75rem;
@@ -246,7 +258,14 @@
         }
     </style>
 </head>
-<body>
+<body class="loading-lock">
+
+    <div id="site-loader" class="fixed inset-0 z-[100] bg-[var(--bg-cream)] flex flex-col items-center justify-center">
+        <h1 class="font-serif-en text-5xl md:text-7xl italic font-semibold tracking-tighter text-[var(--accent-red)] mb-8">:our story</h1>
+        <div class="absolute bottom-16 md:bottom-20 font-serif-en text-xl md:text-2xl text-[var(--accent-red)] tracking-widest flex items-center justify-center w-full">
+            <span id="loader-progress">0</span><span class="ml-1">%</span>
+        </div>
+    </div>
 
     <header class="fixed top-0 left-0 w-full z-50 transition-all duration-300" id="main-header">
         <div class="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center relative z-50">
@@ -5024,6 +5043,41 @@
             }
         });
 
+        function runSiteLoader() {
+            const loader = document.getElementById('site-loader');
+            const progress = document.getElementById('loader-progress');
+            if (!loader || !progress) return Promise.resolve();
+
+            const loaderKey = 'ourstory-loader-seen';
+            if (sessionStorage.getItem(loaderKey) === '1') {
+                loader.remove();
+                document.body.classList.remove('loading-lock');
+                return Promise.resolve();
+            }
+
+            return new Promise(resolve => {
+                const startedAt = performance.now();
+                const duration = 850;
+                const tick = now => {
+                    const ratio = Math.min((now - startedAt) / duration, 1);
+                    progress.textContent = String(Math.round(ratio * 100));
+                    if (ratio < 1) {
+                        requestAnimationFrame(tick);
+                        return;
+                    }
+                    sessionStorage.setItem(loaderKey, '1');
+                    loader.classList.add('loader-hidden');
+                    document.body.classList.remove('loading-lock');
+                    setTimeout(() => {
+                        loader.remove();
+                        resolve();
+                    }, 900);
+                };
+                requestAnimationFrame(tick);
+            });
+        }
+
+        runSiteLoader();
         bootstrapInitialView();
         initAuth();
         renderCalendar();
