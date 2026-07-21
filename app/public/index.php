@@ -10,7 +10,7 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Nanum+Myeongjo:wght@400;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Sans+KR:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap');
 
         :root {
             --bg-cream: #ffffff;
@@ -18,6 +18,8 @@
             --text-dark: #2a2825;
             --accent-red: #d92518;
             --border-light: rgba(42, 40, 37, 0.1);
+            --bg-color: #f8f7f3;
+            --text-muted: #8e8a84;
         }
 
         body {
@@ -35,6 +37,8 @@
 
         .font-serif-en { font-family: 'Playfair Display', serif; }
         .font-serif-ko { font-family: 'Nanum Myeongjo', serif; }
+        .font-document { font-family: 'Cormorant Garamond', serif; }
+        .font-mono { font-family: 'Space Mono', monospace; }
 
 
         .nav-link {
@@ -333,15 +337,147 @@
         }
 
         #site-loader {
-            transition: transform 1.05s cubic-bezier(0.76, 0, 0.24, 1), opacity 1.05s ease;
+            background-color: var(--bg-color);
+            transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), visibility 1s, transform 1s cubic-bezier(0.16, 1, 0.3, 1);
         }
         #site-loader.loader-hidden {
-            transform: translateY(-100%);
             opacity: 0;
+            visibility: hidden;
+            transform: scale(1.05);
             pointer-events: none;
         }
         body.loading-lock {
             overflow: hidden;
+        }
+        .system-status {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            letter-spacing: 0.2em;
+            margin-bottom: 2.5rem;
+            text-transform: uppercase;
+            height: 15px;
+            transition: color 0.3s;
+        }
+        .preloader-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: clamp(2.5rem, 8vw, 4.75rem);
+            color: var(--text-dark);
+            letter-spacing: -0.02em;
+            opacity: 0;
+            animation: focusIn 2s ease forwards;
+        }
+        .auth-bar-container {
+            width: 150px;
+            height: 1px;
+            background-color: rgba(26, 26, 26, 0.1);
+            margin-top: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .auth-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0%;
+            background-color: var(--text-dark);
+            transition: width 0.1s linear;
+        }
+        .preloader-progress {
+            margin-top: 1rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            letter-spacing: 0.15em;
+        }
+        @keyframes focusIn {
+            0% { opacity: 0; filter: blur(10px); transform: translateY(10px); }
+            100% { opacity: 1; filter: blur(0); transform: translateY(0); }
+        }
+
+        body.login-mode {
+            background: #30302f;
+        }
+        body.login-mode #main-header {
+            background: #30302f;
+            color: #f8f7f3;
+        }
+        body.login-mode #scroll-progress-bar {
+            background: #f8f7f3;
+        }
+        .login-vault {
+            width: 100vw;
+            min-height: calc(100vh - 8rem);
+            margin-left: calc(50% - 50vw);
+            margin-right: calc(50% - 50vw);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: clamp(2rem, 5vw, 5rem) 1.25rem;
+            background:
+                radial-gradient(circle at 50% 38%, rgba(255,255,255,0.08), transparent 34rem),
+                #30302f;
+        }
+        .login-document {
+            width: min(100%, 560px);
+            background: #f8f7f3;
+            color: #1b1b1a;
+            padding: 1rem;
+            box-shadow: 0 28px 85px rgba(0, 0, 0, 0.38);
+        }
+        .login-document-inner {
+            border: 1px solid rgba(26, 26, 26, 0.16);
+            padding: clamp(2rem, 5vw, 3.4rem);
+        }
+        .login-doc-meta {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.66rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: rgba(26, 26, 26, 0.48);
+        }
+        .login-doc-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: #1b1b1a;
+        }
+        .login-doc-input {
+            width: 100%;
+            border-bottom: 1px dashed rgba(26, 26, 26, 0.35);
+            background: transparent;
+            padding: 0.8rem 0 0.65rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+            font-style: italic;
+            color: #1b1b1a;
+        }
+        .login-doc-input::placeholder {
+            color: rgba(26, 26, 26, 0.28);
+        }
+        .login-doc-input:focus {
+            border-bottom-color: #1b1b1a;
+        }
+        .login-doc-button {
+            width: 100%;
+            border: 1px solid #1b1b1a;
+            background: #1b1b1a;
+            color: #fff;
+            padding: 1.1rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            box-shadow: inset 0 0 0 4px #1b1b1a, inset 0 0 0 5px rgba(255, 255, 255, 0.45);
+            transition: transform 0.25s ease, background-color 0.25s ease;
+        }
+        .login-doc-button:hover {
+            transform: translateY(-2px);
+            background: #2a2825;
         }
 
         @media (max-width: 767px) {
@@ -480,10 +616,14 @@
 </head>
 <body class="loading-lock">
 
-    <div id="site-loader" class="fixed inset-0 z-[100] bg-[var(--bg-cream)] flex flex-col items-center justify-center">
-        <h1 class="font-serif-en text-5xl md:text-7xl italic font-semibold tracking-tighter text-[var(--accent-red)] mb-8">:our story</h1>
-        <div class="absolute bottom-16 md:bottom-20 font-serif-en text-xl md:text-2xl text-[var(--accent-red)] tracking-widest flex items-center justify-center w-full">
-            <span id="loader-progress">0</span><span class="ml-1">%</span>
+    <div id="site-loader" class="fixed inset-0 z-[100] flex flex-col items-center justify-center">
+        <div id="loader-status" class="system-status">Initializing private archive</div>
+        <h1 class="preloader-logo">our story</h1>
+        <div class="auth-bar-container" aria-hidden="true">
+            <div id="loader-bar" class="auth-bar"></div>
+        </div>
+        <div class="preloader-progress">
+            <span id="loader-progress">0</span><span>%</span>
         </div>
     </div>
 
@@ -530,32 +670,37 @@
 
     <main class="flex-grow w-full max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-14 py-4 relative z-10">
 
-        <section id="view-login" class="w-full view-hidden fade-in py-20 flex justify-center items-center">
-            <div class="w-full max-w-md bg-white/40 backdrop-blur-md p-10 rounded-lg shadow-sm border border-[var(--border-light)]">
-                <div class="text-center mb-10">
-                    <span class="text-[var(--accent-red)] text-4xl font-serif-en italic">:l</span>
-                    <h2 class="mt-4 text-xl font-serif-ko tracking-widest uppercase">Welcome Back</h2>
-                    <p class="text-xs opacity-50 mt-2">회원 전용 공간입니다.</p>
-                </div>
+        <section id="view-login" class="w-full view-hidden fade-in">
+            <div class="login-vault">
+                <div class="login-document">
+                    <div class="login-document-inner">
+                        <div class="login-doc-meta flex justify-between mb-12">
+                            <span>DOC NO. 2026-X</span>
+                            <span>[ X ]</span>
+                        </div>
 
-                <form id="login-form" class="flex flex-col gap-6">
-                    <div class="flex flex-col gap-1">
-                        <label for="user-id" class="text-xs tracking-widest uppercase opacity-70">ID</label>
-                        <input type="text" id="user-id" class="border-b border-[var(--border-light)] bg-transparent py-2 focus:border-[var(--accent-red)] transition-colors" placeholder="your id" autocomplete="username" required>
+                        <div class="text-center mb-14">
+                            <p class="login-doc-label mb-8">Confidential</p>
+                            <h1 class="font-document italic text-4xl md:text-5xl leading-tight">Private Exhibition<br>Access</h1>
+                            <div class="w-10 h-px bg-[#1b1b1a] mx-auto mt-9"></div>
+                        </div>
+
+                        <form id="login-form" class="flex flex-col gap-9">
+                            <div>
+                                <label for="user-id" class="login-doc-label">Identity [ID]</label>
+                                <input type="text" id="user-id" class="login-doc-input" placeholder="Enter your identity..." autocomplete="username" required>
+                            </div>
+                            <div>
+                                <label for="password" class="login-doc-label">Passcode [Key]</label>
+                                <input type="password" id="password" class="login-doc-input" placeholder="Enter your passcode..." autocomplete="current-password" required>
+                            </div>
+
+                            <button type="submit" class="login-doc-button mt-7">Unseal &amp; Enter</button>
+                            <p id="login-error" class="hidden text-sm text-[var(--accent-red)] text-center"></p>
+                        </form>
+
+                        <p class="login-doc-meta text-center mt-10">Strictly for authorized personnel only.</p>
                     </div>
-                    <div class="flex flex-col gap-1">
-                        <label for="password" class="text-xs tracking-widest uppercase opacity-70">Password</label>
-                        <input type="password" id="password" class="border-b border-[var(--border-light)] bg-transparent py-2 focus:border-[var(--accent-red)] transition-colors" placeholder="••••••••" required>
-                    </div>
-
-                    <button type="submit" class="w-full bg-[var(--accent-red)] text-white py-3 mt-4 text-sm font-bold tracking-widest uppercase hover:bg-red-700 transition-colors">
-                        Enter
-                    </button>
-                    <p id="login-error" class="hidden text-sm text-[var(--accent-red)] text-center"></p>
-                </form>
-
-                <div class="mt-8 text-center text-xs opacity-60">
-                    <p>아직 멤버가 아니신가요? <button class="underline hover:text-[var(--accent-red)] transition-colors ml-1">초대장 요청하기</button></p>
                 </div>
             </div>
         </section>
@@ -1685,6 +1830,7 @@
         function showView(targetId, options = {}) {
             const { remember = true, scroll = true } = options;
             currentViewId = targetId;
+            document.body.classList.toggle('login-mode', targetId === 'view-login');
 
             views.forEach(view => {
                 if (view.id === targetId) {
@@ -5170,22 +5316,37 @@
         function runSiteLoader() {
             const loader = document.getElementById('site-loader');
             const progress = document.getElementById('loader-progress');
+            const loaderBar = document.getElementById('loader-bar');
+            const loaderStatus = document.getElementById('loader-status');
             if (!loader || !progress) return Promise.resolve();
+
+            const statuses = [
+                'Initializing private archive',
+                'Checking sealed records',
+                'Preparing exhibition access',
+                'Opening index'
+            ];
 
             return new Promise(resolve => {
                 let value = 0;
                 const updateProgress = () => {
-                    let increment = Math.random() * 3 + 0.8;
-                    if (value > 70) increment = Math.random() * 1.2 + 0.35;
-                    if (value > 90) increment = Math.random() * 0.65 + 0.15;
+                    let increment = Math.random() * 2.2 + 0.55;
+                    if (value > 70) increment = Math.random() * 0.9 + 0.22;
+                    if (value > 90) increment = Math.random() * 0.45 + 0.12;
 
                     value = Math.min(100, value + increment);
-                    progress.textContent = String(Math.floor(value));
+                    const roundedValue = Math.floor(value);
+                    progress.textContent = String(roundedValue);
+                    if (loaderBar) loaderBar.style.width = `${roundedValue}%`;
+                    if (loaderStatus) {
+                        const statusIndex = Math.min(statuses.length - 1, Math.floor(roundedValue / 28));
+                        loaderStatus.textContent = statuses[statusIndex];
+                    }
 
                     if (value < 100) {
                         const delay = value > 80
-                            ? Math.random() * 90 + 65
-                            : Math.random() * 55 + 35;
+                            ? Math.random() * 130 + 95
+                            : Math.random() * 75 + 55;
                         setTimeout(() => requestAnimationFrame(updateProgress), delay);
                         return;
                     }
