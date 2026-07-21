@@ -4189,40 +4189,41 @@
             left.appendChild(barSection);
 
             const right = document.createElement('section');
-            right.className = 'lg:col-span-5 border border-[var(--border-light)] bg-white/60 p-7 sm:p-9 relative overflow-hidden';
+            right.className = 'group lg:col-span-5 border border-[var(--border-light)] bg-white/70 p-6 sm:p-8 relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(42,40,37,0.08)]';
             const albumItems = items.filter(item => item.type === 'album');
             const album = albumItems[0] || null;
             right.innerHTML = `
-                <div class="absolute -top-6 -right-6 w-28 h-28 bg-red-50 rotate-12 opacity-80 pointer-events-none"></div>
+                <div class="absolute -top-3 -right-3 w-16 h-16 bg-red-100 rotate-12 opacity-50 mix-blend-multiply pointer-events-none"></div>
                 <div class="relative z-10 flex items-center justify-between mb-8">
-                    <h3 class="font-serif-en text-3xl sm:text-4xl">Activity Album</h3>
+                    <h3 class="font-serif-en text-3xl sm:text-4xl font-medium">Activity Album</h3>
                     <div class="flex items-center gap-2">
-                        <button type="button" class="w-9 h-9 rounded-full border border-[var(--border-light)] flex items-center justify-center text-black/35" aria-label="이전 앨범"><i class="ph ph-caret-left"></i></button>
-                        <button type="button" class="w-9 h-9 rounded-full border border-[var(--border-light)] flex items-center justify-center text-black/35" aria-label="다음 앨범"><i class="ph ph-caret-right"></i></button>
+                        <button type="button" class="w-8 h-8 rounded-full border border-[var(--border-light)] flex items-center justify-center text-black/35 hover:text-[var(--text-dark)] hover:border-[var(--text-dark)] transition-colors" aria-label="이전 앨범"><i class="ph ph-caret-left"></i></button>
+                        <button type="button" class="w-8 h-8 rounded-full border border-[var(--border-light)] flex items-center justify-center text-black/35 hover:text-[var(--text-dark)] hover:border-[var(--text-dark)] transition-colors" aria-label="다음 앨범"><i class="ph ph-caret-right"></i></button>
                     </div>
                 </div>
             `;
             const albumMedia = document.createElement(album ? 'article' : 'div');
-            albumMedia.className = 'relative z-10';
+            albumMedia.className = 'relative z-10 flex flex-col h-full';
             if (album) {
                 const cover = document.createElement('div');
-                cover.className = 'aspect-[4/3] bg-black/[0.04] overflow-hidden mb-8 flex items-center justify-center';
+                cover.className = 'relative aspect-[4/3] bg-black/[0.04] rounded-lg overflow-hidden mb-6 flex-shrink-0 flex items-center justify-center transition-all duration-500 group-hover:shadow-lg';
                 cover.innerHTML = album.imageUrl
-                    ? `<img src="${album.imageUrl}" alt="" class="w-full h-full object-cover">`
-                    : '<i class="ph ph-image text-6xl text-black/15"></i>';
+                    ? `<img src="${album.imageUrl}" alt="" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"><div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"><span class="bg-white/90 text-[var(--text-dark)] px-4 py-2 rounded-full text-sm font-medium tracking-wide translate-y-4 group-hover:translate-y-0 transition-transform duration-300">자세히 보기</span></div>`
+                    : '<div class="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center"><i class="ph ph-image text-6xl text-gray-300 transition-transform duration-500 group-hover:scale-110"></i></div><div class="absolute inset-0 bg-black/35 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"><span class="bg-white/90 text-[var(--text-dark)] px-4 py-2 rounded-full text-sm font-medium tracking-wide translate-y-4 group-hover:translate-y-0 transition-transform duration-300">자세히 보기</span></div>';
                 const info = document.createElement('div');
+                info.className = 'mt-auto';
                 info.innerHTML = `
-                    <div class="flex items-center justify-between gap-5 mb-4">
+                    <div class="flex items-center justify-between gap-5 mb-3">
                         <span class="text-xs tracking-[0.22em] uppercase text-[var(--accent-red)] font-bold">New Photo</span>
                         <time class="text-sm opacity-45">${latestArchiveDate(album.occurredAt)}</time>
                     </div>
-                    <h4 class="text-2xl font-bold mb-5">${escapeHtml(album.title)}</h4>
-                    <p class="text-sm leading-loose opacity-55">${escapeHtml(album.summary || '새로운 활동 사진이 업로드되었습니다.')}</p>
+                    <h4 class="text-xl sm:text-2xl font-bold mb-3 group-hover:text-[var(--accent-red)] transition-colors">${escapeHtml(album.title)}</h4>
+                    <p class="text-sm leading-relaxed opacity-55 line-clamp-2">${escapeHtml(album.summary || '최근 진행된 모임의 주요 사진들이 업로드되었습니다. 멤버 페이지에서 더 많은 기록을 확인해보세요.')}</p>
                 `;
                 albumMedia.append(cover, info);
                 makeLatestInteractive(albumMedia, album);
             } else {
-                albumMedia.innerHTML = '<div class="aspect-[4/3] bg-black/[0.04] flex items-center justify-center mb-8"><i class="ph ph-image text-6xl text-black/15"></i></div><p class="text-sm opacity-45">아직 등록된 앨범이 없습니다.</p>';
+                albumMedia.innerHTML = '<div class="relative aspect-[4/3] rounded-lg overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center mb-6"><i class="ph ph-image text-6xl text-gray-300"></i></div><p class="text-sm opacity-45">아직 등록된 앨범이 없습니다.</p>';
             }
             right.appendChild(albumMedia);
 
