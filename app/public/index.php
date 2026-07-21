@@ -13,8 +13,8 @@
         @import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
 
         :root {
-            --bg-cream: #fdfbf7;
-            --bg-pink: #fcedf2;
+            --bg-cream: #ffffff;
+            --bg-pink: #ffffff;
             --text-dark: #2a2825;
             --accent-red: #d92518;
             --border-light: rgba(42, 40, 37, 0.1);
@@ -23,7 +23,7 @@
         body {
             font-family: 'Noto Sans KR', sans-serif;
 
-            background: linear-gradient(135deg, var(--bg-cream) 0%, var(--bg-pink) 100%);
+            background: #ffffff;
             background-attachment: fixed;
             color: var(--text-dark);
             min-height: 100vh;
@@ -187,6 +187,151 @@
             background: rgba(255,255,255,0.7);
         }
 
+        .gallery-home {
+            min-height: calc(100vh - 8rem);
+            display: grid;
+            grid-template-columns: minmax(180px, 0.72fr) minmax(320px, 1.7fr) minmax(160px, 0.62fr);
+            gap: clamp(2rem, 4vw, 4.5rem);
+            align-items: center;
+            padding: clamp(2rem, 4vw, 4.5rem) 0 clamp(2rem, 4vw, 4rem);
+        }
+        .gallery-home-detail {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(2rem, 5vw, 4rem);
+        }
+        .gallery-home-kicker {
+            display: inline-block;
+            width: fit-content;
+            padding-bottom: 0.55rem;
+            border-bottom: 1px solid var(--text-dark);
+            font-family: 'Playfair Display', serif;
+            font-size: 0.68rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            opacity: 0.52;
+        }
+        .gallery-home-copy {
+            margin-top: 1rem;
+            font-size: 0.86rem;
+            line-height: 1.9;
+            opacity: 0.68;
+            word-break: keep-all;
+        }
+        .gallery-home-art {
+            position: relative;
+            min-width: 0;
+            text-align: center;
+        }
+        .gallery-home-image {
+            width: min(100%, 620px);
+            aspect-ratio: 3 / 4;
+            object-fit: cover;
+            margin: 0 auto;
+            filter: grayscale(100%) contrast(1.12) brightness(0.92);
+            box-shadow: 0 24px 60px rgba(42, 40, 37, 0.08);
+            transition: filter 1s ease, transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .gallery-home-art:hover .gallery-home-image {
+            filter: grayscale(28%) contrast(1.04) brightness(1);
+            transform: translateY(-4px);
+        }
+        .gallery-home-title {
+            position: absolute;
+            left: 50%;
+            bottom: -0.1em;
+            transform: translateX(-50%);
+            width: max-content;
+            max-width: 94vw;
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3.4rem, 8vw, 8.2rem);
+            line-height: 0.84;
+            font-weight: 300;
+            letter-spacing: -0.055em;
+            color: white;
+            mix-blend-mode: difference;
+            pointer-events: none;
+            text-transform: uppercase;
+        }
+        .gallery-home-title i {
+            font-style: italic;
+            font-weight: 400;
+        }
+        .gallery-home-action {
+            min-height: min(620px, 74vh);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-end;
+            text-align: right;
+        }
+        .gallery-home-date {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            font-family: 'Playfair Display', serif;
+            font-size: 0.72rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            opacity: 0.5;
+        }
+        .gallery-home-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            border: 1px solid var(--text-dark);
+            padding: 1rem 1.6rem;
+            font-size: 0.72rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .gallery-home-button:hover {
+            background-color: var(--text-dark);
+            color: var(--bg-cream);
+        }
+        .index-menu-links button {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 2rem;
+            padding: 1.6rem 0;
+            border-bottom: 1px solid var(--border-light);
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 5vw, 4.2rem);
+            font-style: italic;
+            line-height: 1;
+            text-align: left;
+            opacity: 0;
+            transform: translateX(-18px);
+            transition: opacity 0.45s ease, transform 0.45s ease, padding 0.35s ease, color 0.35s ease;
+        }
+        .index-menu-links button em {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.78rem;
+            font-style: normal;
+            letter-spacing: 0.12em;
+            opacity: 0.45;
+        }
+        #index-menu.open {
+            transform: translateX(0);
+        }
+        #index-menu.open .index-menu-links button {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        #index-menu.open .index-menu-links button:nth-child(1) { transition-delay: 0.12s; }
+        #index-menu.open .index-menu-links button:nth-child(2) { transition-delay: 0.18s; }
+        #index-menu.open .index-menu-links button:nth-child(3) { transition-delay: 0.24s; }
+        #index-menu.open .index-menu-links button:nth-child(4) { transition-delay: 0.30s; }
+        #index-menu.open .index-menu-links button:nth-child(5) { transition-delay: 0.36s; }
+        #index-menu.open .index-menu-links button:nth-child(6) { transition-delay: 0.42s; }
+        #index-menu.open .index-menu-links button:nth-child(7) { transition-delay: 0.48s; }
+        .index-menu-links button:hover {
+            color: var(--accent-red);
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
         #site-loader {
             transition: transform 1.05s cubic-bezier(0.76, 0, 0.24, 1), opacity 1.05s ease;
         }
@@ -200,6 +345,42 @@
         }
 
         @media (max-width: 767px) {
+            .gallery-home {
+                min-height: auto;
+                grid-template-columns: 1fr;
+                gap: 2.2rem;
+                padding-top: 1.25rem;
+            }
+            .gallery-home-detail {
+                gap: 1.5rem;
+            }
+            .gallery-home-copy {
+                font-size: 0.9rem;
+            }
+            .gallery-home-title {
+                position: relative;
+                display: block;
+                left: auto;
+                bottom: auto;
+                transform: none;
+                width: auto;
+                max-width: 100%;
+                margin-top: -1.4rem;
+                color: var(--text-dark);
+                mix-blend-mode: normal;
+                font-size: clamp(3.1rem, 18vw, 5.4rem);
+                white-space: normal;
+            }
+            .gallery-home-action {
+                min-height: auto;
+                align-items: flex-start;
+                text-align: left;
+                gap: 1.5rem;
+            }
+            .gallery-home-date {
+                writing-mode: horizontal-tb;
+                transform: none;
+            }
             #mega-menu {
                 display: none;
             }
@@ -310,195 +491,44 @@
         <h1 id="page-transition-logo" class="text-white font-serif-en text-6xl md:text-[120px] font-light tracking-tighter rotate-90 opacity-0 transition-all duration-[1200ms] ease-[cubic-bezier(0.76,0,0.24,1)]">:Our Story</h1>
     </div>
 
-    <header class="fixed top-0 left-0 w-full z-50 transition-all duration-300 bg-[var(--bg-cream)]/90 backdrop-blur-md" id="main-header">
-        <div class="max-w-[1400px] mx-auto px-6 lg:px-12 h-20 flex justify-between items-center relative z-50">
-
-            <div class="w-1/3 flex items-center md:pl-4">
-                <button type="button" id="mobile-menu-toggle" class="md:hidden w-10 h-10 flex items-center justify-center border border-[var(--border-light)] rounded-full" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mobile-menu">
-                    <i class="ph ph-list text-xl" id="mobile-menu-icon"></i>
-                </button>
-                <nav class="gap-3 lg:gap-5 xl:gap-6 text-xs lg:text-sm tracking-widest uppercase hidden md:flex">
-                    <button class="nav-link active uppercase" data-menu="journal">Journal</button>
-                    <button class="nav-link uppercase" data-menu="members">Members</button>
-                    <button class="nav-link uppercase" data-menu="schedule">Schedule</button>
-                    <button class="nav-link uppercase hidden" data-menu="system" id="system-nav-link">System</button>
-                    <button class="nav-link uppercase whitespace-nowrap hidden" data-menu="mypage" id="my-page-nav-link">My Page</button>
-                </nav>
+    <header class="fixed top-0 left-0 w-full z-50 bg-white" id="main-header">
+        <div class="max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-14 h-24 grid grid-cols-[1fr_auto_1fr] items-center">
+            <div class="flex justify-start">
+                <button type="button" id="index-menu-open" class="font-serif-en text-xs tracking-[0.28em] uppercase opacity-55 hover:opacity-100 transition-opacity">[ INDEX + ]</button>
             </div>
-
-            <div class="text-2xl sm:text-3xl font-serif-en italic tracking-tighter whitespace-nowrap w-1/3 text-center cursor-pointer view-trigger" data-target="view-read">
-                :our story
-            </div>
-
-            <div class="flex justify-end items-center gap-3 lg:gap-6 text-sm tracking-widest w-1/3">
-                <span id="current-date" class="hidden lg:block opacity-70"></span>
-                <button class="hidden md:block opacity-70 hover:opacity-100 transition-opacity uppercase tracking-widest text-xs view-trigger" data-target="view-login" id="login-nav-btn">
-                    Login
-                </button>
-                <button type="button" id="header-logout-btn" class="logout-trigger hidden opacity-55 hover:opacity-100 hover:text-[var(--accent-red)] transition-colors" title="Logout" aria-label="Logout">
-                    <i class="ph ph-sign-out text-lg md:hidden"></i>
-                    <span class="hidden md:inline text-xs uppercase tracking-widest">Logout</span>
-                </button>
-                <button class="view-trigger flex items-center justify-center w-10 h-10 bg-[var(--accent-red)] text-white rounded-full hover:scale-110 transition-transform" data-target="view-write" title="Write a story">
-                    <i class="ph ph-plus text-lg"></i>
-                </button>
+            <button type="button" class="view-trigger font-serif-en italic text-3xl md:text-4xl tracking-tight" data-target="view-read">our story</button>
+            <div class="flex justify-end items-center gap-5 sm:gap-8 font-serif-en text-xs tracking-[0.28em] uppercase opacity-60">
+                <span class="hidden sm:inline">Seoul, KR</span>
+                <button type="button" class="view-trigger hover:opacity-100" data-target="view-login" id="login-nav-btn">Login</button>
+                <button type="button" id="header-logout-btn" class="logout-trigger hidden hover:text-[var(--accent-red)]">Logout</button>
             </div>
         </div>
-
         <div class="absolute bottom-0 left-0 w-full h-px bg-[var(--border-light)]" aria-hidden="true">
             <div id="scroll-progress-bar" class="h-full w-0 bg-[var(--accent-red)] transition-[width] duration-150 ease-out"></div>
         </div>
-
-        <div id="mega-menu" class="h-[340px]">
-            <div class="max-w-[1400px] mx-auto h-full flex px-6 lg:px-12">
-                <div class="w-[44%] h-full py-7 pr-10">
-                    <div class="w-full h-full overflow-hidden relative group rounded-sm bg-gray-100">
-                        <img id="menu-image" src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&q=80&w=800" alt="Menu Image" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105">
-                        <div class="absolute inset-0 bg-black/10"></div>
-                    </div>
-                </div>
-
-                <div class="w-[56%] h-full py-10 pl-10 flex flex-col justify-center">
-                    <div id="submenu-journal" class="submenu-content hidden">
-                        <div class="grid grid-cols-2 gap-x-12 gap-y-8">
-                            <div>
-                                <h4 class="font-serif-en italic text-xl mb-4 border-b border-[var(--border-light)] pb-2 flex items-center gap-2">
-                                    <i class="ph ph-book-open"></i> records
-                                </h4>
-                                <ul class="space-y-4 text-sm opacity-70">
-                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-notice">Notice</li>
-                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-introduce">Self Introduce</li>
-                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-anonymous">Anonymous Talk</li>
-                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-write">Write New Story</li>
-                                    <li class="hover:text-[var(--accent-red)] cursor-pointer opacity-50">Monthly Archive</li>
-                                </ul>
-                            </div>
-                            <div>
-                                <h4 class="font-serif-en italic text-xl mb-4 border-b border-[var(--border-light)] pb-2 flex items-center gap-2">
-                                    <i class="ph ph-info"></i> information
-                                </h4>
-                                <ul class="space-y-4 text-sm opacity-70">
-                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-sm-board">SM 정보</li>
-                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-sm-bar-list">SM Bar List</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="submenu-members" class="submenu-content hidden">
-                        <div class="grid grid-cols-2 gap-x-12 gap-y-8">
-                            <div>
-                                <h4 class="font-serif-en italic text-xl mb-4 border-b border-[var(--border-light)] pb-2 flex items-center gap-2">
-                                    <i class="ph ph-users"></i> directory
-                                </h4>
-                                <ul class="space-y-4 text-sm opacity-70">
-                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-people">Our Stories</li>
-                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-membership-archive">Membership Archive</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="submenu-schedule" class="submenu-content hidden">
-                        <div class="grid grid-cols-2 gap-x-12 gap-y-8">
-                            <div>
-                                <h4 class="font-serif-en italic text-xl mb-4 border-b border-[var(--border-light)] pb-2 flex items-center gap-2">
-                                    <i class="ph ph-calendar-blank"></i> calendar
-                                </h4>
-                                <ul class="space-y-4 text-sm opacity-70">
-                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-schedule">Monthly Schedule</li>
-                                </ul>
-                            </div>
-                            <div>
-                                <h4 class="font-serif-en italic text-xl mb-4 border-b border-[var(--border-light)] pb-2 flex items-center gap-2">
-                                    <i class="ph ph-images"></i> gallery
-                                </h4>
-                                <ul class="space-y-4 text-sm opacity-70">
-                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-gallery">Activity Album</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="submenu-system" class="submenu-content hidden">
-                        <div class="grid grid-cols-1 gap-y-8">
-                            <div>
-                                <h4 class="font-serif-en italic text-xl mb-4 border-b border-[var(--border-light)] pb-2 flex items-center gap-2">
-                                    <i class="ph ph-gear-six"></i> members
-                                </h4>
-                                <ul class="space-y-4 text-sm opacity-70">
-                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-system-members">회원 관리</li>
-                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-system-add">회원 추가</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="submenu-mypage" class="submenu-content hidden">
-                        <div class="grid grid-cols-1 gap-y-8">
-                            <div>
-                                <h4 class="font-serif-en italic text-xl mb-4 border-b border-[var(--border-light)] pb-2 flex items-center gap-2">
-                                    <i class="ph ph-user-circle"></i> account
-                                </h4>
-                                <ul class="space-y-4 text-sm opacity-70">
-                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-my-page">Profile</li>
-                                    <li class="hover:text-[var(--accent-red)] cursor-pointer view-trigger" data-target="view-my-timeline">My Timeline</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="mobile-menu" class="md:hidden px-6 py-8" aria-hidden="true">
-            <div class="space-y-8">
-                <section>
-                    <p class="font-serif-en italic text-xl mb-4">Journal</p>
-                    <div class="grid gap-2">
-                        <p class="mobile-menu-kicker">Records</p>
-                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-notice">Notice</button>
-                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-introduce">Self Introduce</button>
-                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-anonymous">Anonymous Talk</button>
-                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-write">Write New Story</button>
-                        <p class="mobile-menu-kicker pt-4">Information</p>
-                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-sm-board">SM 정보</button>
-                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-sm-bar-list">SM Bar List</button>
-                    </div>
-                </section>
-                <section>
-                    <p class="font-serif-en italic text-xl mb-4">Community</p>
-                    <div class="grid gap-2">
-                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-people">Our Stories</button>
-                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-membership-archive">Membership Archive</button>
-                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-schedule">Monthly Schedule</button>
-                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-gallery">Activity Album</button>
-                    </div>
-                </section>
-                <section id="mobile-system-section" class="hidden">
-                    <p class="font-serif-en italic text-xl mb-4">System</p>
-                    <div class="grid gap-2">
-                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-system-members">회원 관리</button>
-                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-system-add">회원 추가</button>
-                    </div>
-                </section>
-                <section id="mobile-my-page-section" class="hidden">
-                    <p class="font-serif-en italic text-xl mb-4">Account</p>
-                    <div class="grid gap-2">
-                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-my-page">Profile</button>
-                        <button type="button" class="view-trigger text-left py-3 border-b border-[var(--border-light)]" data-target="view-my-timeline">My Timeline</button>
-                    </div>
-                </section>
-                <button type="button" id="mobile-login-btn" class="view-trigger w-full py-3 text-sm tracking-widest uppercase border border-[var(--text-dark)]" data-target="view-login">Login</button>
-            </div>
-        </div>
     </header>
 
-    <div id="menu-overlay" class="fixed left-0 right-0 top-20 bottom-0 bg-black/10 z-30 opacity-0 pointer-events-none transition-opacity duration-500"></div>
+    <div id="menu-overlay" class="fixed inset-0 bg-black/20 backdrop-blur-[3px] z-[80] opacity-0 pointer-events-none transition-opacity duration-500"></div>
+    <aside id="index-menu" class="fixed top-0 left-0 z-[90] h-screen w-[min(86vw,520px)] -translate-x-full bg-white border-r border-[var(--border-light)] px-8 sm:px-12 py-9 flex flex-col transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)]">
+        <div class="flex justify-between items-center border-b border-[var(--text-dark)] pb-8 mb-8">
+            <span class="font-serif-en text-xs tracking-[0.28em] uppercase opacity-55">Index</span>
+            <button type="button" id="index-menu-close" class="font-serif-en text-xs tracking-[0.28em] uppercase opacity-55 hover:opacity-100">[ Close - ]</button>
+        </div>
+        <nav class="index-menu-links flex flex-col">
+            <button type="button" class="view-trigger" data-target="view-notice"><span>Notice</span><em>01</em></button>
+            <button type="button" class="view-trigger" data-target="view-sm-board"><span>Archive</span><em>02</em></button>
+            <button type="button" class="view-trigger" data-target="view-people"><span>Members</span><em>03</em></button>
+            <button type="button" class="view-trigger" data-target="view-schedule"><span>Schedule</span><em>04</em></button>
+            <button type="button" class="view-trigger" data-target="view-gallery"><span>Gallery</span><em>05</em></button>
+            <button type="button" class="view-trigger hidden" data-target="view-system-members" id="system-nav-link"><span>System</span><em>06</em></button>
+            <button type="button" class="view-trigger hidden" data-target="view-my-page" id="my-page-nav-link"><span>My Page</span><em>07</em></button>
+        </nav>
+        <button type="button" id="mobile-login-btn" class="view-trigger mt-auto border border-[var(--text-dark)] py-4 font-serif-en text-xs tracking-[0.25em] uppercase" data-target="view-login">Login</button>
+    </aside>
 
     <div class="h-32"></div>
 
-    <main class="flex-grow w-full max-w-7xl mx-auto px-6 py-4 relative z-10">
+    <main class="flex-grow w-full max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-14 py-4 relative z-10">
 
         <section id="view-login" class="w-full view-hidden fade-in py-20 flex justify-center items-center">
             <div class="w-full max-w-md bg-white/40 backdrop-blur-md p-10 rounded-lg shadow-sm border border-[var(--border-light)]">
@@ -830,40 +860,44 @@
         </section>
 
         <section id="view-read" class="w-full fade-in">
-            <div class="mb-10 md:mb-16 border-y border-[var(--border-light)] py-8 sm:py-12 md:py-16">
-                <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)] gap-7 lg:gap-16 lg:items-end">
+            <div class="gallery-home">
+                <div class="gallery-home-detail">
                     <div>
-                        <div class="flex items-center gap-3 sm:gap-4">
-                            <span class="w-6 sm:w-9 h-px bg-[var(--accent-red)]" aria-hidden="true"></span>
-                            <span class="text-[0.6rem] sm:text-[0.65rem] tracking-[0.16em] sm:tracking-[0.32em] uppercase opacity-50 font-serif-en break-keep">Private Community Archive</span>
-                        </div>
-                        <h1 class="mt-5 sm:mt-6 text-[2.45rem] sm:text-6xl md:text-7xl font-serif-ko font-light leading-[1.2] tracking-[-0.02em] sm:tracking-[-0.04em] break-keep">
-                            기록이 모여,<br><span class="text-[var(--accent-red)]">우리</span>가 되는 시간
-                        </h1>
-                    </div>
-
-                    <div class="lg:border-l lg:border-[var(--border-light)] lg:pl-10">
-                        <p class="text-[0.95rem] sm:text-base leading-[1.85] opacity-65 font-serif-ko break-words sm:break-keep">
-                            서로의 다름을 존중하며 함께 머무는 사람들의 이야기와 순간을 차곡차곡 기록합니다.
+                        <span class="gallery-home-kicker">Exhibition / 01</span>
+                        <p class="gallery-home-copy font-serif-ko">
+                            기록이 모여 우리가 되는 시간.<br>
+                            서로의 다름을 존중하며<br>
+                            함께 머무는 사람들의 이야기를 기록합니다.
                         </p>
-                        <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
-                            <button type="button" class="view-trigger group text-xs tracking-widest uppercase flex items-center gap-2 hover:text-[var(--accent-red)] transition-colors" data-target="view-notice">
-                                <span>필독 공지</span><i class="ph ph-arrow-up-right group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"></i>
-                            </button>
-                            <button type="button" class="view-trigger group text-xs tracking-widest uppercase flex items-center gap-2 hover:text-[var(--accent-red)] transition-colors" data-target="view-schedule">
-                                <span>일정 보기</span><i class="ph ph-arrow-right group-hover:translate-x-1 transition-transform"></i>
-                            </button>
-                        </div>
+                    </div>
+                    <div>
+                        <span class="gallery-home-kicker">Key Notes</span>
+                        <p class="gallery-home-copy">
+                            Privacy<br>
+                            Community<br>
+                            Archive
+                        </p>
+                    </div>
+                </div>
+
+                <div class="gallery-home-art">
+                    <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop" alt="Abstract archive artwork" class="gallery-home-image">
+                    <h1 class="gallery-home-title">Private <i>Archive</i></h1>
+                </div>
+
+                <div class="gallery-home-action">
+                    <div class="gallery-home-date">VOL 42. JUL 21. 2026</div>
+                    <div class="flex flex-col items-start sm:items-end gap-3">
+                        <button type="button" class="gallery-home-button view-trigger" data-target="view-notice">
+                            <span>Notice</span><i class="ph ph-arrow-up-right"></i>
+                        </button>
+                        <button type="button" class="gallery-home-button view-trigger" data-target="view-gallery">
+                            <span>Enter Gallery</span><i class="ph ph-arrow-right"></i>
+                        </button>
                     </div>
                 </div>
             </div>
-
-            <div id="latest-dashboard">
-                <div class="flex flex-col items-center justify-center py-20 opacity-50">
-                    <div class="w-8 h-8 border-2 border-t-[var(--accent-red)] border-gray-400 rounded-full animate-spin mb-4"></div>
-                    <p class="text-sm tracking-widest uppercase">Loading updates...</p>
-                </div>
-            </div>
+            <div id="latest-dashboard" class="hidden"></div>
         </section>
 
         <section id="view-anonymous" class="w-full max-w-[960px] mx-auto view-hidden fade-in bg-white/75 sm:border-x border-[var(--border-light)] sm:shadow-[0_0_40px_rgba(42,40,37,0.03)]">
@@ -1431,7 +1465,7 @@
 
     </main>
 
-    <footer class="w-full border-t border-[var(--border-light)] mt-20 py-10 text-center text-xs tracking-widest uppercase opacity-50 relative z-10">
+    <footer class="hidden">
         <p>&copy; 2026 :our story. All rights reserved.</p>
     </footer>
 
@@ -1570,19 +1604,12 @@
 
         const header = document.getElementById('main-header');
         const scrollProgressBar = document.getElementById('scroll-progress-bar');
-        const navLinks = document.querySelectorAll('.nav-link[data-menu]');
-        const desktopNavItems = document.querySelectorAll('nav .nav-link');
-        const megaMenu = document.getElementById('mega-menu');
         const menuOverlay = document.getElementById('menu-overlay');
-        const menuImage = document.getElementById('menu-image');
-        const submenuContents = document.querySelectorAll('.submenu-content');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-        const mobileMenuIcon = document.getElementById('mobile-menu-icon');
+        const indexMenu = document.getElementById('index-menu');
+        const indexMenuOpen = document.getElementById('index-menu-open');
+        const indexMenuClose = document.getElementById('index-menu-close');
         const systemNavLink = document.getElementById('system-nav-link');
         const myPageNavLink = document.getElementById('my-page-nav-link');
-        const mobileSystemSection = document.getElementById('mobile-system-section');
-        const mobileMyPageSection = document.getElementById('mobile-my-page-section');
         const loginNavBtn = document.getElementById('login-nav-btn');
         const mobileLoginBtn = document.getElementById('mobile-login-btn');
         const headerLogoutBtn = document.getElementById('header-logout-btn');
@@ -1597,7 +1624,6 @@
         const pendingAuthViewKey = 'ourstory:pending-auth-view';
 
         let isMenuOpen = false;
-        let isMobileMenuOpen = false;
         let siteUser = null;
         let csrfToken = null;
         let passwordReminderShownFor = null;
@@ -1605,10 +1631,8 @@
         let isRestoringHistory = false;
 
         const dateOptions = { year: 'numeric', month: 'short', day: '2-digit' };
-        document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', dateOptions).toUpperCase();
-
         function updateHeaderBg() {
-            if (window.scrollY > 10 || isMenuOpen || isMobileMenuOpen) {
+            if (window.scrollY > 10 || isMenuOpen) {
                 header.classList.add('shadow-sm');
             } else {
                 header.classList.remove('shadow-sm');
@@ -1632,84 +1656,26 @@
         window.addEventListener('resize', updateScrollProgress);
         updateScrollState();
 
+        function openMenu() {
+            indexMenu.classList.add('open');
+            menuOverlay.classList.remove('pointer-events-none');
+            menuOverlay.classList.add('opacity-100');
+            document.body.style.overflow = 'hidden';
+            isMenuOpen = true;
+            updateHeaderBg();
+        }
+
         function closeMenu() {
-            megaMenu.classList.remove('open');
+            indexMenu.classList.remove('open');
             menuOverlay.classList.remove('opacity-100');
             menuOverlay.classList.add('pointer-events-none');
+            document.body.style.overflow = '';
             isMenuOpen = false;
             updateHeaderBg();
         }
 
-        function closeMobileMenu() {
-            mobileMenu.classList.remove('open');
-            mobileMenu.setAttribute('aria-hidden', 'true');
-            mobileMenuToggle.setAttribute('aria-expanded', 'false');
-            mobileMenuToggle.setAttribute('aria-label', '메뉴 열기');
-            mobileMenuIcon.classList.remove('ph-x');
-            mobileMenuIcon.classList.add('ph-list');
-            menuOverlay.classList.remove('opacity-100');
-            menuOverlay.classList.add('pointer-events-none');
-            isMobileMenuOpen = false;
-            updateHeaderBg();
-        }
-
-        mobileMenuToggle.addEventListener('click', () => {
-            if (isMobileMenuOpen) {
-                closeMobileMenu();
-                return;
-            }
-
-            closeMenu();
-            mobileMenu.classList.add('open');
-            mobileMenu.setAttribute('aria-hidden', 'false');
-            mobileMenuToggle.setAttribute('aria-expanded', 'true');
-            mobileMenuToggle.setAttribute('aria-label', '메뉴 닫기');
-            mobileMenuIcon.classList.remove('ph-list');
-            mobileMenuIcon.classList.add('ph-x');
-            menuOverlay.classList.remove('pointer-events-none');
-            menuOverlay.classList.add('opacity-100');
-            isMobileMenuOpen = true;
-            updateHeaderBg();
-        });
-
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.stopPropagation();
-
-                const menuName = link.getAttribute('data-menu');
-                const wasActive = link.classList.contains('active');
-
-                if (wasActive && isMenuOpen) {
-                    closeMenu();
-                    return;
-                }
-
-                desktopNavItems.forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
-
-                submenuContents.forEach(content => content.classList.add('hidden'));
-                const activeSubmenu = document.getElementById(`submenu-${menuName}`);
-                if (activeSubmenu) activeSubmenu.classList.remove('hidden');
-
-                if (menuName === 'journal') {
-                    menuImage.src = 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&q=80&w=800';
-                } else if (menuName === 'members') {
-                    menuImage.src = 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&q=80&w=800';
-                } else if (menuName === 'schedule') {
-                    menuImage.src = 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&q=80&w=800';
-                } else if (menuName === 'system') {
-                    menuImage.src = 'https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&q=80&w=800';
-                } else if (menuName === 'mypage') {
-                    menuImage.src = 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=800';
-                }
-
-                megaMenu.classList.add('open');
-                menuOverlay.classList.remove('pointer-events-none');
-                menuOverlay.classList.add('opacity-100');
-                isMenuOpen = true;
-                updateHeaderBg();
-            });
-        });
+        indexMenuOpen?.addEventListener('click', openMenu);
+        indexMenuClose?.addEventListener('click', closeMenu);
 
         function rememberView(targetId) {
             if (!targetId || targetId === 'view-login') return;
@@ -1800,7 +1766,6 @@
             const shouldPushHistory = options.history !== false && !isRestoringHistory;
 
             if (isMenuOpen) closeMenu();
-            if (isMobileMenuOpen) closeMobileMenu();
 
             showView(resolvedTargetId, options);
             loadViewData(resolvedTargetId);
@@ -1838,11 +1803,6 @@
             trigger.addEventListener('click', async () => {
                 const targetId = trigger.getAttribute('data-target');
 
-                if (trigger.id === 'my-page-nav-link') {
-                    desktopNavItems.forEach(item => item.classList.remove('active'));
-                    trigger.classList.add('active');
-                }
-
                 if (targetId && targetId !== currentViewId && !trigger.classList.contains('hidden')) {
                     await runPageTransition();
                 }
@@ -1852,11 +1812,10 @@
 
         menuOverlay.addEventListener('click', () => {
             if (isMenuOpen) closeMenu();
-            if (isMobileMenuOpen) closeMobileMenu();
         });
 
         window.addEventListener('resize', () => {
-            if (window.innerWidth >= 768 && isMobileMenuOpen) closeMobileMenu();
+            updateScrollProgress();
         });
 
         function showToast(message, isSuccess = true) {
@@ -1889,8 +1848,6 @@
 
             systemNavLink.classList.toggle('hidden', !isManager);
             myPageNavLink.classList.toggle('hidden', !user);
-            mobileSystemSection.classList.toggle('hidden', !isManager);
-            mobileMyPageSection.classList.toggle('hidden', !user);
             headerLogoutBtn.classList.toggle('hidden', !user);
             document.getElementById('sm-write-btn').classList.toggle('hidden', !user);
             document.getElementById('sm-bar-add-btn').classList.toggle('hidden', !user);
@@ -2021,7 +1978,6 @@
                     localStorage.removeItem(pendingAuthViewKey);
                     localStorage.removeItem(lastViewKey);
                     closeMenu();
-                    if (isMobileMenuOpen) closeMobileMenu();
                     showToast('로그아웃되었습니다.', true);
                     navigateToView('view-read');
                 }
