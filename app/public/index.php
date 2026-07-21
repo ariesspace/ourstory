@@ -144,6 +144,12 @@
             overflow-wrap: anywhere;
         }
 
+        .my-page-shell {
+            width: 100vw;
+            margin-left: calc(50% - 50vw);
+            margin-right: calc(50% - 50vw);
+        }
+
 
         input:focus, textarea:focus { outline: none; }
 
@@ -518,8 +524,8 @@
             </div>
         </section>
 
-        <section id="view-my-page" class="w-screen max-w-none relative left-1/2 -translate-x-1/2 view-hidden fade-in border-t border-[var(--border-light)]">
-            <div class="grid grid-cols-1 lg:grid-cols-[340px_minmax(0,1fr)] min-h-[calc(100vh-8rem)]">
+        <section id="view-my-page" class="my-page-shell max-w-none view-hidden fade-in border-t border-[var(--border-light)] overflow-hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-[320px_minmax(0,1fr)] min-h-[calc(100vh-8rem)]">
                 <aside class="hidden lg:block border-r border-[var(--border-light)] bg-[var(--bg-cream)]/55 px-12 py-16">
                     <nav class="space-y-0 text-sm tracking-[0.08em]">
                         <button type="button" class="w-full flex items-center justify-between border-b border-[var(--border-light)] py-5 text-left font-semibold">
@@ -541,14 +547,14 @@
                     </nav>
                 </aside>
 
-                <div class="px-6 sm:px-10 lg:px-20 py-10 lg:py-16">
+                <div class="min-w-0 px-6 sm:px-10 lg:px-16 xl:px-20 py-10 lg:py-16">
                     <div class="border-b border-[var(--border-light)] pb-7 mb-10 flex flex-wrap items-baseline gap-4">
-                        <h1 class="font-serif-en text-4xl sm:text-5xl md:text-7xl tracking-tight uppercase">Account Info</h1>
+                        <h1 class="min-w-0 font-serif-en text-4xl sm:text-5xl md:text-6xl xl:text-7xl tracking-tight uppercase leading-none break-words">Account Info</h1>
                         <span class="text-[10px] tracking-[0.25em] font-semibold uppercase opacity-45">[ Profile ]</span>
                     </div>
                     <p id="my-page-status" class="py-14 text-center text-sm opacity-50">프로필을 불러오는 중입니다.</p>
-                    <form id="my-page-form" class="hidden grid grid-cols-1 xl:grid-cols-[400px_minmax(0,1fr)] gap-10 xl:gap-14">
-                        <div>
+                    <form id="my-page-form" class="hidden grid grid-cols-1 xl:grid-cols-[360px_minmax(0,1fr)] gap-10 xl:gap-14">
+                        <div class="min-w-0">
                             <div class="w-full aspect-[4/5] bg-white/35 border border-[var(--border-light)] p-8 flex flex-col items-center justify-center relative shadow-sm">
                                 <div class="absolute top-5 left-5 w-5 h-px bg-black/20"></div>
                                 <div class="absolute top-5 left-5 w-px h-5 bg-black/20"></div>
@@ -574,7 +580,7 @@
                             </div>
                         </div>
 
-                        <div class="flex flex-col justify-start">
+                        <div class="min-w-0 flex flex-col justify-start">
                             <div class="mb-8 flex items-center gap-4 border-b border-[var(--border-light)] pb-7">
                                 <span class="bg-[var(--accent-red)] text-white text-[10px] font-bold tracking-[0.2em] uppercase px-3 py-1.5 shadow-sm" id="my-access-badge">Member</span>
                                 <h2 class="font-serif-en text-2xl tracking-tight">Access Level</h2>
@@ -590,33 +596,33 @@
 
                     <div class="flex flex-col sm:flex-row sm:items-center py-5 border-b border-[var(--border-light)]">
                         <label for="my-role" class="w-full sm:w-32 text-[10px] font-semibold opacity-50 tracking-widest uppercase mb-2 sm:mb-0">Role</label>
-                        <input type="text" id="my-role" class="flex-grow bg-transparent py-2 text-[15px] opacity-60" readonly>
+                        <input type="text" id="my-role" class="min-w-0 flex-grow bg-transparent py-2 text-[15px] opacity-60" readonly>
                     </div>
 
                     <div class="flex flex-col sm:flex-row sm:items-center py-5 border-b border-[var(--border-light)]">
                         <label for="my-display-name" class="w-full sm:w-32 text-[10px] font-semibold opacity-50 tracking-widest uppercase mb-2 sm:mb-0">Nickname</label>
-                        <input type="text" id="my-display-name" maxlength="60" class="flex-grow bg-transparent border-b border-transparent focus:border-[var(--accent-red)] py-2 text-[15px]" required>
+                        <input type="text" id="my-display-name" maxlength="60" class="min-w-0 flex-grow bg-transparent border-b border-transparent focus:border-[var(--accent-red)] py-2 text-[15px]" required>
                     </div>
 
                     <div class="flex flex-col sm:flex-row py-5 border-b border-[var(--border-light)] gap-5 sm:gap-0">
-                        <div class="w-full sm:w-1/2 flex flex-col sm:flex-row sm:items-center">
+                        <div class="min-w-0 w-full sm:w-1/2 flex flex-col sm:flex-row sm:items-center">
                             <label for="my-birth-year" class="w-full sm:w-32 text-[10px] font-semibold opacity-50 tracking-widest uppercase mb-2 sm:mb-0">Birth Year</label>
-                            <input type="number" id="my-birth-year" min="1900" max="2100" class="flex-grow sm:mr-8 bg-transparent border-b border-transparent focus:border-[var(--accent-red)] py-2 text-[15px]" placeholder="예: 1995">
+                            <input type="number" id="my-birth-year" min="1900" max="2100" class="min-w-0 flex-grow sm:mr-8 bg-transparent border-b border-transparent focus:border-[var(--accent-red)] py-2 text-[15px]" placeholder="예: 1995">
                         </div>
-                        <div class="w-full sm:w-1/2 flex flex-col sm:flex-row sm:items-center">
+                        <div class="min-w-0 w-full sm:w-1/2 flex flex-col sm:flex-row sm:items-center">
                             <label for="my-region" class="w-full sm:w-20 text-[10px] font-semibold opacity-50 tracking-widest uppercase mb-2 sm:mb-0">Region</label>
-                            <input type="text" id="my-region" maxlength="80" class="flex-grow bg-transparent border-b border-transparent focus:border-[var(--accent-red)] py-2 text-[15px]" placeholder="예: 서울">
+                            <input type="text" id="my-region" maxlength="80" class="min-w-0 flex-grow bg-transparent border-b border-transparent focus:border-[var(--accent-red)] py-2 text-[15px]" placeholder="예: 서울">
                         </div>
                     </div>
 
                     <div class="flex flex-col sm:flex-row sm:items-center py-5 border-b border-[var(--border-light)]">
                         <label for="my-personality" class="w-full sm:w-32 text-[10px] font-semibold opacity-50 tracking-widest uppercase mb-2 sm:mb-0">Personal Pref.</label>
-                        <input type="text" id="my-personality" maxlength="120" class="flex-grow bg-transparent border-b border-transparent focus:border-[var(--accent-red)] py-2 text-[15px]" placeholder="선택 입력">
+                        <input type="text" id="my-personality" maxlength="120" class="min-w-0 flex-grow bg-transparent border-b border-transparent focus:border-[var(--accent-red)] py-2 text-[15px]" placeholder="선택 입력">
                     </div>
 
                     <div class="flex flex-col sm:flex-row sm:items-center py-5 border-b border-[var(--border-light)]">
                         <label for="my-relationship-style" class="w-full sm:w-32 text-[10px] font-semibold opacity-50 tracking-widest uppercase mb-2 sm:mb-0">Dating Pref.</label>
-                        <input type="text" id="my-relationship-style" maxlength="120" class="flex-grow bg-transparent border-b border-transparent focus:border-[var(--accent-red)] py-2 text-[15px]" placeholder="선택 입력">
+                        <input type="text" id="my-relationship-style" maxlength="120" class="min-w-0 flex-grow bg-transparent border-b border-transparent focus:border-[var(--accent-red)] py-2 text-[15px]" placeholder="선택 입력">
                     </div>
 
                     <div class="pt-7">
