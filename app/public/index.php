@@ -523,7 +523,6 @@
                         <input type="text" id="my-relationship-style" maxlength="120" class="w-full bg-transparent border-b border-[var(--border-light)] py-3">
                     </div>
                 </div>
-                <input type="hidden" id="my-bio">
                 <div class="border-t border-[var(--border-light)] pt-6">
                     <button type="button" id="my-password-toggle" class="border border-[var(--text-dark)] px-5 py-3 text-sm font-medium hover:border-[var(--accent-red)] hover:text-[var(--accent-red)] transition-colors" aria-expanded="false" aria-controls="my-password-section">비밀번호 변경</button>
                     <div id="my-password-section" class="hidden mt-6 grid grid-cols-1 sm:grid-cols-2 gap-7 bg-white/25 border border-[var(--border-light)] p-5 sm:p-6">
@@ -3268,7 +3267,6 @@
             document.getElementById('my-region').value = profile.region || '';
             document.getElementById('my-personality').value = profile.personality || '';
             document.getElementById('my-relationship-style').value = profile.relationshipStyle || '';
-            document.getElementById('my-bio').value = profile.bio || '';
             document.getElementById('my-password').value = '';
             document.getElementById('my-password-confirm').value = '';
             myAvatarFallback.textContent = profileInitial(profile);
@@ -3630,7 +3628,6 @@
                         region: document.getElementById('my-region').value.trim(),
                         personality: document.getElementById('my-personality').value.trim(),
                         relationshipStyle: document.getElementById('my-relationship-style').value.trim(),
-                        bio: document.getElementById('my-bio').value.trim(),
                         password
                     })
                 });

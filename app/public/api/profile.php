@@ -74,7 +74,6 @@ $birthYear = $birthYearValue === '' ? null : (int) $birthYearValue;
 $region = trim((string) ($body['region'] ?? ''));
 $personality = trim((string) ($body['personality'] ?? ''));
 $relationshipStyle = trim((string) ($body['relationshipStyle'] ?? ''));
-$bio = trim((string) ($body['bio'] ?? ''));
 $password = (string) ($body['password'] ?? '');
 
 if (!preg_match('/^[A-Za-z0-9._-]{3,32}$/', $username)) {
@@ -90,7 +89,6 @@ foreach ([
     '지역' => [$region, 80],
     '개인 성향' => [$personality, 120],
     '연애 성향' => [$relationshipStyle, 120],
-    '자기소개' => [$bio, 1000],
 ] as $label => [$value, $limit]) {
     if (mb_strlen($value) > $limit) {
         profile_json(['error' => "{$label}은(는) {$limit}자 이내로 입력해주세요."], 422);
@@ -107,7 +105,6 @@ $sql = 'UPDATE users SET
             region = :region,
             personality = :personality,
             relationship_style = :relationship_style,
-            bio = :bio,
             updated_at = CURRENT_TIMESTAMP';
 $params = [
     ':username' => $username,
@@ -116,7 +113,6 @@ $params = [
     ':region' => $region,
     ':personality' => $personality,
     ':relationship_style' => $relationshipStyle,
-    ':bio' => $bio,
     ':id' => $user['id'],
 ];
 if ($password !== '') {
