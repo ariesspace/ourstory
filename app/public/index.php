@@ -757,7 +757,7 @@
         </section>
 
         <section id="view-anonymous" class="w-full max-w-4xl mx-auto view-hidden fade-in py-4 md:py-10">
-            <div class="border-b border-[var(--text-dark)] pb-8 mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5">
+            <div class="border-b border-[var(--border-light)] pb-8 mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5">
                 <div>
                     <div class="flex items-center gap-3 text-[var(--accent-red)]">
                         <i class="ph ph-chat-circle-dots text-xl"></i>
@@ -771,7 +771,7 @@
                 </button>
             </div>
 
-            <form id="anonymous-form" class="border border-[var(--border-light)] bg-white/30 p-4 sm:p-6 mb-8">
+            <form id="anonymous-form" class="border border-[var(--border-light)] bg-white/35 p-4 sm:p-6 mb-8 shadow-sm">
                 <label for="anonymous-input" class="sr-only">익명 글 작성</label>
                 <textarea id="anonymous-input" maxlength="500" rows="3" class="w-full bg-transparent resize-none text-sm sm:text-base leading-relaxed font-serif-ko" placeholder="이름 없이 편하게 남겨보세요." required></textarea>
                 <div class="mt-4 pt-4 border-t border-[var(--border-light)] flex items-center justify-between gap-4">
@@ -787,7 +787,7 @@
             </form>
 
             <p id="anonymous-status" class="py-14 text-center text-sm opacity-45">익명 대화를 불러오는 중입니다.</p>
-            <div id="anonymous-list" class="min-h-[12rem] max-h-[60vh] overflow-y-auto pr-1 flex flex-col gap-5" aria-live="polite"></div>
+            <div id="anonymous-list" class="min-h-[12rem] max-h-[60vh] overflow-y-auto overflow-x-hidden px-1 sm:px-3 flex flex-col gap-5" aria-live="polite"></div>
             <p class="mt-10 pt-5 border-t border-[var(--border-light)] text-xs leading-relaxed opacity-40 font-serif-ko">화면에는 작성자가 표시되지 않습니다. 안전한 운영과 본인 글 관리를 위해 계정 연결 정보는 서버에만 보관됩니다.</p>
         </section>
 
@@ -2099,11 +2099,11 @@
                 return;
             }
 
-            items.forEach(item => {
+            items.slice().reverse().forEach(item => {
                 const row = document.createElement('article');
                 row.className = `flex ${item.isOwn ? 'justify-end' : 'justify-start'}`;
                 const wrap = document.createElement('div');
-                wrap.className = 'w-[88%] sm:w-[72%]';
+                wrap.className = 'max-w-[86%] sm:max-w-[68%]';
                 const meta = document.createElement('div');
                 meta.className = `mb-2 flex items-center gap-3 text-[0.65rem] opacity-40 ${item.isOwn ? 'justify-end' : ''}`;
                 const name = document.createElement('span');
@@ -2136,7 +2136,7 @@
                 row.appendChild(wrap);
                 anonymousList.appendChild(row);
             });
-            requestAnimationFrame(() => { anonymousList.scrollTop = anonymousList.scrollHeight; });
+            requestAnimationFrame(() => { anonymousList.scrollTop = 0; });
         }
 
         async function loadAnonymousTalk() {
