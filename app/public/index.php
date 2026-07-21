@@ -755,40 +755,42 @@
             </div>
         </section>
 
-        <section id="view-anonymous" class="w-full max-w-4xl mx-auto view-hidden fade-in py-4 md:py-10">
-            <div class="border-b border-[var(--border-light)] pb-8 mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5">
+        <section id="view-anonymous" class="w-full max-w-[960px] mx-auto view-hidden fade-in bg-white/70 border-x border-[var(--border-light)] shadow-[0_0_40px_rgba(42,40,37,0.03)]">
+            <div class="px-5 sm:px-8 md:px-10 py-8 border-b border-[var(--border-light)] bg-white/75 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5">
                 <div>
                     <div class="flex items-center gap-3 text-[var(--accent-red)]">
                         <i class="ph ph-chat-circle-dots text-xl"></i>
                         <span class="text-[0.65rem] tracking-[0.3em] uppercase font-bold">Journal · Records</span>
                     </div>
-                    <h1 class="mt-4 text-4xl sm:text-6xl font-serif-en italic tracking-tight">Anonymous Talk</h1>
-                    <p class="mt-4 text-sm opacity-55 font-serif-ko leading-relaxed">이름 없이 가볍게 이야기하는 회원 전용 공간입니다.</p>
+                    <h1 class="mt-4 text-3xl sm:text-4xl font-serif-en tracking-tight">Anonymous Talk</h1>
+                    <p class="mt-3 text-sm opacity-55 font-serif-ko leading-relaxed">이름 없이 가볍게 이야기하는 회원 전용 공간입니다.</p>
                 </div>
-                <button type="button" id="anonymous-refresh" class="w-11 h-11 shrink-0 rounded-full border border-[var(--border-light)] flex items-center justify-center hover:border-[var(--accent-red)] hover:text-[var(--accent-red)] transition-colors" aria-label="익명 게시판 새로고침">
+                <button type="button" id="anonymous-refresh" class="w-10 h-10 shrink-0 rounded-full flex items-center justify-center text-black/45 hover:text-[var(--accent-red)] hover:bg-black/[0.03] transition-colors" aria-label="익명 게시판 새로고침">
                     <i class="ph ph-arrow-clockwise"></i>
                 </button>
             </div>
 
             <p id="anonymous-status" class="py-14 text-center text-sm opacity-45">익명 대화를 불러오는 중입니다.</p>
-            <div id="anonymous-list" class="min-h-[14rem] max-h-[48vh] overflow-y-auto overflow-x-hidden px-1 sm:px-3 flex flex-col gap-5" aria-live="polite"></div>
+            <div id="anonymous-list" class="min-h-[52vh] max-h-[62vh] overflow-y-auto overflow-x-hidden px-5 sm:px-8 py-8 flex flex-col gap-6 bg-white/35" aria-live="polite"></div>
 
-            <form id="anonymous-form" class="mt-8 border border-[var(--border-light)] bg-white/35 p-4 sm:p-6 shadow-sm">
+            <form id="anonymous-form" class="p-5 sm:p-7 border-t border-[var(--border-light)] bg-white">
                 <label for="anonymous-input" class="sr-only">익명 글 작성</label>
-                <textarea id="anonymous-input" maxlength="500" rows="3" class="w-full bg-transparent resize-none text-sm sm:text-base leading-relaxed font-serif-ko" placeholder="이름 없이 편하게 남겨보세요." required></textarea>
-                <div class="mt-4 pt-4 border-t border-[var(--border-light)] flex items-center justify-between gap-4">
-                    <div>
-                        <span id="anonymous-length" class="text-xs opacity-40">0 / 500</span>
-                        <span class="hidden sm:inline ml-3 text-[0.65rem] opacity-35">Ctrl + Enter로 전송</span>
+                <div class="relative rounded-2xl border border-[var(--border-light)] bg-[var(--bg-cream)]/70 focus-within:border-[var(--text-dark)] focus-within:ring-1 focus-within:ring-[var(--text-dark)] transition-all overflow-hidden">
+                    <textarea id="anonymous-input" maxlength="500" rows="3" class="w-full bg-transparent resize-none px-5 py-4 pb-14 text-sm sm:text-base leading-relaxed font-serif-ko focus:outline-none" placeholder="이름 없이 편하게 남겨보세요..." required></textarea>
+                    <div class="absolute bottom-0 left-0 w-full px-5 py-3 flex items-center justify-between bg-gradient-to-t from-[var(--bg-cream)] via-[var(--bg-cream)]/95 to-transparent">
+                        <div>
+                            <span id="anonymous-length" class="text-xs opacity-45">0 / 500</span>
+                            <span class="hidden sm:inline ml-3 text-[0.65rem] opacity-35">Ctrl + Enter로 전송</span>
+                        </div>
+                        <button type="submit" id="anonymous-submit" class="w-10 h-10 rounded-full bg-[var(--text-dark)] text-white flex items-center justify-center hover:bg-[var(--accent-red)] hover:scale-105 transition-all shadow-md" aria-label="익명 글 등록">
+                            <i class="ph ph-paper-plane-tilt text-base"></i>
+                        </button>
                     </div>
-                    <button type="submit" id="anonymous-submit" class="w-11 h-11 rounded-full bg-[var(--accent-red)] text-white flex items-center justify-center hover:scale-105 transition-transform" aria-label="익명 글 등록">
-                        <i class="ph ph-paper-plane-tilt text-lg"></i>
-                    </button>
                 </div>
                 <p id="anonymous-error" class="hidden mt-4 text-sm text-[var(--accent-red)]"></p>
             </form>
 
-            <p class="mt-10 pt-5 border-t border-[var(--border-light)] text-xs leading-relaxed opacity-40 font-serif-ko">화면에는 작성자가 표시되지 않습니다. 안전한 운영과 본인 글 관리를 위해 계정 연결 정보는 서버에만 보관됩니다.</p>
+            <p class="px-5 sm:px-8 pb-6 text-xs leading-relaxed opacity-35 font-serif-ko bg-white">화면에는 작성자가 표시되지 않습니다. 안전한 운영과 본인 글 관리를 위해 계정 연결 정보는 서버에만 보관됩니다.</p>
         </section>
 
         <section id="view-notice" class="w-full max-w-4xl mx-auto view-hidden fade-in py-8 md:py-12">
@@ -2146,52 +2148,79 @@
             });
         }
 
+        function anonymousDay(value) {
+            if (!value) return '';
+            const date = new Date(value.includes('T') ? value : `${value.replace(' ', 'T')}Z`);
+            if (Number.isNaN(date.getTime())) return '';
+            return `${date.getFullYear()}. ${String(date.getMonth() + 1).padStart(2, '0')}. ${String(date.getDate()).padStart(2, '0')}`;
+        }
+
+        function anonymousTime(value) {
+            if (!value) return '';
+            const date = new Date(value.includes('T') ? value : `${value.replace(' ', 'T')}Z`);
+            if (Number.isNaN(date.getTime())) return anonymousDate(value);
+            return date.toLocaleTimeString('ko-KR', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
         function renderAnonymousTalk(items) {
             anonymousList.replaceChildren();
             anonymousStatus.classList.add('hidden');
             if (!items.length) {
                 const empty = document.createElement('div');
-                empty.className = 'py-20 text-center';
+                empty.className = 'py-24 text-center';
                 empty.innerHTML = '<i class="ph ph-chat-circle-dots text-4xl opacity-20"></i><p class="mt-4 text-sm opacity-45 font-serif-ko">아직 남겨진 이야기가 없습니다.</p>';
                 anonymousList.appendChild(empty);
                 return;
             }
 
-            items.slice().reverse().forEach(item => {
+            let currentDay = '';
+            items.forEach(item => {
+                const day = anonymousDay(item.createdAt);
+                if (day && day !== currentDay) {
+                    currentDay = day;
+                    const separator = document.createElement('div');
+                    separator.className = 'flex items-center justify-center gap-5 py-3 text-[0.7rem] tracking-[0.18em] text-black/30';
+                    separator.innerHTML = `<span class="h-px w-14 bg-[var(--border-light)]"></span><time>${day}</time><span class="h-px w-14 bg-[var(--border-light)]"></span>`;
+                    anonymousList.appendChild(separator);
+                }
+
                 const row = document.createElement('article');
-                row.className = `flex ${item.isOwn ? 'justify-end' : 'justify-start'}`;
+                row.className = `group flex ${item.isOwn ? 'justify-end' : 'justify-start'}`;
                 const wrap = document.createElement('div');
-                wrap.className = 'max-w-[86%] sm:max-w-[68%]';
-                const meta = document.createElement('div');
-                meta.className = `mb-2 flex items-center text-[0.65rem] opacity-35 ${item.isOwn ? 'justify-end' : ''}`;
-                const date = document.createElement('time');
-                date.dateTime = item.createdAt;
-                date.textContent = anonymousDate(item.createdAt);
-                meta.appendChild(date);
+                wrap.className = `flex items-end max-w-[88%] sm:max-w-[76%] ${item.isOwn ? 'flex-row-reverse' : ''}`;
 
                 const bubble = document.createElement('div');
                 bubble.className = item.isOwn
-                    ? 'relative bg-[var(--accent-red)] text-white px-5 py-4 rounded-[1.25rem_0.25rem_1.25rem_1.25rem] shadow-sm'
-                    : 'relative bg-white/55 border border-[var(--border-light)] px-5 py-4 rounded-[0.25rem_1.25rem_1.25rem_1.25rem]';
+                    ? 'relative bg-[var(--text-dark)] text-white px-5 py-3.5 rounded-2xl rounded-tr-sm shadow-md'
+                    : 'relative bg-white border border-[var(--border-light)] text-[var(--text-dark)] px-5 py-3.5 rounded-2xl rounded-tl-sm shadow-sm';
                 const content = document.createElement('p');
-                content.className = 'text-sm sm:text-base leading-relaxed whitespace-pre-wrap break-words font-serif-ko';
+                content.className = 'text-sm sm:text-[0.95rem] leading-relaxed whitespace-pre-wrap break-words';
                 content.textContent = item.content;
                 bubble.appendChild(content);
 
                 if (item.canDelete) {
                     const remove = document.createElement('button');
                     remove.type = 'button';
-                    remove.className = `absolute -top-2 -right-2 w-7 h-7 rounded-full flex items-center justify-center shadow-sm transition-colors ${item.isOwn ? 'bg-[var(--text-dark)] text-white hover:bg-white hover:text-[var(--accent-red)]' : 'bg-white text-[var(--text-dark)] hover:bg-[var(--accent-red)] hover:text-white'}`;
+                    remove.className = 'absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white text-[var(--text-dark)] border border-[var(--border-light)] flex items-center justify-center shadow-sm opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity hover:text-[var(--accent-red)] hover:border-[var(--accent-red)]';
                     remove.setAttribute('aria-label', '익명 글 삭제');
                     remove.innerHTML = '<i class="ph ph-x text-xs"></i>';
                     remove.addEventListener('click', () => deleteAnonymousPost(item.id));
                     bubble.appendChild(remove);
                 }
-                wrap.append(meta, bubble);
+
+                const date = document.createElement('time');
+                date.className = `${item.isOwn ? 'mr-2' : 'ml-2'} mb-1 shrink-0 text-[0.68rem] text-black/35`;
+                date.dateTime = item.createdAt;
+                date.textContent = anonymousTime(item.createdAt);
+
+                wrap.append(bubble, date);
                 row.appendChild(wrap);
                 anonymousList.appendChild(row);
             });
-            requestAnimationFrame(() => { anonymousList.scrollTop = 0; });
+            requestAnimationFrame(() => { anonymousList.scrollTop = anonymousList.scrollHeight; });
         }
 
         async function loadAnonymousTalk() {
