@@ -5082,10 +5082,11 @@
 
             return new Promise(resolve => {
                 const startedAt = performance.now();
-                const duration = 1700;
+                const duration = 2600;
                 const tick = now => {
                     const ratio = Math.min((now - startedAt) / duration, 1);
-                    progress.textContent = String(Math.round(ratio * 100));
+                    const eased = 1 - Math.pow(1 - ratio, 2.4);
+                    progress.textContent = String(Math.min(100, Math.floor(eased * 100)));
                     if (ratio < 1) {
                         requestAnimationFrame(tick);
                         return;
