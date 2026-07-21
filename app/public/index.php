@@ -770,7 +770,10 @@
                 </button>
             </div>
 
-            <form id="anonymous-form" class="border border-[var(--border-light)] bg-white/35 p-4 sm:p-6 mb-8 shadow-sm">
+            <p id="anonymous-status" class="py-14 text-center text-sm opacity-45">익명 대화를 불러오는 중입니다.</p>
+            <div id="anonymous-list" class="min-h-[14rem] max-h-[48vh] overflow-y-auto overflow-x-hidden px-1 sm:px-3 flex flex-col gap-5" aria-live="polite"></div>
+
+            <form id="anonymous-form" class="mt-8 border border-[var(--border-light)] bg-white/35 p-4 sm:p-6 shadow-sm">
                 <label for="anonymous-input" class="sr-only">익명 글 작성</label>
                 <textarea id="anonymous-input" maxlength="500" rows="3" class="w-full bg-transparent resize-none text-sm sm:text-base leading-relaxed font-serif-ko" placeholder="이름 없이 편하게 남겨보세요." required></textarea>
                 <div class="mt-4 pt-4 border-t border-[var(--border-light)] flex items-center justify-between gap-4">
@@ -785,8 +788,6 @@
                 <p id="anonymous-error" class="hidden mt-4 text-sm text-[var(--accent-red)]"></p>
             </form>
 
-            <p id="anonymous-status" class="py-14 text-center text-sm opacity-45">익명 대화를 불러오는 중입니다.</p>
-            <div id="anonymous-list" class="min-h-[12rem] max-h-[60vh] overflow-y-auto overflow-x-hidden px-1 sm:px-3 flex flex-col gap-5" aria-live="polite"></div>
             <p class="mt-10 pt-5 border-t border-[var(--border-light)] text-xs leading-relaxed opacity-40 font-serif-ko">화면에는 작성자가 표시되지 않습니다. 안전한 운영과 본인 글 관리를 위해 계정 연결 정보는 서버에만 보관됩니다.</p>
         </section>
 
