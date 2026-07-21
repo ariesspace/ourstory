@@ -874,42 +874,79 @@
             </article>
         </section>
 
-        <section id="view-write" class="w-full max-w-4xl mx-auto view-hidden fade-in py-10">
-            <div class="text-center mb-16">
-                <span class="text-[var(--accent-red)] text-4xl font-serif-en italic">:w</span>
-                <h2 class="mt-4 text-sm tracking-widest uppercase opacity-60">Write Your Story</h2>
+        <section id="view-write" class="w-full view-hidden fade-in">
+            <div class="max-w-[1400px] mx-auto px-5 sm:px-8 lg:px-12 py-12 md:py-20">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+                    <aside class="lg:col-span-4 lg:sticky lg:top-28">
+                        <div class="flex items-center gap-5 mb-8">
+                            <span class="w-12 h-px bg-[var(--accent-red)]"></span>
+                            <span class="text-[0.68rem] font-bold text-black/45 tracking-[0.3em] uppercase">Private Community Archive</span>
+                        </div>
+                        <h1 class="font-serif-ko text-4xl sm:text-5xl lg:text-6xl leading-tight tracking-tight">
+                            우리들의<br>
+                            <span class="text-[var(--accent-red)]">새 기록</span>
+                        </h1>
+                        <p class="mt-8 font-serif-ko text-base sm:text-lg leading-loose text-black/55">
+                            서로의 마음과 하루를 천천히 남기는 공간입니다.<br>
+                            짧은 문장도, 긴 이야기들도 괜찮아요.
+                        </p>
+                        <div class="mt-12 grid grid-cols-2 gap-3 text-xs tracking-widest uppercase text-black/45">
+                            <div class="border border-[var(--border-light)] bg-white/45 p-4">
+                                <span class="block text-[var(--accent-red)] font-bold mb-2">01</span>
+                                Title
+                            </div>
+                            <div class="border border-[var(--border-light)] bg-white/45 p-4">
+                                <span class="block text-[var(--accent-red)] font-bold mb-2">02</span>
+                                Story
+                            </div>
+                        </div>
+                    </aside>
+
+                    <form id="story-form" class="lg:col-span-8 bg-white/70 border border-[var(--border-light)] shadow-[0_18px_60px_rgba(42,40,37,0.04)] p-5 sm:p-8 md:p-10 relative overflow-hidden">
+                        <div class="absolute -top-20 -right-20 w-64 h-64 bg-red-50/70 rounded-full blur-3xl pointer-events-none"></div>
+                        <div class="relative z-10 flex flex-col gap-10">
+                            <div class="flex items-center justify-between gap-4 border-b-2 border-[var(--text-dark)] pb-5">
+                                <div>
+                                    <span class="text-[0.68rem] tracking-[0.28em] uppercase text-[var(--accent-red)] font-bold">Journal · Create</span>
+                                    <h2 class="mt-3 font-serif-en text-3xl sm:text-4xl italic tracking-tight">Write New Story</h2>
+                                </div>
+                                <i class="ph ph-pencil-simple-line text-3xl text-black/25"></i>
+                            </div>
+
+                            <div>
+                                <label for="story-title-input" class="block text-[0.68rem] tracking-[0.28em] uppercase opacity-45 mb-4">Title</label>
+                                <input
+                                    type="text"
+                                    id="story-title-input"
+                                    placeholder="제목을 입력하세요."
+                                    class="w-full bg-transparent text-2xl sm:text-3xl md:text-4xl font-serif-ko text-[var(--text-dark)] placeholder:text-black/25 border-b border-[var(--border-light)] pb-5 transition-colors focus:border-[var(--accent-red)] outline-none"
+                                    required
+                                >
+                            </div>
+
+                            <div>
+                                <label for="story-content-input" class="block text-[0.68rem] tracking-[0.28em] uppercase opacity-45 mb-4">Story</label>
+                                <textarea
+                                    id="story-content-input"
+                                    placeholder="이곳에 당신의 이야기를 털어놓으세요..."
+                                    class="w-full min-h-[420px] bg-white/45 border border-[var(--border-light)] resize-none px-5 py-5 text-base sm:text-lg leading-loose text-[var(--text-dark)] placeholder:text-black/25 font-serif-ko focus:border-[var(--accent-red)] focus:outline-none transition-colors"
+                                    required
+                                ></textarea>
+                            </div>
+
+                            <div class="flex justify-between items-center border-t border-[var(--border-light)] pt-7">
+                                <button type="button" class="view-trigger text-xs tracking-[0.25em] uppercase opacity-45 hover:opacity-100 transition-opacity" data-target="view-read">
+                                    Cancel
+                                </button>
+                                <button type="submit" id="submit-btn" class="bg-[var(--accent-red)] text-white px-8 sm:px-10 py-4 text-xs font-bold tracking-[0.25em] uppercase hover:bg-red-700 transition-colors flex items-center gap-3">
+                                    <span>Publish</span>
+                                    <i class="ph ph-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
-
-            <form id="story-form" class="flex flex-col gap-10 relative">
-                <div class="relative group">
-                    <input
-                        type="text"
-                        id="story-title-input"
-                        placeholder="제목을 입력하세요"
-                        class="w-full bg-transparent text-4xl md:text-5xl font-serif-ko font-bold text-gray-800 placeholder-gray-400 border-b border-[var(--border-light)] pb-4 transition-colors focus:border-[var(--accent-red)]"
-                        required
-                    >
-                </div>
-
-                <div class="relative flex-grow min-h-[400px]">
-                    <textarea
-                        id="story-content-input"
-                        placeholder="이곳에 당신의 이야기를 털어놓으세요..."
-                        class="w-full h-full min-h-[400px] bg-transparent resize-none text-lg leading-loose text-gray-700 placeholder-gray-400 border-none"
-                        required
-                    ></textarea>
-                </div>
-
-                <div class="flex justify-between items-center border-t border-[var(--border-light)] pt-8 mt-8">
-                    <button type="button" class="view-trigger text-sm tracking-widest uppercase opacity-50 hover:opacity-100 transition-opacity" data-target="view-read">
-                        Cancel
-                    </button>
-                    <button type="submit" id="submit-btn" class="bg-[var(--accent-red)] text-white px-10 py-4 text-sm font-bold tracking-widest uppercase hover:bg-red-700 transition-colors flex items-center gap-3">
-                        <span>Publish</span>
-                        <i class="ph ph-arrow-right"></i>
-                    </button>
-                </div>
-            </form>
         </section>
 
         <section id="view-introduce" class="w-full view-hidden fade-in">
