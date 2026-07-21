@@ -719,23 +719,23 @@
         </section>
 
         <section id="view-read" class="w-full fade-in">
-            <div class="mb-14 md:mb-20 border-y border-[var(--border-light)] py-10 sm:py-14 md:py-16">
-                <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)] gap-10 lg:gap-16 lg:items-end">
+            <div class="mb-10 md:mb-16 border-y border-[var(--border-light)] py-8 sm:py-12 md:py-16">
+                <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)] gap-7 lg:gap-16 lg:items-end">
                     <div>
                         <div class="flex items-center gap-4">
                             <span class="w-9 h-px bg-[var(--accent-red)]" aria-hidden="true"></span>
                             <span class="text-[0.65rem] tracking-[0.32em] uppercase opacity-50 font-serif-en">Private Community Archive</span>
                         </div>
-                        <h1 class="mt-7 text-[2.65rem] sm:text-6xl md:text-7xl font-serif-ko font-light leading-[1.2] tracking-[-0.04em]">
+                        <h1 class="mt-6 text-[2.15rem] sm:text-6xl md:text-7xl font-serif-ko font-light leading-[1.22] tracking-[-0.04em]">
                             기록이 모여,<br><span class="text-[var(--accent-red)]">우리</span>가 되는 시간
                         </h1>
                     </div>
 
                     <div class="lg:border-l lg:border-[var(--border-light)] lg:pl-10">
-                        <p class="text-sm sm:text-base leading-[1.9] opacity-65 font-serif-ko break-words sm:break-keep">
+                        <p class="text-[0.95rem] sm:text-base leading-[1.85] opacity-65 font-serif-ko break-words sm:break-keep">
                             서로의 다름을 존중하며 함께 머무는 사람들의 이야기와 순간을 차곡차곡 기록합니다.
                         </p>
-                        <div class="mt-7 flex flex-wrap items-center gap-x-7 gap-y-4">
+                        <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
                             <button type="button" class="view-trigger group text-xs tracking-widest uppercase flex items-center gap-2 hover:text-[var(--accent-red)] transition-colors" data-target="view-notice">
                                 <span>필독 공지</span><i class="ph ph-arrow-up-right group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"></i>
                             </button>
@@ -4072,6 +4072,19 @@
             }[character]));
         }
 
+        function normalizeLatestTitle(item) {
+            let title = String(item.title || '').trim();
+            let author = String(item.authorName || '').trim();
+            const match = title.match(/\s+by\.?\s*([^\s]+)\s*$/i);
+            if (match) {
+                title = title.slice(0, match.index).trim();
+                if (!author || author === '관리자') {
+                    author = match[1].trim();
+                }
+            }
+            return { title, author: author || '관리자' };
+        }
+
         function openLatestItem(item) {
             if (item.type === 'sm-info') {
                 openSmPost(item.id);
@@ -4104,35 +4117,35 @@
             latestDashboard.innerHTML = '';
 
             const header = document.createElement('div');
-            header.className = 'mb-16 md:mb-24 flex items-start justify-between gap-6';
+            header.className = 'mb-9 sm:mb-16 md:mb-24 flex items-start justify-between gap-5';
             const headingWrap = document.createElement('div');
             const eyebrow = document.createElement('p');
-            eyebrow.className = 'flex items-center gap-4 text-[0.72rem] tracking-[0.32em] uppercase opacity-55 font-bold';
-            eyebrow.innerHTML = '<span class="w-2 h-2 rounded-full bg-[var(--accent-red)] opacity-65"></span><span>Latest Updates</span>';
+            eyebrow.className = 'flex items-center gap-3 text-[0.68rem] sm:text-[0.72rem] tracking-[0.26em] sm:tracking-[0.32em] uppercase opacity-55 font-bold';
+            eyebrow.innerHTML = '<span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[var(--accent-red)] opacity-65"></span><span>Latest Updates</span>';
             const headingTitle = document.createElement('h2');
-            headingTitle.className = 'mt-6 text-4xl sm:text-5xl md:text-6xl font-serif-ko font-light tracking-[-0.06em]';
+            headingTitle.className = 'mt-4 sm:mt-6 text-[2.35rem] sm:text-5xl md:text-6xl font-serif-ko font-light tracking-[-0.06em]';
             headingTitle.textContent = '오늘의 새 기록';
             headingWrap.append(eyebrow, headingTitle);
             const allLink = document.createElement('button');
             allLink.type = 'button';
-            allLink.className = 'mt-8 shrink-0 text-sm font-bold tracking-widest hover:text-[var(--accent-red)] transition-colors flex items-center gap-2';
+            allLink.className = 'mt-9 sm:mt-8 shrink-0 text-sm font-bold tracking-widest hover:text-[var(--accent-red)] transition-colors flex items-center gap-2';
             allLink.innerHTML = '<span>전체보기</span><i class="ph ph-arrow-right text-lg"></i>';
             allLink.addEventListener('click', () => document.querySelector('.view-trigger[data-target="view-sm-board"]')?.click());
             header.append(headingWrap, allLink);
             latestDashboard.appendChild(header);
 
             const layout = document.createElement('div');
-            layout.className = 'grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16';
+            layout.className = 'grid grid-cols-1 lg:grid-cols-12 gap-9 lg:gap-16';
 
             const left = document.createElement('div');
-            left.className = 'lg:col-span-7 flex flex-col gap-20';
+            left.className = 'lg:col-span-7 flex flex-col gap-10 sm:gap-20';
 
             const smItems = items.filter(item => item.type === 'sm-info').slice(0, 3);
             const smSection = document.createElement('section');
             smSection.innerHTML = `
-                <div class="flex items-baseline justify-between border-b-2 border-[var(--text-dark)] pb-5 mb-8">
+                <div class="flex items-baseline justify-between border-b border-[var(--text-dark)] sm:border-b-2 pb-3 sm:pb-5 mb-4 sm:mb-8">
                     <h3 class="font-serif-ko text-2xl sm:text-3xl">SM 정보</h3>
-                    <span class="text-xs tracking-widest opacity-45">${smItems.length} POSTS</span>
+                    <span class="text-[0.68rem] sm:text-xs tracking-widest opacity-45">${smItems.length} POSTS</span>
                 </div>
             `;
             const smList = document.createElement('div');
@@ -4141,17 +4154,18 @@
                 smList.innerHTML = '<p class="py-12 text-center text-sm opacity-40">아직 등록된 SM 정보가 없습니다.</p>';
             }
             smItems.forEach((item, index) => {
+                const meta = normalizeLatestTitle(item);
                 const row = document.createElement('article');
-                row.className = 'group cursor-pointer border-b border-[var(--border-light)] py-4 first:pt-0';
+                row.className = 'group cursor-pointer border-b border-[var(--border-light)] py-3 sm:py-4 first:pt-0';
                 row.innerHTML = `
-                    <div class="grid grid-cols-[minmax(0,1fr)_auto] gap-5 items-center">
+                    <div class="grid grid-cols-[minmax(0,1fr)_auto] gap-4 sm:gap-5 items-center">
                         <div class="min-w-0">
-                            <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
-                                ${index === 0 ? '<span class="bg-black/[0.04] px-2.5 py-1 rounded text-[0.62rem] font-bold tracking-widest uppercase opacity-55">HOT</span>' : ''}
-                                <h4 class="text-base sm:text-lg font-bold leading-snug tracking-[-0.02em] group-hover:text-[var(--accent-red)] transition-colors break-keep">${escapeHtml(item.title)}</h4>
+                            <div class="flex items-center gap-x-2.5">
+                                ${index === 0 ? '<span class="shrink-0 bg-black/[0.04] px-2 py-0.5 rounded text-[0.58rem] font-bold tracking-widest uppercase opacity-55">HOT</span>' : ''}
+                                <h4 class="min-w-0 truncate text-[0.98rem] sm:text-lg font-bold leading-snug tracking-[-0.02em] group-hover:text-[var(--accent-red)] transition-colors">${escapeHtml(meta.title)}</h4>
                             </div>
-                            <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs sm:text-sm opacity-42">
-                                <span>by.${escapeHtml(item.authorName || '관리자')}</span>
+                            <div class="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs sm:text-sm opacity-42">
+                                <span>by.${escapeHtml(meta.author)}</span>
                             </div>
                         </div>
                         <time class="shrink-0 text-xs sm:text-sm opacity-35">${index === 0 ? latestArchiveDate(item.occurredAt) : latestShortDate(item.occurredAt)}</time>
