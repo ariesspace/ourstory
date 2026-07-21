@@ -1718,7 +1718,7 @@
 
         async function loadSiteSession() {
             try {
-                const response = await fetch('/api/auth.php', { headers: { Accept: 'application/json' }, cache: 'no-store' });
+                const response = await fetch('/api/auth.php', { headers: { Accept: 'application/json' }, cache: 'no-store', credentials: 'same-origin' });
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const payload = await response.json();
                 applySiteAuth(payload.user, payload.csrfToken);
@@ -1756,6 +1756,7 @@
                 const response = await fetch('/api/auth.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                    credentials: 'same-origin',
                     body: JSON.stringify({
                         action: 'login',
                         username: document.getElementById('user-id').value.trim(),
@@ -1797,6 +1798,7 @@
                     await fetch('/api/auth.php', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
+                        credentials: 'same-origin',
                         body: JSON.stringify({ action: 'logout' })
                     });
                 } finally {
@@ -2197,7 +2199,7 @@
             anonymousStatus.textContent = '익명 대화를 불러오는 중입니다.';
             anonymousStatus.classList.remove('hidden');
             try {
-                const response = await fetch('/api/anonymous-talk.php', { headers: { Accept: 'application/json' }, cache: 'no-store' });
+                const response = await fetch('/api/anonymous-talk.php', { headers: { Accept: 'application/json' }, cache: 'no-store', credentials: 'same-origin' });
                 const payload = await response.json();
                 if (!response.ok) throw new Error(payload.error || '익명 대화를 불러오지 못했습니다.');
                 renderAnonymousTalk(Array.isArray(payload.items) ? payload.items : []);
@@ -2214,7 +2216,7 @@
             body.append('action', 'delete');
             body.append('id', String(id));
             try {
-                const response = await fetch('/api/anonymous-talk.php', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken || '' }, body });
+                const response = await fetch('/api/anonymous-talk.php', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken || '' }, credentials: 'same-origin', body });
                 const payload = await response.json();
                 if (!response.ok) throw new Error(payload.error || '익명 글을 삭제하지 못했습니다.');
                 await loadAnonymousTalk();
@@ -2238,12 +2240,21 @@
             event.preventDefault();
             anonymousError.classList.add('hidden');
             anonymousSubmit.disabled = true;
-            const body = new FormData();
-            body.append('action', 'create');
-            body.append('content', anonymousInput.value.trim());
             try {
-                const response = await fetch('/api/anonymous-talk.php', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken || '' }, body });
+                if (!siteUser || !csrfToken) {
+                    await loadSiteSession();
+                }
+                if (!siteUser || !csrfToken) {
+                    throw new Error('로그인 세션이 만료되었습니다. 다시 로그인해 주세요.');
+                }
+                const body = new FormData();
+                body.append('action', 'create');
+                body.append('content', anonymousInput.value.trim());
+                const response = await fetch('/api/anonymous-talk.php', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken || '' }, credentials: 'same-origin', body });
                 const payload = await response.json();
+                if (response.status === 401) {
+                    await loadSiteSession();
+                }
                 if (!response.ok) throw new Error(payload.error || '익명 글을 등록하지 못했습니다.');
                 anonymousForm.reset();
                 anonymousLength.textContent = '0 / 500';
