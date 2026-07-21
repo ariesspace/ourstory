@@ -267,6 +267,10 @@
         </div>
     </div>
 
+    <div id="page-transition-overlay" class="fixed inset-0 z-[9999] bg-[var(--accent-red)] flex flex-col items-center justify-center translate-y-full transition-transform duration-[800ms] ease-[cubic-bezier(0.76,0,0.24,1)] pointer-events-none" aria-hidden="true">
+        <h1 id="page-transition-logo" class="text-white font-serif-en text-8xl md:text-[150px] font-light tracking-tighter rotate-90 opacity-0 transition-all duration-[800ms] ease-[cubic-bezier(0.76,0,0.24,1)]">:w</h1>
+    </div>
+
     <header class="fixed top-0 left-0 w-full z-50 transition-all duration-300" id="main-header">
         <div class="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center relative z-50">
 
@@ -1701,8 +1705,33 @@
             }
         }
 
+        function runPageTransition() {
+            const overlay = document.getElementById('page-transition-overlay');
+            const logo = document.getElementById('page-transition-logo');
+            if (!overlay || !logo) return Promise.resolve();
+
+            overlay.classList.remove('pointer-events-none', 'translate-y-full');
+            overlay.classList.add('translate-y-0');
+            logo.classList.remove('rotate-0', 'opacity-100');
+            logo.classList.add('rotate-90', 'opacity-0');
+
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    logo.classList.remove('rotate-90', 'opacity-0');
+                    logo.classList.add('rotate-0', 'opacity-100');
+                }, 360);
+                setTimeout(resolve, 980);
+                setTimeout(() => {
+                    overlay.classList.remove('translate-y-0');
+                    overlay.classList.add('translate-y-full', 'pointer-events-none');
+                    logo.classList.remove('rotate-0', 'opacity-100');
+                    logo.classList.add('rotate-90', 'opacity-0');
+                }, 1180);
+            });
+        }
+
         viewTriggers.forEach(trigger => {
-            trigger.addEventListener('click', () => {
+            trigger.addEventListener('click', async () => {
                 const targetId = trigger.getAttribute('data-target');
 
                 if (trigger.id === 'my-page-nav-link') {
@@ -1710,6 +1739,9 @@
                     trigger.classList.add('active');
                 }
 
+                if (targetId && targetId !== currentViewId && !trigger.classList.contains('hidden')) {
+                    await runPageTransition();
+                }
                 navigateToView(targetId);
             });
         });
@@ -5073,13 +5105,6 @@
             const progress = document.getElementById('loader-progress');
             if (!loader || !progress) return Promise.resolve();
 
-            const loaderKey = 'ourstory-loader-seen';
-            if (sessionStorage.getItem(loaderKey) === '1') {
-                loader.remove();
-                document.body.classList.remove('loading-lock');
-                return Promise.resolve();
-            }
-
             return new Promise(resolve => {
                 let value = 0;
                 const updateProgress = () => {
@@ -5098,7 +5123,6 @@
                         return;
                     }
 
-                    sessionStorage.setItem(loaderKey, '1');
                     setTimeout(() => {
                         loader.classList.add('loader-hidden');
                         document.body.classList.remove('loading-lock');
