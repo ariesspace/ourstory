@@ -362,6 +362,304 @@
             background: #1b1b1a;
             color: white;
         }
+        .feed-container {
+            width: min(100%, 760px);
+            margin: 0 auto;
+            border-left: 1px solid var(--border-light);
+            border-right: 1px solid var(--border-light);
+            background: rgba(255,255,255,0.86);
+            min-height: calc(100vh - 8rem);
+        }
+        .feed-header {
+            position: sticky;
+            top: 6rem;
+            z-index: 5;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border-light);
+            padding: 1.5rem 1.8rem;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        .feed-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.2rem, 5vw, 3.4rem);
+            font-style: italic;
+            line-height: 0.9;
+            letter-spacing: -0.03em;
+        }
+        .feed-subtitle {
+            margin-top: 0.55rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.64rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(42, 40, 37, 0.46);
+        }
+        .feed-refresh {
+            width: 2.35rem;
+            height: 2.35rem;
+            border: 1px solid var(--border-light);
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(42, 40, 37, 0.48);
+            transition: color 0.25s ease, border-color 0.25s ease;
+        }
+        .feed-refresh:hover {
+            color: var(--accent-red);
+            border-color: var(--accent-red);
+        }
+        .compose-box,
+        .tweet-card {
+            display: grid;
+            grid-template-columns: 48px minmax(0, 1fr);
+            gap: 1rem;
+            padding: 1.45rem 1.8rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .compose-avatar,
+        .tweet-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 999px;
+            overflow: hidden;
+            background: #1b1b1a;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.45rem;
+            font-style: italic;
+        }
+        .compose-avatar img,
+        .tweet-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%);
+        }
+        .compose-form {
+            min-width: 0;
+        }
+        .compose-textarea {
+            width: 100%;
+            min-height: 92px;
+            resize: vertical;
+            background: transparent;
+            border: 0;
+            font-size: 1rem;
+            line-height: 1.75;
+            color: var(--text-dark);
+        }
+        .compose-textarea::placeholder {
+            color: rgba(42, 40, 37, 0.36);
+        }
+        .compose-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-light);
+        }
+        .compose-tools {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.62rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: rgba(42, 40, 37, 0.42);
+        }
+        .btn-tweet-submit {
+            background: #1b1b1a;
+            color: white;
+            border-radius: 999px;
+            padding: 0.75rem 1.25rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            transition: background-color 0.25s ease, transform 0.25s ease;
+        }
+        .btn-tweet-submit:hover {
+            background: var(--accent-red);
+            transform: translateY(-1px);
+        }
+        .timeline-stream {
+            min-height: 42vh;
+        }
+        .tweet-card {
+            transition: background-color 0.25s ease;
+        }
+        .tweet-card:hover {
+            background: rgba(42, 40, 37, 0.018);
+        }
+        .tweet-content-wrap {
+            min-width: 0;
+        }
+        .tweet-meta {
+            display: flex;
+            align-items: baseline;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.55rem;
+        }
+        .tweet-author {
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+        .tweet-time {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.68rem;
+            color: rgba(42, 40, 37, 0.42);
+        }
+        .tweet-text {
+            font-family: 'Nanum Myeongjo', serif;
+            font-size: 0.98rem;
+            line-height: 1.85;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .tweet-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.68rem;
+            color: rgba(42, 40, 37, 0.45);
+        }
+        .tweet-action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: color 0.25s ease;
+        }
+        .tweet-action-btn:hover {
+            color: var(--accent-red);
+        }
+        .tweet-delete {
+            margin-left: auto;
+        }
+        .schedule-header {
+            text-align: center;
+            padding: clamp(2.5rem, 6vw, 5rem) 1rem clamp(2rem, 4vw, 3.2rem);
+        }
+        .schedule-main-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(3.6rem, 8vw, 7rem);
+            font-style: italic;
+            line-height: 0.9;
+            letter-spacing: -0.04em;
+        }
+        .schedule-sub-title {
+            margin-top: 1.2rem;
+            font-family: 'Nanum Myeongjo', serif;
+            font-size: 0.95rem;
+            color: rgba(42, 40, 37, 0.55);
+        }
+        .schedule-layout {
+            width: min(100%, 1180px);
+            margin: 0 auto clamp(3rem, 7vw, 6rem);
+            display: grid;
+            grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.55fr);
+            gap: clamp(2rem, 4vw, 4.5rem);
+            align-items: start;
+        }
+        .calendar-box,
+        .schedule-sidebar {
+            background: rgba(255,255,255,0.72);
+            border: 1px solid var(--border-light);
+            padding: clamp(1.4rem, 3vw, 2.4rem);
+        }
+        .calendar-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: clamp(1.8rem, 4vw, 3rem);
+        }
+        .calendar-nav-btn {
+            width: 2.5rem;
+            height: 2.5rem;
+            border: 1px solid var(--border-light);
+            border-radius: 999px;
+            font-family: 'Space Mono', monospace;
+            transition: border-color 0.25s ease, color 0.25s ease;
+        }
+        .calendar-nav-btn:hover {
+            color: var(--accent-red);
+            border-color: var(--accent-red);
+        }
+        .calendar-month-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.4rem, 5vw, 4rem);
+            font-style: italic;
+            letter-spacing: 0.05em;
+        }
+        .calendar-weekdays,
+        .calendar-days-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            text-align: center;
+        }
+        .calendar-weekday {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.68rem;
+            letter-spacing: 0.18em;
+            color: rgba(42, 40, 37, 0.45);
+        }
+        .calendar-days-grid {
+            margin-top: 0.85rem;
+            row-gap: clamp(1rem, 2.4vw, 2rem);
+        }
+        .selected-date-header {
+            border-bottom: 1px solid var(--text-dark);
+            padding-bottom: 1rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.1rem;
+            font-style: italic;
+        }
+        .schedule-event-list {
+            margin-top: 1.5rem;
+            min-height: 12rem;
+        }
+        .add-event-box {
+            margin-top: 2.5rem;
+            border-top: 1px solid var(--border-light);
+            padding-top: 1.5rem;
+        }
+        .add-event-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(42, 40, 37, 0.48);
+        }
+        .add-event-input {
+            width: 100%;
+            margin-top: 1rem;
+            border-bottom: 1px solid var(--text-dark);
+            background: transparent;
+            padding: 0.8rem 0;
+            font-family: 'Nanum Myeongjo', serif;
+        }
+        .btn-add-schedule {
+            width: 100%;
+            margin-top: 1.5rem;
+            background: #1b1b1a;
+            color: white;
+            padding: 1rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
 
         input:focus, textarea:focus { outline: none; }
 
@@ -847,6 +1145,39 @@
             .profile-card-box {
                 max-width: 360px;
             }
+            .feed-container {
+                width: 100%;
+                border-left: 0;
+                border-right: 0;
+            }
+            .feed-header {
+                top: 6rem;
+                padding: 1.25rem;
+            }
+            .compose-box,
+            .tweet-card {
+                grid-template-columns: 40px minmax(0, 1fr);
+                gap: 0.85rem;
+                padding: 1.15rem 1.25rem;
+            }
+            .compose-avatar,
+            .tweet-avatar {
+                width: 40px;
+                height: 40px;
+            }
+            .schedule-layout {
+                grid-template-columns: 1fr;
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            .calendar-box,
+            .schedule-sidebar {
+                padding: 1.25rem;
+            }
+            .calendar-days-grid {
+                row-gap: 0.7rem;
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
@@ -893,9 +1224,10 @@
         <nav class="index-menu-links flex flex-col">
             <button type="button" class="view-trigger" data-target="view-sm-board"><em>01</em><span>Archive</span></button>
             <button type="button" class="view-trigger" data-target="view-people"><em>02</em><span>Members</span></button>
-            <button type="button" class="view-trigger" data-target="view-schedule"><em>03</em><span>Schedule</span></button>
-            <button type="button" class="view-trigger hidden" data-target="view-system-members" id="system-nav-link"><em>04</em><span>System</span></button>
-            <button type="button" class="view-trigger hidden" data-target="view-my-page" id="my-page-nav-link"><em>05</em><span>My Page</span></button>
+            <button type="button" class="view-trigger" data-target="view-timeline"><em>03</em><span>Timeline</span></button>
+            <button type="button" class="view-trigger" data-target="view-schedule"><em>04</em><span>Schedule</span></button>
+            <button type="button" class="view-trigger hidden" data-target="view-system-members" id="system-nav-link"><em>05</em><span>System</span></button>
+            <button type="button" class="view-trigger hidden" data-target="view-my-page" id="my-page-nav-link"><em>06</em><span>My Page</span></button>
         </nav>
         <button type="button" id="mobile-login-btn" class="mt-auto border border-[var(--text-dark)] py-4 font-mono text-xs tracking-[0.25em] uppercase hover:bg-[var(--text-dark)] hover:text-white transition-colors">Login</button>
     </aside>
@@ -1050,6 +1382,39 @@
                     <p id="my-timeline-error" class="hidden text-sm text-[var(--accent-red)] mt-4"></p>
                 </form>
                 <div id="my-timeline-list" class="border-t border-[var(--border-light)]"></div>
+            </div>
+        </section>
+
+        <section id="view-timeline" class="w-full view-hidden fade-in">
+            <div class="feed-container">
+                <div class="feed-header">
+                    <div>
+                        <div class="feed-title">Gallery Timeline</div>
+                        <div class="feed-subtitle">Public Feed &amp; Thoughts</div>
+                    </div>
+                    <button type="button" id="timeline-refresh" class="feed-refresh" aria-label="타임라인 새로고침">
+                        <i class="ph ph-arrow-clockwise"></i>
+                    </button>
+                </div>
+
+                <form id="timeline-form" class="compose-box">
+                    <div id="timeline-compose-avatar" class="compose-avatar"></div>
+                    <div class="compose-form">
+                        <label for="timeline-input" class="sr-only">타임라인 글 작성</label>
+                        <textarea id="timeline-input" maxlength="500" class="compose-textarea" placeholder="Share your thoughts with the gallery..." required></textarea>
+                        <div class="compose-footer">
+                            <div class="compose-tools">
+                                <span>[ Secure Post ]</span>
+                                <span id="timeline-length" class="ml-3">0 / 500</span>
+                            </div>
+                            <button type="submit" id="timeline-submit" class="btn-tweet-submit">Publish</button>
+                        </div>
+                        <p id="timeline-error" class="hidden mt-4 text-sm text-[var(--accent-red)]"></p>
+                    </div>
+                </form>
+
+                <p id="timeline-status" class="py-16 text-center text-sm opacity-45">타임라인을 불러오는 중입니다.</p>
+                <div class="timeline-stream" id="timeline-stream"></div>
             </div>
         </section>
 
@@ -1671,59 +2036,46 @@
         </section>
 
         <section id="view-schedule" class="w-full view-hidden fade-in">
-            <div class="schedule-hero w-full py-20 mb-16 flex flex-col justify-center items-center relative border-b border-[var(--border-light)]">
-                <div class="text-center flex flex-col items-center gap-6">
-                    <span class="text-xs tracking-[0.3em] uppercase opacity-50 font-bold">Our Timeline</span>
-                    <h1 class="text-6xl md:text-8xl font-serif-en italic tracking-tighter text-[var(--text-dark)] flex items-baseline justify-center">
-                        <span class="text-[var(--text-dark)] opacity-80">:</span>Schedule
-                    </h1>
-                    <p class="text-sm opacity-60 font-serif-ko max-w-md px-4 leading-relaxed mt-2">
-                        우리가 함께할 시간들, 그리고 기록할 일정
-                    </p>
-                </div>
+            <div class="schedule-header">
+                <h1 class="schedule-main-title">:Schedule</h1>
+                <p class="schedule-sub-title">우리가 함께할 시간들, 그리고 기록할 일정</p>
             </div>
 
-            <div class="schedule-layout flex flex-col lg:flex-row gap-12 mb-20 max-w-6xl mx-auto px-4">
-                <div class="w-full lg:w-2/3">
-                    <div class="schedule-month-bar flex justify-between items-center mb-10">
-                        <button id="prev-month" class="p-2 hover:text-[var(--accent-red)] transition-colors" type="button" aria-label="Previous month">
-                            <i class="ph ph-caret-left text-2xl"></i>
-                        </button>
-                        <h2 id="calendar-month-year" class="text-4xl font-serif-en italic tracking-widest text-center">July 2026</h2>
-                        <button id="next-month" class="p-2 hover:text-[var(--accent-red)] transition-colors" type="button" aria-label="Next month">
-                            <i class="ph ph-caret-right text-2xl"></i>
-                        </button>
+            <div class="schedule-layout">
+                <div class="calendar-box">
+                    <div class="calendar-nav">
+                        <button id="prev-month" class="calendar-nav-btn" type="button" aria-label="Previous month">←</button>
+                        <h2 id="calendar-month-year" class="calendar-month-title">July 2026</h2>
+                        <button id="next-month" class="calendar-nav-btn" type="button" aria-label="Next month">→</button>
                     </div>
 
-                    <div class="schedule-weekdays grid grid-cols-7 gap-4 mb-6 text-center text-xs tracking-widest uppercase opacity-40 font-bold">
-                        <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                    <div class="calendar-weekdays">
+                        <div class="calendar-weekday">SUN</div><div class="calendar-weekday">MON</div><div class="calendar-weekday">TUE</div><div class="calendar-weekday">WED</div><div class="calendar-weekday">THU</div><div class="calendar-weekday">FRI</div><div class="calendar-weekday">SAT</div>
                     </div>
 
-                    <div id="calendar-grid" class="grid grid-cols-7 gap-y-8 gap-x-4 text-center font-serif-en text-xl"></div>
+                    <div id="calendar-grid" class="calendar-days-grid font-serif-en text-xl"></div>
                 </div>
 
-                <div class="schedule-detail w-full lg:w-1/3 flex flex-col border-l border-[var(--border-light)] pl-0 lg:pl-12 pt-10 lg:pt-0 min-h-[400px]">
-                    <h3 id="selected-date-display" class="text-2xl font-bold font-serif-en italic mb-8 pb-4 border-b border-[var(--border-light)]">
-                        2026. 07. 14
-                    </h3>
-
-                    <div id="schedule-list" class="flex-grow overflow-y-auto mb-8 flex flex-col gap-4">
-                        <p class="text-sm opacity-50 italic font-serif-ko">일정을 불러오는 중입니다...</p>
+                <aside class="schedule-sidebar">
+                    <div>
+                        <h3 id="selected-date-display" class="selected-date-header">2026. 07. 14</h3>
+                        <div id="schedule-list" class="schedule-event-list flex flex-col gap-4">
+                            <p class="text-sm opacity-50 italic font-serif-ko">일정을 불러오는 중입니다...</p>
+                        </div>
                     </div>
 
-                    <div class="schedule-form-card mt-auto bg-white/40 p-6 rounded-sm border border-[var(--border-light)] shadow-sm">
-                        <h4 class="text-sm tracking-widest uppercase font-bold mb-4 flex items-center gap-2">
-                            <i class="ph ph-plus-circle text-lg"></i> Add Event
-                        </h4>
-                        <form id="schedule-form" class="flex flex-col gap-4">
-                            <input type="text" id="schedule-title" placeholder="일정 제목 (예: 독서 모임)" class="bg-transparent border-b border-[var(--border-light)] pb-2 text-sm focus:border-[var(--accent-red)] transition-colors" required>
-                            <button type="submit" id="schedule-submit-btn" class="bg-[var(--text-dark)] text-[var(--bg-cream)] text-xs tracking-widest uppercase py-3 hover:bg-[var(--accent-red)] transition-colors mt-2">Save Event</button>
+                    <div class="add-event-box">
+                        <div class="add-event-label">[ New Schedule Entry ]</div>
+                        <form id="schedule-form" class="mt-5">
+                            <label for="schedule-title" class="add-event-label block mb-2">Event Title</label>
+                            <input type="text" id="schedule-title" placeholder="예: 정기 큐레이션 미팅..." class="add-event-input" required>
+                            <button type="submit" id="schedule-submit-btn" class="btn-add-schedule">Save Event</button>
                         </form>
                     </div>
-                </div>
+                </aside>
             </div>
 
-            <div class="max-w-6xl mx-auto px-4 mb-20">
+            <div class="hidden max-w-6xl mx-auto px-4 mb-20">
                 <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 pb-5 border-b border-[var(--text-dark)]">
                     <div>
                         <p class="text-[0.65rem] tracking-[0.3em] uppercase opacity-45 font-serif-en">Monthly Events</p>
@@ -2100,6 +2452,7 @@
             if (targetId === 'view-system-members') loadMembers();
             if (targetId === 'view-my-page') loadMyProfile();
             if (targetId === 'view-my-timeline') loadMyTimeline();
+            if (targetId === 'view-timeline') loadTimelineFeed();
             if (targetId === 'view-sm-board') loadSmBoard();
             if (targetId === 'view-sm-bar-list') loadSmBars();
             if (targetId === 'view-gallery') loadActivityAlbums();
@@ -2121,6 +2474,12 @@
             }
             if (targetId === 'view-my-timeline' && !siteUser) {
                 showToast('로그인이 필요합니다.', false);
+                localStorage.setItem(pendingAuthViewKey, targetId);
+                openLoginModal();
+                return null;
+            }
+            if (targetId === 'view-timeline' && !siteUser) {
+                showToast('타임라인은 회원 로그인 후 이용할 수 있습니다.', false);
                 localStorage.setItem(pendingAuthViewKey, targetId);
                 openLoginModal();
                 return null;
@@ -2490,6 +2849,15 @@
         const myTimelineForm = document.getElementById('my-timeline-form');
         const myTimelineInput = document.getElementById('my-timeline-input');
         const myTimelineList = document.getElementById('my-timeline-list');
+        const timelineForm = document.getElementById('timeline-form');
+        const timelineInput = document.getElementById('timeline-input');
+        const timelineList = document.getElementById('timeline-stream');
+        const timelineStatus = document.getElementById('timeline-status');
+        const timelineRefresh = document.getElementById('timeline-refresh');
+        const timelineSubmit = document.getElementById('timeline-submit');
+        const timelineError = document.getElementById('timeline-error');
+        const timelineLength = document.getElementById('timeline-length');
+        const timelineComposeAvatar = document.getElementById('timeline-compose-avatar');
         const peopleStatus = document.getElementById('people-status');
         const peopleList = document.getElementById('people-list');
         const peopleSearch = document.getElementById('people-search');
@@ -3984,6 +4352,90 @@
             });
         }
 
+        function renderTimelineFeed(items) {
+            if (!timelineList || !timelineStatus) return;
+            timelineList.replaceChildren();
+            timelineStatus.classList.add('hidden');
+
+            if (!items.length) {
+                const empty = document.createElement('p');
+                empty.className = 'py-16 text-center text-sm opacity-45 font-serif-ko';
+                empty.textContent = '아직 타임라인에 남겨진 글이 없습니다.';
+                timelineList.appendChild(empty);
+                return;
+            }
+
+            items.forEach(post => {
+                const author = post.author || {};
+                const article = document.createElement('article');
+                article.className = 'tweet-card';
+
+                const avatar = document.createElement('div');
+                avatar.className = 'tweet-avatar';
+                renderProfileAvatar(avatar, author);
+
+                const body = document.createElement('div');
+                body.className = 'tweet-content-wrap';
+
+                const meta = document.createElement('div');
+                meta.className = 'tweet-meta';
+                const name = document.createElement('span');
+                name.className = 'tweet-author';
+                name.textContent = author.displayName || author.username || 'Member';
+                const time = document.createElement('time');
+                time.className = 'tweet-time';
+                time.dateTime = post.createdAt;
+                time.textContent = formatTimelineDate(post.createdAt);
+                meta.append(name, time);
+
+                const text = document.createElement('p');
+                text.className = 'tweet-text';
+                text.textContent = post.content;
+
+                const actions = document.createElement('div');
+                actions.className = 'tweet-actions';
+                const reply = document.createElement('button');
+                reply.type = 'button';
+                reply.className = 'tweet-action-btn';
+                reply.innerHTML = '<i class="ph ph-chat-circle"></i><span>0</span>';
+                const like = document.createElement('button');
+                like.type = 'button';
+                like.className = 'tweet-action-btn';
+                like.innerHTML = '<i class="ph ph-heart"></i><span>0</span>';
+                actions.append(reply, like);
+
+                if (post.canDelete) {
+                    const remove = document.createElement('button');
+                    remove.type = 'button';
+                    remove.className = 'tweet-action-btn tweet-delete';
+                    remove.innerHTML = '<i class="ph ph-trash"></i><span>Delete</span>';
+                    remove.addEventListener('click', () => deleteTimelinePost(post.id, 'feed'));
+                    actions.appendChild(remove);
+                }
+
+                body.append(meta, text, actions);
+                article.append(avatar, body);
+                timelineList.appendChild(article);
+            });
+        }
+
+        async function loadTimelineFeed() {
+            if (!siteUser || !timelineList || !timelineStatus) return;
+            timelineStatus.textContent = '타임라인을 불러오는 중입니다.';
+            timelineStatus.classList.remove('hidden');
+            timelineList.replaceChildren();
+            renderProfileAvatar(timelineComposeAvatar, siteUser);
+            try {
+                const response = await fetch('/api/timeline.php?action=feed', { headers: { Accept: 'application/json' }, cache: 'no-store' });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '타임라인을 불러오지 못했습니다.');
+                renderTimelineFeed(Array.isArray(payload.items) ? payload.items : []);
+            } catch (error) {
+                timelineStatus.textContent = error.message;
+                timelineStatus.classList.remove('hidden');
+            }
+        }
+
         async function loadMyTimeline() {
             try {
                 const response = await fetch(`/api/timeline.php?action=profile&username=${encodeURIComponent(siteUser.username)}`, { headers: { Accept: 'application/json' }, cache: 'no-store' });
@@ -4009,6 +4461,7 @@
                 if (!response.ok) throw new Error(payload.error || '글을 삭제하지 못했습니다.');
                 showToast('타임라인 글을 삭제했습니다.', true);
                 if (context === 'self') await loadMyTimeline();
+                else if (context === 'feed') await loadTimelineFeed();
                 else await openMemberTimeline(viewedTimelineUsername, false);
             } catch (error) {
                 showToast(error.message, false);
@@ -4043,6 +4496,44 @@
                 errorElement.classList.remove('hidden');
             } finally {
                 submit.disabled = false;
+            }
+        });
+
+        timelineInput?.addEventListener('input', () => {
+            if (timelineLength) timelineLength.textContent = `${timelineInput.value.length} / 500`;
+        });
+
+        timelineInput?.addEventListener('keydown', event => {
+            if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+                event.preventDefault();
+                timelineForm.requestSubmit();
+            }
+        });
+
+        timelineRefresh?.addEventListener('click', loadTimelineFeed);
+
+        timelineForm?.addEventListener('submit', async event => {
+            event.preventDefault();
+            const content = timelineInput.value.trim();
+            timelineError.classList.add('hidden');
+            if (!content) return;
+            timelineSubmit.disabled = true;
+            const body = new FormData();
+            body.append('action', 'create');
+            body.append('content', content);
+            try {
+                const response = await fetch('/api/timeline.php', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken || '' }, body });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '글을 등록하지 못했습니다.');
+                timelineForm.reset();
+                if (timelineLength) timelineLength.textContent = '0 / 500';
+                await loadTimelineFeed();
+                showToast('타임라인에 글을 남겼습니다.', true);
+            } catch (error) {
+                timelineError.textContent = error.message;
+                timelineError.classList.remove('hidden');
+            } finally {
+                timelineSubmit.disabled = false;
             }
         });
 

@@ -63,6 +63,36 @@ if ($method === 'GET' && $action === 'members') {
     timeline_json(['items' => $items]);
 }
 
+if ($method === 'GET' && $action === 'feed') {
+    $rows = $pdo->query(
+        'SELECT t.id, t.user_id, t.content, t.created_at, t.updated_at,
+                u.username, u.display_name, u.avatar_stored_name
+         FROM timeline_posts t
+         JOIN users u ON u.id = t.user_id
+         WHERE u.is_active = 1
+         ORDER BY t.created_at DESC, t.id DESC
+         LIMIT 100'
+    )->fetchAll();
+    $items = array_map(static function (array $row) use ($viewer): array {
+        return [
+            'id' => (int) $row['id'],
+            'content' => $row['content'],
+            'createdAt' => $row['created_at'],
+            'updatedAt' => $row['updated_at'],
+            'author' => [
+                'id' => (int) $row['user_id'],
+                'username' => $row['username'],
+                'displayName' => $row['display_name'],
+                'avatarUrl' => $row['avatar_stored_name'] !== ''
+                    ? '/api/avatar.php?username=' . rawurlencode($row['username']) . '&version=' . rawurlencode($row['avatar_stored_name'])
+                    : '',
+            ],
+            'canDelete' => $viewer['id'] === (int) $row['user_id'] || in_array($viewer['role'], ['superuser', 'admin'], true),
+        ];
+    }, $rows);
+    timeline_json(['items' => $items]);
+}
+
 if ($method === 'GET' && $action === 'profile') {
     $username = trim((string) ($_GET['username'] ?? $viewer['username']));
     $stmt = $pdo->prepare(
