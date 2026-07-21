@@ -5081,25 +5081,34 @@
             }
 
             return new Promise(resolve => {
-                const startedAt = performance.now();
-                const duration = 2600;
-                const tick = now => {
-                    const ratio = Math.min((now - startedAt) / duration, 1);
-                    const eased = 1 - Math.pow(1 - ratio, 2.4);
-                    progress.textContent = String(Math.min(100, Math.floor(eased * 100)));
-                    if (ratio < 1) {
-                        requestAnimationFrame(tick);
+                let value = 0;
+                const updateProgress = () => {
+                    let increment = Math.random() * 3 + 0.8;
+                    if (value > 70) increment = Math.random() * 1.2 + 0.35;
+                    if (value > 90) increment = Math.random() * 0.65 + 0.15;
+
+                    value = Math.min(100, value + increment);
+                    progress.textContent = String(Math.floor(value));
+
+                    if (value < 100) {
+                        const delay = value > 80
+                            ? Math.random() * 90 + 65
+                            : Math.random() * 55 + 35;
+                        setTimeout(() => requestAnimationFrame(updateProgress), delay);
                         return;
                     }
+
                     sessionStorage.setItem(loaderKey, '1');
-                    loader.classList.add('loader-hidden');
-                    document.body.classList.remove('loading-lock');
                     setTimeout(() => {
-                        loader.remove();
-                        resolve();
-                    }, 1100);
+                        loader.classList.add('loader-hidden');
+                        document.body.classList.remove('loading-lock');
+                        setTimeout(() => {
+                            loader.remove();
+                            resolve();
+                        }, 1100);
+                    }, 400);
                 };
-                requestAnimationFrame(tick);
+                updateProgress();
             });
         }
 
