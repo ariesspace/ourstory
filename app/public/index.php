@@ -1442,6 +1442,8 @@
         const initialPasswordClose = document.getElementById('initial-password-close');
         const initialPasswordLater = document.getElementById('initial-password-later');
         const initialPasswordGo = document.getElementById('initial-password-go');
+        const lastViewKey = 'ourstory:last-view';
+        const pendingAuthViewKey = 'ourstory:pending-auth-view';
 
         let isMenuOpen = false;
         let isMobileMenuOpen = false;
@@ -1542,74 +1544,108 @@
             });
         });
 
+        function rememberView(targetId) {
+            if (!targetId || targetId === 'view-login') return;
+            localStorage.setItem(lastViewKey, targetId);
+        }
+
+        function showView(targetId, options = {}) {
+            const { remember = true, scroll = true } = options;
+
+            views.forEach(view => {
+                if (view.id === targetId) {
+                    view.classList.remove('view-hidden');
+                    view.classList.remove('fade-in');
+                    void view.offsetWidth;
+                    view.classList.add('fade-in');
+                    if (scroll) window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    view.classList.add('view-hidden');
+                }
+            });
+
+            if (remember) rememberView(targetId);
+        }
+
+        function loadViewData(targetId) {
+            if (targetId === 'view-introduce') loadIntroductions();
+            if (targetId === 'view-anonymous') loadAnonymousTalk();
+            if (targetId === 'view-membership-archive') loadMembershipApplications();
+            if (targetId === 'view-read') loadLatestDashboard();
+            if (targetId === 'view-system-members') loadMembers();
+            if (targetId === 'view-my-page') loadMyProfile();
+            if (targetId === 'view-my-timeline') loadMyTimeline();
+            if (targetId === 'view-sm-board') loadSmBoard();
+            if (targetId === 'view-sm-bar-list') loadSmBars();
+            if (targetId === 'view-gallery') loadActivityAlbums();
+            if (targetId === 'view-people') loadPeopleDirectory();
+        }
+
+        function resolveViewAccess(targetId) {
+            if (targetId?.startsWith('view-system-') && !['superuser', 'admin'].includes(siteUser?.role)) {
+                showToast('관리자 로그인이 필요합니다.', false);
+                localStorage.setItem(pendingAuthViewKey, targetId);
+                return 'view-login';
+            }
+            if (targetId === 'view-my-page' && !siteUser) {
+                showToast('로그인이 필요합니다.', false);
+                localStorage.setItem(pendingAuthViewKey, targetId);
+                return 'view-login';
+            }
+            if (targetId === 'view-my-timeline' && !siteUser) {
+                showToast('로그인이 필요합니다.', false);
+                localStorage.setItem(pendingAuthViewKey, targetId);
+                return 'view-login';
+            }
+            if (targetId === 'view-anonymous' && !siteUser) {
+                showToast('익명 게시판은 회원 로그인 후 이용할 수 있습니다.', false);
+                localStorage.setItem(pendingAuthViewKey, targetId);
+                return 'view-login';
+            }
+            if (targetId === 'view-membership-archive' && !siteUser) {
+                showToast('가입 신청 기록은 회원 로그인 후 볼 수 있습니다.', false);
+                localStorage.setItem(pendingAuthViewKey, targetId);
+                return 'view-login';
+            }
+            if (targetId === 'view-sm-editor' && !siteUser) {
+                showToast('게시글 작성은 로그인이 필요합니다.', false);
+                localStorage.setItem(pendingAuthViewKey, targetId);
+                return 'view-login';
+            }
+            if (targetId === 'view-gallery-write' && !siteUser) {
+                showToast('앨범 작성은 로그인이 필요합니다.', false);
+                localStorage.setItem(pendingAuthViewKey, targetId);
+                return 'view-login';
+            }
+            if (['view-people', 'view-member-profile'].includes(targetId) && !siteUser) {
+                showToast('회원 타임라인은 로그인이 필요합니다.', false);
+                localStorage.setItem(pendingAuthViewKey, targetId);
+                return 'view-login';
+            }
+
+            return targetId;
+        }
+
+        function navigateToView(targetId, options = {}) {
+            const resolvedTargetId = resolveViewAccess(targetId);
+
+            if (isMenuOpen) closeMenu();
+            if (isMobileMenuOpen) closeMobileMenu();
+
+            showView(resolvedTargetId, options);
+            loadViewData(resolvedTargetId);
+        }
+
         viewTriggers.forEach(trigger => {
             trigger.addEventListener('click', () => {
-                let targetId = trigger.getAttribute('data-target');
+                const targetId = trigger.getAttribute('data-target');
 
                 if (trigger.id === 'my-page-nav-link') {
                     desktopNavItems.forEach(item => item.classList.remove('active'));
                     trigger.classList.add('active');
                 }
 
-                if (targetId?.startsWith('view-system-') && !['superuser', 'admin'].includes(siteUser?.role)) {
-                    showToast('관리자 로그인이 필요합니다.', false);
-                    targetId = 'view-login';
-                }
-                if (targetId === 'view-my-page' && !siteUser) {
-                    showToast('로그인이 필요합니다.', false);
-                    targetId = 'view-login';
-                }
-                if (targetId === 'view-my-timeline' && !siteUser) {
-                    showToast('로그인이 필요합니다.', false);
-                    targetId = 'view-login';
-                }
-                if (targetId === 'view-anonymous' && !siteUser) {
-                    showToast('익명 게시판은 회원 로그인 후 이용할 수 있습니다.', false);
-                    targetId = 'view-login';
-                }
-                if (targetId === 'view-membership-archive' && !siteUser) {
-                    showToast('가입 신청 기록은 회원 로그인 후 볼 수 있습니다.', false);
-                    targetId = 'view-login';
-                }
-                if (targetId === 'view-sm-editor' && !siteUser) {
-                    showToast('게시글 작성은 로그인이 필요합니다.', false);
-                    targetId = 'view-login';
-                }
-                if (targetId === 'view-gallery-write' && !siteUser) {
-                    showToast('앨범 작성은 로그인이 필요합니다.', false);
-                    targetId = 'view-login';
-                }
-                if (['view-people', 'view-member-profile'].includes(targetId) && !siteUser) {
-                    showToast('회원 타임라인은 로그인이 필요합니다.', false);
-                    targetId = 'view-login';
-                }
-
-                if (isMenuOpen) closeMenu();
-                if (isMobileMenuOpen) closeMobileMenu();
-
-                views.forEach(view => {
-                    if (view.id === targetId) {
-                        view.classList.remove('view-hidden');
-                        view.classList.remove('fade-in');
-                        void view.offsetWidth;
-                        view.classList.add('fade-in');
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    } else {
-                        view.classList.add('view-hidden');
-                    }
-                });
-
-                if (targetId === 'view-introduce') loadIntroductions();
-                if (targetId === 'view-anonymous') loadAnonymousTalk();
-                if (targetId === 'view-membership-archive') loadMembershipApplications();
-                if (targetId === 'view-read') loadLatestDashboard();
-                if (targetId === 'view-system-members') loadMembers();
-                if (targetId === 'view-my-page') loadMyProfile();
-                if (targetId === 'view-my-timeline') loadMyTimeline();
-                if (targetId === 'view-sm-board') loadSmBoard();
-                if (targetId === 'view-sm-bar-list') loadSmBars();
-                if (targetId === 'view-gallery') loadActivityAlbums();
-                if (targetId === 'view-people') loadPeopleDirectory();
+                navigateToView(targetId);
             });
         });
 
@@ -1686,10 +1722,26 @@
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const payload = await response.json();
                 applySiteAuth(payload.user, payload.csrfToken);
+                return payload.user;
             } catch (error) {
                 console.error('Session Load Error:', error);
                 applySiteAuth(null);
+                return null;
             }
+        }
+
+        async function bootstrapInitialView() {
+            const user = await loadSiteSession();
+            const storedView = localStorage.getItem(lastViewKey);
+            const targetId = views.some(view => view.id === storedView) ? storedView : 'view-read';
+
+            if (!user && targetId !== 'view-read' && targetId !== 'view-notice') {
+                localStorage.setItem(pendingAuthViewKey, targetId);
+                showView('view-login', { remember: false, scroll: false });
+                return;
+            }
+
+            navigateToView(targetId, { scroll: false });
         }
 
         document.getElementById('login-form').addEventListener('submit', async (event) => {
@@ -1716,7 +1768,9 @@
                 applySiteAuth(payload.user, payload.csrfToken);
                 loginForm.reset();
                 showToast(`${payload.user.displayName}님, 환영합니다.`, true);
-                document.querySelector('.view-trigger[data-target="view-read"]').click();
+                const targetId = localStorage.getItem(pendingAuthViewKey) || localStorage.getItem(lastViewKey) || 'view-read';
+                localStorage.removeItem(pendingAuthViewKey);
+                navigateToView(targetId);
             } catch (error) {
                 errorElement.textContent = error.message;
                 errorElement.classList.remove('hidden');
@@ -1747,10 +1801,12 @@
                     });
                 } finally {
                     applySiteAuth(null);
+                    localStorage.removeItem(pendingAuthViewKey);
+                    localStorage.removeItem(lastViewKey);
                     closeMenu();
                     if (isMobileMenuOpen) closeMobileMenu();
                     showToast('로그아웃되었습니다.', true);
-                    document.querySelector('.view-trigger[data-target="view-read"]').click();
+                    navigateToView('view-read');
                 }
             });
         });
@@ -4794,7 +4850,7 @@
             }
         });
 
-        loadSiteSession();
+        bootstrapInitialView();
         initAuth();
         renderCalendar();
         renderSchedules();
