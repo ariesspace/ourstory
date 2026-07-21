@@ -755,34 +755,34 @@
             </div>
         </section>
 
-        <section id="view-anonymous" class="w-full max-w-[960px] mx-auto view-hidden fade-in bg-white/70 border-x border-[var(--border-light)] shadow-[0_0_40px_rgba(42,40,37,0.03)]">
-            <div class="px-5 sm:px-8 md:px-10 py-8 border-b border-[var(--border-light)] bg-white/75 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5">
+        <section id="view-anonymous" class="w-full max-w-[960px] mx-auto view-hidden fade-in bg-white/75 sm:border-x border-[var(--border-light)] sm:shadow-[0_0_40px_rgba(42,40,37,0.03)]">
+            <div class="px-4 sm:px-8 md:px-10 py-5 sm:py-8 border-b border-[var(--border-light)] bg-white/80 flex items-start sm:items-end justify-between gap-4">
                 <div>
                     <div class="flex items-center gap-3 text-[var(--accent-red)]">
-                        <i class="ph ph-chat-circle-dots text-xl"></i>
-                        <span class="text-[0.65rem] tracking-[0.3em] uppercase font-bold">Journal · Records</span>
+                        <i class="ph ph-chat-circle-dots text-lg sm:text-xl"></i>
+                        <span class="text-[0.62rem] sm:text-[0.65rem] tracking-[0.24em] sm:tracking-[0.3em] uppercase font-bold">Journal · Records</span>
                     </div>
-                    <h1 class="mt-4 text-3xl sm:text-4xl font-serif-en tracking-tight">Anonymous Talk</h1>
-                    <p class="mt-3 text-sm opacity-55 font-serif-ko leading-relaxed">이름 없이 가볍게 이야기하는 회원 전용 공간입니다.</p>
+                    <h1 class="mt-3 sm:mt-4 text-3xl sm:text-4xl font-serif-en tracking-tight">Anonymous Talk</h1>
+                    <p class="mt-2 sm:mt-3 text-xs sm:text-sm opacity-55 font-serif-ko leading-relaxed">이름 없이 가볍게 이야기하는 회원 전용 공간입니다.</p>
                 </div>
-                <button type="button" id="anonymous-refresh" class="w-10 h-10 shrink-0 rounded-full flex items-center justify-center text-black/45 hover:text-[var(--accent-red)] hover:bg-black/[0.03] transition-colors" aria-label="익명 게시판 새로고침">
+                <button type="button" id="anonymous-refresh" class="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center text-black/45 hover:text-[var(--accent-red)] hover:bg-black/[0.03] transition-colors" aria-label="익명 게시판 새로고침">
                     <i class="ph ph-arrow-clockwise"></i>
                 </button>
             </div>
 
             <p id="anonymous-status" class="py-14 text-center text-sm opacity-45">익명 대화를 불러오는 중입니다.</p>
-            <div id="anonymous-list" class="min-h-[52vh] max-h-[62vh] overflow-y-auto overflow-x-hidden px-5 sm:px-8 py-8 flex flex-col gap-6 bg-white/35" aria-live="polite"></div>
+            <div id="anonymous-list" class="min-h-[46vh] sm:min-h-[52vh] max-h-[54vh] sm:max-h-[62vh] overflow-y-auto overflow-x-hidden px-4 sm:px-8 py-5 sm:py-8 flex flex-col gap-4 sm:gap-6 bg-white/35" aria-live="polite"></div>
 
-            <form id="anonymous-form" class="p-5 sm:p-7 border-t border-[var(--border-light)] bg-white">
+            <form id="anonymous-form" class="p-4 sm:p-7 border-t border-[var(--border-light)] bg-white">
                 <label for="anonymous-input" class="sr-only">익명 글 작성</label>
-                <div class="relative rounded-2xl border border-[var(--border-light)] bg-[var(--bg-cream)]/70 focus-within:border-[var(--text-dark)] focus-within:ring-1 focus-within:ring-[var(--text-dark)] transition-all overflow-hidden">
-                    <textarea id="anonymous-input" maxlength="500" rows="3" class="w-full bg-transparent resize-none px-5 py-4 pb-14 text-sm sm:text-base leading-relaxed font-serif-ko focus:outline-none" placeholder="이름 없이 편하게 남겨보세요..." required></textarea>
-                    <div class="absolute bottom-0 left-0 w-full px-5 py-3 flex items-center justify-between bg-gradient-to-t from-[var(--bg-cream)] via-[var(--bg-cream)]/95 to-transparent">
+                <div class="relative rounded-xl sm:rounded-2xl border border-[var(--border-light)] bg-[var(--bg-cream)]/70 focus-within:border-[var(--text-dark)] focus-within:ring-1 focus-within:ring-[var(--text-dark)] transition-all overflow-hidden">
+                    <textarea id="anonymous-input" maxlength="500" rows="2" class="w-full bg-transparent resize-none px-4 sm:px-5 py-3 sm:py-4 pb-12 sm:pb-14 text-sm sm:text-base leading-relaxed font-serif-ko focus:outline-none" placeholder="이름 없이 편하게 남겨보세요..." required></textarea>
+                    <div class="absolute bottom-0 left-0 w-full px-4 sm:px-5 py-2 sm:py-3 flex items-center justify-between bg-gradient-to-t from-[var(--bg-cream)] via-[var(--bg-cream)]/95 to-transparent">
                         <div>
                             <span id="anonymous-length" class="text-xs opacity-45">0 / 500</span>
                             <span class="hidden sm:inline ml-3 text-[0.65rem] opacity-35">Ctrl + Enter로 전송</span>
                         </div>
-                        <button type="submit" id="anonymous-submit" class="w-10 h-10 rounded-full bg-[var(--text-dark)] text-white flex items-center justify-center hover:bg-[var(--accent-red)] hover:scale-105 transition-all shadow-md" aria-label="익명 글 등록">
+                        <button type="submit" id="anonymous-submit" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[var(--text-dark)] text-white flex items-center justify-center hover:bg-[var(--accent-red)] hover:scale-105 transition-all shadow-md" aria-label="익명 글 등록">
                             <i class="ph ph-paper-plane-tilt text-base"></i>
                         </button>
                     </div>
@@ -790,7 +790,7 @@
                 <p id="anonymous-error" class="hidden mt-4 text-sm text-[var(--accent-red)]"></p>
             </form>
 
-            <p class="px-5 sm:px-8 pb-6 text-xs leading-relaxed opacity-35 font-serif-ko bg-white">화면에는 작성자가 표시되지 않습니다. 안전한 운영과 본인 글 관리를 위해 계정 연결 정보는 서버에만 보관됩니다.</p>
+            <p class="px-4 sm:px-8 pb-5 sm:pb-6 text-[0.7rem] sm:text-xs leading-relaxed opacity-35 font-serif-ko bg-white">화면에는 작성자가 표시되지 않습니다. 안전한 운영과 본인 글 관리를 위해 계정 연결 정보는 서버에만 보관됩니다.</p>
         </section>
 
         <section id="view-notice" class="w-full max-w-4xl mx-auto view-hidden fade-in py-8 md:py-12">
@@ -2219,22 +2219,22 @@
                 if (day && day !== currentDay) {
                     currentDay = day;
                     const separator = document.createElement('div');
-                    separator.className = 'flex items-center justify-center gap-5 py-3 text-[0.7rem] tracking-[0.18em] text-black/30';
-                    separator.innerHTML = `<span class="h-px w-14 bg-[var(--border-light)]"></span><time>${day}</time><span class="h-px w-14 bg-[var(--border-light)]"></span>`;
+                    separator.className = 'flex items-center justify-center gap-3 sm:gap-5 py-2 sm:py-3 text-[0.65rem] sm:text-[0.7rem] tracking-[0.14em] sm:tracking-[0.18em] text-black/30';
+                    separator.innerHTML = `<span class="h-px w-8 sm:w-14 bg-[var(--border-light)]"></span><time>${day}</time><span class="h-px w-8 sm:w-14 bg-[var(--border-light)]"></span>`;
                     anonymousList.appendChild(separator);
                 }
 
                 const row = document.createElement('article');
                 row.className = `group flex ${item.isOwn ? 'justify-end' : 'justify-start'}`;
                 const wrap = document.createElement('div');
-                wrap.className = `flex items-end max-w-[88%] sm:max-w-[76%] ${item.isOwn ? 'flex-row-reverse' : ''}`;
+                wrap.className = `flex flex-col max-w-[82%] sm:max-w-[76%] ${item.isOwn ? 'items-end' : 'items-start'}`;
 
                 const bubble = document.createElement('div');
                 bubble.className = item.isOwn
-                    ? 'relative bg-[var(--text-dark)] text-white px-5 py-3.5 rounded-2xl rounded-tr-sm shadow-md'
-                    : 'relative bg-white border border-[var(--border-light)] text-[var(--text-dark)] px-5 py-3.5 rounded-2xl rounded-tl-sm shadow-sm';
+                    ? 'relative bg-[var(--text-dark)] text-white px-4 sm:px-5 py-3 sm:py-3.5 rounded-2xl rounded-tr-sm shadow-md'
+                    : 'relative bg-white border border-[var(--border-light)] text-[var(--text-dark)] px-4 sm:px-5 py-3 sm:py-3.5 rounded-2xl rounded-tl-sm shadow-sm';
                 const content = document.createElement('p');
-                content.className = 'text-sm sm:text-[0.95rem] leading-relaxed whitespace-pre-wrap break-words';
+                content.className = 'text-[0.9rem] sm:text-[0.95rem] leading-relaxed whitespace-pre-wrap break-words';
                 content.textContent = item.content;
                 bubble.appendChild(content);
 
@@ -2249,7 +2249,7 @@
                 }
 
                 const date = document.createElement('time');
-                date.className = `${item.isOwn ? 'mr-2' : 'ml-2'} mb-1 shrink-0 text-[0.68rem] text-black/35`;
+                date.className = `mt-1.5 px-1 text-[0.65rem] text-black/35 ${item.isOwn ? 'text-right' : 'text-left'}`;
                 date.dateTime = item.createdAt;
                 date.textContent = anonymousTime(item.createdAt);
 
