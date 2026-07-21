@@ -267,8 +267,8 @@
         </div>
     </div>
 
-    <div id="page-transition-overlay" class="fixed inset-0 z-[9999] bg-[var(--accent-red)] flex flex-col items-center justify-center translate-y-full transition-transform duration-[800ms] ease-[cubic-bezier(0.76,0,0.24,1)] pointer-events-none" aria-hidden="true">
-        <h1 id="page-transition-logo" class="text-white font-serif-en text-8xl md:text-[150px] font-light tracking-tighter rotate-90 opacity-0 transition-all duration-[800ms] ease-[cubic-bezier(0.76,0,0.24,1)]">:w</h1>
+    <div id="page-transition-overlay" class="fixed inset-0 z-[9999] bg-[var(--accent-red)] flex flex-col items-center justify-center translate-y-full transition-transform duration-[1200ms] ease-[cubic-bezier(0.76,0,0.24,1)] pointer-events-none" aria-hidden="true">
+        <h1 id="page-transition-logo" class="text-white font-serif-en text-6xl md:text-[120px] font-light tracking-tighter rotate-90 opacity-0 transition-all duration-[1200ms] ease-[cubic-bezier(0.76,0,0.24,1)]">:Our Story</h1>
     </div>
 
     <header class="fixed top-0 left-0 w-full z-50 transition-all duration-300" id="main-header">
@@ -487,67 +487,86 @@
             </div>
         </section>
 
-        <section id="view-my-page" class="w-full max-w-3xl mx-auto view-hidden fade-in py-8">
-            <div class="text-center mb-12">
-                <span class="text-xs tracking-[0.3em] uppercase opacity-50 font-bold">Account</span>
-                <h1 class="text-5xl md:text-7xl font-serif-en italic tracking-tighter mt-3">My Page</h1>
-                <p class="text-sm opacity-55 mt-5">내 계정과 선택형 프로필 정보를 관리합니다.</p>
+        <section id="view-my-page" class="w-full max-w-6xl mx-auto view-hidden fade-in py-8">
+            <div class="border-b border-[var(--border-light)] pb-7 mb-10 flex flex-wrap items-baseline gap-4">
+                <h1 class="font-serif-en text-4xl md:text-5xl tracking-tight">Account Info</h1>
+                <span class="text-[10px] tracking-[0.25em] font-semibold uppercase opacity-45">[ Profile ]</span>
             </div>
             <p id="my-page-status" class="py-14 text-center text-sm opacity-50">프로필을 불러오는 중입니다.</p>
-            <form id="my-page-form" class="hidden bg-white/35 border border-[var(--border-light)] rounded-sm shadow-sm p-6 sm:p-10 space-y-8">
-                <div class="flex flex-col sm:flex-row items-center gap-6 border-b border-[var(--border-light)] pb-8">
-                    <div id="my-avatar-preview-wrap" class="w-28 h-28 shrink-0 rounded-full overflow-hidden bg-[var(--accent-red)] text-white flex items-center justify-center text-4xl font-serif-en italic">
-                        <img id="my-avatar-preview" class="hidden w-full h-full object-cover" alt="내 프로필 사진">
-                        <span id="my-avatar-fallback"></span>
-                    </div>
-                    <div class="text-center sm:text-left">
-                        <p class="text-xs tracking-widest uppercase opacity-60 mb-3">Profile Photo <span class="normal-case opacity-50">(선택)</span></p>
-                        <input type="file" id="my-avatar-input" class="hidden" accept="image/jpeg,image/png,image/gif,image/webp">
-                        <div class="flex flex-wrap justify-center sm:justify-start gap-2">
-                            <label for="my-avatar-input" class="cursor-pointer border border-[var(--border-light)] bg-white/40 px-5 py-3 text-xs tracking-widest uppercase hover:border-[var(--accent-red)] transition-colors">사진 선택</label>
-                            <button type="button" id="my-avatar-remove" class="hidden px-4 py-3 text-xs tracking-widest uppercase text-[var(--accent-red)]">사진 삭제</button>
+            <form id="my-page-form" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+                <div class="lg:col-span-5">
+                    <div class="w-full aspect-[4/5] bg-white/40 border border-[var(--border-light)] p-8 flex flex-col items-center justify-center relative shadow-sm">
+                        <div class="absolute top-4 left-4 w-5 h-px bg-black/20"></div>
+                        <div class="absolute top-4 left-4 w-px h-5 bg-black/20"></div>
+                        <div class="absolute bottom-4 right-4 w-5 h-px bg-black/20"></div>
+                        <div class="absolute bottom-4 right-4 w-px h-5 bg-black/20"></div>
+
+                        <div class="flex flex-col items-center text-center">
+                            <div id="my-avatar-preview-wrap" class="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden bg-[var(--accent-red)] text-white flex items-center justify-center text-5xl font-serif-en italic shadow-lg mb-8">
+                                <img id="my-avatar-preview" class="hidden w-full h-full object-cover" alt="내 프로필 사진">
+                                <span id="my-avatar-fallback"></span>
+                            </div>
+                            <h2 class="font-serif-ko text-2xl font-bold mb-2" id="my-profile-card-name">관리자</h2>
+                            <p class="text-[10px] tracking-[0.25em] uppercase opacity-45 mb-8" id="my-profile-card-role">Admin user</p>
+
+                            <input type="file" id="my-avatar-input" class="hidden" accept="image/jpeg,image/png,image/gif,image/webp">
+                            <div class="flex flex-wrap justify-center gap-2">
+                                <label for="my-avatar-input" class="cursor-pointer border border-[var(--text-dark)] px-6 py-3 text-[10px] font-semibold tracking-[0.2em] uppercase hover:bg-[var(--text-dark)] hover:text-white transition-all">Change Photo</label>
+                                <button type="button" id="my-avatar-remove" class="hidden px-4 py-3 text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--accent-red)]">Remove</button>
+                            </div>
+                            <p class="text-[10px] opacity-45 mt-3">JPG, PNG, GIF, WEBP / MAX 5MB</p>
+                            <p id="my-avatar-error" class="hidden text-xs text-[var(--accent-red)] mt-2"></p>
                         </div>
-                        <p class="text-xs opacity-45 mt-3">JPG, PNG, GIF, WEBP · 최대 5MB</p>
-                        <p id="my-avatar-error" class="hidden text-xs text-[var(--accent-red)] mt-2"></p>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-7">
-                    <div>
-                        <label for="my-username" class="block text-xs tracking-widest uppercase opacity-60 mb-3">로그인 ID</label>
-                        <input type="text" id="my-username" minlength="3" maxlength="32" pattern="[A-Za-z0-9._-]+" autocomplete="username" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" required>
-                        <p class="text-xs opacity-40 mt-2">영문, 숫자, 점, 밑줄, 하이픈 · 3~32자</p>
+
+                <div class="lg:col-span-7 flex flex-col justify-start">
+                    <div class="mb-8 flex items-center gap-4 border-b border-[var(--border-light)] pb-7">
+                        <span class="bg-[var(--accent-red)] text-white text-[10px] font-bold tracking-[0.2em] uppercase px-3 py-1.5 shadow-sm" id="my-access-badge">Member</span>
+                        <h2 class="font-serif-en text-2xl tracking-tight">Access Level</h2>
                     </div>
-                    <div>
-                        <label for="my-role" class="block text-xs tracking-widest uppercase opacity-60 mb-3">권한</label>
-                        <input type="text" id="my-role" class="w-full bg-transparent border-b border-[var(--border-light)] py-3 opacity-50" readonly>
+
+                    <div class="flex flex-col sm:flex-row sm:items-center py-5 border-b border-[var(--border-light)]">
+                        <label for="my-username" class="w-full sm:w-32 text-[10px] font-semibold opacity-50 tracking-widest uppercase mb-2 sm:mb-0">Login ID</label>
+                        <div class="flex-grow">
+                            <input type="text" id="my-username" minlength="3" maxlength="32" pattern="[A-Za-z0-9._-]+" autocomplete="username" class="w-full bg-transparent border-0 border-b border-transparent focus:border-[var(--accent-red)] py-2 text-[15px]" required>
+                            <p class="text-[10px] opacity-35 mt-1">영문, 숫자, 점, 밑줄, 하이픈 / 3~32자</p>
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <label for="my-display-name" class="block text-xs tracking-widest uppercase opacity-60 mb-3">표시 이름</label>
-                    <input type="text" id="my-display-name" maxlength="60" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" required>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-7">
-                    <div>
-                        <label for="my-birth-year" class="block text-xs tracking-widest uppercase opacity-60 mb-3">출생연도 <span class="normal-case opacity-50">(선택)</span></label>
-                        <input type="number" id="my-birth-year" min="1900" max="2100" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" placeholder="예: 1995">
+
+                    <div class="flex flex-col sm:flex-row sm:items-center py-5 border-b border-[var(--border-light)]">
+                        <label for="my-role" class="w-full sm:w-32 text-[10px] font-semibold opacity-50 tracking-widest uppercase mb-2 sm:mb-0">Role</label>
+                        <input type="text" id="my-role" class="flex-grow bg-transparent py-2 text-[15px] opacity-60" readonly>
                     </div>
-                    <div>
-                        <label for="my-region" class="block text-xs tracking-widest uppercase opacity-60 mb-3">지역 <span class="normal-case opacity-50">(선택)</span></label>
-                        <input type="text" id="my-region" maxlength="80" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" placeholder="예: 서울">
+
+                    <div class="flex flex-col sm:flex-row sm:items-center py-5 border-b border-[var(--border-light)]">
+                        <label for="my-display-name" class="w-full sm:w-32 text-[10px] font-semibold opacity-50 tracking-widest uppercase mb-2 sm:mb-0">Nickname</label>
+                        <input type="text" id="my-display-name" maxlength="60" class="flex-grow bg-transparent border-b border-transparent focus:border-[var(--accent-red)] py-2 text-[15px]" required>
                     </div>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-7">
-                    <div>
-                        <label for="my-personality" class="block text-xs tracking-widest uppercase opacity-60 mb-3">개인 성향 <span class="normal-case opacity-50">(선택)</span></label>
-                        <input type="text" id="my-personality" maxlength="120" class="w-full bg-transparent border-b border-[var(--border-light)] py-3">
+
+                    <div class="flex flex-col sm:flex-row py-5 border-b border-[var(--border-light)] gap-5 sm:gap-0">
+                        <div class="w-full sm:w-1/2 flex flex-col sm:flex-row sm:items-center">
+                            <label for="my-birth-year" class="w-full sm:w-32 text-[10px] font-semibold opacity-50 tracking-widest uppercase mb-2 sm:mb-0">Birth Year</label>
+                            <input type="number" id="my-birth-year" min="1900" max="2100" class="flex-grow sm:mr-8 bg-transparent border-b border-transparent focus:border-[var(--accent-red)] py-2 text-[15px]" placeholder="예: 1995">
+                        </div>
+                        <div class="w-full sm:w-1/2 flex flex-col sm:flex-row sm:items-center">
+                            <label for="my-region" class="w-full sm:w-20 text-[10px] font-semibold opacity-50 tracking-widest uppercase mb-2 sm:mb-0">Region</label>
+                            <input type="text" id="my-region" maxlength="80" class="flex-grow bg-transparent border-b border-transparent focus:border-[var(--accent-red)] py-2 text-[15px]" placeholder="예: 서울">
+                        </div>
                     </div>
-                    <div>
-                        <label for="my-relationship-style" class="block text-xs tracking-widest uppercase opacity-60 mb-3">연애 성향 <span class="normal-case opacity-50">(선택)</span></label>
-                        <input type="text" id="my-relationship-style" maxlength="120" class="w-full bg-transparent border-b border-[var(--border-light)] py-3">
+
+                    <div class="flex flex-col sm:flex-row sm:items-center py-5 border-b border-[var(--border-light)]">
+                        <label for="my-personality" class="w-full sm:w-32 text-[10px] font-semibold opacity-50 tracking-widest uppercase mb-2 sm:mb-0">Personal Pref.</label>
+                        <input type="text" id="my-personality" maxlength="120" class="flex-grow bg-transparent border-b border-transparent focus:border-[var(--accent-red)] py-2 text-[15px]" placeholder="선택 입력">
                     </div>
-                </div>
-                <div class="border-t border-[var(--border-light)] pt-6">
-                    <button type="button" id="my-password-toggle" class="border border-[var(--text-dark)] px-5 py-3 text-sm font-medium hover:border-[var(--accent-red)] hover:text-[var(--accent-red)] transition-colors" aria-expanded="false" aria-controls="my-password-section">비밀번호 변경</button>
+
+                    <div class="flex flex-col sm:flex-row sm:items-center py-5 border-b border-[var(--border-light)]">
+                        <label for="my-relationship-style" class="w-full sm:w-32 text-[10px] font-semibold opacity-50 tracking-widest uppercase mb-2 sm:mb-0">Dating Pref.</label>
+                        <input type="text" id="my-relationship-style" maxlength="120" class="flex-grow bg-transparent border-b border-transparent focus:border-[var(--accent-red)] py-2 text-[15px]" placeholder="선택 입력">
+                    </div>
+
+                    <div class="pt-7">
+                        <button type="button" id="my-password-toggle" class="text-[11px] font-medium opacity-60 hover:opacity-100 hover:text-[var(--accent-red)] underline underline-offset-4 tracking-wider transition-colors" aria-expanded="false" aria-controls="my-password-section">Change Password</button>
                     <div id="my-password-section" class="hidden mt-6 grid grid-cols-1 sm:grid-cols-2 gap-7 bg-white/25 border border-[var(--border-light)] p-5 sm:p-6">
                         <div>
                             <label for="my-password" class="block text-xs tracking-widest uppercase opacity-60 mb-3">새 비밀번호</label>
@@ -558,10 +577,11 @@
                             <input type="password" id="my-password-confirm" minlength="10" maxlength="128" autocomplete="new-password" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" placeholder="한 번 더 입력하세요">
                         </div>
                     </div>
-                </div>
-                <p id="my-page-error" class="hidden text-sm text-[var(--accent-red)] text-center"></p>
-                <div class="flex items-center justify-end gap-4 pt-4">
-                    <button type="submit" id="my-page-submit" class="bg-[var(--accent-red)] text-white px-8 py-4 text-sm tracking-widest uppercase">Save Profile</button>
+                    </div>
+                    <p id="my-page-error" class="hidden text-sm text-[var(--accent-red)] mt-6"></p>
+                    <div class="flex flex-col sm:flex-row justify-end items-center gap-4 mt-8 pt-8">
+                        <button type="submit" id="my-page-submit" class="w-full sm:w-auto bg-[var(--text-dark)] text-white px-10 py-4 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-[var(--accent-red)] transition-colors shadow-md">Save Changes</button>
+                    </div>
                 </div>
             </form>
         </section>
@@ -1719,14 +1739,14 @@
                 setTimeout(() => {
                     logo.classList.remove('rotate-90', 'opacity-0');
                     logo.classList.add('rotate-0', 'opacity-100');
-                }, 360);
-                setTimeout(resolve, 980);
+                }, 560);
+                setTimeout(resolve, 1350);
                 setTimeout(() => {
                     overlay.classList.remove('translate-y-0');
                     overlay.classList.add('translate-y-full', 'pointer-events-none');
                     logo.classList.remove('rotate-0', 'opacity-100');
                     logo.classList.add('rotate-90', 'opacity-0');
-                }, 1180);
+                }, 1650);
             });
         }
 
@@ -3399,7 +3419,7 @@
             if (!myPasswordSection || !myPasswordToggle) return;
             myPasswordSection.classList.toggle('hidden', !open);
             myPasswordToggle.setAttribute('aria-expanded', String(open));
-            myPasswordToggle.textContent = open ? '비밀번호 변경 취소' : '비밀번호 변경';
+            myPasswordToggle.textContent = open ? 'Cancel Password Change' : 'Change Password';
             if (!open) {
                 document.getElementById('my-password').value = '';
                 document.getElementById('my-password-confirm').value = '';
@@ -3416,6 +3436,13 @@
             document.getElementById('my-relationship-style').value = profile.relationshipStyle || '';
             document.getElementById('my-password').value = '';
             document.getElementById('my-password-confirm').value = '';
+            const cardName = document.getElementById('my-profile-card-name');
+            const cardRole = document.getElementById('my-profile-card-role');
+            const accessBadge = document.getElementById('my-access-badge');
+            const roleLabel = profile.role === 'superuser' ? 'Superuser' : profile.role === 'admin' ? 'Admin' : 'Member';
+            if (cardName) cardName.textContent = profile.displayName || profile.username || '회원';
+            if (cardRole) cardRole.textContent = `${roleLabel} user`;
+            if (accessBadge) accessBadge.textContent = roleLabel;
             myAvatarFallback.textContent = profileInitial(profile);
             if (profile.avatarUrl) {
                 myAvatarPreview.src = `${profile.avatarUrl}&v=${cacheBust ? Date.now() : '1'}`;
