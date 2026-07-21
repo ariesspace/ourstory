@@ -160,6 +160,208 @@
                 margin-right: calc(50% - 50dvw);
             }
         }
+        .mypage-layout {
+            width: min(100%, 1480px);
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
+            min-height: calc(100vh - 8rem);
+            padding: clamp(3rem, 6vw, 5.5rem) clamp(1.5rem, 5vw, 4rem);
+        }
+        .mypage-sidebar {
+            border-right: 1px solid var(--border-light);
+            padding-right: clamp(2rem, 4vw, 3.8rem);
+            font-family: 'Space Mono', monospace;
+            letter-spacing: 0.14em;
+        }
+        .mypage-menu-title,
+        .mypage-menu-sub {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-light);
+            padding: 1.1rem 0;
+            text-transform: uppercase;
+        }
+        .mypage-menu-title {
+            color: var(--text-dark);
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+        .mypage-menu-title.active {
+            border-bottom-color: var(--text-dark);
+        }
+        .mypage-menu-sub {
+            margin-left: 1.35rem;
+            color: rgba(42, 40, 37, 0.46);
+            font-size: 0.72rem;
+            text-transform: none;
+        }
+        .mypage-content {
+            min-width: 0;
+            padding-left: clamp(2.4rem, 6vw, 6.2rem);
+        }
+        .mypage-header-title {
+            display: flex;
+            align-items: baseline;
+            gap: 1.4rem;
+            border-bottom: 1px solid var(--text-dark);
+            padding-bottom: 2.2rem;
+            margin-bottom: clamp(2.5rem, 5vw, 4rem);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(3.1rem, 5.5vw, 5.2rem);
+            font-style: italic;
+            line-height: 0.92;
+            letter-spacing: -0.04em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        .mypage-header-title span {
+            flex: none;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.68rem;
+            font-style: normal;
+            letter-spacing: 0.22em;
+            color: rgba(42, 40, 37, 0.45);
+        }
+        .profile-edit-grid {
+            display: grid;
+            grid-template-columns: minmax(240px, 340px) minmax(0, 1fr);
+            gap: clamp(3rem, 6vw, 5rem);
+            align-items: start;
+        }
+        .profile-card-box {
+            min-width: 0;
+        }
+        .profile-img-frame {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 3 / 4;
+            border: 1px solid var(--border-light);
+            background: #f7f6f2;
+            overflow: hidden;
+        }
+        .profile-img-frame::before,
+        .profile-img-frame::after {
+            content: '';
+            position: absolute;
+            width: 1.2rem;
+            height: 1.2rem;
+            z-index: 2;
+            pointer-events: none;
+        }
+        .profile-img-frame::before {
+            top: 1rem;
+            left: 1rem;
+            border-top: 1px solid rgba(42, 40, 37, 0.25);
+            border-left: 1px solid rgba(42, 40, 37, 0.25);
+        }
+        .profile-img-frame::after {
+            right: 1rem;
+            bottom: 1rem;
+            border-right: 1px solid rgba(42, 40, 37, 0.25);
+            border-bottom: 1px solid rgba(42, 40, 37, 0.25);
+        }
+        .profile-img-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%);
+        }
+        .profile-fallback {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #1b1b1a;
+            color: white;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 6rem;
+            font-style: italic;
+        }
+        .btn-change-photo,
+        .btn-save-changes {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--text-dark);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            transition: background-color 0.25s ease, color 0.25s ease;
+        }
+        .btn-change-photo {
+            width: 100%;
+            margin-top: 1.25rem;
+            padding: 1rem;
+            cursor: pointer;
+        }
+        .btn-change-photo:hover,
+        .btn-save-changes:hover {
+            background: var(--text-dark);
+            color: white;
+        }
+        .profile-form-area {
+            min-width: 0;
+        }
+        .form-row {
+            border-bottom: 1px dashed var(--border-light);
+            padding: 0 0 1.85rem;
+            margin-bottom: 1.85rem;
+        }
+        .form-row-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 1rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(42, 40, 37, 0.48);
+        }
+        .form-badge {
+            background: var(--text-dark);
+            color: white;
+            padding: 0.45rem 0.75rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+        .form-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.45rem;
+            font-style: italic;
+            letter-spacing: 0.12em;
+        }
+        .form-input-edit {
+            width: 100%;
+            border-bottom: 1px solid var(--text-dark);
+            background: transparent;
+            padding: 0.2rem 0 0.55rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.98rem;
+            letter-spacing: 0.03em;
+        }
+        .form-input-edit:read-only {
+            color: rgba(42, 40, 37, 0.7);
+        }
+        .btn-save-changes {
+            min-width: min(100%, 260px);
+            margin-top: 2rem;
+            padding: 1.25rem 2rem;
+            background: #1b1b1a;
+            color: white;
+        }
 
         input:focus, textarea:focus { outline: none; }
 
@@ -297,11 +499,11 @@
             display: flex;
             align-items: center;
             justify-content: flex-start;
-            gap: 2rem;
-            padding: 1.05rem 0;
+            gap: 1.9rem;
+            padding: 0.92rem 0;
             font-family: 'Space Mono', monospace;
-            font-size: clamp(1.15rem, 2.2vw, 1.55rem);
-            letter-spacing: 0.18em;
+            font-size: clamp(1rem, 1.35vw, 1.28rem);
+            letter-spacing: 0.2em;
             line-height: 1.25;
             text-transform: uppercase;
             text-align: left;
@@ -310,9 +512,9 @@
             transition: opacity 0.45s ease, transform 0.45s ease, padding 0.35s ease, color 0.35s ease;
         }
         .index-menu-links button em {
-            min-width: 1.4rem;
+            min-width: 1.55rem;
             font-family: 'Space Mono', monospace;
-            font-size: 0.78rem;
+            font-size: 0.72rem;
             font-style: normal;
             letter-spacing: 0.08em;
             opacity: 0.58;
@@ -627,6 +829,24 @@
             #view-schedule .schedule-layout {
                 max-width: 42rem;
             }
+            .mypage-layout {
+                grid-template-columns: 1fr;
+                padding-top: 2.5rem;
+            }
+            .mypage-content {
+                padding-left: 0;
+            }
+            .mypage-header-title {
+                white-space: normal;
+                font-size: clamp(2.5rem, 13vw, 4rem);
+            }
+            .profile-edit-grid {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+            .profile-card-box {
+                max-width: 360px;
+            }
         }
     </style>
 </head>
@@ -665,7 +885,7 @@
     </header>
 
     <div id="menu-overlay" class="fixed inset-0 bg-black/20 backdrop-blur-[3px] z-[80] opacity-0 pointer-events-none transition-opacity duration-500"></div>
-    <aside id="index-menu" class="fixed top-0 left-0 z-[90] h-screen w-[min(86vw,560px)] -translate-x-full bg-white border-r border-[var(--border-light)] px-8 sm:px-14 lg:px-20 py-16 flex flex-col transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)]">
+    <aside id="index-menu" class="fixed top-0 left-0 z-[90] h-screen w-[min(86vw,500px)] -translate-x-full bg-white border-r border-[var(--border-light)] px-8 sm:px-14 lg:px-20 py-24 flex flex-col transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)]">
         <div class="flex justify-between items-center border-b border-[var(--border-light)] pb-7 mb-16">
             <span class="font-mono text-xs tracking-[0.32em] uppercase opacity-55">Archive Directory</span>
             <button type="button" id="index-menu-close" class="font-serif-en text-xs tracking-[0.28em] uppercase opacity-55 hover:opacity-100">[ Close - ]</button>
@@ -718,128 +938,98 @@
 
     <main class="flex-grow w-full max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-14 py-4 relative z-10">
 
-        <section id="view-my-page" class="my-page-shell view-hidden fade-in border-y border-[var(--border-light)] overflow-hidden bg-[var(--bg-cream)]/28">
-            <div class="max-w-[1500px] mx-auto grid grid-cols-1 lg:grid-cols-[390px_minmax(0,1fr)] min-h-[calc(100vh-8rem)] px-6 lg:px-12 xl:px-16">
-                <aside class="hidden lg:block border-r border-[var(--border-light)] bg-[var(--bg-cream)]/45 pr-14 xl:pr-16 py-16">
-                    <nav class="space-y-0 text-base tracking-[0.07em]">
-                        <button type="button" class="w-full flex items-center justify-between border-b border-[var(--border-light)] py-5 text-left font-semibold">
-                            <span>Profile Settings</span>
-                            <i class="ph ph-caret-right text-[var(--accent-red)]"></i>
-                        </button>
-                        <button type="button" class="w-full flex items-center justify-between border-b border-[var(--border-light)] py-5 text-left opacity-50">
-                            <span>My Activity Log</span>
-                            <i class="ph ph-caret-down"></i>
-                        </button>
-                        <button type="button" class="w-full flex items-center justify-between border-b border-[var(--border-light)] py-5 text-left opacity-50">
-                            <span>Notification Preferences</span>
-                            <i class="ph ph-caret-down"></i>
-                        </button>
-                        <button type="button" class="w-full flex items-center justify-between border-b border-[var(--border-light)] py-5 text-left opacity-50">
-                            <span>Privacy & Security</span>
-                            <i class="ph ph-caret-down"></i>
-                        </button>
-                    </nav>
+        <section id="view-my-page" class="my-page-shell view-hidden fade-in">
+            <div class="mypage-layout">
+                <aside class="mypage-sidebar hidden lg:block">
+                    <div class="mypage-menu-title active">Profile Settings <span>→</span></div>
+                    <div class="mypage-menu-sub">My Activity Log</div>
+                    <div class="mypage-menu-sub">Notification Preferences</div>
+                    <div class="mypage-menu-sub">Privacy &amp; Security</div>
+                    <div class="mypage-menu-title mt-8 opacity-45">Membership <span>+</span></div>
                 </aside>
 
-                <div class="min-w-0 overflow-hidden pl-0 lg:pl-14 xl:pl-20 py-10 lg:py-16">
-                    <div class="border-b border-[var(--border-light)] pb-7 mb-10 flex items-baseline gap-4 overflow-hidden">
-                        <h1 class="min-w-0 shrink font-serif-en text-[clamp(2.8rem,4.1vw,4.9rem)] tracking-tight uppercase leading-none truncate">Account Info</h1>
-                        <span class="hidden 2xl:inline shrink-0 text-[10px] tracking-[0.25em] font-semibold uppercase opacity-45">[ Profile ]</span>
+                <div class="mypage-content">
+                    <div class="mypage-header-title">
+                        Account Info
+                        <span>[ Profile Dossier ]</span>
                     </div>
+
                     <p id="my-page-status" class="py-14 text-center text-sm opacity-50">프로필을 불러오는 중입니다.</p>
-                    <form id="my-page-form" class="hidden grid grid-cols-1 2xl:grid-cols-[340px_minmax(0,1fr)] gap-8 2xl:gap-12">
-                        <div class="min-w-0">
-                            <div class="w-full aspect-[4/5] bg-white/35 border border-[var(--border-light)] p-8 flex flex-col items-center justify-center relative shadow-sm">
-                                <div class="absolute top-5 left-5 w-5 h-px bg-black/20"></div>
-                                <div class="absolute top-5 left-5 w-px h-5 bg-black/20"></div>
-                                <div class="absolute bottom-5 right-5 w-5 h-px bg-black/20"></div>
-                                <div class="absolute bottom-5 right-5 w-px h-5 bg-black/20"></div>
 
-                                <div class="flex flex-col items-center text-center">
-                                    <div id="my-avatar-preview-wrap" class="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden bg-[var(--accent-red)] text-white flex items-center justify-center text-5xl font-serif-en italic shadow-lg mb-8">
-                                        <img id="my-avatar-preview" class="hidden w-full h-full object-cover" alt="내 프로필 사진">
-                                        <span id="my-avatar-fallback"></span>
-                                    </div>
-                                    <h2 class="font-serif-ko text-2xl font-bold mb-2" id="my-profile-card-name">관리자</h2>
-                                    <p class="text-[10px] tracking-[0.25em] uppercase opacity-45 mb-8" id="my-profile-card-role">Admin user</p>
+                    <form id="my-page-form" class="hidden profile-edit-grid">
+                        <div class="profile-card-box">
+                            <div id="my-avatar-preview-wrap" class="profile-img-frame">
+                                <img id="my-avatar-preview" class="hidden" alt="내 프로필 사진">
+                                <span id="my-avatar-fallback" class="profile-fallback"></span>
+                            </div>
+                            <input type="file" id="my-avatar-input" class="hidden" accept="image/jpeg,image/png,image/gif,image/webp">
+                            <label for="my-avatar-input" class="btn-change-photo">Change Portrait</label>
+                            <button type="button" id="my-avatar-remove" class="hidden mt-3 w-full text-[10px] tracking-[0.22em] uppercase text-[var(--accent-red)]">Remove Portrait</button>
+                            <p id="my-avatar-error" class="hidden text-xs text-[var(--accent-red)] mt-2"></p>
+                            <h2 class="mt-8 text-center font-serif-ko text-2xl font-bold" id="my-profile-card-name">관리자</h2>
+                            <p class="text-center text-[10px] tracking-[0.25em] uppercase opacity-45 mt-2" id="my-profile-card-role">Admin user</p>
+                        </div>
 
-                                    <input type="file" id="my-avatar-input" class="hidden" accept="image/jpeg,image/png,image/gif,image/webp">
-                                    <div class="flex flex-wrap justify-center gap-2">
-                                        <label for="my-avatar-input" class="cursor-pointer border border-[var(--text-dark)] px-6 py-3 text-[10px] font-semibold tracking-[0.2em] uppercase hover:bg-[var(--text-dark)] hover:text-white transition-all">Change Photo</label>
-                                        <button type="button" id="my-avatar-remove" class="hidden px-4 py-3 text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--accent-red)]">Remove</button>
-                                    </div>
-                                    <p class="text-[10px] opacity-45 mt-3">JPG, PNG, GIF, WEBP / MAX 5MB</p>
-                                    <p id="my-avatar-error" class="hidden text-xs text-[var(--accent-red)] mt-2"></p>
+                        <div class="profile-form-area">
+                            <div class="form-row">
+                                <div class="form-row-top">
+                                    <span class="form-label mb-0">Access Level</span>
+                                    <span class="form-badge" id="my-access-badge">Member</span>
+                                </div>
+                                <div class="form-value mt-5">Authorized Curator</div>
+                            </div>
+
+                            <div class="form-row">
+                                <label for="my-username" class="form-label">Login ID [UID]</label>
+                                <input type="text" id="my-username" minlength="3" maxlength="32" pattern="[A-Za-z0-9._-]+" autocomplete="username" class="form-input-edit" required>
+                            </div>
+
+                            <div class="form-row hidden">
+                                <label for="my-role" class="form-label">Role</label>
+                                <input type="text" id="my-role" class="form-input-edit" readonly>
+                            </div>
+
+                            <div class="form-row">
+                                <label for="my-display-name" class="form-label">Display Nickname</label>
+                                <input type="text" id="my-display-name" maxlength="60" class="form-input-edit" required>
+                            </div>
+
+                            <div class="form-row">
+                                <span class="form-label">Birth Year / Region</span>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                    <input type="number" id="my-birth-year" min="1900" max="2100" class="form-input-edit" placeholder="예: 1995">
+                                    <input type="text" id="my-region" maxlength="80" class="form-input-edit" placeholder="예: 서울">
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="min-w-0 flex flex-col justify-start">
-                            <div class="mb-8 flex items-center gap-4 border-b border-[var(--border-light)] pb-7">
-                                <span class="bg-[var(--accent-red)] text-white text-[10px] font-bold tracking-[0.2em] uppercase px-3 py-1.5 shadow-sm" id="my-access-badge">Member</span>
-                                <h2 class="font-serif-en text-2xl tracking-tight">Access Level</h2>
+                            <div class="form-row">
+                                <label for="my-personality" class="form-label">Personal Preferences</label>
+                                <input type="text" id="my-personality" maxlength="120" class="form-input-edit" placeholder="선택 입력">
                             </div>
 
-                    <div class="flex flex-col sm:flex-row sm:items-center py-5 border-b border-[var(--border-light)]">
-                        <label for="my-username" class="w-full sm:w-32 text-[10px] font-semibold opacity-50 tracking-widest uppercase mb-2 sm:mb-0">Login ID</label>
-                        <div class="flex-grow">
-                            <input type="text" id="my-username" minlength="3" maxlength="32" pattern="[A-Za-z0-9._-]+" autocomplete="username" class="w-full bg-transparent border-0 border-b border-transparent focus:border-[var(--accent-red)] py-2 text-[15px]" required>
-                            <p class="text-[10px] opacity-35 mt-1">영문, 숫자, 점, 밑줄, 하이픈 / 3~32자</p>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col sm:flex-row sm:items-center py-5 border-b border-[var(--border-light)]">
-                        <label for="my-role" class="w-full sm:w-32 text-[10px] font-semibold opacity-50 tracking-widest uppercase mb-2 sm:mb-0">Role</label>
-                        <input type="text" id="my-role" class="min-w-0 flex-grow bg-transparent py-2 text-[15px] opacity-60" readonly>
-                    </div>
-
-                    <div class="flex flex-col sm:flex-row sm:items-center py-5 border-b border-[var(--border-light)]">
-                        <label for="my-display-name" class="w-full sm:w-32 text-[10px] font-semibold opacity-50 tracking-widest uppercase mb-2 sm:mb-0">Nickname</label>
-                        <input type="text" id="my-display-name" maxlength="60" class="min-w-0 flex-grow bg-transparent border-b border-transparent focus:border-[var(--accent-red)] py-2 text-[15px]" required>
-                    </div>
-
-                    <div class="flex flex-col sm:flex-row py-5 border-b border-[var(--border-light)] gap-5 sm:gap-0">
-                        <div class="min-w-0 w-full sm:w-1/2 flex flex-col sm:flex-row sm:items-center">
-                            <label for="my-birth-year" class="w-full sm:w-32 text-[10px] font-semibold opacity-50 tracking-widest uppercase mb-2 sm:mb-0">Birth Year</label>
-                            <input type="number" id="my-birth-year" min="1900" max="2100" class="min-w-0 flex-grow sm:mr-8 bg-transparent border-b border-transparent focus:border-[var(--accent-red)] py-2 text-[15px]" placeholder="예: 1995">
-                        </div>
-                        <div class="min-w-0 w-full sm:w-1/2 flex flex-col sm:flex-row sm:items-center">
-                            <label for="my-region" class="w-full sm:w-20 text-[10px] font-semibold opacity-50 tracking-widest uppercase mb-2 sm:mb-0">Region</label>
-                            <input type="text" id="my-region" maxlength="80" class="min-w-0 flex-grow bg-transparent border-b border-transparent focus:border-[var(--accent-red)] py-2 text-[15px]" placeholder="예: 서울">
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col sm:flex-row sm:items-center py-5 border-b border-[var(--border-light)]">
-                        <label for="my-personality" class="w-full sm:w-32 text-[10px] font-semibold opacity-50 tracking-widest uppercase mb-2 sm:mb-0">Personal Pref.</label>
-                        <input type="text" id="my-personality" maxlength="120" class="min-w-0 flex-grow bg-transparent border-b border-transparent focus:border-[var(--accent-red)] py-2 text-[15px]" placeholder="선택 입력">
-                    </div>
-
-                    <div class="flex flex-col sm:flex-row sm:items-center py-5 border-b border-[var(--border-light)]">
-                        <label for="my-relationship-style" class="w-full sm:w-32 text-[10px] font-semibold opacity-50 tracking-widest uppercase mb-2 sm:mb-0">Dating Pref.</label>
-                        <input type="text" id="my-relationship-style" maxlength="120" class="min-w-0 flex-grow bg-transparent border-b border-transparent focus:border-[var(--accent-red)] py-2 text-[15px]" placeholder="선택 입력">
-                    </div>
-
-                    <div class="pt-7">
-                        <button type="button" id="my-password-toggle" class="text-[11px] font-medium opacity-60 hover:opacity-100 hover:text-[var(--accent-red)] underline underline-offset-4 tracking-wider transition-colors" aria-expanded="false" aria-controls="my-password-section">Change Password</button>
-                    <div id="my-password-section" class="hidden mt-6 grid grid-cols-1 sm:grid-cols-2 gap-7 bg-white/25 border border-[var(--border-light)] p-5 sm:p-6">
-                        <div>
-                            <label for="my-password" class="block text-xs tracking-widest uppercase opacity-60 mb-3">새 비밀번호</label>
-                            <input type="password" id="my-password" minlength="10" maxlength="128" autocomplete="new-password" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" placeholder="10자 이상 입력하세요">
-                        </div>
-                        <div>
-                            <label for="my-password-confirm" class="block text-xs tracking-widest uppercase opacity-60 mb-3">새 비밀번호 확인</label>
-                            <input type="password" id="my-password-confirm" minlength="10" maxlength="128" autocomplete="new-password" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" placeholder="한 번 더 입력하세요">
-                        </div>
-                    </div>
-                    </div>
-                    <p id="my-page-error" class="hidden text-sm text-[var(--accent-red)] mt-6"></p>
-                            <div class="flex flex-col sm:flex-row justify-end items-center gap-4 mt-8 pt-8">
-                                <button type="submit" id="my-page-submit" class="w-full sm:w-auto bg-[var(--text-dark)] text-white px-10 py-4 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-[var(--accent-red)] transition-colors shadow-md">Save Changes</button>
+                            <div class="form-row">
+                                <label for="my-relationship-style" class="form-label">Dating Preferences</label>
+                                <input type="text" id="my-relationship-style" maxlength="120" class="form-input-edit" placeholder="선택 입력">
                             </div>
+
+                            <button type="button" id="my-password-toggle" class="text-[11px] font-mono opacity-60 hover:opacity-100 hover:text-[var(--accent-red)] underline underline-offset-4 tracking-wider transition-colors" aria-expanded="false" aria-controls="my-password-section">Change Password</button>
+                            <div id="my-password-section" class="hidden mt-6 grid grid-cols-1 sm:grid-cols-2 gap-7 border border-[var(--border-light)] p-5 sm:p-6">
+                                <div>
+                                    <label for="my-password" class="form-label">새 비밀번호</label>
+                                    <input type="password" id="my-password" minlength="10" maxlength="128" autocomplete="new-password" class="form-input-edit" placeholder="10자 이상 입력하세요">
+                                </div>
+                                <div>
+                                    <label for="my-password-confirm" class="form-label">새 비밀번호 확인</label>
+                                    <input type="password" id="my-password-confirm" minlength="10" maxlength="128" autocomplete="new-password" class="form-input-edit" placeholder="한 번 더 입력하세요">
+                                </div>
+                            </div>
+
+                            <p id="my-page-error" class="hidden text-sm text-[var(--accent-red)] mt-6"></p>
+                            <button type="submit" id="my-page-submit" class="btn-save-changes">Save Changes</button>
                         </div>
                     </form>
-                    </div>
                 </div>
+            </div>
         </section>
 
         <section id="view-my-timeline" class="w-full max-w-3xl mx-auto view-hidden fade-in py-8">
