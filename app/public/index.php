@@ -518,44 +518,67 @@
             </div>
         </section>
 
-        <section id="view-my-page" class="w-full max-w-6xl mx-auto view-hidden fade-in py-8">
-            <div class="border-b border-[var(--border-light)] pb-7 mb-10 flex flex-wrap items-baseline gap-4">
-                <h1 class="font-serif-en text-4xl md:text-5xl tracking-tight">Account Info</h1>
-                <span class="text-[10px] tracking-[0.25em] font-semibold uppercase opacity-45">[ Profile ]</span>
-            </div>
-            <p id="my-page-status" class="py-14 text-center text-sm opacity-50">프로필을 불러오는 중입니다.</p>
-            <form id="my-page-form" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
-                <div class="lg:col-span-5">
-                    <div class="w-full aspect-[4/5] bg-white/40 border border-[var(--border-light)] p-8 flex flex-col items-center justify-center relative shadow-sm">
-                        <div class="absolute top-4 left-4 w-5 h-px bg-black/20"></div>
-                        <div class="absolute top-4 left-4 w-px h-5 bg-black/20"></div>
-                        <div class="absolute bottom-4 right-4 w-5 h-px bg-black/20"></div>
-                        <div class="absolute bottom-4 right-4 w-px h-5 bg-black/20"></div>
+        <section id="view-my-page" class="w-screen max-w-none relative left-1/2 -translate-x-1/2 view-hidden fade-in border-t border-[var(--border-light)]">
+            <div class="grid grid-cols-1 lg:grid-cols-[340px_minmax(0,1fr)] min-h-[calc(100vh-8rem)]">
+                <aside class="hidden lg:block border-r border-[var(--border-light)] bg-[var(--bg-cream)]/55 px-12 py-16">
+                    <nav class="space-y-0 text-sm tracking-[0.08em]">
+                        <button type="button" class="w-full flex items-center justify-between border-b border-[var(--border-light)] py-5 text-left font-semibold">
+                            <span>Profile Settings</span>
+                            <i class="ph ph-caret-right text-[var(--accent-red)]"></i>
+                        </button>
+                        <button type="button" class="w-full flex items-center justify-between border-b border-[var(--border-light)] py-5 text-left opacity-50">
+                            <span>My Activity Log</span>
+                            <i class="ph ph-caret-down"></i>
+                        </button>
+                        <button type="button" class="w-full flex items-center justify-between border-b border-[var(--border-light)] py-5 text-left opacity-50">
+                            <span>Notification Preferences</span>
+                            <i class="ph ph-caret-down"></i>
+                        </button>
+                        <button type="button" class="w-full flex items-center justify-between border-b border-[var(--border-light)] py-5 text-left opacity-50">
+                            <span>Privacy & Security</span>
+                            <i class="ph ph-caret-down"></i>
+                        </button>
+                    </nav>
+                </aside>
 
-                        <div class="flex flex-col items-center text-center">
-                            <div id="my-avatar-preview-wrap" class="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden bg-[var(--accent-red)] text-white flex items-center justify-center text-5xl font-serif-en italic shadow-lg mb-8">
-                                <img id="my-avatar-preview" class="hidden w-full h-full object-cover" alt="내 프로필 사진">
-                                <span id="my-avatar-fallback"></span>
-                            </div>
-                            <h2 class="font-serif-ko text-2xl font-bold mb-2" id="my-profile-card-name">관리자</h2>
-                            <p class="text-[10px] tracking-[0.25em] uppercase opacity-45 mb-8" id="my-profile-card-role">Admin user</p>
+                <div class="px-6 sm:px-10 lg:px-20 py-10 lg:py-16">
+                    <div class="border-b border-[var(--border-light)] pb-7 mb-10 flex flex-wrap items-baseline gap-4">
+                        <h1 class="font-serif-en text-4xl sm:text-5xl md:text-7xl tracking-tight uppercase">Account Info</h1>
+                        <span class="text-[10px] tracking-[0.25em] font-semibold uppercase opacity-45">[ Profile ]</span>
+                    </div>
+                    <p id="my-page-status" class="py-14 text-center text-sm opacity-50">프로필을 불러오는 중입니다.</p>
+                    <form id="my-page-form" class="hidden grid grid-cols-1 xl:grid-cols-[400px_minmax(0,1fr)] gap-10 xl:gap-14">
+                        <div>
+                            <div class="w-full aspect-[4/5] bg-white/35 border border-[var(--border-light)] p-8 flex flex-col items-center justify-center relative shadow-sm">
+                                <div class="absolute top-5 left-5 w-5 h-px bg-black/20"></div>
+                                <div class="absolute top-5 left-5 w-px h-5 bg-black/20"></div>
+                                <div class="absolute bottom-5 right-5 w-5 h-px bg-black/20"></div>
+                                <div class="absolute bottom-5 right-5 w-px h-5 bg-black/20"></div>
 
-                            <input type="file" id="my-avatar-input" class="hidden" accept="image/jpeg,image/png,image/gif,image/webp">
-                            <div class="flex flex-wrap justify-center gap-2">
-                                <label for="my-avatar-input" class="cursor-pointer border border-[var(--text-dark)] px-6 py-3 text-[10px] font-semibold tracking-[0.2em] uppercase hover:bg-[var(--text-dark)] hover:text-white transition-all">Change Photo</label>
-                                <button type="button" id="my-avatar-remove" class="hidden px-4 py-3 text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--accent-red)]">Remove</button>
+                                <div class="flex flex-col items-center text-center">
+                                    <div id="my-avatar-preview-wrap" class="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden bg-[var(--accent-red)] text-white flex items-center justify-center text-5xl font-serif-en italic shadow-lg mb-8">
+                                        <img id="my-avatar-preview" class="hidden w-full h-full object-cover" alt="내 프로필 사진">
+                                        <span id="my-avatar-fallback"></span>
+                                    </div>
+                                    <h2 class="font-serif-ko text-2xl font-bold mb-2" id="my-profile-card-name">관리자</h2>
+                                    <p class="text-[10px] tracking-[0.25em] uppercase opacity-45 mb-8" id="my-profile-card-role">Admin user</p>
+
+                                    <input type="file" id="my-avatar-input" class="hidden" accept="image/jpeg,image/png,image/gif,image/webp">
+                                    <div class="flex flex-wrap justify-center gap-2">
+                                        <label for="my-avatar-input" class="cursor-pointer border border-[var(--text-dark)] px-6 py-3 text-[10px] font-semibold tracking-[0.2em] uppercase hover:bg-[var(--text-dark)] hover:text-white transition-all">Change Photo</label>
+                                        <button type="button" id="my-avatar-remove" class="hidden px-4 py-3 text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--accent-red)]">Remove</button>
+                                    </div>
+                                    <p class="text-[10px] opacity-45 mt-3">JPG, PNG, GIF, WEBP / MAX 5MB</p>
+                                    <p id="my-avatar-error" class="hidden text-xs text-[var(--accent-red)] mt-2"></p>
+                                </div>
                             </div>
-                            <p class="text-[10px] opacity-45 mt-3">JPG, PNG, GIF, WEBP / MAX 5MB</p>
-                            <p id="my-avatar-error" class="hidden text-xs text-[var(--accent-red)] mt-2"></p>
                         </div>
-                    </div>
-                </div>
 
-                <div class="lg:col-span-7 flex flex-col justify-start">
-                    <div class="mb-8 flex items-center gap-4 border-b border-[var(--border-light)] pb-7">
-                        <span class="bg-[var(--accent-red)] text-white text-[10px] font-bold tracking-[0.2em] uppercase px-3 py-1.5 shadow-sm" id="my-access-badge">Member</span>
-                        <h2 class="font-serif-en text-2xl tracking-tight">Access Level</h2>
-                    </div>
+                        <div class="flex flex-col justify-start">
+                            <div class="mb-8 flex items-center gap-4 border-b border-[var(--border-light)] pb-7">
+                                <span class="bg-[var(--accent-red)] text-white text-[10px] font-bold tracking-[0.2em] uppercase px-3 py-1.5 shadow-sm" id="my-access-badge">Member</span>
+                                <h2 class="font-serif-en text-2xl tracking-tight">Access Level</h2>
+                            </div>
 
                     <div class="flex flex-col sm:flex-row sm:items-center py-5 border-b border-[var(--border-light)]">
                         <label for="my-username" class="w-full sm:w-32 text-[10px] font-semibold opacity-50 tracking-widest uppercase mb-2 sm:mb-0">Login ID</label>
@@ -610,11 +633,13 @@
                     </div>
                     </div>
                     <p id="my-page-error" class="hidden text-sm text-[var(--accent-red)] mt-6"></p>
-                    <div class="flex flex-col sm:flex-row justify-end items-center gap-4 mt-8 pt-8">
-                        <button type="submit" id="my-page-submit" class="w-full sm:w-auto bg-[var(--text-dark)] text-white px-10 py-4 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-[var(--accent-red)] transition-colors shadow-md">Save Changes</button>
+                            <div class="flex flex-col sm:flex-row justify-end items-center gap-4 mt-8 pt-8">
+                                <button type="submit" id="my-page-submit" class="w-full sm:w-auto bg-[var(--text-dark)] text-white px-10 py-4 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-[var(--accent-red)] transition-colors shadow-md">Save Changes</button>
+                            </div>
+                        </div>
+                    </form>
                     </div>
                 </div>
-            </form>
         </section>
 
         <section id="view-my-timeline" class="w-full max-w-3xl mx-auto view-hidden fade-in py-8">
