@@ -2160,14 +2160,11 @@
                 const wrap = document.createElement('div');
                 wrap.className = 'max-w-[86%] sm:max-w-[68%]';
                 const meta = document.createElement('div');
-                meta.className = `mb-2 flex items-center gap-3 text-[0.65rem] opacity-40 ${item.isOwn ? 'justify-end' : ''}`;
-                const name = document.createElement('span');
-                name.className = 'tracking-widest uppercase font-bold';
-                name.textContent = `Anonymous ${String(item.id).padStart(3, '0')}`;
+                meta.className = `mb-2 flex items-center text-[0.65rem] opacity-35 ${item.isOwn ? 'justify-end' : ''}`;
                 const date = document.createElement('time');
                 date.dateTime = item.createdAt;
                 date.textContent = anonymousDate(item.createdAt);
-                meta.append(name, date);
+                meta.appendChild(date);
 
                 const bubble = document.createElement('div');
                 bubble.className = item.isOwn
