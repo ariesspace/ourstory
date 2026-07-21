@@ -4142,28 +4142,19 @@
             }
             smItems.forEach((item, index) => {
                 const row = document.createElement('article');
-                row.className = index === 0
-                    ? 'group cursor-pointer border-b border-[var(--border-light)] pb-8 mb-2'
-                    : 'group cursor-pointer border-b border-[var(--border-light)] py-5';
-                if (index === 0) {
-                    row.innerHTML = `
-                        <div class="flex items-start justify-between gap-6">
-                            <h4 class="text-2xl sm:text-3xl font-bold tracking-tight group-hover:text-[var(--accent-red)] transition-colors">${escapeHtml(item.title)}</h4>
-                            <span class="mt-2 shrink-0 text-sm opacity-45">by.${escapeHtml(item.authorName || 'OUR STORY')}</span>
+                row.className = 'group cursor-pointer border-b border-[var(--border-light)] py-6 first:pt-1';
+                row.innerHTML = `
+                    <div class="grid grid-cols-[minmax(0,1fr)_auto] gap-5 items-start">
+                        <div class="min-w-0">
+                            <h4 class="text-lg sm:text-xl font-bold leading-snug tracking-[-0.02em] group-hover:text-[var(--accent-red)] transition-colors break-keep">${escapeHtml(item.title)}</h4>
+                            <div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm opacity-45">
+                                ${index === 0 ? '<span class="bg-black/[0.04] px-3 py-1.5 rounded text-[0.65rem] font-bold tracking-widest uppercase">HOT</span>' : ''}
+                                <span>by.${escapeHtml(item.authorName || '관리자')}</span>
+                            </div>
                         </div>
-                        <div class="mt-6 flex items-center gap-5 text-sm opacity-55">
-                            <span class="bg-black/[0.04] px-3 py-2 rounded text-xs font-bold tracking-widest">HOT</span>
-                            <time>${latestArchiveDate(item.occurredAt)}</time>
-                        </div>
-                    `;
-                } else {
-                    row.innerHTML = `
-                        <div class="flex items-center justify-between gap-5">
-                            <h4 class="text-base sm:text-lg font-bold opacity-55 group-hover:opacity-100 group-hover:text-[var(--text-dark)] transition-colors truncate">${escapeHtml(item.title)}<span class="ml-3 text-sm font-normal opacity-70">${item.authorName ? `by.${escapeHtml(item.authorName)}` : ''}</span></h4>
-                            <time class="shrink-0 text-xs opacity-35">${latestShortDate(item.occurredAt)}</time>
-                        </div>
-                    `;
-                }
+                        <time class="pt-1 shrink-0 text-xs sm:text-sm opacity-35">${index === 0 ? latestArchiveDate(item.occurredAt) : latestShortDate(item.occurredAt)}</time>
+                    </div>
+                `;
                 makeLatestInteractive(row, item);
                 smList.appendChild(row);
             });
