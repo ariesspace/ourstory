@@ -144,6 +144,18 @@
             overflow-wrap: anywhere;
         }
 
+        .my-page-shell {
+            width: 100vw;
+            margin-left: calc(50% - 50vw);
+            margin-right: calc(50% - 50vw);
+        }
+        @supports (width: 100dvw) {
+            .my-page-shell {
+                width: 100dvw;
+                margin-left: calc(50% - 50dvw);
+                margin-right: calc(50% - 50dvw);
+            }
+        }
 
         input:focus, textarea:focus { outline: none; }
 
@@ -518,9 +530,9 @@
             </div>
         </section>
 
-        <section id="view-my-page" class="w-full max-w-7xl mx-auto view-hidden fade-in border-t border-[var(--border-light)] overflow-hidden">
-            <div class="grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] min-h-[calc(100vh-8rem)]">
-                <aside class="hidden lg:block border-r border-[var(--border-light)] bg-[var(--bg-cream)]/55 pr-10 py-14">
+        <section id="view-my-page" class="my-page-shell view-hidden fade-in border-y border-[var(--border-light)] overflow-hidden bg-[var(--bg-cream)]/28">
+            <div class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-[320px_minmax(0,1fr)] min-h-[calc(100vh-8rem)] px-6 lg:px-12">
+                <aside class="hidden lg:block border-r border-[var(--border-light)] bg-[var(--bg-cream)]/45 pr-12 py-16">
                     <nav class="space-y-0 text-sm tracking-[0.08em]">
                         <button type="button" class="w-full flex items-center justify-between border-b border-[var(--border-light)] py-5 text-left font-semibold">
                             <span>Profile Settings</span>
@@ -541,13 +553,13 @@
                     </nav>
                 </aside>
 
-                <div class="min-w-0 pl-0 lg:pl-14 py-10 lg:py-14">
-                    <div class="border-b border-[var(--border-light)] pb-7 mb-10 flex flex-wrap items-baseline gap-4">
-                        <h1 class="min-w-0 font-serif-en text-4xl sm:text-5xl md:text-6xl tracking-tight uppercase leading-none break-words">Account Info</h1>
-                        <span class="text-[10px] tracking-[0.25em] font-semibold uppercase opacity-45">[ Profile ]</span>
+                <div class="min-w-0 overflow-hidden pl-0 lg:pl-14 xl:pl-20 py-10 lg:py-16">
+                    <div class="border-b border-[var(--border-light)] pb-7 mb-10 flex items-baseline gap-4 overflow-hidden">
+                        <h1 class="min-w-0 shrink font-serif-en text-[clamp(3rem,5.2vw,5.8rem)] tracking-tight uppercase leading-none truncate">Account Info</h1>
+                        <span class="hidden 2xl:inline shrink-0 text-[10px] tracking-[0.25em] font-semibold uppercase opacity-45">[ Profile ]</span>
                     </div>
                     <p id="my-page-status" class="py-14 text-center text-sm opacity-50">프로필을 불러오는 중입니다.</p>
-                    <form id="my-page-form" class="hidden grid grid-cols-1 xl:grid-cols-[320px_minmax(0,1fr)] gap-8 xl:gap-12">
+                    <form id="my-page-form" class="hidden grid grid-cols-1 2xl:grid-cols-[340px_minmax(0,1fr)] gap-8 2xl:gap-12">
                         <div class="min-w-0">
                             <div class="w-full aspect-[4/5] bg-white/35 border border-[var(--border-light)] p-8 flex flex-col items-center justify-center relative shadow-sm">
                                 <div class="absolute top-5 left-5 w-5 h-px bg-black/20"></div>
