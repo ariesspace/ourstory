@@ -271,8 +271,8 @@
         <h1 id="page-transition-logo" class="text-white font-serif-en text-6xl md:text-[120px] font-light tracking-tighter rotate-90 opacity-0 transition-all duration-[1200ms] ease-[cubic-bezier(0.76,0,0.24,1)]">:Our Story</h1>
     </div>
 
-    <header class="fixed top-0 left-0 w-full z-50 transition-all duration-300" id="main-header">
-        <div class="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center relative z-50">
+    <header class="fixed top-0 left-0 w-full z-50 transition-all duration-300 bg-[var(--bg-cream)]/90 backdrop-blur-md" id="main-header">
+        <div class="max-w-[1400px] mx-auto px-6 lg:px-12 h-20 flex justify-between items-center relative z-50">
 
             <div class="w-1/3 flex items-center md:pl-4">
                 <button type="button" id="mobile-menu-toggle" class="md:hidden w-10 h-10 flex items-center justify-center border border-[var(--border-light)] rounded-full" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mobile-menu">
@@ -304,6 +304,10 @@
                     <i class="ph ph-plus text-lg"></i>
                 </button>
             </div>
+        </div>
+
+        <div class="absolute bottom-0 left-0 w-full h-px bg-[var(--border-light)]" aria-hidden="true">
+            <div id="scroll-progress-bar" class="h-full w-0 bg-[var(--accent-red)] transition-[width] duration-150 ease-out"></div>
         </div>
 
         <div id="mega-menu" class="h-[400px]">
@@ -1501,6 +1505,7 @@
         import { getFirestore, collection, addDoc, onSnapshot, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const header = document.getElementById('main-header');
+        const scrollProgressBar = document.getElementById('scroll-progress-bar');
         const navLinks = document.querySelectorAll('.nav-link[data-menu]');
         const desktopNavItems = document.querySelectorAll('nav .nav-link');
         const megaMenu = document.getElementById('mega-menu');
@@ -1540,14 +1545,28 @@
 
         function updateHeaderBg() {
             if (window.scrollY > 10 || isMenuOpen || isMobileMenuOpen) {
-                header.classList.add('bg-[var(--bg-cream)]', 'shadow-sm');
-                header.classList.remove('bg-transparent');
+                header.classList.add('shadow-sm');
             } else {
-                header.classList.remove('bg-[var(--bg-cream)]', 'shadow-sm');
-                header.classList.add('bg-transparent');
+                header.classList.remove('shadow-sm');
             }
         }
-        window.addEventListener('scroll', updateHeaderBg);
+
+        function updateScrollProgress() {
+            if (!scrollProgressBar) return;
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+            const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = scrollableHeight > 0 ? Math.min(100, Math.max(0, (scrollTop / scrollableHeight) * 100)) : 0;
+            scrollProgressBar.style.width = `${progress}%`;
+        }
+
+        function updateScrollState() {
+            updateHeaderBg();
+            updateScrollProgress();
+        }
+
+        window.addEventListener('scroll', updateScrollState, { passive: true });
+        window.addEventListener('resize', updateScrollProgress);
+        updateScrollState();
 
         function closeMenu() {
             megaMenu.classList.remove('open');
@@ -1650,6 +1669,7 @@
             });
 
             if (remember) rememberView(targetId);
+            requestAnimationFrame(updateScrollProgress);
         }
 
         function loadViewData(targetId) {
