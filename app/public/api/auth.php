@@ -46,6 +46,32 @@ if ($action === 'logout') {
     auth_json(['ok' => true]);
 }
 
+if ($action === 'verify_password') {
+    $receivedCsrf = (string) ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? '');
+    if ($receivedCsrf === '' || !hash_equals(site_csrf_token(), $receivedCsrf)) {
+        auth_json(['error' => '요청 검증에 실패했습니다. 페이지를 새로고침해주세요.'], 403);
+    }
+
+    $currentUser = site_current_user($pdo);
+    if (!$currentUser) {
+        auth_json(['error' => '로그인이 필요합니다.'], 401);
+    }
+
+    $password = (string) ($body['password'] ?? '');
+    $stmt = $pdo->prepare(
+        'SELECT password_hash
+         FROM users
+         WHERE id = :id AND is_active = 1'
+    );
+    $stmt->execute([':id' => $currentUser['id']]);
+    $row = $stmt->fetch();
+    if (!$row || !password_verify($password, $row['password_hash'])) {
+        auth_json(['error' => '현재 비밀번호가 올바르지 않습니다.'], 401);
+    }
+
+    auth_json(['ok' => true]);
+}
+
 if ($action !== 'login') {
     auth_json(['error' => 'Unsupported action.'], 400);
 }

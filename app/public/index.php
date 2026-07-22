@@ -3959,6 +3959,29 @@
         </div>
     </div>
 
+    <div id="security-password-modal" class="fixed inset-0 z-[96] hidden items-center justify-center bg-black/60 p-4" role="dialog" aria-modal="true" aria-labelledby="security-password-title">
+        <form id="security-password-form" class="relative w-full max-w-md bg-[var(--bg-cream)] border border-[var(--border-light)] shadow-2xl p-7 sm:p-10">
+            <button type="button" id="security-password-close" class="absolute top-4 right-4 w-9 h-9 rounded-full border border-[var(--border-light)] flex items-center justify-center hover:bg-[var(--accent-red)] hover:text-white transition-colors" aria-label="보안 확인 닫기">
+                <i class="ph ph-x"></i>
+            </button>
+            <div class="w-12 h-12 rounded-full bg-[var(--accent-red)] text-white flex items-center justify-center">
+                <i class="ph ph-lock-key text-2xl"></i>
+            </div>
+            <p class="mt-7 text-[0.65rem] tracking-[0.3em] uppercase opacity-45 font-serif-en">Restricted Area</p>
+            <h2 id="security-password-title" class="mt-3 text-3xl sm:text-4xl font-document italic leading-tight">Security Check</h2>
+            <p class="mt-4 text-sm leading-loose opacity-60 font-serif-ko">Privacy &amp; Security 설정으로 이동하려면 현재 비밀번호를 한 번 더 입력해 주세요.</p>
+            <div class="mt-8">
+                <label for="security-current-password" class="form-label">Current Passcode</label>
+                <input type="password" id="security-current-password" class="form-input-edit" autocomplete="current-password" placeholder="현재 비밀번호" required>
+            </div>
+            <p id="security-password-error" class="hidden mt-4 text-sm text-[var(--accent-red)]"></p>
+            <div class="mt-8 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
+                <button type="button" id="security-password-cancel" class="px-5 py-3 text-xs tracking-widest uppercase opacity-55">Cancel</button>
+                <button type="submit" id="security-password-submit" class="bg-[var(--accent-red)] text-white px-6 py-3 text-xs tracking-widest uppercase">Enter</button>
+            </div>
+        </form>
+    </div>
+
     <div id="gallery-modal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-black/60 p-3 sm:p-6">
         <div class="relative w-full max-w-6xl max-h-[94vh] overflow-y-auto bg-[var(--bg-cream)] border border-[var(--border-light)] shadow-2xl rounded-sm">
             <button type="button" id="gallery-modal-close" class="absolute top-5 right-5 z-10 w-10 h-10 rounded-full bg-white/80 hover:bg-[var(--accent-red)] hover:text-white transition-colors flex items-center justify-center" aria-label="Close gallery detail">
@@ -4651,6 +4674,13 @@
         const myPasswordSection = document.getElementById('my-password-section');
         const myPageHeading = document.getElementById('my-page-heading');
         const myPageKicker = document.getElementById('my-page-kicker');
+        const securityPasswordModal = document.getElementById('security-password-modal');
+        const securityPasswordForm = document.getElementById('security-password-form');
+        const securityCurrentPassword = document.getElementById('security-current-password');
+        const securityPasswordError = document.getElementById('security-password-error');
+        const securityPasswordSubmit = document.getElementById('security-password-submit');
+        const securityPasswordClose = document.getElementById('security-password-close');
+        const securityPasswordCancel = document.getElementById('security-password-cancel');
         const myAvatarInput = document.getElementById('my-avatar-input');
         const myAvatarPreviewWrap = document.getElementById('my-avatar-preview-wrap');
         const myAvatarPreview = document.getElementById('my-avatar-preview');
@@ -6062,6 +6092,47 @@
             }
         }
 
+        function activateMyPageTab(action) {
+            document.querySelectorAll('[data-my-action]').forEach(nav => nav.classList.toggle('active', nav.dataset.myAction === action));
+            document.getElementById('view-my-page')?.classList.toggle('mypage-security-mode', action === 'security');
+            if (action === 'account') {
+                if (myPageHeading) myPageHeading.textContent = 'Account Info';
+                if (myPageKicker) myPageKicker.textContent = '[ Profile Dossier ]';
+                setMyPasswordEditorOpen(false);
+                myPageForm?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                document.getElementById('my-display-name')?.focus({ preventScroll: true });
+                return;
+            }
+            if (action === 'security') {
+                if (myPageHeading) myPageHeading.textContent = 'Security';
+                if (myPageKicker) myPageKicker.textContent = '[ ID & Passcode Settings ]';
+                setMyPasswordEditorOpen(true);
+                setTimeout(() => document.getElementById('my-password')?.focus(), 250);
+            }
+        }
+
+        function openSecurityPasswordModal() {
+            if (!securityPasswordModal || !securityCurrentPassword) {
+                activateMyPageTab('security');
+                return;
+            }
+            securityPasswordError?.classList.add('hidden');
+            securityCurrentPassword.value = '';
+            securityPasswordModal.classList.remove('hidden');
+            securityPasswordModal.classList.add('flex');
+            document.body.classList.add('overflow-hidden');
+            setTimeout(() => securityCurrentPassword.focus(), 50);
+        }
+
+        function closeSecurityPasswordModal() {
+            if (!securityPasswordModal) return;
+            securityPasswordModal.classList.add('hidden');
+            securityPasswordModal.classList.remove('flex');
+            if (securityCurrentPassword) securityCurrentPassword.value = '';
+            securityPasswordError?.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }
+
         function fillMyProfile(profile, cacheBust = false) {
             document.getElementById('my-username').value = profile.username || '';
             document.getElementById('my-role').value = profile.role || '';
@@ -6120,22 +6191,13 @@
 
         document.querySelectorAll('[data-my-action]').forEach(item => {
             item.addEventListener('click', () => {
-                document.querySelectorAll('[data-my-action]').forEach(nav => nav.classList.toggle('active', nav === item));
                 const action = item.dataset.myAction;
-                document.getElementById('view-my-page')?.classList.toggle('mypage-security-mode', action === 'security');
                 if (action === 'account') {
-                    if (myPageHeading) myPageHeading.textContent = 'Account Info';
-                    if (myPageKicker) myPageKicker.textContent = '[ Profile Dossier ]';
-                    setMyPasswordEditorOpen(false);
-                    myPageForm?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    document.getElementById('my-display-name')?.focus({ preventScroll: true });
+                    activateMyPageTab('account');
                     return;
                 }
                 if (action === 'security') {
-                    if (myPageHeading) myPageHeading.textContent = 'Security';
-                    if (myPageKicker) myPageKicker.textContent = '[ ID & Passcode Settings ]';
-                    setMyPasswordEditorOpen(true);
-                    setTimeout(() => document.getElementById('my-password')?.focus(), 250);
+                    openSecurityPasswordModal();
                     return;
                 }
                 if (action === 'activity') {
@@ -6144,6 +6206,49 @@
                 }
                 showToast('Liked Posts Log는 아직 준비 중입니다.', false);
             });
+        });
+
+        securityPasswordClose?.addEventListener('click', closeSecurityPasswordModal);
+        securityPasswordCancel?.addEventListener('click', closeSecurityPasswordModal);
+        securityPasswordModal?.addEventListener('click', event => {
+            if (event.target === securityPasswordModal) closeSecurityPasswordModal();
+        });
+        securityPasswordForm?.addEventListener('submit', async event => {
+            event.preventDefault();
+            if (!securityCurrentPassword?.value) return;
+            securityPasswordError?.classList.add('hidden');
+            if (securityPasswordSubmit) {
+                securityPasswordSubmit.disabled = true;
+                securityPasswordSubmit.textContent = 'Checking...';
+            }
+            try {
+                const response = await fetch('/api/auth.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': csrfToken || '',
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({
+                        action: 'verify_password',
+                        password: securityCurrentPassword.value,
+                    }),
+                });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '비밀번호를 확인하지 못했습니다.');
+                closeSecurityPasswordModal();
+                activateMyPageTab('security');
+            } catch (error) {
+                if (securityPasswordError) {
+                    securityPasswordError.textContent = error.message;
+                    securityPasswordError.classList.remove('hidden');
+                }
+            } finally {
+                if (securityPasswordSubmit) {
+                    securityPasswordSubmit.disabled = false;
+                    securityPasswordSubmit.textContent = 'Enter';
+                }
+            }
         });
 
         function formatTimelineDate(value) {
@@ -8099,6 +8204,7 @@
         });
         window.addEventListener('keydown', (event) => {
             if (event.key !== 'Escape') return;
+            if (!securityPasswordModal?.classList.contains('hidden')) return closeSecurityPasswordModal();
             if (!initialPasswordModal?.classList.contains('hidden')) return closeInitialPasswordReminder();
             if (!memberProfileModal?.classList.contains('hidden')) return closeMemberProfileModal();
             if (!timelinePhotoModal?.classList.contains('hidden')) return closeTimelinePhoto();
