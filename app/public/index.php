@@ -161,12 +161,12 @@
             }
         }
         .mypage-layout {
-            width: min(100%, 1400px);
+            width: min(100%, 1680px);
             margin: 0 auto;
             display: flex;
-            gap: clamp(3rem, 5vw, 5rem);
+            gap: clamp(4rem, 6vw, 7rem);
             min-height: calc(100vh - 8rem);
-            padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 5vw, 4rem);
+            padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 4vw, 4rem);
             text-align: left;
         }
         .mypage-sidebar {
@@ -251,7 +251,7 @@
         .mypage-content {
             flex: 1;
             min-width: 0;
-            padding-left: clamp(1.4rem, 3vw, 3rem);
+            padding-left: clamp(1rem, 2vw, 2rem);
         }
         .mypage-header-title {
             display: flex;
@@ -288,8 +288,8 @@
         }
         .mypage-profile-grid {
             display: grid;
-            grid-template-columns: minmax(240px, 320px) minmax(420px, 1fr);
-            gap: clamp(3rem, 5vw, 4.2rem);
+            grid-template-columns: minmax(320px, 430px) minmax(520px, 1fr);
+            gap: clamp(4rem, 6vw, 6rem);
             align-items: start;
         }
         .mypage-portrait-col {
@@ -303,9 +303,9 @@
         .profile-img-frame {
             position: relative;
             width: 100%;
-            aspect-ratio: 6 / 5;
+            aspect-ratio: 1 / 0.82;
             border: 1px solid var(--border-light);
-            background: #111;
+            background: var(--accent-red);
             overflow: hidden;
         }
         .profile-img-frame::before,
@@ -341,11 +341,15 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #111;
+            background: var(--accent-red);
             color: white;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(4rem, 7vw, 5.8rem);
-            font-style: italic;
+            font-family: 'Phosphor', sans-serif;
+            font-size: clamp(4.4rem, 7vw, 6.2rem);
+            font-style: normal;
+        }
+        .profile-fallback i {
+            display: block;
+            line-height: 1;
         }
         .portrait-caption {
             text-align: center;
@@ -456,7 +460,7 @@
             color: white;
         }
         .mypage-security-mode .mypage-profile-grid {
-            grid-template-columns: minmax(420px, 760px);
+            grid-template-columns: minmax(520px, 840px);
         }
         .mypage-security-mode .mypage-portrait-col,
         .mypage-security-mode .profile-form-area > .form-row:not(.security-visible),
@@ -6075,7 +6079,7 @@
             if (cardName) cardName.textContent = profile.displayName || profile.username || '회원';
             if (cardRole) cardRole.textContent = `${roleLabel} user`;
             if (accessBadge) accessBadge.textContent = roleLabel;
-            myAvatarFallback.textContent = profileInitial(profile);
+            myAvatarFallback.innerHTML = '<i class="ph ph-user"></i>';
             if (profile.avatarUrl) {
                 myAvatarPreview.src = `${profile.avatarUrl}&v=${cacheBust ? Date.now() : '1'}`;
                 myAvatarPreview.classList.remove('hidden');
