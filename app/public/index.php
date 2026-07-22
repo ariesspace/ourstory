@@ -13,19 +13,19 @@
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Nanum+Myeongjo:wght@400;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Sans+KR:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap');
 
         :root {
-            --bg-cream: #ffffff;
-            --bg-pink: #ffffff;
-            --text-dark: #2a2825;
-            --accent-red: #d92518;
-            --border-light: rgba(42, 40, 37, 0.1);
-            --bg-color: #f8f7f3;
-            --text-muted: #8e8a84;
+            --bg-cream: #f9f9f8;
+            --bg-pink: #f9f9f8;
+            --text-dark: #111111;
+            --accent-red: #2A3B32;
+            --border-light: #e0e0e0;
+            --bg-color: #f9f9f8;
+            --text-muted: #888888;
         }
 
         body {
             font-family: 'Noto Sans KR', sans-serif;
 
-            background: #ffffff;
+            background: var(--bg-color);
             background-attachment: fixed;
             color: var(--text-dark);
             min-height: 100vh;
@@ -35,7 +35,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        .font-serif-en { font-family: 'Playfair Display', serif; }
+        .font-serif-en { font-family: 'Cormorant Garamond', serif; }
         .font-serif-ko { font-family: 'Nanum Myeongjo', serif; }
         .font-document { font-family: 'Cormorant Garamond', serif; }
         .font-mono { font-family: 'Space Mono', monospace; }
@@ -161,18 +161,69 @@
             }
         }
         .mypage-layout {
-            width: min(100%, 1480px);
+            width: min(100%, 1400px);
             margin: 0 auto;
-            display: grid;
-            grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
+            display: flex;
+            gap: clamp(3rem, 5vw, 5rem);
             min-height: calc(100vh - 8rem);
-            padding: clamp(3rem, 6vw, 5.5rem) clamp(1.5rem, 5vw, 4rem);
+            padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 5vw, 4rem);
+            text-align: left;
         }
         .mypage-sidebar {
+            flex: 0 0 clamp(260px, 24vw, 330px);
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
             border-right: 1px solid var(--border-light);
-            padding-right: clamp(2rem, 4vw, 3.8rem);
+            padding-right: clamp(2.2rem, 3.8vw, 3.8rem);
             font-family: 'Space Mono', monospace;
             letter-spacing: 0.14em;
+        }
+        .mypage-nav-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .mypage-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.95rem 0;
+            border-bottom: 1px solid var(--text-dark);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--text-dark);
+        }
+        .mypage-nav-list {
+            display: flex;
+            flex-direction: column;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .mypage-nav-item {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 1.05rem 0;
+            border-bottom: 1px dashed var(--border-light);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.12em;
+            color: rgba(17, 17, 17, 0.48);
+            cursor: pointer;
+            transition: color 0.25s ease, padding-left 0.25s ease;
+        }
+        .mypage-nav-item:last-child {
+            border-bottom: 0;
+        }
+        .mypage-nav-item:hover {
+            color: var(--accent-red);
+            padding-left: 0.35rem;
+        }
+        .mypage-nav-item.active {
+            color: var(--text-dark);
+            font-weight: 700;
         }
         .mypage-menu-title,
         .mypage-menu-sub {
@@ -198,23 +249,28 @@
             text-transform: none;
         }
         .mypage-content {
+            flex: 1;
             min-width: 0;
-            padding-left: clamp(2.4rem, 6vw, 6.2rem);
+            padding-left: clamp(1.4rem, 3vw, 3rem);
         }
         .mypage-header-title {
             display: flex;
             align-items: baseline;
             gap: 1.4rem;
             border-bottom: 1px solid var(--text-dark);
-            padding-bottom: 2.2rem;
-            margin-bottom: clamp(2.5rem, 5vw, 4rem);
+            padding-bottom: 1.75rem;
+            margin-bottom: clamp(2.4rem, 4.4vw, 3.6rem);
             font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(3.1rem, 5.5vw, 5.2rem);
+            font-size: clamp(3rem, 4.3vw, 4.8rem);
             font-style: italic;
             line-height: 0.92;
             letter-spacing: -0.04em;
             text-transform: uppercase;
             white-space: nowrap;
+        }
+        .mypage-header-title strong {
+            font: inherit;
+            font-weight: 400;
         }
         .mypage-header-title span {
             flex: none;
@@ -230,15 +286,26 @@
             gap: clamp(3rem, 6vw, 5rem);
             align-items: start;
         }
+        .mypage-profile-grid {
+            display: grid;
+            grid-template-columns: minmax(240px, 320px) minmax(420px, 1fr);
+            gap: clamp(3rem, 5vw, 4.2rem);
+            align-items: start;
+        }
+        .mypage-portrait-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
         .profile-card-box {
             min-width: 0;
         }
         .profile-img-frame {
             position: relative;
             width: 100%;
-            aspect-ratio: 3 / 4;
+            aspect-ratio: 6 / 5;
             border: 1px solid var(--border-light);
-            background: #f7f6f2;
+            background: #111;
             overflow: hidden;
         }
         .profile-img-frame::before,
@@ -274,11 +341,29 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #1b1b1a;
+            background: #111;
             color: white;
             font-family: 'Cormorant Garamond', serif;
-            font-size: 6rem;
+            font-size: clamp(4rem, 7vw, 5.8rem);
             font-style: italic;
+        }
+        .portrait-caption {
+            text-align: center;
+            font-family: 'Noto Serif KR', serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            line-height: 1.35;
+            color: var(--text-dark);
+        }
+        .portrait-caption span {
+            display: block;
+            margin-top: 0.35rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.62rem;
+            font-weight: 400;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: rgba(17, 17, 17, 0.42);
         }
         .btn-change-photo,
         .btn-save-changes {
@@ -307,10 +392,18 @@
         .profile-form-area {
             min-width: 0;
         }
+        .mypage-form-col {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            border: 1px solid var(--border-light);
+            background: rgba(255, 255, 255, 0.78);
+            padding: clamp(2rem, 4vw, 3rem);
+        }
         .form-row {
             border-bottom: 1px dashed var(--border-light);
-            padding: 0 0 1.85rem;
-            margin-bottom: 1.85rem;
+            padding: 0 0 1.55rem;
+            margin-bottom: 1.55rem;
         }
         .form-row-top {
             display: flex;
@@ -356,11 +449,25 @@
             color: rgba(42, 40, 37, 0.7);
         }
         .btn-save-changes {
-            min-width: min(100%, 260px);
+            width: min(100%, 420px);
             margin-top: 2rem;
             padding: 1.25rem 2rem;
             background: #1b1b1a;
             color: white;
+        }
+        .mypage-security-mode .mypage-profile-grid {
+            grid-template-columns: minmax(420px, 760px);
+        }
+        .mypage-security-mode .mypage-portrait-col,
+        .mypage-security-mode .profile-form-area > .form-row:not(.security-visible),
+        .mypage-security-mode #my-password-toggle {
+            display: none;
+        }
+        .mypage-security-mode #my-password-section {
+            display: grid !important;
+            margin-top: 0;
+            border: 1px solid var(--border-light);
+            padding: clamp(2rem, 4vw, 3rem);
         }
         .feed-container {
             width: min(100%, 760px);
@@ -548,74 +655,155 @@
         }
         .schedule-header {
             text-align: center;
-            padding: clamp(2.5rem, 6vw, 5rem) 1rem clamp(2rem, 4vw, 3.2rem);
+            padding: clamp(3.5rem, 7vw, 5.4rem) 1rem clamp(2.4rem, 5vw, 3.4rem);
+            border-bottom: 1px solid var(--border-light);
+            margin-bottom: clamp(3rem, 6vw, 4.8rem);
         }
         .schedule-main-title {
             font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(3.6rem, 8vw, 7rem);
+            font-size: clamp(3.2rem, 6vw, 4.9rem);
             font-style: italic;
-            line-height: 0.9;
-            letter-spacing: -0.04em;
+            font-weight: 400;
+            line-height: 0.92;
+            letter-spacing: -0.035em;
         }
         .schedule-sub-title {
-            margin-top: 1.2rem;
-            font-family: 'Nanum Myeongjo', serif;
-            font-size: 0.95rem;
-            color: rgba(42, 40, 37, 0.55);
+            margin-top: 1.8rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.38em;
+            text-transform: uppercase;
+            color: rgba(42, 40, 37, 0.46);
         }
         .schedule-layout {
-            width: min(100%, 1180px);
+            width: min(100%, 1000px);
             margin: 0 auto clamp(3rem, 7vw, 6rem);
-            display: grid;
-            grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.55fr);
-            gap: clamp(2rem, 4vw, 4.5rem);
-            align-items: start;
+            display: block;
         }
-        .calendar-box,
-        .schedule-sidebar {
-            background: rgba(255,255,255,0.72);
+        .calendar-box {
+            background: transparent;
             border: 1px solid var(--border-light);
-            padding: clamp(1.4rem, 3vw, 2.4rem);
+            padding: clamp(1.4rem, 2vw, 1.8rem);
+        }
+        .schedule-sidebar {
+            display: none;
         }
         .calendar-nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: clamp(1.8rem, 4vw, 3rem);
+            gap: 1rem;
+            margin-bottom: clamp(1.6rem, 3vw, 2rem);
         }
         .calendar-nav-btn {
-            width: 2.5rem;
-            height: 2.5rem;
-            border: 1px solid var(--border-light);
-            border-radius: 999px;
+            width: auto;
+            height: auto;
+            border: 0;
+            border-radius: 0;
             font-family: 'Space Mono', monospace;
-            transition: border-color 0.25s ease, color 0.25s ease;
+            font-size: 0.72rem;
+            letter-spacing: 0.32em;
+            color: rgba(42, 40, 37, 0.46);
+            text-transform: uppercase;
+            transition: color 0.25s ease;
         }
         .calendar-nav-btn:hover {
-            color: var(--accent-red);
-            border-color: var(--accent-red);
+            color: var(--text-dark);
         }
         .calendar-month-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(2.4rem, 5vw, 4rem);
-            font-style: italic;
-            letter-spacing: 0.05em;
+            font-family: 'Space Mono', monospace;
+            font-size: clamp(1.1rem, 2vw, 1.35rem);
+            font-style: normal;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
         }
         .calendar-weekdays,
         .calendar-days-grid {
             display: grid;
             grid-template-columns: repeat(7, minmax(0, 1fr));
-            text-align: center;
+        }
+        .calendar-weekdays {
+            border: 1px solid var(--border-light);
+            border-bottom: 0;
         }
         .calendar-weekday {
+            min-width: 0;
+            padding: 1rem 0.45rem;
+            border-right: 1px solid var(--border-light);
             font-family: 'Space Mono', monospace;
-            font-size: 0.68rem;
-            letter-spacing: 0.18em;
+            font-size: 0.66rem;
+            letter-spacing: 0.06em;
+            text-align: center;
             color: rgba(42, 40, 37, 0.45);
         }
+        .calendar-weekday:last-child {
+            border-right: 0;
+        }
         .calendar-days-grid {
-            margin-top: 0.85rem;
-            row-gap: clamp(1rem, 2.4vw, 2rem);
+            margin-top: 0;
+            row-gap: 0;
+            border-top: 1px solid var(--border-light);
+            border-left: 1px solid var(--border-light);
+        }
+        .calendar-cell {
+            min-height: 9.5rem;
+            border-right: 1px solid var(--border-light);
+            border-bottom: 1px solid var(--border-light);
+            padding: 1.05rem 0.9rem;
+            background: transparent;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+            transition: background-color 0.2s ease;
+        }
+        button.calendar-cell {
+            cursor: pointer;
+        }
+        button.calendar-cell:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+        .calendar-cell.empty {
+            pointer-events: none;
+            opacity: 0.38;
+        }
+        .calendar-cell.selected .date-number {
+            color: var(--accent-red);
+        }
+        .date-number {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.86rem;
+            letter-spacing: 0.02em;
+            color: var(--text-dark);
+        }
+        .date-number.holiday {
+            color: #b42318;
+            font-weight: 700;
+        }
+        .event-badges {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0.34rem;
+            margin-top: auto;
+        }
+        .event-badge {
+            align-self: flex-start;
+            max-width: 100%;
+            padding: 0.42rem 0.5rem;
+            background: #171717;
+            color: #fff;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 700;
+            line-height: 1.25;
+            text-align: left;
+            word-break: keep-all;
+            overflow-wrap: break-word;
+        }
+        .event-badge.type-party {
+            background: #2A3B32;
         }
         .selected-date-header {
             border-bottom: 1px solid var(--text-dark);
@@ -793,29 +981,86 @@
             background-color: var(--text-dark);
             color: var(--bg-cream);
         }
-        .index-menu-links button {
+        .index-menu-head {
             display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            gap: 1.9rem;
-            padding: 0.92rem 0;
+            align-items: baseline;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--text-dark);
+            padding-bottom: 2.55rem;
+            margin-bottom: 3.25rem;
+        }
+        .index-menu-title,
+        .index-menu-close {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1.25rem;
+            letter-spacing: -0.01em;
+        }
+        .index-menu-close {
             font-family: 'Space Mono', monospace;
-            font-size: clamp(1rem, 1.35vw, 1.28rem);
+            font-style: normal;
+            font-size: 0.72rem;
+            letter-spacing: 0.38em;
+            color: rgba(17, 17, 17, 0.56);
+            text-transform: uppercase;
+        }
+        .index-menu-section {
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 1.55rem;
+            margin-bottom: 2.65rem;
+        }
+        .index-menu-section-title {
+            margin-bottom: 1.7rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            font-style: normal;
             letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(79, 91, 105, 0.78);
+        }
+        .index-menu-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1.45rem;
+        }
+        .index-menu-links button {
+            display: grid;
+            grid-template-columns: 3.4rem minmax(0, 1fr) auto;
+            align-items: baseline;
+            gap: 1rem;
+            width: 100%;
+            padding: 0;
+            font-family: 'Space Mono', monospace;
+            font-size: 1rem;
+            letter-spacing: 0.22em;
             line-height: 1.25;
             text-transform: uppercase;
             text-align: left;
             opacity: 0;
             transform: translateX(-18px);
-            transition: opacity 0.45s ease, transform 0.45s ease, padding 0.35s ease, color 0.35s ease;
+            transition: opacity 0.45s ease, transform 0.45s ease, color 0.35s ease, padding 0.32s ease, letter-spacing 0.32s ease;
         }
         .index-menu-links button em {
-            min-width: 1.55rem;
             font-family: 'Space Mono', monospace;
-            font-size: 0.72rem;
+            font-size: 0.68rem;
             font-style: normal;
             letter-spacing: 0.08em;
-            opacity: 0.58;
+            color: rgba(79, 91, 105, 0.8);
+            transition: opacity 0.32s ease, transform 0.32s ease;
+        }
+        .index-menu-links button span {
+            min-width: 0;
+            color: #000;
+            transition: color 0.32s ease, transform 0.32s ease, letter-spacing 0.32s ease;
+        }
+        .index-menu-links button small {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 0.76rem;
+            font-weight: 400;
+            letter-spacing: 0.16em;
+            color: rgba(79, 91, 105, 0.82);
+            white-space: nowrap;
+            transition: color 0.32s ease, transform 0.32s ease, letter-spacing 0.32s ease;
         }
         #index-menu.open {
             transform: translateX(0);
@@ -833,7 +1078,23 @@
         #index-menu.open .index-menu-links button:nth-child(7) { transition-delay: 0.48s; }
         .index-menu-links button:hover {
             color: var(--accent-red);
-            padding-left: 0.65rem;
+            padding-left: 0.28rem;
+            padding-right: 0.28rem;
+            letter-spacing: 0.2em;
+        }
+        .index-menu-links button:hover em {
+            opacity: 0.55;
+            transform: translateX(0.06rem);
+        }
+        .index-menu-links button:hover span {
+            color: var(--accent-red);
+            transform: translateX(0.14rem);
+            letter-spacing: 0.2em;
+        }
+        .index-menu-links button:hover small {
+            color: var(--accent-red);
+            transform: translateX(-0.18rem);
+            letter-spacing: 0.14em;
         }
 
         #site-loader {
@@ -901,11 +1162,8 @@
             background: #30302f;
         }
         body.login-mode #main-header {
-            background: #30302f;
-            color: #f8f7f3;
-        }
-        body.login-mode #scroll-progress-bar {
-            background: #f8f7f3;
+            background: #fff;
+            color: var(--text-dark);
         }
         .login-vault {
             width: 100vw;
@@ -1084,8 +1342,8 @@
                 font-size: 1.25rem;
             }
             #calendar-month-year {
-                font-size: 1.85rem;
-                letter-spacing: 0.04em;
+                font-size: 0.95rem;
+                letter-spacing: 0.18em;
             }
             #view-schedule .schedule-weekdays {
                 gap: 0;
@@ -1094,9 +1352,9 @@
                 letter-spacing: 0.08em;
             }
             #calendar-grid {
-                row-gap: 0.15rem;
+                row-gap: 0;
                 column-gap: 0;
-                font-size: 0.95rem;
+                font-size: 0.82rem;
             }
             #view-schedule .schedule-detail {
                 display: none;
@@ -1128,7 +1386,8 @@
                 max-width: 42rem;
             }
             .mypage-layout {
-                grid-template-columns: 1fr;
+                flex-direction: column;
+                gap: 2rem;
                 padding-top: 2.5rem;
             }
             .mypage-content {
@@ -1139,6 +1398,10 @@
                 font-size: clamp(2.5rem, 13vw, 4rem);
             }
             .profile-edit-grid {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+            .mypage-profile-grid {
                 grid-template-columns: 1fr;
                 gap: 2.5rem;
             }
@@ -1179,6 +1442,1508 @@
                 font-size: 1rem;
             }
         }
+
+        /* Exhibition redesign pass: local-only visual direction from the new reference */
+        #main-header {
+            background: var(--bg-color) !important;
+            backdrop-filter: none !important;
+            color: var(--text-dark);
+            box-shadow: none !important;
+        }
+        #main-header > div:first-child {
+            max-width: none;
+            height: 96px;
+            padding-left: clamp(1.7rem, 4vw, 4rem);
+            padding-right: clamp(1.7rem, 4vw, 4rem);
+        }
+        #main-header button,
+        #main-header span {
+            font-family: 'Space Mono', monospace;
+        }
+        #main-header #index-menu-open,
+        #main-header .header-auth-item {
+            font-size: 0.78rem;
+            letter-spacing: 0.32em;
+            color: rgba(17, 17, 17, 0.58);
+            text-transform: uppercase;
+        }
+        #main-header .header-user-link {
+            font-family: 'Space Mono', 'Noto Sans KR', monospace !important;
+            font-style: normal;
+            font-size: 0.78rem;
+            letter-spacing: 0.16em;
+            color: rgba(17, 17, 17, 0.72);
+            text-transform: uppercase;
+        }
+        #main-header .view-trigger[data-target="view-read"] {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-weight: 300;
+            letter-spacing: -0.02em;
+            line-height: 1;
+        }
+        main {
+            max-width: 1600px !important;
+            padding-left: clamp(1.5rem, 4vw, 4rem) !important;
+            padding-right: clamp(1.5rem, 4vw, 4rem) !important;
+        }
+        .gallery-home {
+            grid-template-columns: minmax(180px, 1fr) minmax(320px, 2fr) minmax(160px, 1fr);
+            gap: clamp(2rem, 4vw, 4.5rem);
+        }
+        .gallery-home-kicker,
+        .feed-subtitle,
+        .add-event-label,
+        .form-label,
+        .login-doc-meta,
+        .login-doc-label,
+        .index-menu-links button,
+        .mypage-sidebar,
+        .btn-change-photo,
+        .btn-save-changes,
+        .btn-add-schedule,
+        .btn-tweet-submit {
+            font-family: 'Space Mono', monospace;
+        }
+        .gallery-home-kicker,
+        .detail-title {
+            color: var(--text-muted);
+            border-bottom-color: var(--text-dark);
+        }
+        .gallery-home-image {
+            max-width: 550px;
+            filter: grayscale(100%) contrast(1.1) brightness(0.9);
+            box-shadow: none;
+        }
+        .gallery-home-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 300;
+            letter-spacing: -0.04em;
+        }
+        .gallery-home-button,
+        .btn-save-changes,
+        .btn-change-photo,
+        .btn-add-schedule,
+        .btn-tweet-submit,
+        #submit-btn,
+        #sm-publish-btn,
+        #gallery-submit-btn {
+            border-radius: 0 !important;
+            box-shadow: none !important;
+        }
+        .index-menu-links button {
+            font-size: 0.86rem;
+            letter-spacing: 0.18em;
+        }
+        #index-menu {
+            background: var(--bg-color) !important;
+            width: min(88vw, 500px) !important;
+            padding-top: 4.8rem !important;
+            padding-bottom: 3.2rem !important;
+        }
+        #menu-overlay {
+            background: rgba(249, 249, 248, 0.45) !important;
+            backdrop-filter: blur(7px);
+        }
+        .login-modal {
+            background: rgba(249, 249, 248, 0.72) !important;
+            backdrop-filter: blur(10px);
+        }
+        .login-document {
+            background: var(--bg-color);
+            color: var(--text-dark);
+            box-shadow: 0 24px 80px rgba(17, 17, 17, 0.14);
+        }
+        .login-doc-button {
+            background: var(--text-dark);
+            box-shadow: none;
+        }
+        .page-header,
+        #view-sm-board > div:first-child,
+        #view-gallery > div:first-child {
+            border-bottom: 1px solid var(--border-light) !important;
+        }
+        .feed-container,
+        .calendar-box,
+        .schedule-sidebar,
+        .timeline-composer,
+        .compose-box,
+        .tweet-card,
+        article,
+        form {
+            border-color: var(--border-light) !important;
+        }
+        .feed-container,
+        .calendar-box,
+        .schedule-sidebar,
+        .compose-box {
+            background: rgba(255, 255, 255, 0.58);
+        }
+        .feed-title,
+        .schedule-main-title,
+        .calendar-month-title,
+        .mypage-header-title,
+        .page-title,
+        h1.font-serif-en,
+        h2.font-serif-en {
+            font-family: 'Cormorant Garamond', serif !important;
+            font-weight: 300 !important;
+        }
+        input,
+        textarea {
+            caret-color: var(--accent-red);
+        }
+        ::selection {
+            background: var(--accent-red);
+            color: var(--bg-color);
+        }
+
+        @media (max-width: 767px) {
+            #main-header > div:first-child {
+                height: 84px;
+                padding-left: 1.25rem;
+                padding-right: 1.25rem;
+                grid-template-columns: 1fr auto 1fr !important;
+            }
+            #main-header #index-menu-open,
+            #main-header .header-auth-item {
+                font-size: 0.68rem;
+                letter-spacing: 0.22em;
+            }
+            #main-header .header-user-link {
+                display: none !important;
+            }
+            #main-header > div:first-child > div:last-child {
+                gap: 0.85rem !important;
+            }
+            #main-header .view-trigger[data-target="view-read"] {
+                font-size: 1.85rem !important;
+            }
+            main {
+                padding-left: 1.25rem !important;
+                padding-right: 1.25rem !important;
+            }
+            .gallery-home {
+                grid-template-columns: 1fr;
+            }
+            .gallery-home-title {
+                font-size: clamp(3rem, 17vw, 5rem);
+            }
+            #view-schedule .schedule-header {
+                padding-top: 2.8rem;
+                padding-bottom: 2rem;
+                margin-bottom: 1.5rem;
+            }
+            #view-schedule .schedule-layout {
+                width: 100%;
+                padding-left: 0;
+                padding-right: 0;
+            }
+            #view-schedule .calendar-box {
+                padding: 0.8rem;
+                overflow-x: auto;
+            }
+            #view-schedule .calendar-nav {
+                margin-bottom: 1rem;
+            }
+            #view-schedule .calendar-nav-btn {
+                font-size: 0.58rem;
+                letter-spacing: 0.16em;
+            }
+            #view-schedule .calendar-weekdays,
+            #view-schedule .calendar-days-grid {
+                min-width: 620px;
+            }
+            #view-schedule .calendar-weekday {
+                padding: 0.7rem 0.3rem;
+                font-size: 0.56rem;
+            }
+            #view-schedule .calendar-cell {
+                min-height: 5.8rem;
+                padding: 0.62rem 0.48rem;
+                gap: 0.4rem;
+            }
+            #view-schedule .date-number {
+                font-size: 0.72rem;
+            }
+            #view-schedule .event-badge {
+                padding: 0.28rem 0.34rem;
+                font-size: 0.58rem;
+                line-height: 1.2;
+            }
+        }
+
+        #view-timeline .feed-container {
+            width: min(100%, 1120px) !important;
+            margin: 0 auto !important;
+            padding: clamp(2rem, 4vw, 3.2rem) 0 clamp(4rem, 7vw, 6rem) !important;
+            background: transparent !important;
+            border: 0 !important;
+        }
+        #view-timeline .feed-header {
+            position: relative !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            text-align: center !important;
+            border-bottom: 1px solid var(--border-light) !important;
+            padding-bottom: clamp(2.4rem, 5vw, 3.4rem) !important;
+            margin-bottom: clamp(3rem, 6vw, 4.8rem) !important;
+        }
+        #view-timeline .feed-title {
+            font-family: 'Cormorant Garamond', serif !important;
+            font-size: clamp(3.2rem, 6vw, 4.9rem) !important;
+            font-style: italic !important;
+            font-weight: 400 !important;
+            line-height: 0.92 !important;
+            letter-spacing: -0.035em !important;
+        }
+        #view-timeline .feed-subtitle {
+            margin-top: 1.8rem !important;
+            font-family: 'Space Mono', monospace !important;
+            font-size: 0.72rem !important;
+            letter-spacing: 0.38em !important;
+            text-transform: uppercase !important;
+            color: rgba(17, 17, 17, 0.46) !important;
+        }
+        #view-timeline .feed-refresh {
+            position: absolute !important;
+            right: 0 !important;
+            bottom: 2.7rem !important;
+            width: 2.7rem !important;
+            height: 2.7rem !important;
+            border: 1px solid var(--border-light) !important;
+            border-radius: 0 !important;
+            background: transparent !important;
+            color: rgba(17, 17, 17, 0.55) !important;
+        }
+        #view-timeline .compose-box {
+            display: block !important;
+            grid-template-columns: none !important;
+            border: 1px solid var(--border-light) !important;
+            padding: 1.35rem 1.6rem !important;
+            margin: 0 auto clamp(3rem, 5vw, 4rem) !important;
+            background: transparent !important;
+        }
+        #view-timeline .compose-form {
+            min-width: 0 !important;
+        }
+        #view-timeline .compose-textarea {
+            width: 100% !important;
+            min-height: 5.4rem !important;
+            max-height: 13rem !important;
+            resize: vertical !important;
+            background: transparent !important;
+            border: 0 !important;
+            border-bottom: 1px solid var(--border-light) !important;
+            padding: 0.15rem 0 0.95rem !important;
+            font-family: 'Noto Sans KR', sans-serif !important;
+            font-size: 1.05rem !important;
+            line-height: 1.55 !important;
+            color: var(--text-dark) !important;
+        }
+        #view-timeline .compose-textarea::placeholder {
+            color: rgba(17, 17, 17, 0.42) !important;
+        }
+        #view-timeline .compose-footer {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: flex-end !important;
+            gap: 1.3rem !important;
+            padding-top: 1rem !important;
+            border-top: 0 !important;
+        }
+        #view-timeline .compose-tools {
+            margin-right: auto !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 1.1rem !important;
+            font-family: 'Space Mono', monospace !important;
+            font-size: 0.68rem !important;
+            letter-spacing: 0.08em !important;
+            color: rgba(17, 17, 17, 0.5) !important;
+            text-transform: uppercase !important;
+        }
+        #view-timeline .timeline-anon-option {
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 0.45rem !important;
+            font-size: 0.78rem !important;
+            color: rgba(17, 17, 17, 0.58) !important;
+            white-space: nowrap !important;
+        }
+        #view-timeline .timeline-anon-option input {
+            width: 0.82rem !important;
+            height: 0.82rem !important;
+            border-radius: 0 !important;
+        }
+        #view-timeline .btn-tweet-submit {
+            min-width: 5.6rem !important;
+            border-radius: 0 !important;
+            padding: 0.95rem 1.6rem !important;
+            background: #171717 !important;
+            color: #fff !important;
+            font-family: 'Space Mono', monospace !important;
+            font-size: 0.72rem !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.12em !important;
+            text-transform: uppercase !important;
+        }
+        #view-timeline .timeline-stream {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 0 !important;
+            min-height: 0 !important;
+        }
+        #view-timeline .tweet-card {
+            display: block !important;
+            grid-template-columns: none !important;
+            gap: 0 !important;
+            border-bottom: 1px dashed var(--border-light) !important;
+            padding: clamp(2rem, 4vw, 3rem) 0 !important;
+            background: transparent !important;
+        }
+        #view-timeline .tweet-card:hover {
+            background: transparent !important;
+        }
+        #view-timeline .tweet-avatar {
+            display: flex !important;
+            width: 2.55rem !important;
+            height: 2.55rem !important;
+            border-radius: 999px !important;
+            overflow: hidden !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: rgba(42, 59, 50, 0.13) !important;
+            color: rgba(42, 59, 50, 0.82) !important;
+            font-family: 'Space Mono', monospace !important;
+            font-size: 0.78rem !important;
+            border: 1px solid var(--border-light) !important;
+            flex-shrink: 0 !important;
+        }
+        #view-timeline .tweet-avatar img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+        }
+        #view-timeline .tweet-avatar.anonymous-avatar {
+            background: rgba(42, 59, 50, 0.13) !important;
+        }
+        #view-timeline .tweet-avatar.anonymous-avatar i {
+            font-size: 1.45rem !important;
+            color: rgba(42, 59, 50, 0.82) !important;
+        }
+        #view-timeline .tweet-content-wrap {
+            min-width: 0 !important;
+        }
+        #view-timeline .tweet-meta {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            gap: 1.5rem !important;
+            margin-bottom: clamp(1.6rem, 3vw, 2.6rem) !important;
+        }
+        #view-timeline .timeline-author-wrap {
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 0.8rem !important;
+            min-width: 0 !important;
+        }
+        #view-timeline .timeline-author-wrap.profile-link,
+        #view-timeline .comment-avatar.profile-link,
+        #view-timeline .comment-author.profile-link {
+            cursor: pointer;
+        }
+        #view-timeline .timeline-author-wrap.profile-link:hover .tweet-author,
+        #view-timeline .comment-author.profile-link:hover {
+            color: var(--accent-red);
+        }
+        #view-timeline .tweet-author {
+            font-family: 'Noto Sans KR', sans-serif !important;
+            font-size: 1rem !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.02em !important;
+        }
+        #view-timeline .tweet-author small {
+            margin-left: 0.35rem !important;
+            font-weight: 400 !important;
+            color: rgba(17, 17, 17, 0.72) !important;
+        }
+        #view-timeline .tweet-time {
+            font-family: 'Space Mono', monospace !important;
+            font-size: 0.68rem !important;
+            letter-spacing: 0.12em !important;
+            color: rgba(17, 17, 17, 0.48) !important;
+            text-transform: uppercase !important;
+            white-space: nowrap !important;
+        }
+        #view-timeline .tweet-text {
+            font-family: 'Noto Sans KR', sans-serif !important;
+            font-size: 1rem !important;
+            line-height: 1.9 !important;
+            white-space: pre-wrap !important;
+            word-break: keep-all !important;
+            overflow-wrap: break-word !important;
+        }
+        #view-timeline .tweet-actions {
+            margin-top: 1.85rem !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 1.4rem !important;
+            font-family: 'Space Mono', monospace !important;
+            font-size: 0.7rem !important;
+            color: rgba(17, 17, 17, 0.55) !important;
+        }
+        #view-timeline .tweet-delete {
+            color: #b84a4a !important;
+        }
+        #view-timeline .tweet-delete:hover {
+            color: #8f2424 !important;
+        }
+        #view-timeline .preview-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 0.8rem 0 1rem;
+        }
+        #view-timeline .preview-thumb-wrap {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border: 1px solid var(--border-light);
+        }
+        #view-timeline .preview-thumb {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(50%);
+        }
+        #view-timeline .btn-remove-thumb {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: var(--text-dark);
+            color: var(--bg-color);
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            font-size: 0.6rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        #view-timeline .post-images {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 0.8rem;
+            margin: 1.6rem 0 0.4rem;
+        }
+        #view-timeline .post-image {
+            width: 100%;
+            max-height: 500px;
+            object-fit: cover;
+            filter: grayscale(80%);
+            transition: filter 0.5s ease;
+            border: 1px solid var(--border-light);
+            cursor: zoom-in;
+        }
+        #view-timeline .post-image:hover {
+            filter: grayscale(0%);
+        }
+        #view-timeline .comments-section {
+            display: none;
+            margin-top: 20px;
+            border-top: 1px dashed var(--border-light);
+            padding-top: 20px;
+        }
+        #view-timeline .comments-section.active {
+            display: block;
+        }
+        #view-timeline .comment-item {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+        #view-timeline .comment-avatar {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 999px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: rgba(42, 59, 50, 0.13);
+            color: rgba(42, 59, 50, 0.82);
+            border: 1px solid var(--border-light);
+        }
+        #view-timeline .comment-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        #view-timeline .comment-avatar i {
+            font-size: 1.05rem;
+        }
+        #view-timeline .comment-body {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        #view-timeline .comment-author {
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        #view-timeline .comment-text {
+            font-size: 0.85rem;
+            color: var(--text-dark);
+            white-space: pre-wrap;
+        }
+        #view-timeline .comment-delete {
+            align-self: flex-start;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.62rem;
+            color: rgba(17,17,17,.45);
+        }
+        #view-timeline .comment-delete:hover {
+            color: #8f2424;
+        }
+        .member-profile-modal-card {
+            width: min(100%, 560px);
+            background:
+                linear-gradient(135deg, rgba(42, 59, 50, 0.05), transparent 32%),
+                linear-gradient(315deg, rgba(42, 59, 50, 0.035), transparent 38%),
+                var(--bg-color);
+            border: 1px solid var(--border-light);
+            box-shadow: 0 2rem 5rem rgba(0, 0, 0, 0.22);
+            padding: clamp(1.45rem, 4vw, 2.45rem);
+            position: relative;
+            overflow: hidden;
+        }
+        .member-profile-modal-card::before {
+            content: 'PROFILE';
+            position: absolute;
+            right: 1.15rem;
+            bottom: 0.6rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(3.2rem, 12vw, 6.5rem);
+            font-style: italic;
+            line-height: 0.75;
+            color: rgba(42, 59, 50, 0.035);
+            pointer-events: none;
+        }
+        .member-profile-modal-main {
+            display: flex;
+            align-items: center;
+            gap: clamp(1rem, 3vw, 1.55rem);
+            position: relative;
+            z-index: 1;
+            padding-bottom: clamp(1.3rem, 3vw, 2rem);
+            border-bottom: 1px solid rgba(17, 17, 17, 0.12);
+        }
+        .member-profile-modal-avatar {
+            width: clamp(3.7rem, 10vw, 4.8rem);
+            height: clamp(3.7rem, 10vw, 4.8rem);
+            border-radius: 999px;
+            overflow: hidden;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--accent-red);
+            color: var(--bg-color);
+            font-family: 'Noto Serif KR', serif;
+            box-shadow: 0 1rem 2.2rem rgba(42, 59, 50, 0.18);
+        }
+        .member-profile-modal-avatar i,
+        .default-profile-icon i {
+            font-size: 2.25rem;
+            line-height: 1;
+        }
+        .member-profile-modal-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .member-profile-modal-name {
+            font-family: 'Noto Serif KR', serif;
+            font-size: clamp(1.55rem, 4vw, 2.15rem);
+            line-height: 1.12;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            word-break: keep-all;
+        }
+        .member-profile-modal-username {
+            margin-top: 0.45rem;
+            font-family: 'Noto Sans KR', 'Inter', sans-serif;
+            font-size: 0.88rem;
+            letter-spacing: 0;
+            font-weight: 500;
+            color: rgba(17, 17, 17, 0.52);
+        }
+        .member-profile-modal-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.85rem;
+            margin-top: 1.35rem;
+            position: relative;
+            z-index: 1;
+        }
+        .member-profile-modal-field {
+            border: 1px solid rgba(17, 17, 17, 0.08);
+            background: rgba(255, 255, 255, 0.38);
+            padding: 0.95rem 1rem;
+        }
+        .member-profile-modal-label {
+            display: block;
+            margin-bottom: 0.45rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.58rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(17, 17, 17, 0.38);
+        }
+        .member-profile-modal-value {
+            display: block;
+            min-height: 1.5rem;
+            font-size: 0.95rem;
+            word-break: keep-all;
+            overflow-wrap: break-word;
+        }
+        .member-profile-modal-bio {
+            position: relative;
+            z-index: 1;
+            margin-top: 1rem;
+            border: 1px solid rgba(17, 17, 17, 0.08);
+            background: rgba(255, 255, 255, 0.28);
+            padding: 1.1rem 1.2rem;
+            line-height: 1.75;
+            white-space: pre-wrap;
+            color: rgba(17, 17, 17, 0.78);
+        }
+        .notice-document {
+            background: rgba(255, 255, 255, 0.74);
+            border: 1px solid rgba(17, 17, 17, 0.12);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.025);
+            text-align: left;
+        }
+        .notice-doc-page-header {
+            text-align: center;
+            border-bottom: 1px solid rgba(17, 17, 17, 0.10);
+            padding-bottom: 2.5rem;
+            margin-bottom: 3.4rem;
+        }
+        .notice-doc-page-header h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(3rem, 7vw, 4.8rem);
+            font-style: italic;
+            font-weight: 400;
+            line-height: 1;
+            letter-spacing: -0.04em;
+        }
+        .notice-doc-page-header p {
+            margin-top: 1.3rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.34em;
+            text-transform: uppercase;
+            color: rgba(17, 17, 17, 0.43);
+        }
+        .notice-doc-header {
+            border-bottom: 2px solid var(--accent-red);
+            padding-bottom: 1.65rem;
+            margin-bottom: 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 1.5rem;
+        }
+        .notice-doc-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.2rem, 5vw, 3.15rem);
+            font-style: italic;
+            font-weight: 400;
+            line-height: 1;
+            letter-spacing: -0.035em;
+        }
+        .notice-doc-meta {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.66rem;
+            color: rgba(17, 17, 17, 0.46);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            text-align: right;
+            line-height: 1.7;
+        }
+        .notice-doc-body {
+            font-size: 0.96rem;
+            font-weight: 300;
+            line-height: 1.86;
+            color: rgba(17, 17, 17, 0.78);
+            word-break: keep-all;
+            overflow-wrap: break-word;
+        }
+        .notice-doc-body h3 {
+            margin-top: 2.2rem;
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.55rem;
+            border-bottom: 1px dashed rgba(17, 17, 17, 0.16);
+            font-family: 'Cormorant Garamond', 'Noto Serif KR', serif;
+            font-size: 1.55rem;
+            font-style: italic;
+            font-weight: 600;
+            color: var(--accent-red);
+        }
+        .notice-doc-body h4 {
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 1.03rem;
+            font-weight: 600;
+            color: rgba(17, 17, 17, 0.84);
+        }
+        .notice-doc-body h4.notice-alert-heading {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.55rem;
+            color: #b42318;
+            background: rgba(180, 35, 24, 0.055);
+            border-left: 3px solid #b42318;
+            padding: 0.48rem 0.8rem;
+            letter-spacing: 0.01em;
+        }
+        .notice-doc-body p {
+            margin-bottom: 1rem;
+        }
+        .notice-doc-body ul,
+        .notice-doc-body ol {
+            padding-left: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        .notice-doc-body li {
+            margin-bottom: 0.45rem;
+        }
+        .notice-doc-body li::marker {
+            color: var(--accent-red);
+        }
+        .notice-doc-footnote {
+            margin-top: 2rem;
+            border-top: 1px solid rgba(17, 17, 17, 0.14);
+            padding-top: 1rem;
+            font-size: 0.86rem;
+            color: rgba(17, 17, 17, 0.52);
+            font-style: italic;
+        }
+        .bar-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.65rem;
+        }
+        .bar-card {
+            position: relative;
+            display: grid;
+            grid-template-columns: minmax(14rem, 0.9fr) minmax(0, 2fr);
+            gap: clamp(1.6rem, 4vw, 2.7rem);
+            border: 1px solid var(--border-light);
+            background: rgba(255, 255, 255, 0.62);
+            padding: clamp(1.35rem, 3vw, 2.35rem);
+            text-align: left;
+            transition: border-color 0.35s ease, background-color 0.35s ease, transform 0.35s ease;
+        }
+        .bar-card:hover {
+            border-color: var(--text-dark);
+            background: rgba(255, 255, 255, 0.86);
+            transform: translateY(-2px);
+        }
+        .bar-card.is-hidden {
+            opacity: 0.56;
+        }
+        .bar-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            border-right: 1px solid var(--border-light);
+            padding-right: clamp(1rem, 3vw, 2rem);
+        }
+        .bar-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 4vw, 2.7rem);
+            font-style: italic;
+            font-weight: 400;
+            line-height: 0.95;
+            letter-spacing: -0.035em;
+        }
+        .bar-tags {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.66rem;
+            color: var(--accent-red);
+            letter-spacing: 0.12em;
+            line-height: 1.55;
+            word-break: keep-all;
+            text-transform: uppercase;
+        }
+        .bar-location {
+            margin-top: 0.25rem;
+            font-size: 0.78rem;
+            color: rgba(17, 17, 17, 0.48);
+            line-height: 1.65;
+        }
+        .bar-desc {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 1rem;
+            font-size: 0.95rem;
+            font-weight: 300;
+            line-height: 1.9;
+            color: rgba(17, 17, 17, 0.7);
+            word-break: keep-all;
+        }
+        .bar-desc-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem 1rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.68rem;
+            letter-spacing: 0.08em;
+            color: rgba(17, 17, 17, 0.48);
+        }
+        .bar-actions {
+            display: flex;
+            gap: 0.35rem;
+            margin-top: 0.35rem;
+        }
+        .bar-action-btn {
+            width: 2.25rem;
+            height: 2.25rem;
+            border: 1px solid var(--border-light);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(17, 17, 17, 0.5);
+            transition: color 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
+        }
+        .bar-action-btn:hover {
+            color: var(--accent-red);
+            border-color: var(--accent-red);
+            background: rgba(42, 59, 50, 0.06);
+        }
+        #view-gallery {
+            max-width: min(100%, 1240px);
+            margin: 0 auto;
+        }
+        .gallery-archive-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 1.5rem;
+            border-bottom: 1px solid var(--border-light);
+            padding: clamp(2rem, 4vw, 3rem) 0 1.25rem;
+            margin-bottom: 2.5rem;
+        }
+        .gallery-archive-kicker {
+            display: block;
+            margin-bottom: 0.85rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.68rem;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            color: rgba(17, 17, 17, 0.45);
+        }
+        .gallery-archive-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(3rem, 5.8vw, 4.6rem);
+            font-style: italic;
+            font-weight: 400;
+            line-height: 0.92;
+            letter-spacing: -0.045em;
+        }
+        .gallery-archive-copy {
+            max-width: 24rem;
+            color: rgba(17, 17, 17, 0.55);
+            line-height: 1.75;
+            word-break: keep-all;
+        }
+        .gallery-archive-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: var(--accent-red);
+            color: var(--bg-color);
+            padding: 0.85rem 1.35rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            transition: opacity 0.28s ease, transform 0.28s ease;
+        }
+        .gallery-archive-action:hover {
+            opacity: 0.86;
+            transform: translateY(-1px);
+        }
+        .gallery-archive-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.8rem;
+            background: transparent;
+            border: 0;
+        }
+        .gallery-archive-card {
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            border: 1px solid var(--border-light);
+            cursor: pointer;
+            overflow: hidden;
+            transition: border-color 0.35s ease, transform 0.35s ease, box-shadow 0.35s ease;
+        }
+        .gallery-archive-card:hover {
+            border-color: var(--text-dark);
+            transform: translateY(-4px);
+            box-shadow: 0 16px 34px rgba(17, 17, 17, 0.045);
+        }
+        .gallery-archive-media {
+            position: relative;
+            aspect-ratio: 4 / 3;
+            overflow: hidden;
+            background: rgba(17, 17, 17, 0.04);
+        }
+        .gallery-archive-card:nth-child(5n + 1) .gallery-archive-media {
+            aspect-ratio: 4 / 3;
+        }
+        .gallery-archive-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(90%);
+            transform: scale(1.01);
+            transition: filter 0.55s ease, transform 0.65s ease;
+        }
+        .gallery-archive-card:hover .gallery-archive-media img {
+            filter: grayscale(10%);
+            transform: scale(1.035);
+        }
+        .gallery-archive-media::after {
+            content: 'View Archive';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -35%);
+            opacity: 0;
+            background: rgba(255, 255, 255, 0.88);
+            color: var(--text-dark);
+            padding: 0.75rem 1.1rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .gallery-archive-card:hover .gallery-archive-media::after {
+            opacity: 1;
+            transform: translate(-50%, -50%);
+        }
+        .gallery-archive-count {
+            position: absolute;
+            right: 0.9rem;
+            bottom: 0.9rem;
+            background: rgba(17, 17, 17, 0.82);
+            color: var(--bg-color);
+            padding: 0.4rem 0.58rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.58rem;
+            letter-spacing: 0.1em;
+        }
+        .gallery-archive-body {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding: 1.25rem 1.35rem 1.35rem;
+        }
+        .gallery-archive-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 0.9rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.62rem;
+            letter-spacing: 0.13em;
+            text-transform: uppercase;
+            color: rgba(17, 17, 17, 0.42);
+        }
+        .gallery-archive-meta span:first-child {
+            color: var(--accent-red);
+            font-weight: 700;
+        }
+        .gallery-archive-card-title {
+            font-size: 1.08rem;
+            font-weight: 700;
+            line-height: 1.35;
+            letter-spacing: -0.015em;
+            word-break: keep-all;
+            transition: color 0.28s ease;
+        }
+        .gallery-archive-card:hover .gallery-archive-card-title {
+            color: var(--accent-red);
+        }
+        .gallery-archive-summary {
+            margin-top: 0.55rem;
+            color: rgba(17, 17, 17, 0.54);
+            font-size: 0.84rem;
+            line-height: 1.65;
+            word-break: keep-all;
+        }
+        .gallery-editor-shell {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: clamp(2.8rem, 5vw, 4.5rem) 0;
+        }
+        .gallery-editor-head {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 1.5rem;
+            border-bottom: 1px solid var(--text-dark);
+            padding-bottom: 1.3rem;
+            margin-bottom: 2.5rem;
+        }
+        .gallery-editor-mark {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.8rem, 6vw, 4.2rem);
+            font-style: italic;
+            line-height: 0.95;
+        }
+        .gallery-editor-heading {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: rgba(17, 17, 17, 0.5);
+        }
+        .gallery-editor-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid var(--border-light);
+            padding: clamp(1.4rem, 3vw, 2.4rem);
+        }
+        .gallery-editor-title {
+            width: 100%;
+            background: transparent;
+            border-bottom: 1px solid var(--border-light);
+            padding: 0.25rem 0 0.85rem;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: clamp(1.25rem, 3vw, 1.9rem);
+            font-weight: 600;
+            color: var(--text-dark);
+            transition: border-color 0.25s ease;
+        }
+        .gallery-editor-title:focus,
+        .gallery-editor-textarea:focus {
+            border-color: var(--accent-red);
+        }
+        .gallery-dropzone {
+            cursor: pointer;
+            border: 2px dashed var(--border-light);
+            background: #fff;
+            min-height: 12rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
+            text-align: center;
+            transition: border-color 0.25s ease, background-color 0.25s ease;
+        }
+        .gallery-dropzone:hover {
+            border-color: var(--accent-red);
+            background: rgba(42, 59, 50, 0.035);
+        }
+        .gallery-editor-textarea {
+            width: 100%;
+            min-height: 12rem;
+            resize: vertical;
+            border: 1px solid var(--border-light);
+            background: transparent;
+            padding: 1.2rem;
+            line-height: 1.75;
+            color: var(--text-dark);
+            transition: border-color 0.25s ease;
+        }
+        .gallery-editor-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            border-top: 1px solid var(--border-light);
+            padding-top: 1.35rem;
+        }
+        .gallery-editor-submit {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: var(--accent-red);
+            color: var(--bg-color);
+            padding: 0.9rem 1.6rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+        }
+        @media (max-width: 860px) {
+            .bar-card {
+                grid-template-columns: 1fr;
+            }
+            .bar-meta {
+                border-right: 0;
+                border-bottom: 1px solid var(--border-light);
+                padding-right: 0;
+                padding-bottom: 1.1rem;
+            }
+            .gallery-archive-head {
+                grid-template-columns: 1fr;
+            }
+            .gallery-archive-grid {
+                grid-template-columns: 1fr;
+                gap: 1.1rem;
+            }
+            .gallery-archive-card {
+                border-bottom: 1px solid var(--border-light);
+            }
+        }
+        @media (max-width: 640px) {
+            .notice-doc-header {
+                display: block;
+            }
+            .notice-doc-meta {
+                margin-top: 1rem;
+                text-align: left;
+            }
+        }
+        @media (max-width: 520px) {
+            .member-profile-modal-main {
+                align-items: flex-start;
+            }
+            .member-profile-modal-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        #view-timeline .comment-input-wrapper {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        #view-timeline .comment-input {
+            flex: 1;
+            border: none;
+            border-bottom: 1px solid var(--border-light);
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 0.85rem;
+            background: transparent;
+            padding: 5px 0;
+            outline: none;
+        }
+        #view-timeline .comment-input:focus {
+            border-color: var(--accent-red);
+        }
+        #view-timeline .comment-submit {
+            border: 1px solid var(--text-dark);
+            padding: 5px 15px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+        }
+        #view-timeline .comment-submit:hover {
+            background: var(--text-dark);
+            color: var(--bg-color);
+        }
+        #main-header > div:first-child {
+            max-width: none !important;
+            grid-template-columns: minmax(10rem, 1fr) auto minmax(10rem, 1fr) !important;
+            overflow: visible !important;
+        }
+        #main-header > div:first-child > div:last-child span,
+        #main-header > div:first-child > div:last-child button {
+            white-space: nowrap !important;
+        }
+        #view-people {
+            width: min(100%, 1320px) !important;
+            margin: 0 auto !important;
+            padding-top: clamp(2.4rem, 5vw, 4rem) !important;
+        }
+        #view-people .members-directory-head {
+            display: grid;
+            grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.95fr);
+            align-items: end;
+            gap: clamp(2rem, 7vw, 8rem);
+            border-bottom: 2px solid var(--text-dark);
+            padding-bottom: clamp(2.2rem, 4vw, 3rem);
+            margin-bottom: 0;
+        }
+        #view-people .members-directory-head h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(4.2rem, 8vw, 7.8rem);
+            font-weight: 400;
+            line-height: 0.9;
+            letter-spacing: -0.055em;
+            text-transform: uppercase;
+        }
+        #view-people .members-directory-head h1 em {
+            font-style: italic;
+            font-weight: 400;
+        }
+        #view-people .members-directory-head > div > p {
+            margin-top: 1.85rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: rgba(17, 17, 17, 0.46);
+        }
+        #view-people .members-directory-copy {
+            justify-self: end;
+            max-width: 420px;
+            font-size: 0.95rem;
+            line-height: 1.9;
+            color: rgba(17, 17, 17, 0.48);
+            word-break: keep-all;
+        }
+        #view-people .members-search-bar {
+            display: flex;
+            align-items: center;
+            gap: 1.4rem;
+            border-bottom: 1px solid var(--border-light);
+            padding: 2.2rem 0 1.8rem;
+            margin-bottom: clamp(2.2rem, 5vw, 4rem);
+        }
+        #view-people .members-search-bar i {
+            font-size: 1.65rem;
+            color: var(--text-dark);
+            opacity: 1;
+        }
+        #view-people .members-search-bar input {
+            flex: 1;
+            min-width: 0;
+            background: transparent;
+            border: 0;
+            outline: 0;
+            padding: 0.2rem 0;
+            font-size: 1.15rem;
+            color: var(--text-dark);
+        }
+        #view-people .members-search-bar input::placeholder {
+            color: rgba(17, 17, 17, 0.25);
+        }
+        #view-people #people-search-count {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.78rem;
+            letter-spacing: 0.18em;
+            color: rgba(17, 17, 17, 0.48);
+            white-space: nowrap;
+        }
+        #view-people .members-directory-list {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1px;
+            border: 1px solid var(--border-light);
+            background: var(--border-light);
+        }
+        #view-people .member-directory-card {
+            min-height: 18rem;
+            background: var(--bg-color);
+            padding: 1.7rem;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            transition: background-color 0.25s ease, color 0.25s ease;
+        }
+        #view-people .member-directory-card:hover {
+            background: #fff;
+        }
+        #view-people .member-directory-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 2.2rem;
+        }
+        #view-people .member-directory-index {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.68rem;
+            letter-spacing: 0.16em;
+            color: rgba(17, 17, 17, 0.42);
+        }
+        #view-people .member-directory-avatar {
+            width: 3.2rem;
+            height: 3.2rem;
+            border-radius: 999px;
+            overflow: hidden;
+            background: var(--accent-red);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1.45rem;
+        }
+        #view-people .member-directory-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%);
+        }
+        #view-people .member-directory-name {
+            font-size: clamp(1.3rem, 2.4vw, 2rem);
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1.15;
+        }
+        #view-people .member-directory-username {
+            margin-top: 0.45rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.68rem;
+            letter-spacing: 0.08em;
+            color: rgba(17, 17, 17, 0.42);
+        }
+        #view-people .member-directory-bio {
+            margin-top: 1.3rem;
+            font-size: 0.86rem;
+            line-height: 1.75;
+            color: rgba(17, 17, 17, 0.56);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        #view-people .member-directory-meta {
+            margin-top: auto;
+            padding-top: 1.4rem;
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.66rem;
+            letter-spacing: 0.1em;
+            color: rgba(17, 17, 17, 0.42);
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 767px) {
+            #view-timeline .feed-container {
+                padding-top: 2.8rem !important;
+            }
+            #view-timeline .feed-header {
+                padding-bottom: 2rem !important;
+                margin-bottom: 1.5rem !important;
+            }
+            #view-timeline .feed-refresh {
+                right: 0 !important;
+                bottom: 1.65rem !important;
+                width: 2.25rem !important;
+                height: 2.25rem !important;
+            }
+            #view-timeline .compose-box {
+                padding: 1.05rem !important;
+                margin-bottom: 1.8rem !important;
+            }
+            #view-timeline .compose-textarea {
+                min-height: 7rem !important;
+                font-size: 0.95rem !important;
+            }
+            #view-timeline .compose-footer {
+                flex-wrap: wrap !important;
+                justify-content: space-between !important;
+                gap: 0.85rem !important;
+            }
+            #view-timeline .compose-tools {
+                order: 1 !important;
+                width: 100% !important;
+                gap: 0.75rem !important;
+                font-size: 0.58rem !important;
+                flex-wrap: wrap !important;
+            }
+            #view-timeline .timeline-anon-option {
+                order: 2 !important;
+                font-size: 0.72rem !important;
+            }
+            #view-timeline .btn-tweet-submit {
+                order: 3 !important;
+                min-width: 4.7rem !important;
+                padding: 0.78rem 1.05rem !important;
+            }
+            #view-timeline .tweet-card {
+                grid-template-columns: 2.45rem minmax(0, 1fr) !important;
+                gap: 0.85rem !important;
+                padding: 1.8rem 0 !important;
+            }
+            #view-timeline .tweet-avatar {
+                width: 2.45rem !important;
+                height: 2.45rem !important;
+            }
+            #view-timeline .tweet-meta {
+                align-items: flex-start !important;
+                flex-direction: column !important;
+                gap: 0.45rem !important;
+                margin-bottom: 1.2rem !important;
+            }
+            #view-people {
+                padding-top: 3.5rem !important;
+            }
+            #view-people .members-directory-head {
+                grid-template-columns: 1fr;
+                gap: 1.8rem;
+                padding-bottom: 2rem;
+            }
+            #view-people .members-directory-copy {
+                justify-self: start;
+                max-width: none;
+            }
+            #view-people .members-search-bar {
+                gap: 0.9rem;
+                padding: 1.4rem 0 1.2rem;
+            }
+            #view-people .members-search-bar input {
+                font-size: 0.95rem;
+            }
+            #view-people .members-directory-list {
+                grid-template-columns: 1fr;
+            }
+            #view-people .member-directory-card {
+                min-height: 14rem;
+                padding: 1.25rem;
+            }
+        }
+
+        #view-timeline {
+            padding-top: 0 !important;
+        }
+        #view-timeline .feed-container,
+        #view-timeline .feed-header,
+        #view-timeline .compose-box {
+            background: transparent !important;
+            box-shadow: none !important;
+        }
+        #view-timeline .feed-container {
+            padding-top: 0 !important;
+        }
+        #view-timeline .feed-header {
+            position: static !important;
+            top: auto !important;
+            backdrop-filter: none !important;
+            margin-top: 0 !important;
+            min-height: auto !important;
+            padding-top: 0 !important;
+            padding-bottom: 2.2rem !important;
+        }
     </style>
 </head>
 <body class="loading-lock">
@@ -1199,35 +2964,54 @@
     </div>
 
     <header class="fixed top-0 left-0 w-full z-50 bg-white" id="main-header">
-        <div class="max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-14 h-24 grid grid-cols-[1fr_auto_1fr] items-center">
+        <div class="max-w-none mx-auto px-7 sm:px-12 lg:px-16 h-24 grid grid-cols-[1fr_auto_1fr] items-center">
             <div class="flex justify-start">
                 <button type="button" id="index-menu-open" class="font-serif-en text-xs tracking-[0.28em] uppercase opacity-55 hover:opacity-100 transition-opacity">[ INDEX + ]</button>
             </div>
             <button type="button" class="view-trigger font-serif-en italic text-3xl md:text-4xl tracking-tight" data-target="view-read">our story</button>
-            <div class="flex justify-end items-center gap-5 sm:gap-8 font-serif-en text-xs tracking-[0.28em] uppercase opacity-60">
-                <span class="hidden sm:inline">Seoul, KR</span>
-                <button type="button" class="view-trigger hover:opacity-100" data-target="view-login" id="login-nav-btn">Login</button>
-                <button type="button" id="header-logout-btn" class="logout-trigger hidden hover:text-[var(--accent-red)]">Logout</button>
+            <div class="flex justify-end items-center gap-5 sm:gap-9 font-serif-en text-xs tracking-[0.28em] uppercase">
+                <button type="button" class="view-trigger hidden header-auth-item hover:opacity-100" data-target="view-notice" id="header-notice-btn">Notice</button>
+                <button type="button" class="view-trigger hidden header-user-link hover:opacity-100" data-target="view-my-page" id="header-user-btn"></button>
+                <button type="button" class="view-trigger header-auth-item hover:opacity-100" data-target="view-login" id="login-nav-btn">Login</button>
+                <button type="button" id="header-logout-btn" class="logout-trigger hidden header-auth-item hover:text-[var(--accent-red)]">Logout</button>
             </div>
         </div>
-        <div class="absolute bottom-0 left-0 w-full h-px bg-[var(--border-light)]" aria-hidden="true">
+        <div class="absolute bottom-0 left-0 w-full h-px bg-black/[0.06]" aria-hidden="true">
             <div id="scroll-progress-bar" class="h-full w-0 bg-[var(--accent-red)] transition-[width] duration-150 ease-out"></div>
         </div>
     </header>
 
-    <div id="menu-overlay" class="fixed inset-0 bg-black/20 backdrop-blur-[3px] z-[80] opacity-0 pointer-events-none transition-opacity duration-500"></div>
-    <aside id="index-menu" class="fixed top-0 left-0 z-[90] h-screen w-[min(86vw,500px)] -translate-x-full bg-white border-r border-[var(--border-light)] px-8 sm:px-14 lg:px-20 py-24 flex flex-col transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)]">
-        <div class="flex justify-between items-center border-b border-[var(--border-light)] pb-7 mb-16">
-            <span class="font-mono text-xs tracking-[0.32em] uppercase opacity-55">Archive Directory</span>
-            <button type="button" id="index-menu-close" class="font-serif-en text-xs tracking-[0.28em] uppercase opacity-55 hover:opacity-100">[ Close - ]</button>
+    <div id="menu-overlay" class="fixed inset-0 bg-[rgba(249,249,248,0.6)] backdrop-blur-[5px] z-[80] opacity-0 pointer-events-none transition-opacity duration-500"></div>
+    <aside id="index-menu" class="fixed top-0 left-0 z-[90] h-screen w-[min(80vw,400px)] -translate-x-full bg-[var(--bg-color)] border-r border-[var(--border-light)] px-10 py-10 flex flex-col overflow-y-auto transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)]">
+        <div class="index-menu-head">
+            <span class="index-menu-title">Index</span>
+            <button type="button" id="index-menu-close" class="index-menu-close">[ Close ]</button>
         </div>
-        <nav class="index-menu-links flex flex-col">
-            <button type="button" class="view-trigger" data-target="view-sm-board"><em>01</em><span>Archive</span></button>
-            <button type="button" class="view-trigger" data-target="view-people"><em>02</em><span>Members</span></button>
-            <button type="button" class="view-trigger" data-target="view-timeline"><em>03</em><span>Timeline</span></button>
-            <button type="button" class="view-trigger" data-target="view-schedule"><em>04</em><span>Schedule</span></button>
-            <button type="button" class="view-trigger hidden" data-target="view-system-members" id="system-nav-link"><em>05</em><span>System</span></button>
-            <button type="button" class="view-trigger hidden" data-target="view-my-page" id="my-page-nav-link"><em>06</em><span>My Page</span></button>
+        <nav class="index-menu-links">
+            <section class="index-menu-section">
+                <p class="index-menu-section-title">Community</p>
+                <button type="button" class="view-trigger" data-target="view-timeline"><em>01</em><span>Timeline</span><small>[ 기록 ]</small></button>
+            </section>
+
+            <section class="index-menu-section">
+                <p class="index-menu-section-title">Archive</p>
+                <button type="button" class="view-trigger" data-target="view-gallery"><em>02</em><span>Album</span><small>[ 갤러리 ]</small></button>
+                <button type="button" class="view-trigger" data-target="view-sm-bar-list"><em>03</em><span>SM Bar List</span><small>[ 장소 ]</small></button>
+                <button type="button" class="view-trigger" data-target="view-sm-board"><em>04</em><span>Information</span><small>[ 정보 ]</small></button>
+            </section>
+
+            <section class="index-menu-section">
+                <p class="index-menu-section-title">Personal</p>
+                <button type="button" class="view-trigger" data-target="view-people"><em>05</em><span>Members</span><small>[ 회원 ]</small></button>
+                <button type="button" class="view-trigger" data-target="view-schedule"><em>06</em><span>Schedule</span><small>[ 일정 ]</small></button>
+                <button type="button" class="view-trigger hidden" data-target="view-my-page" id="my-page-nav-link"><em>07</em><span>My Profile</span><small>[ 설정 ]</small></button>
+            </section>
+
+            <section class="index-menu-section hidden" id="system-menu-section">
+                <p class="index-menu-section-title">Admin Only</p>
+                <button type="button" class="view-trigger hidden" data-target="view-system-members" id="system-nav-link"><em>08</em><span>Management</span><small>[ 관리 ]</small></button>
+                <button type="button" class="view-trigger hidden" data-target="view-system-add" id="system-add-nav-link"><em>09</em><span>Create Account</span><small>[ 계정 생성 ]</small></button>
+            </section>
         </nav>
         <button type="button" id="mobile-login-btn" class="mt-auto border border-[var(--text-dark)] py-4 font-mono text-xs tracking-[0.25em] uppercase hover:bg-[var(--text-dark)] hover:text-white transition-colors">Login</button>
     </aside>
@@ -1272,24 +3056,31 @@
 
         <section id="view-my-page" class="my-page-shell view-hidden fade-in">
             <div class="mypage-layout">
-                <aside class="mypage-sidebar hidden lg:block">
-                    <div class="mypage-menu-title active">Profile Settings <span>→</span></div>
-                    <div class="mypage-menu-sub">My Activity Log</div>
-                    <div class="mypage-menu-sub">Notification Preferences</div>
-                    <div class="mypage-menu-sub">Privacy &amp; Security</div>
-                    <div class="mypage-menu-title mt-8 opacity-45">Membership <span>+</span></div>
+                <aside class="mypage-sidebar hidden lg:flex">
+                    <div class="mypage-nav-group">
+                        <div class="mypage-nav-header">My Profile <span>→</span></div>
+                        <div class="mypage-nav-list">
+                            <button type="button" class="mypage-nav-item active" data-my-action="account">Account Info</button>
+                            <button type="button" class="mypage-nav-item" data-my-action="security">Privacy &amp; Security</button>
+                            <button type="button" class="mypage-nav-item" data-my-action="activity">My Activity Log</button>
+                            <button type="button" class="mypage-nav-item" data-my-action="likes">Liked Posts Log</button>
+                        </div>
+                    </div>
+                    <div class="mypage-nav-group opacity-55">
+                        <div class="mypage-nav-header">Membership <span>+</span></div>
+                    </div>
                 </aside>
 
                 <div class="mypage-content">
                     <div class="mypage-header-title">
-                        Account Info
-                        <span>[ Profile Dossier ]</span>
+                        <strong id="my-page-heading">Account Info</strong>
+                        <span id="my-page-kicker">[ Profile Dossier ]</span>
                     </div>
 
                     <p id="my-page-status" class="py-14 text-center text-sm opacity-50">프로필을 불러오는 중입니다.</p>
 
-                    <form id="my-page-form" class="hidden profile-edit-grid">
-                        <div class="profile-card-box">
+                    <form id="my-page-form" class="hidden mypage-profile-grid">
+                        <div class="profile-card-box mypage-portrait-col">
                             <div id="my-avatar-preview-wrap" class="profile-img-frame">
                                 <img id="my-avatar-preview" class="hidden" alt="내 프로필 사진">
                                 <span id="my-avatar-fallback" class="profile-fallback"></span>
@@ -1298,11 +3089,13 @@
                             <label for="my-avatar-input" class="btn-change-photo">Change Portrait</label>
                             <button type="button" id="my-avatar-remove" class="hidden mt-3 w-full text-[10px] tracking-[0.22em] uppercase text-[var(--accent-red)]">Remove Portrait</button>
                             <p id="my-avatar-error" class="hidden text-xs text-[var(--accent-red)] mt-2"></p>
-                            <h2 class="mt-8 text-center font-serif-ko text-2xl font-bold" id="my-profile-card-name">관리자</h2>
-                            <p class="text-center text-[10px] tracking-[0.25em] uppercase opacity-45 mt-2" id="my-profile-card-role">Admin user</p>
+                            <div class="portrait-caption mt-6">
+                                <strong id="my-profile-card-name">관리자</strong>
+                                <span id="my-profile-card-role">Admin user</span>
+                            </div>
                         </div>
 
-                        <div class="profile-form-area">
+                        <div class="profile-form-area mypage-form-col">
                             <div class="form-row">
                                 <div class="form-row-top">
                                     <span class="form-label mb-0">Access Level</span>
@@ -1311,7 +3104,7 @@
                                 <div class="form-value mt-5">Authorized Curator</div>
                             </div>
 
-                            <div class="form-row">
+                            <div class="form-row security-visible">
                                 <label for="my-username" class="form-label">Login ID [UID]</label>
                                 <input type="text" id="my-username" minlength="3" maxlength="32" pattern="[A-Za-z0-9._-]+" autocomplete="username" class="form-input-edit" required>
                             </div>
@@ -1389,8 +3182,8 @@
             <div class="feed-container">
                 <div class="feed-header">
                     <div>
-                        <div class="feed-title">Gallery Timeline</div>
-                        <div class="feed-subtitle">Public Feed &amp; Thoughts</div>
+                        <div class="feed-title">Timeline</div>
+                        <div class="feed-subtitle">Record Your Moments</div>
                     </div>
                     <button type="button" id="timeline-refresh" class="feed-refresh" aria-label="타임라인 새로고침">
                         <i class="ph ph-arrow-clockwise"></i>
@@ -1398,16 +3191,22 @@
                 </div>
 
                 <form id="timeline-form" class="compose-box">
-                    <div id="timeline-compose-avatar" class="compose-avatar"></div>
                     <div class="compose-form">
                         <label for="timeline-input" class="sr-only">타임라인 글 작성</label>
-                        <textarea id="timeline-input" maxlength="500" class="compose-textarea" placeholder="Share your thoughts with the gallery..." required></textarea>
+                        <textarea id="timeline-input" maxlength="500" class="compose-textarea" placeholder="What's on your mind? 당신의 이야기를 남겨주세요." required></textarea>
+                        <div id="timeline-preview" class="preview-container"></div>
+                        <input type="file" id="timeline-image-input" class="hidden" accept="image/jpeg,image/png,image/gif,image/webp" multiple>
                         <div class="compose-footer">
                             <div class="compose-tools">
-                                <span>[ Secure Post ]</span>
+                                <button type="button" id="timeline-image-btn">[ + Images (Max 4) ]</button>
+                                <button type="button">[ Format ]</button>
                                 <span id="timeline-length" class="ml-3">0 / 500</span>
                             </div>
-                            <button type="submit" id="timeline-submit" class="btn-tweet-submit">Publish</button>
+                            <label class="timeline-anon-option">
+                                <input type="checkbox" id="timeline-anonymous">
+                                <span>익명 작성</span>
+                            </label>
+                            <button type="submit" id="timeline-submit" class="btn-tweet-submit">Post</button>
                         </div>
                         <p id="timeline-error" class="hidden mt-4 text-sm text-[var(--accent-red)]"></p>
                     </div>
@@ -1652,83 +3451,79 @@
         </section>
 
         <section id="view-notice" class="w-full max-w-4xl mx-auto view-hidden fade-in py-8 md:py-12">
-            <article class="bg-white/30 border border-[var(--border-light)] shadow-sm px-5 py-8 sm:px-8 md:px-12 md:py-14">
-                <div class="border-b border-[var(--border-light)] pb-8 mb-10">
-                    <span class="text-xs tracking-[0.3em] uppercase opacity-45 font-serif-en">Notice</span>
-                    <h1 class="mt-4 text-3xl sm:text-4xl md:text-5xl font-serif-ko font-bold leading-tight">[공지] 필독</h1>
-                    <p class="mt-6 text-base leading-loose opacity-75 font-serif-ko">
-                        저희 단톡방은 특이하고 특수한 단톡방입니다.<br>
-                        그러므로 서로의 다름을 이해하고 인정해 주세요.<br>
-                        또한 모르면 공부해 보세요. 새로운 세상을 알 수 있습니다.
-                    </p>
+            <div class="notice-doc-page-header">
+                <h2>Notice & Rules</h2>
+                <p>Community Official Guidelines</p>
+            </div>
+            <article class="notice-document px-5 py-8 sm:px-8 md:px-14 md:py-14">
+                <div class="notice-doc-header">
+                    <h3 class="notice-doc-title">Official Guidelines</h3>
+                    <div class="notice-doc-meta">
+                        <span>our story - terms</span><br>
+                        <span>rev. 2026.07</span>
+                    </div>
                 </div>
 
-                <div class="space-y-10 text-[0.95rem] sm:text-base leading-loose font-serif-ko">
+                <div class="notice-doc-body font-serif-ko">
+                    <h4>[공지] 필독</h4>
+                    <p>저희 단톡방은 특이하고 특수한 단톡방입니다. 그러므로 서로의 다름을 이해하고 인정해 주세요. 또한 모르면 공부해 보세요. 새로운 세상을 알 수 있습니다.</p>
+
                     <section>
-                        <h2 class="text-xl sm:text-2xl font-bold mb-4">Ⅰ. 닉네임 규정</h2>
-                        <p>닉네임은 '이름 / 지역 / 나이(연도) / 성향 / 연애 유형 / 유무'로 작성해 주세요.</p>
-                        <ol class="mt-3 space-y-2 list-[lower-roman] pl-6">
+                        <h3>Ⅰ. 닉네임 규정</h3>
+                        <p>닉네임은 <b>'이름 / 지역 / 나이(연도) / 성향 / 연애 유형 / 유무'</b>로 작성해 주세요.</p>
+                        <ul>
                             <li>연애 유형은 모노, 논모노, 폴리 등 본인이 추구하는 유형을 적어주세요.</li>
                             <li>연애 유무는 독점적 연애 중이시라면 하트, 독점적 디엣/파트너이시라면 동물, 그 외 진행 중이시라면 다른 이모지 사용을 부탁드립니다.</li>
-                            <li>오픈프로필 사용이 가능합니다.</li>
-                        </ol>
+                        </ul>
+                        <p>오픈프로필 사용이 가능합니다.</p>
                     </section>
 
                     <section>
-                        <h2 class="text-xl sm:text-2xl font-bold mb-4">Ⅱ. 모임</h2>
-                        <ol class="space-y-3 list-[lower-roman] pl-6">
-                            <li>모임은 누구나 만들고 주최할 수 있습니다.<br>단, 모임에서 일어나는 사건이나 사고에 대해 운영진은 책임지지 않습니다.</li>
-                            <li>
-                                모임 주최 방식은 아래와 같습니다.
-                                <ol class="mt-2 space-y-2 list-decimal pl-6">
-                                    <li>모임 양식 작성</li>
-                                    <li>
-                                        일정 등록 및 단톡방 생성
-                                        <ol class="mt-2 space-y-1 list-[hangul] pl-6">
-                                            <li>단톡방은 운영진이 생성해 드립니다.</li>
-                                            <li>단톡방은 모임 관련된 이야기만 할 수 있으며, 주로 모임 장소 및 당일 위치 확인, 정산에만 사용합니다.</li>
-                                            <li>모임 종료 및 정산 완료 후 단톡방은 폐쇄됩니다.</li>
-                                        </ol>
-                                    </li>
-                                    <li>모임 내 있었던 일에 대하여 단톡방에 이야기하는 것은 좋으나, 모임에 참여하지 않은 사람들을 위해 배려해 주세요.</li>
-                                </ol>
-                            </li>
-                        </ol>
+                        <h3>Ⅱ. 모임</h3>
+                        <p>모임은 누구나 만들고 주최할 수 있습니다. 단, 모임에서 일어나는 사건이나 사고에 대해 운영진은 책임지지 않습니다.</p>
+                        <h4>모임 주최 방식 및 절차</h4>
+                        <ul>
+                            <li>모임 양식 작성 후 일정 등록 및 단톡방 생성</li>
+                            <li>단톡방은 운영진이 생성해 드립니다.</li>
+                            <li>단톡방은 모임 관련된 이야기만 할 수 있으며, 주로 모임 장소 및 당일 위치 확인, 정산에만 사용합니다.</li>
+                            <li>모임 종료 및 정산 완료 후 단톡방은 폐쇄됩니다.</li>
+                            <li>모임 내 있었던 일에 대하여 단톡방에 이야기하는 것은 좋으나, 모임에 참여하지 않은 사람들을 위해 배려해 주세요.</li>
+                        </ul>
                     </section>
 
                     <section>
-                        <h2 class="text-xl sm:text-2xl font-bold mb-4">Ⅲ. 보이스룸 규정</h2>
-                        <ol class="space-y-2 list-[lower-roman] pl-6">
+                        <h3>Ⅲ. 보이스룸 규정</h3>
+                        <ul>
                             <li>디스코드는 생성 불가능합니다.</li>
                             <li>보이스룸은 누구나 열 수 있습니다.</li>
-                            <li>보이스룸은 현재 단톡방에 있는 인원만 참여 가능하며, 외부인 참여는 불가능합니다. (애인, 파트너, 기존 인원 등)<br>단, 정지당한 인원은 제외합니다. (보이스룸 참가 가능)</li>
-                        </ol>
+                            <li>보이스룸은 현재 단톡방에 있는 인원만 참여 가능하며, 외부인 참여는 불가능합니다. (애인, 파트너, 기존 인원 등)</li>
+                            <li>단, 정지당한 인원은 제외합니다. (보이스룸 참가 가능)</li>
+                        </ul>
                     </section>
 
                     <section>
-                        <h2 class="text-xl sm:text-2xl font-bold mb-4">Ⅳ. ETC</h2>
-                        <ol class="space-y-3 list-[lower-roman] pl-6">
-                            <li>
-                                합의되지 않은 관계는 인정하지 않습니다. 이 경우 경고 혹은 강퇴가 될 수 있습니다. 사례는 아래와 같습니다.
-                                <ol class="mt-2 space-y-2 list-decimal pl-6">
-                                    <li>합의되지 않은 반말, 욕설, 과한 친목</li>
-                                    <li>상대가 거절했음에도 불구하고 진행된 과도한 플러팅</li>
-                                    <li>합의되지 않은 관계성<br>(오픈릴이어도 합의가 되지 않았다면 바람입니다.)</li>
-                                    <li>법에 위반되는 사례</li>
-                                    <li>분쟁/제보 발생의 경우<br>분쟁 혹은 제보가 발생된 경우 운영진 측에서 사실 확인에 들어갈 수 있습니다. 이 경우 소환되는 경우도 있으니 참고해 주세요.</li>
-                                </ol>
-                            </li>
+                        <h3>Ⅳ. ETC</h3>
+                        <p><b>합의되지 않은 관계는 인정하지 않습니다.</b> 이 경우 경고 혹은 강퇴가 될 수 있습니다. 사례는 아래와 같습니다.</p>
+                        <ul>
+                            <li>합의되지 않은 반말, 욕설, 과한 친목</li>
+                            <li>상대가 거절했음에도 불구하고 진행된 과도한 플러팅</li>
+                            <li>합의되지 않은 관계성 (오픈릴이어도 합의가 되지 않았다면 바람입니다.)</li>
+                            <li>법에 위반되는 사례</li>
+                        </ul>
+
+                        <h4 class="notice-alert-heading">분쟁 / 제보 발생의 경우</h4>
+                        <p>분쟁 혹은 제보가 발생된 경우 운영진 측에서 사실 확인에 들어갈 수 있습니다. 이 경우 소환되는 경우도 있으니 참고해 주세요.</p>
+                        <ul>
                             <li>활동이 저조한 경우 내보내질 수 있습니다.</li>
                             <li>이유 없이 나간 경우 재입장이 불가능합니다. 사유가 있는 경우 꼭 운영진에게 공유 부탁드립니다.</li>
                             <li>저희는 바이, 호모플렉시블, 레즈비언을 차별하지 않습니다. 여성을 좋아하면 되는 여성애자면 입장이 가능하오니 참고 부탁드립니다.</li>
-                            <li>공지는 언제든지 수정될 수 있습니다. 공지 미숙지로 인해 얻는 불이익이 없도록 가끔 확인해 주세요.</li>
-                        </ol>
+                        </ul>
                     </section>
-                </div>
 
-                <p class="mt-12 pt-8 border-t border-[var(--border-light)] text-sm sm:text-base leading-loose opacity-75 font-serif-ko">
-                    이 외 추가로 건의할 내용이나 제보할 내용이 있는 경우 운영진에게 개인톡 부탁드립니다.
-                </p>
+                    <p class="notice-doc-footnote">
+                        * 공지는 언제든지 수정될 수 있습니다. 공지 미숙지로 인해 얻는 불이익이 없도록 가끔 확인해 주세요. 이 외 추가로 건의할 내용이나 제보할 내용이 있는 경우 운영진에게 개인톡 부탁드립니다.
+                    </p>
+                </div>
             </article>
         </section>
 
@@ -1912,22 +3707,7 @@
                 <input type="search" id="sm-bar-search" class="w-full bg-transparent py-4 outline-none placeholder:opacity-40" placeholder="Bar 이름, 지역, 주소, 입장료 또는 트위터 검색">
                 <span id="sm-bar-search-count" class="shrink-0 text-xs tracking-widest uppercase opacity-45"></span>
             </div>
-            <div class="overflow-x-auto border-t-2 border-[var(--text-dark)]">
-                <table class="w-full min-w-[860px] text-sm">
-                    <thead class="border-b border-[var(--border-light)] text-xs tracking-widest uppercase opacity-60">
-                        <tr>
-                            <th class="w-16 py-4 text-center">No.</th>
-                            <th class="py-4 text-left">Bar Name</th>
-                            <th class="w-28 py-4 text-center">Region</th>
-                            <th class="w-36 py-4 text-center">Entrance Fee</th>
-                            <th class="py-4 text-left">Address</th>
-                            <th class="w-40 py-4 text-center">Twitter / X</th>
-                            <th class="w-24 py-4 text-center">Manage</th>
-                        </tr>
-                    </thead>
-                    <tbody id="sm-bar-list"></tbody>
-                </table>
-            </div>
+            <div id="sm-bar-list" class="bar-list"></div>
             <p id="sm-bar-status" class="py-16 text-center text-sm opacity-50">목록을 불러오는 중입니다.</p>
         </section>
 
@@ -1992,39 +3772,38 @@
         </section>
 
         <section id="view-people" class="w-full view-hidden fade-in">
-            <div class="w-full bg-[var(--accent-red)] text-white py-32 mb-16 flex justify-center items-center rounded-sm shadow-xl">
-                <h1 class="text-8xl font-serif-en italic transform -rotate-90 md:rotate-0 tracking-tighter opacity-90">:m</h1>
-            </div>
-
-            <div class="flex justify-between items-end mb-10">
+            <div class="members-directory-head">
                 <div>
-                    <h2 class="text-xl font-bold tracking-widest uppercase">Our Stories</h2>
-                    <p class="text-xs opacity-45 mt-2">계정이 생성되어 있고 현재 활성 상태인 회원만 표시됩니다.</p>
+                    <h1>Members</h1>
+                    <p>[ Member Directory ]</p>
                 </div>
-                <span class="text-xs opacity-50 tracking-widest uppercase">Member Timelines</span>
+                <p class="members-directory-copy">
+                    계정이 생성되어 있고 현재 활성 상태인 회원만 표시됩니다.<br>
+                    서로를 존중하는 프라이빗 커뮤니티의 일원들을 확인하세요.
+                </p>
             </div>
 
-            <div class="mb-8 border-b border-[var(--text-dark)] flex items-center gap-3">
+            <div class="members-search-bar">
                 <i class="ph ph-magnifying-glass text-xl opacity-45" aria-hidden="true"></i>
                 <label for="people-search" class="sr-only">회원 검색</label>
-                <input type="search" id="people-search" class="w-full bg-transparent py-4 outline-none placeholder:opacity-40" placeholder="이름, 아이디, 지역 또는 소개로 검색">
+                <input type="search" id="people-search" placeholder="이름, 아이디, 지역 또는 소개로 검색">
                 <span id="people-search-count" class="shrink-0 text-xs tracking-widest uppercase opacity-45"></span>
             </div>
 
             <p id="people-status" class="py-16 text-center text-sm opacity-50">회원 목록을 불러오는 중입니다.</p>
-            <div id="people-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            <div id="people-list" class="members-directory-list"></div>
             <button type="button" id="member-profile-view-trigger" class="view-trigger hidden" data-target="view-member-profile"></button>
         </section>
 
         <section id="view-member-profile" class="w-full max-w-3xl mx-auto view-hidden fade-in py-8">
-            <button type="button" class="view-trigger text-xs tracking-widest uppercase opacity-60 mb-10" data-target="view-people"><i class="ph ph-arrow-left mr-2"></i>Our Stories</button>
+            <button type="button" class="view-trigger text-xs tracking-widest uppercase opacity-60 mb-10" data-target="view-people"><i class="ph ph-arrow-left mr-2"></i>Members</button>
             <div class="border-b border-[var(--border-light)] pb-10 mb-8 flex items-start gap-5">
                 <div id="member-profile-avatar" class="w-20 h-20 shrink-0 rounded-full overflow-hidden bg-[var(--accent-red)] text-white flex items-center justify-center text-3xl font-serif-en italic"></div>
                 <div class="min-w-0">
                     <h1 id="member-profile-name" class="text-4xl md:text-5xl font-serif-ko font-bold break-words"></h1>
                     <p id="member-profile-username" class="mt-2 opacity-45"></p>
-                    <p id="member-profile-meta" class="mt-4 text-sm opacity-60"></p>
-                    <p id="member-profile-bio" class="mt-4 text-sm leading-relaxed whitespace-pre-wrap"></p>
+                    <div id="member-profile-meta" class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-sm"></div>
+                    <p id="member-profile-bio" class="mt-6 border-t border-[var(--border-light)] pt-5 text-sm leading-relaxed whitespace-pre-wrap"></p>
                 </div>
             </div>
             <div class="flex items-end justify-between gap-4 mb-5">
@@ -2037,16 +3816,16 @@
 
         <section id="view-schedule" class="w-full view-hidden fade-in">
             <div class="schedule-header">
-                <h1 class="schedule-main-title">:Schedule</h1>
-                <p class="schedule-sub-title">우리가 함께할 시간들, 그리고 기록할 일정</p>
+                <h1 class="schedule-main-title">Schedule</h1>
+                <p class="schedule-sub-title">Shared Calendar</p>
             </div>
 
             <div class="schedule-layout">
                 <div class="calendar-box">
                     <div class="calendar-nav">
-                        <button id="prev-month" class="calendar-nav-btn" type="button" aria-label="Previous month">←</button>
+                        <button id="prev-month" class="calendar-nav-btn" type="button" aria-label="Previous month">&lt; PREV</button>
                         <h2 id="calendar-month-year" class="calendar-month-title">July 2026</h2>
-                        <button id="next-month" class="calendar-nav-btn" type="button" aria-label="Next month">→</button>
+                        <button id="next-month" class="calendar-nav-btn" type="button" aria-label="Next month">NEXT &gt;</button>
                     </div>
 
                     <div class="calendar-weekdays">
@@ -2055,24 +3834,6 @@
 
                     <div id="calendar-grid" class="calendar-days-grid font-serif-en text-xl"></div>
                 </div>
-
-                <aside class="schedule-sidebar">
-                    <div>
-                        <h3 id="selected-date-display" class="selected-date-header">2026. 07. 14</h3>
-                        <div id="schedule-list" class="schedule-event-list flex flex-col gap-4">
-                            <p class="text-sm opacity-50 italic font-serif-ko">일정을 불러오는 중입니다...</p>
-                        </div>
-                    </div>
-
-                    <div class="add-event-box">
-                        <div class="add-event-label">[ New Schedule Entry ]</div>
-                        <form id="schedule-form" class="mt-5">
-                            <label for="schedule-title" class="add-event-label block mb-2">Event Title</label>
-                            <input type="text" id="schedule-title" placeholder="예: 정기 큐레이션 미팅..." class="add-event-input" required>
-                            <button type="submit" id="schedule-submit-btn" class="btn-add-schedule">Save Event</button>
-                        </form>
-                    </div>
-                </aside>
             </div>
 
             <div class="hidden max-w-6xl mx-auto px-4 mb-20">
@@ -2088,23 +3849,20 @@
         </section>
 
         <section id="view-gallery" class="w-full view-hidden fade-in">
-            <div class="mb-16 border-b border-[var(--border-light)] pb-12 flex flex-col md:flex-row items-end justify-between gap-8">
+            <div class="gallery-archive-head">
                 <div>
-                    <span class="text-xs tracking-[0.3em] uppercase opacity-50 font-bold">Activity Album</span>
-                    <h1 class="mt-4 text-5xl md:text-7xl font-serif-en italic tracking-tighter">
-                        <span class="opacity-80">:</span>Gallery
-                    </h1>
-                    <p class="mt-4 text-sm opacity-60 font-serif-ko leading-relaxed">
+                    <span class="gallery-archive-kicker">Activity Album</span>
+                    <h1 class="gallery-archive-title">Gallery</h1>
+                    <p class="gallery-archive-copy mt-6 text-sm font-serif-ko">
                         함께한 순간들을 사진과 짧은 기록으로 남기는 공간
                     </p>
                 </div>
-                <button type="button" id="gallery-write-btn" class="view-trigger hidden bg-[var(--accent-red)] text-white px-8 py-3 text-xs tracking-widest uppercase hover:bg-red-700 transition-colors flex items-center gap-2" data-target="view-gallery-write">
-                    <i class="ph ph-plus"></i>
-                    New Album
+                <button type="button" id="gallery-write-btn" class="gallery-archive-action view-trigger hidden" data-target="view-gallery-write">
+                    <span>New Album</span><i class="ph ph-arrow-up-right"></i>
                 </button>
             </div>
 
-            <div id="gallery-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div id="gallery-list" class="gallery-archive-grid">
                 <div class="col-span-full flex flex-col items-center justify-center py-20 opacity-50">
                     <div class="w-8 h-8 border-2 border-t-[var(--accent-red)] border-gray-400 rounded-full animate-spin mb-4"></div>
                     <p class="text-sm tracking-widest uppercase">Loading gallery...</p>
@@ -2115,52 +3873,57 @@
             <button type="button" id="gallery-editor-view-trigger" class="view-trigger hidden" data-target="view-gallery-write"></button>
         </section>
 
-        <section id="view-gallery-write" class="w-full max-w-4xl mx-auto view-hidden fade-in py-10">
-            <div class="text-center mb-16">
-                <span class="text-[var(--accent-red)] text-4xl font-serif-en italic">:g</span>
-                <h2 id="gallery-editor-heading" class="mt-4 text-sm tracking-widest uppercase opacity-60">Create Activity Album</h2>
-            </div>
-
-            <form id="gallery-form" class="flex flex-col gap-8">
-                <input
-                    type="text"
-                    id="gallery-title-input"
-                    placeholder="앨범 제목을 입력하세요"
-                    class="w-full bg-transparent text-4xl md:text-5xl font-serif-ko font-bold text-gray-800 placeholder-gray-400 border-b border-[var(--border-light)] pb-4 transition-colors focus:border-[var(--accent-red)]"
-                    required
-                >
-                <label for="gallery-image-input" class="group cursor-pointer border border-dashed border-[var(--border-light)] bg-white/25 min-h-[180px] flex flex-col items-center justify-center gap-3 text-center transition-colors hover:border-[var(--accent-red)]">
-                    <i class="ph ph-image-square text-4xl text-[var(--accent-red)]"></i>
-                    <span class="text-sm tracking-widest uppercase opacity-60">Select Photos</span>
-                    <span id="gallery-file-name" class="text-xs opacity-45 font-serif-ko">사진 1~10장 · 장당 8MB, 전체 25MB 이하</span>
-                </label>
-                <input
-                    type="file"
-                    id="gallery-image-input"
-                    accept="image/jpeg,image/png,image/gif,image/webp"
-                    multiple
-                    class="hidden"
-                >
-                <div id="gallery-existing-photos" class="hidden grid grid-cols-2 sm:grid-cols-4 gap-4"></div>
-                <div id="gallery-preview" class="grid grid-cols-2 sm:grid-cols-4 gap-4"></div>
-                <textarea
-                    id="gallery-content-input"
-                    placeholder="사진에 담긴 활동 이야기를 적어주세요..."
-                    class="w-full min-h-[220px] bg-white/30 resize-none text-lg leading-loose text-gray-700 placeholder-gray-400 border border-[var(--border-light)] p-6 focus:border-[var(--accent-red)] transition-colors"
-                    required
-                ></textarea>
-                <p id="gallery-form-error" class="hidden text-sm text-[var(--accent-red)] text-center"></p>
-
-                <div class="flex justify-between items-center border-t border-[var(--border-light)] pt-8 mt-4">
-                    <button type="button" class="view-trigger text-sm tracking-widest uppercase opacity-50 hover:opacity-100 transition-opacity" data-target="view-gallery">
-                        Cancel
-                    </button>
-                    <button type="submit" id="gallery-submit-btn" class="bg-[var(--accent-red)] text-white px-10 py-4 text-sm font-bold tracking-widest uppercase hover:bg-red-700 transition-colors flex items-center gap-3">
-                        <span>Publish Album</span>
-                        <i class="ph ph-arrow-right"></i>
-                    </button>
+        <section id="view-gallery-write" class="w-full view-hidden fade-in">
+            <div class="gallery-editor-shell">
+                <div class="gallery-editor-head">
+                    <div>
+                        <div class="gallery-editor-mark">Album</div>
+                        <h2 id="gallery-editor-heading" class="gallery-editor-heading">Create Activity Album</h2>
+                    </div>
+                    <button type="button" class="view-trigger text-xs tracking-[0.25em] uppercase opacity-45 hover:opacity-100 transition-opacity" data-target="view-gallery">Cancel</button>
                 </div>
-            </form>
+
+                <form id="gallery-form" class="gallery-editor-form">
+                    <input
+                        type="text"
+                        id="gallery-title-input"
+                        placeholder="앨범 제목을 입력하세요"
+                        class="gallery-editor-title"
+                        required
+                    >
+                    <label for="gallery-image-input" class="gallery-dropzone">
+                        <i class="ph ph-image-square text-4xl text-[var(--accent-red)]"></i>
+                        <span class="text-sm tracking-widest uppercase opacity-60">Select Photos</span>
+                        <span id="gallery-file-name" class="text-xs opacity-45 font-serif-ko">사진 1~10장 · 장당 8MB, 전체 25MB 이하</span>
+                    </label>
+                    <input
+                        type="file"
+                        id="gallery-image-input"
+                        accept="image/jpeg,image/png,image/gif,image/webp"
+                        multiple
+                        class="hidden"
+                    >
+                    <div id="gallery-existing-photos" class="hidden grid grid-cols-2 sm:grid-cols-4 gap-4"></div>
+                    <div id="gallery-preview" class="grid grid-cols-2 sm:grid-cols-4 gap-4"></div>
+                    <textarea
+                        id="gallery-content-input"
+                        placeholder="사진에 담긴 활동 이야기를 적어주세요..."
+                        class="gallery-editor-textarea"
+                        required
+                    ></textarea>
+                    <p id="gallery-form-error" class="hidden text-sm text-[var(--accent-red)] text-center"></p>
+
+                    <div class="gallery-editor-footer">
+                        <button type="button" class="view-trigger text-sm tracking-widest uppercase opacity-50 hover:opacity-100 transition-opacity" data-target="view-gallery">
+                            Cancel
+                        </button>
+                        <button type="submit" id="gallery-submit-btn" class="gallery-editor-submit">
+                            <span>Publish Album</span>
+                            <i class="ph ph-arrow-right"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
         </section>
 
     </main>
@@ -2270,6 +4033,30 @@
         <img id="profile-photo-modal-image" src="" alt="" class="max-w-full max-h-full object-contain shadow-2xl">
     </div>
 
+    <div id="timeline-photo-modal" class="fixed inset-0 z-[91] hidden items-center justify-center bg-black/85 p-4 sm:p-8" role="dialog" aria-modal="true" aria-label="타임라인 사진 확대 보기">
+        <button type="button" id="timeline-photo-modal-close" class="absolute top-5 right-5 z-10 w-11 h-11 rounded-full bg-white/90 text-black hover:bg-[var(--accent-red)] hover:text-white transition-colors flex items-center justify-center" aria-label="타임라인 사진 닫기">
+            <i class="ph ph-x text-xl"></i>
+        </button>
+        <img id="timeline-photo-modal-image" src="" alt="" class="max-w-full max-h-full object-contain shadow-2xl">
+    </div>
+
+    <div id="member-profile-modal" class="fixed inset-0 z-[92] hidden items-center justify-center bg-black/62 p-4" role="dialog" aria-modal="true" aria-labelledby="member-profile-modal-name">
+        <div class="member-profile-modal-card relative">
+            <button type="button" id="member-profile-modal-close" class="absolute top-4 right-4 w-10 h-10 flex items-center justify-center opacity-55 hover:opacity-100" aria-label="프로필 닫기">
+                <i class="ph ph-x text-xl"></i>
+            </button>
+            <div class="member-profile-modal-main">
+                <div id="member-profile-modal-avatar" class="member-profile-modal-avatar"></div>
+                <div class="min-w-0">
+                    <h2 id="member-profile-modal-name" class="member-profile-modal-name"></h2>
+                    <p id="member-profile-modal-username" class="member-profile-modal-username"></p>
+                </div>
+            </div>
+            <div id="member-profile-modal-meta" class="member-profile-modal-grid"></div>
+            <p id="member-profile-modal-bio" class="member-profile-modal-bio"></p>
+        </div>
+    </div>
+
     <div id="sm-bar-modal" class="fixed inset-0 z-[90] hidden items-center justify-center bg-black/60 p-4" role="dialog" aria-modal="true" aria-labelledby="sm-bar-modal-title">
         <div class="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-[var(--bg-cream)] border border-[var(--border-light)] p-6 sm:p-10 shadow-2xl relative">
             <button type="button" id="sm-bar-modal-close" class="absolute top-5 right-5 w-10 h-10 flex items-center justify-center" aria-label="닫기"><i class="ph ph-x text-xl"></i></button>
@@ -2309,8 +4096,12 @@
         const indexMenuOpen = document.getElementById('index-menu-open');
         const indexMenuClose = document.getElementById('index-menu-close');
         const systemNavLink = document.getElementById('system-nav-link');
+        const systemAddNavLink = document.getElementById('system-add-nav-link');
+        const systemMenuSection = document.getElementById('system-menu-section');
         const myPageNavLink = document.getElementById('my-page-nav-link');
         const loginNavBtn = document.getElementById('login-nav-btn');
+        const headerNoticeBtn = document.getElementById('header-notice-btn');
+        const headerUserBtn = document.getElementById('header-user-btn');
         const mobileLoginBtn = document.getElementById('mobile-login-btn');
         const headerLogoutBtn = document.getElementById('header-logout-btn');
         const loginModal = document.getElementById('login-modal');
@@ -2414,7 +4205,9 @@
                 event.stopImmediatePropagation();
                 openLoginModal();
             } else {
-                navigateToView('view-my-page');
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                performLogout();
             }
         });
 
@@ -2609,8 +4402,18 @@
             const isManager = ['superuser', 'admin'].includes(user?.role);
 
             systemNavLink.classList.toggle('hidden', !isManager);
+            systemAddNavLink?.classList.toggle('hidden', !isManager);
+            systemMenuSection?.classList.toggle('hidden', !isManager);
             myPageNavLink.classList.toggle('hidden', !user);
+            headerNoticeBtn?.classList.toggle('hidden', !user);
+            headerUserBtn?.classList.toggle('hidden', !user);
             headerLogoutBtn.classList.toggle('hidden', !user);
+            loginNavBtn.classList.toggle('hidden', Boolean(user));
+            if (headerUserBtn) {
+                const display = user?.displayName || user?.username || '';
+                const roleLabel = user?.role === 'superuser' ? 'Admin' : (user?.role === 'admin' ? 'Admin' : 'Member');
+                headerUserBtn.textContent = user ? `${display} / ${roleLabel}` : '';
+            }
             document.getElementById('sm-write-btn').classList.toggle('hidden', !user);
             document.getElementById('sm-bar-add-btn').classList.toggle('hidden', !user);
             document.getElementById('gallery-write-btn').classList.toggle('hidden', !user);
@@ -2626,9 +4429,10 @@
             } else {
                 closeInitialPasswordReminder();
             }
-            loginNavBtn.textContent = user ? user.displayName : 'Login';
-            loginNavBtn.dataset.target = user ? 'view-my-page' : 'view-login';
-            mobileLoginBtn.textContent = user ? user.displayName : 'Login';
+            loginNavBtn.textContent = 'Login';
+            loginNavBtn.dataset.target = 'view-login';
+            mobileLoginBtn.textContent = user ? 'Logout' : 'Login';
+            mobileLoginBtn.classList.toggle('logout-trigger', Boolean(user));
 
             document.querySelectorAll('#new-role option, #edit-role option').forEach(option => {
                 option.hidden = user?.role !== 'superuser' && option.value !== 'member';
@@ -2727,24 +4531,26 @@
             setTimeout(() => document.getElementById('my-password')?.focus(), 350);
         });
 
+        async function performLogout() {
+            try {
+                await fetch('/api/auth.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ action: 'logout' })
+                });
+            } finally {
+                applySiteAuth(null);
+                localStorage.removeItem(pendingAuthViewKey);
+                localStorage.removeItem(lastViewKey);
+                closeMenu();
+                showToast('로그아웃되었습니다.', true);
+                navigateToView('view-read');
+            }
+        }
+
         logoutTriggers.forEach(button => {
-            button.addEventListener('click', async () => {
-                try {
-                    await fetch('/api/auth.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        credentials: 'same-origin',
-                        body: JSON.stringify({ action: 'logout' })
-                    });
-                } finally {
-                    applySiteAuth(null);
-                    localStorage.removeItem(pendingAuthViewKey);
-                    localStorage.removeItem(lastViewKey);
-                    closeMenu();
-                    showToast('로그아웃되었습니다.', true);
-                    navigateToView('view-read');
-                }
-            });
+            button.addEventListener('click', performLogout);
         });
 
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
@@ -2839,6 +4645,8 @@
         const myPageError = document.getElementById('my-page-error');
         const myPasswordToggle = document.getElementById('my-password-toggle');
         const myPasswordSection = document.getElementById('my-password-section');
+        const myPageHeading = document.getElementById('my-page-heading');
+        const myPageKicker = document.getElementById('my-page-kicker');
         const myAvatarInput = document.getElementById('my-avatar-input');
         const myAvatarPreviewWrap = document.getElementById('my-avatar-preview-wrap');
         const myAvatarPreview = document.getElementById('my-avatar-preview');
@@ -2858,6 +4666,10 @@
         const timelineError = document.getElementById('timeline-error');
         const timelineLength = document.getElementById('timeline-length');
         const timelineComposeAvatar = document.getElementById('timeline-compose-avatar');
+        const timelineImageInput = document.getElementById('timeline-image-input');
+        const timelineImageBtn = document.getElementById('timeline-image-btn');
+        const timelinePreview = document.getElementById('timeline-preview');
+        const timelineAnonymous = document.getElementById('timeline-anonymous');
         const peopleStatus = document.getElementById('people-status');
         const peopleList = document.getElementById('people-list');
         const peopleSearch = document.getElementById('people-search');
@@ -2867,6 +4679,16 @@
         const profilePhotoModal = document.getElementById('profile-photo-modal');
         const profilePhotoModalImage = document.getElementById('profile-photo-modal-image');
         const profilePhotoModalClose = document.getElementById('profile-photo-modal-close');
+        const timelinePhotoModal = document.getElementById('timeline-photo-modal');
+        const timelinePhotoModalImage = document.getElementById('timeline-photo-modal-image');
+        const timelinePhotoModalClose = document.getElementById('timeline-photo-modal-close');
+        const memberProfileModal = document.getElementById('member-profile-modal');
+        const memberProfileModalClose = document.getElementById('member-profile-modal-close');
+        const memberProfileModalAvatar = document.getElementById('member-profile-modal-avatar');
+        const memberProfileModalName = document.getElementById('member-profile-modal-name');
+        const memberProfileModalUsername = document.getElementById('member-profile-modal-username');
+        const memberProfileModalMeta = document.getElementById('member-profile-modal-meta');
+        const memberProfileModalBio = document.getElementById('member-profile-modal-bio');
         const smBoardList = document.getElementById('sm-board-list');
         const smBoardStatus = document.getElementById('sm-board-status');
         const smPagination = document.getElementById('sm-pagination');
@@ -2892,6 +4714,28 @@
         const localSchedules = {
             '2026-07-14': ['우리들의 이야기 일정 메뉴 추가', '첫 모임 기록 정리']
         };
+        const koreanHolidayKeys = new Set([
+            '2026-01-01',
+            '2026-02-16',
+            '2026-02-17',
+            '2026-02-18',
+            '2026-03-01',
+            '2026-03-02',
+            '2026-05-05',
+            '2026-05-24',
+            '2026-05-25',
+            '2026-06-03',
+            '2026-06-06',
+            '2026-08-15',
+            '2026-08-17',
+            '2026-09-24',
+            '2026-09-25',
+            '2026-09-26',
+            '2026-10-03',
+            '2026-10-05',
+            '2026-10-09',
+            '2026-12-25'
+        ]);
         let galleryPage = 1;
         let galleryCurrentAlbum = null;
         let galleryEditingId = null;
@@ -3519,129 +5363,81 @@
                 return;
             }
             items.forEach((item, index) => {
-                const row = document.createElement('tr');
-                row.className = `border-b border-[var(--border-light)] cursor-pointer hover:bg-white/30 transition-colors ${item.isHidden ? 'opacity-55' : ''}`;
-                row.setAttribute('tabindex', '0');
-                row.setAttribute('aria-expanded', 'false');
-                const number = document.createElement('td');
-                number.className = 'py-5 text-center text-xs tracking-widest opacity-35';
-                number.textContent = String(index + 1);
-                const name = document.createElement('td');
-                name.className = 'py-5 pr-4';
-                const nameLine = document.createElement('div');
-                nameLine.className = 'flex items-center gap-3';
-                const cocktail = document.createElement('span');
-                cocktail.className = 'text-xl shrink-0';
-                cocktail.setAttribute('aria-hidden', 'true');
-                cocktail.textContent = '🍹';
-                const nameStrong = document.createElement('strong');
-                nameStrong.className = 'text-base font-serif-ko';
-                nameStrong.textContent = item.name;
-                if (item.isHidden) {
-                    const badge = document.createElement('span');
-                    badge.className = 'text-[0.65rem] tracking-widest uppercase text-[var(--accent-red)]';
-                    badge.textContent = '숨김';
-                    nameLine.append(cocktail, nameStrong, badge);
-                } else {
-                    nameLine.append(cocktail, nameStrong);
+                const card = document.createElement('article');
+                card.className = `bar-card${item.isHidden ? ' is-hidden' : ''}`;
+
+                const meta = document.createElement('div');
+                meta.className = 'bar-meta';
+                const number = document.createElement('span');
+                number.className = 'font-mono text-[0.66rem] tracking-[0.22em] uppercase opacity-40';
+                number.textContent = `Place ${String(index + 1).padStart(2, '0')}`;
+                const name = document.createElement('h3');
+                name.className = 'bar-name';
+                name.textContent = item.name;
+                const tags = document.createElement('p');
+                tags.className = 'bar-tags';
+                tags.textContent = [
+                    item.region ? `#${item.region.replace(/\s+/g, '_')}` : '#PRIVATE',
+                    item.entranceFee ? '#ENTRY_INFO' : '#MEMBER_GUIDE',
+                    item.isHidden ? '#HIDDEN' : '#OPEN_ARCHIVE',
+                ].join(' ');
+                const location = document.createElement('p');
+                location.className = 'bar-location';
+                location.textContent = item.address || item.region || 'Location not provided';
+                meta.append(number, name, tags, location);
+
+                const desc = document.createElement('div');
+                desc.className = 'bar-desc';
+                const description = document.createElement('p');
+                description.textContent = item.description || '등록된 상세 설명이 없습니다.';
+                const descMeta = document.createElement('div');
+                descMeta.className = 'bar-desc-meta';
+                if (item.region) {
+                    const region = document.createElement('span');
+                    region.textContent = `REGION ${item.region}`;
+                    descMeta.appendChild(region);
                 }
-                const caret = document.createElement('i');
-                caret.className = 'ph ph-caret-down ml-auto opacity-35 transition-transform';
-                nameLine.appendChild(caret);
-                name.appendChild(nameLine);
-                const region = document.createElement('td');
-                region.className = 'py-5 px-3 text-center';
-                region.textContent = item.region || '-';
-                const fee = document.createElement('td');
-                fee.className = 'py-5 px-3 text-center';
-                fee.textContent = item.entranceFee || '-';
-                const address = document.createElement('td');
-                address.className = 'py-5 pr-5 max-w-[22rem] truncate';
-                address.textContent = item.address || '-';
-                const link = document.createElement('td');
-                link.className = 'py-5 text-center';
+                if (item.entranceFee) {
+                    const fee = document.createElement('span');
+                    fee.textContent = `FEE ${item.entranceFee}`;
+                    descMeta.appendChild(fee);
+                }
                 if (item.twitterUrl) {
                     const twitter = document.createElement('a');
                     twitter.href = item.twitterUrl;
                     twitter.target = '_blank';
                     twitter.rel = 'noopener noreferrer';
-                    twitter.className = 'underline underline-offset-4';
-                    twitter.textContent = item.twitterAccount;
-                    twitter.addEventListener('click', event => event.stopPropagation());
-                    link.appendChild(twitter);
-                } else link.textContent = '-';
-                const manage = document.createElement('td');
-                manage.className = 'py-5 text-center whitespace-nowrap';
+                    twitter.className = 'underline underline-offset-4 hover:text-[var(--accent-red)]';
+                    twitter.textContent = item.twitterAccount || 'Twitter / X';
+                    descMeta.appendChild(twitter);
+                }
+                const manage = document.createElement('div');
+                manage.className = 'bar-actions';
                 if (item.canEdit) {
                     const visibility = document.createElement('button');
                     visibility.type = 'button';
-                    visibility.className = 'p-2 hover:text-[var(--accent-red)]';
+                    visibility.className = 'bar-action-btn';
                     visibility.title = item.isHidden ? '다시 표시' : '숨기기';
                     visibility.innerHTML = item.isHidden ? '<i class="ph ph-eye"></i>' : '<i class="ph ph-eye-slash"></i>';
-                    visibility.addEventListener('click', event => {
-                        event.stopPropagation();
-                        setSmBarVisibility(item);
-                    });
+                    visibility.addEventListener('click', () => setSmBarVisibility(item));
                     const edit = document.createElement('button');
                     edit.type = 'button';
-                    edit.className = 'p-2 hover:text-[var(--accent-red)]';
+                    edit.className = 'bar-action-btn';
                     edit.title = '수정';
                     edit.innerHTML = '<i class="ph ph-pencil-simple"></i>';
-                    edit.addEventListener('click', event => {
-                        event.stopPropagation();
-                        openSmBarModal(item);
-                    });
+                    edit.addEventListener('click', () => openSmBarModal(item));
                     const remove = document.createElement('button');
                     remove.type = 'button';
-                    remove.className = 'p-2 hover:text-[var(--accent-red)]';
+                    remove.className = 'bar-action-btn';
                     remove.title = '삭제';
                     remove.innerHTML = '<i class="ph ph-trash"></i>';
-                    remove.addEventListener('click', event => {
-                        event.stopPropagation();
-                        deleteSmBar(item);
-                    });
+                    remove.addEventListener('click', () => deleteSmBar(item));
                     manage.append(visibility, edit, remove);
                 }
-                row.append(number, name, region, fee, address, link, manage);
-
-                const detailRow = document.createElement('tr');
-                detailRow.className = 'hidden border-b border-[var(--border-light)] bg-white/25';
-                const detailCell = document.createElement('td');
-                detailCell.colSpan = 7;
-                detailCell.className = 'px-6 sm:px-16 py-7';
-                const detail = document.createElement('div');
-                detail.className = 'grid grid-cols-1 md:grid-cols-[10rem_1fr] gap-4 md:gap-8';
-                const detailTitle = document.createElement('p');
-                detailTitle.className = 'text-xs tracking-[0.2em] uppercase opacity-45';
-                detailTitle.textContent = 'Additional Information';
-                const detailContent = document.createElement('div');
-                const fullAddress = document.createElement('p');
-                fullAddress.className = 'font-medium';
-                fullAddress.textContent = item.address || '주소 정보가 없습니다.';
-                const description = document.createElement('p');
-                description.className = 'mt-4 text-sm opacity-65 leading-relaxed whitespace-pre-wrap';
-                description.textContent = item.description || '추가 정보가 없습니다.';
-                const detailMeta = document.createElement('p');
-                detailMeta.className = 'mt-5 text-xs opacity-45';
-                detailMeta.textContent = [item.region, item.entranceFee, item.twitterAccount].filter(Boolean).join(' · ');
-                detailContent.append(fullAddress, description, detailMeta);
-                detail.append(detailTitle, detailContent);
-                detailCell.appendChild(detail);
-                detailRow.appendChild(detailCell);
-
-                const toggleDetail = () => {
-                    const willOpen = detailRow.classList.contains('hidden');
-                    detailRow.classList.toggle('hidden', !willOpen);
-                    caret.classList.toggle('rotate-180', willOpen);
-                    row.setAttribute('aria-expanded', String(willOpen));
-                };
-                row.addEventListener('click', toggleDetail);
-                row.addEventListener('keydown', event => {
-                    if (event.key !== 'Enter' && event.key !== ' ') return;
-                    event.preventDefault();
-                    toggleDetail();
-                });
-                smBarList.append(row, detailRow);
+                desc.append(description, descMeta);
+                if (item.canEdit) desc.appendChild(manage);
+                card.append(meta, desc);
+                smBarList.appendChild(card);
             });
         }
 
@@ -4185,7 +5981,27 @@
             profilePhotoModal.classList.add('hidden');
             profilePhotoModal.classList.remove('flex');
             profilePhotoModalImage.removeAttribute('src');
-            if (membershipDetailModal.classList.contains('hidden')) {
+            if (membershipDetailModal.classList.contains('hidden') && memberProfileModal.classList.contains('hidden')) {
+                document.body.classList.remove('overflow-hidden');
+            }
+        }
+
+        function openTimelinePhoto(url, alt = 'timeline image') {
+            if (!timelinePhotoModal || !timelinePhotoModalImage || !url) return;
+            timelinePhotoModalImage.src = url;
+            timelinePhotoModalImage.alt = alt;
+            timelinePhotoModal.classList.remove('hidden');
+            timelinePhotoModal.classList.add('flex');
+            document.body.classList.add('overflow-hidden');
+            timelinePhotoModalClose?.focus();
+        }
+
+        function closeTimelinePhoto() {
+            if (!timelinePhotoModal || !timelinePhotoModalImage) return;
+            timelinePhotoModal.classList.add('hidden');
+            timelinePhotoModal.classList.remove('flex');
+            timelinePhotoModalImage.removeAttribute('src');
+            if (membershipDetailModal.classList.contains('hidden') && profilePhotoModal.classList.contains('hidden') && memberProfileModal.classList.contains('hidden')) {
                 document.body.classList.remove('overflow-hidden');
             }
         }
@@ -4199,16 +6015,20 @@
             container.onkeydown = null;
             const initial = profileInitial(profile);
             if (!profile.avatarUrl) {
-                container.textContent = initial;
+                container.classList.add('default-profile-icon');
+                container.setAttribute('aria-label', `${profile.displayName || profile.username || 'Member'} 기본 프로필`);
+                container.innerHTML = '<i class="ph ph-user"></i>';
                 return;
             }
+            container.classList.remove('default-profile-icon');
             const image = document.createElement('img');
             image.className = 'w-full h-full object-cover';
             image.alt = `${profile.displayName || profile.username} 프로필 사진`;
             image.src = `${profile.avatarUrl}${profile.avatarUrl.includes('?') ? '&' : '?'}v=${cacheBust ? Date.now() : '1'}`;
             image.addEventListener('error', () => {
                 container.replaceChildren();
-                container.textContent = initial;
+                container.classList.add('default-profile-icon');
+                container.innerHTML = '<i class="ph ph-user"></i>';
             }, { once: true });
             container.appendChild(image);
             container.classList.add('cursor-zoom-in');
@@ -4294,6 +6114,34 @@
             if (willOpen) setTimeout(() => document.getElementById('my-password')?.focus(), 0);
         });
 
+        document.querySelectorAll('[data-my-action]').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('[data-my-action]').forEach(nav => nav.classList.toggle('active', nav === item));
+                const action = item.dataset.myAction;
+                document.getElementById('view-my-page')?.classList.toggle('mypage-security-mode', action === 'security');
+                if (action === 'account') {
+                    if (myPageHeading) myPageHeading.textContent = 'Account Info';
+                    if (myPageKicker) myPageKicker.textContent = '[ Profile Dossier ]';
+                    setMyPasswordEditorOpen(false);
+                    myPageForm?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    document.getElementById('my-display-name')?.focus({ preventScroll: true });
+                    return;
+                }
+                if (action === 'security') {
+                    if (myPageHeading) myPageHeading.textContent = 'Security';
+                    if (myPageKicker) myPageKicker.textContent = '[ ID & Passcode Settings ]';
+                    setMyPasswordEditorOpen(true);
+                    setTimeout(() => document.getElementById('my-password')?.focus(), 250);
+                    return;
+                }
+                if (action === 'activity') {
+                    document.querySelector('.view-trigger[data-target="view-my-timeline"]')?.click();
+                    return;
+                }
+                showToast('Liked Posts Log는 아직 준비 중입니다.', false);
+            });
+        });
+
         function formatTimelineDate(value) {
             const date = new Date(String(value || '').replace(' ', 'T') + 'Z');
             if (Number.isNaN(date.getTime())) return '';
@@ -4352,6 +6200,93 @@
             });
         }
 
+        function closeMemberProfileModal() {
+            if (!memberProfileModal) return;
+            memberProfileModal.classList.add('hidden');
+            memberProfileModal.classList.remove('flex');
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        function renderModalProfileAvatar(profile) {
+            if (!memberProfileModalAvatar) return;
+            memberProfileModalAvatar.replaceChildren();
+            memberProfileModalAvatar.classList.add('default-profile-icon');
+            memberProfileModalAvatar.removeAttribute('aria-label');
+
+            if (profile.avatarUrl) {
+                const image = document.createElement('img');
+                image.src = `${profile.avatarUrl}${profile.avatarUrl.includes('?') ? '&' : '?'}v=1`;
+                image.alt = `${profile.displayName || profile.username || 'Member'} 프로필 사진`;
+                image.addEventListener('error', () => {
+                    memberProfileModalAvatar.replaceChildren();
+                    memberProfileModalAvatar.classList.add('default-profile-icon');
+                    memberProfileModalAvatar.innerHTML = '<i class="ph ph-user"></i>';
+                }, { once: true });
+                memberProfileModalAvatar.classList.remove('default-profile-icon');
+                memberProfileModalAvatar.appendChild(image);
+                return;
+            }
+
+            memberProfileModalAvatar.setAttribute('aria-label', `${profile.displayName || profile.username || 'Member'} 기본 프로필`);
+            memberProfileModalAvatar.innerHTML = '<i class="ph ph-user"></i>';
+        }
+
+        function renderProfileFields(container, fields, classPrefix) {
+            container.replaceChildren(...fields.map(([label, value]) => {
+                const item = document.createElement('div');
+                item.className = `${classPrefix}-field`;
+                const key = document.createElement('span');
+                key.className = `${classPrefix}-label`;
+                key.textContent = label;
+                const text = document.createElement('span');
+                text.className = `${classPrefix}-value`;
+                text.textContent = value || '미입력';
+                item.append(key, text);
+                return item;
+            }));
+        }
+
+        async function openMemberProfileModal(username) {
+            if (!username || !memberProfileModal) return;
+            try {
+                const response = await fetch(`/api/timeline.php?action=profile&username=${encodeURIComponent(username)}`, { headers: { Accept: 'application/json' }, cache: 'no-store' });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '프로필을 불러오지 못했습니다.');
+                const profile = payload.profile;
+
+                renderModalProfileAvatar(profile);
+                memberProfileModalName.textContent = profile.displayName || profile.username || 'Member';
+                memberProfileModalUsername.textContent = profile.username ? `@${profile.username}` : '';
+                renderProfileFields(memberProfileModalMeta, [
+                    ['Region', profile.region],
+                    ['Birth Year', profile.birthYear ? `${profile.birthYear}년생` : ''],
+                    ['Personal Pref.', profile.personality],
+                    ['Dating Pref.', profile.relationshipStyle],
+                ], 'member-profile-modal');
+                memberProfileModalBio.textContent = profile.bio || '아직 자기소개가 없습니다.';
+                memberProfileModal.classList.remove('hidden');
+                memberProfileModal.classList.add('flex');
+                document.body.classList.add('overflow-hidden');
+                memberProfileModalClose?.focus();
+            } catch (error) {
+                showToast(error.message, false);
+            }
+        }
+
+        function makeProfileLink(element, username) {
+            if (!element || !username) return;
+            element.classList.add('profile-link');
+            element.setAttribute('role', 'button');
+            element.tabIndex = 0;
+            const openProfile = () => openMemberProfileModal(username);
+            element.addEventListener('click', openProfile);
+            element.addEventListener('keydown', event => {
+                if (event.key !== 'Enter' && event.key !== ' ') return;
+                event.preventDefault();
+                openProfile();
+            });
+        }
+
         function renderTimelineFeed(items) {
             if (!timelineList || !timelineStatus) return;
             timelineList.replaceChildren();
@@ -4372,37 +6307,60 @@
 
                 const avatar = document.createElement('div');
                 avatar.className = 'tweet-avatar';
-                renderProfileAvatar(avatar, author);
+                if (post.isAnonymous || !author.avatarUrl) {
+                    avatar.classList.add('anonymous-avatar', 'default-profile-icon');
+                    avatar.innerHTML = '<i class="ph ph-user"></i>';
+                } else {
+                    renderProfileAvatar(avatar, author);
+                }
 
                 const body = document.createElement('div');
                 body.className = 'tweet-content-wrap';
 
                 const meta = document.createElement('div');
                 meta.className = 'tweet-meta';
+                const authorWrap = document.createElement('div');
+                authorWrap.className = 'timeline-author-wrap';
                 const name = document.createElement('span');
                 name.className = 'tweet-author';
-                name.textContent = author.displayName || author.username || 'Member';
+                name.textContent = post.isAnonymous ? 'Anonymous' : (author.displayName || author.username || 'Member');
+                if (!post.isAnonymous && author.username) {
+                    const handle = document.createElement('small');
+                    handle.textContent = `@${author.username}`;
+                    name.appendChild(handle);
+                }
+                authorWrap.append(avatar, name);
+                if (!post.isAnonymous && author.username) {
+                    makeProfileLink(authorWrap, author.username);
+                }
                 const time = document.createElement('time');
                 time.className = 'tweet-time';
                 time.dateTime = post.createdAt;
                 time.textContent = formatTimelineDate(post.createdAt);
-                meta.append(name, time);
+                meta.append(authorWrap, time);
 
                 const text = document.createElement('p');
                 text.className = 'tweet-text';
                 text.textContent = post.content;
 
+                const photos = document.createElement('div');
+                photos.className = 'post-images';
+                (post.photos || []).forEach(photo => {
+                    const image = document.createElement('img');
+                    image.className = 'post-image';
+                    image.src = photo.url;
+                    image.alt = photo.name || 'timeline image';
+                    image.addEventListener('click', () => openTimelinePhoto(photo.url, photo.name || 'timeline image'));
+                    photos.appendChild(image);
+                });
+
                 const actions = document.createElement('div');
                 actions.className = 'tweet-actions';
-                const reply = document.createElement('button');
-                reply.type = 'button';
-                reply.className = 'tweet-action-btn';
-                reply.innerHTML = '<i class="ph ph-chat-circle"></i><span>0</span>';
-                const like = document.createElement('button');
-                like.type = 'button';
-                like.className = 'tweet-action-btn';
-                like.innerHTML = '<i class="ph ph-heart"></i><span>0</span>';
-                actions.append(reply, like);
+                const commentToggle = document.createElement('button');
+                commentToggle.type = 'button';
+                commentToggle.className = 'tweet-action-btn';
+                commentToggle.innerHTML = `<i class="ph ph-chat-circle"></i><span>${(post.comments || []).length}</span>`;
+                actions.appendChild(commentToggle);
 
                 if (post.canDelete) {
                     const remove = document.createElement('button');
@@ -4413,8 +6371,59 @@
                     actions.appendChild(remove);
                 }
 
-                body.append(meta, text, actions);
-                article.append(avatar, body);
+                const comments = document.createElement('div');
+                comments.className = 'comments-section';
+                (post.comments || []).forEach(comment => {
+                    const item = document.createElement('div');
+                    item.className = 'comment-item';
+                    const commentAuthorData = comment.author || {};
+                    const commentAvatar = document.createElement('div');
+                    commentAvatar.className = 'comment-avatar';
+                    if (!commentAuthorData.avatarUrl) {
+                        commentAvatar.classList.add('default-profile-icon');
+                        commentAvatar.innerHTML = '<i class="ph ph-user"></i>';
+                    } else {
+                        const avatarImage = document.createElement('img');
+                        avatarImage.src = commentAuthorData.avatarUrl;
+                        avatarImage.alt = `${commentAuthorData.displayName || commentAuthorData.username || 'Member'} 프로필`;
+                        commentAvatar.appendChild(avatarImage);
+                    }
+                    const commentBody = document.createElement('div');
+                    commentBody.className = 'comment-body';
+                    const commentAuthor = document.createElement('span');
+                    commentAuthor.className = 'comment-author';
+                    commentAuthor.textContent = commentAuthorData.displayName || commentAuthorData.username || 'Member';
+                    if (commentAuthorData.username) {
+                        makeProfileLink(commentAvatar, commentAuthorData.username);
+                        makeProfileLink(commentAuthor, commentAuthorData.username);
+                    }
+                    const commentText = document.createElement('span');
+                    commentText.className = 'comment-text';
+                    commentText.textContent = comment.content;
+                    commentBody.append(commentAuthor, commentText);
+                    if (comment.canDelete) {
+                        const deleteComment = document.createElement('button');
+                        deleteComment.type = 'button';
+                        deleteComment.className = 'comment-delete';
+                        deleteComment.textContent = '[ DELETE ]';
+                        deleteComment.addEventListener('click', () => deleteTimelineComment(comment.id));
+                        commentBody.appendChild(deleteComment);
+                    }
+                    item.append(commentAvatar, commentBody);
+                    comments.appendChild(item);
+                });
+                const commentForm = document.createElement('form');
+                commentForm.className = 'comment-input-wrapper';
+                commentForm.innerHTML = '<input type="text" class="comment-input" maxlength="300" placeholder="댓글을 입력하세요..." required><button type="submit" class="comment-submit">REPLY</button>';
+                commentForm.addEventListener('submit', event => submitTimelineComment(event, post.id));
+                comments.appendChild(commentForm);
+                commentToggle.addEventListener('click', () => comments.classList.toggle('active'));
+
+                body.append(meta, text);
+                if (photos.childElementCount) body.appendChild(photos);
+                if (actions.childElementCount) body.appendChild(actions);
+                body.appendChild(comments);
+                article.appendChild(body);
                 timelineList.appendChild(article);
             });
         }
@@ -4424,7 +6433,7 @@
             timelineStatus.textContent = '타임라인을 불러오는 중입니다.';
             timelineStatus.classList.remove('hidden');
             timelineList.replaceChildren();
-            renderProfileAvatar(timelineComposeAvatar, siteUser);
+            if (timelineComposeAvatar) renderProfileAvatar(timelineComposeAvatar, siteUser);
             try {
                 const response = await fetch('/api/timeline.php?action=feed', { headers: { Accept: 'application/json' }, cache: 'no-store' });
                 const payload = await response.json();
@@ -4433,6 +6442,70 @@
             } catch (error) {
                 timelineStatus.textContent = error.message;
                 timelineStatus.classList.remove('hidden');
+            }
+        }
+
+        let timelineSelectedFiles = [];
+
+        function renderTimelinePreviews() {
+            if (!timelinePreview) return;
+            timelinePreview.replaceChildren();
+            timelineSelectedFiles.forEach((file, index) => {
+                const wrap = document.createElement('div');
+                wrap.className = 'preview-thumb-wrap';
+                const image = document.createElement('img');
+                image.className = 'preview-thumb';
+                image.src = URL.createObjectURL(file);
+                image.alt = file.name;
+                image.addEventListener('load', () => URL.revokeObjectURL(image.src), { once: true });
+                const remove = document.createElement('button');
+                remove.type = 'button';
+                remove.className = 'btn-remove-thumb';
+                remove.textContent = '×';
+                remove.addEventListener('click', () => {
+                    timelineSelectedFiles.splice(index, 1);
+                    renderTimelinePreviews();
+                });
+                wrap.append(image, remove);
+                timelinePreview.appendChild(wrap);
+            });
+        }
+
+        async function submitTimelineComment(event, postId) {
+            event.preventDefault();
+            const form = event.currentTarget;
+            const input = form.querySelector('.comment-input');
+            const content = input.value.trim();
+            if (!content) return;
+            const submit = form.querySelector('.comment-submit');
+            submit.disabled = true;
+            const body = new FormData();
+            body.append('action', 'comment');
+            body.append('post_id', String(postId));
+            body.append('content', content);
+            try {
+                const response = await fetch('/api/timeline.php', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken || '' }, body });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '댓글을 등록하지 못했습니다.');
+                await loadTimelineFeed();
+            } catch (error) {
+                showToast(error.message, false);
+            } finally {
+                submit.disabled = false;
+            }
+        }
+
+        async function deleteTimelineComment(id) {
+            const body = new FormData();
+            body.append('action', 'delete_comment');
+            body.append('id', String(id));
+            try {
+                const response = await fetch('/api/timeline.php', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken || '' }, body });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '댓글을 삭제하지 못했습니다.');
+                await loadTimelineFeed();
+            } catch (error) {
+                showToast(error.message, false);
             }
         }
 
@@ -4512,6 +6585,18 @@
 
         timelineRefresh?.addEventListener('click', loadTimelineFeed);
 
+        timelineImageBtn?.addEventListener('click', () => timelineImageInput?.click());
+        timelineImageInput?.addEventListener('change', () => {
+            const files = Array.from(timelineImageInput.files || []);
+            const combinedFiles = [...timelineSelectedFiles, ...files];
+            timelineSelectedFiles = combinedFiles.slice(0, 4);
+            timelineImageInput.value = '';
+            renderTimelinePreviews();
+            if (combinedFiles.length > 4) {
+                showToast('사진은 최대 4장까지 첨부할 수 있습니다.', false);
+            }
+        });
+
         timelineForm?.addEventListener('submit', async event => {
             event.preventDefault();
             const content = timelineInput.value.trim();
@@ -4521,11 +6606,15 @@
             const body = new FormData();
             body.append('action', 'create');
             body.append('content', content);
+            body.append('is_anonymous', timelineAnonymous?.checked ? '1' : '0');
+            timelineSelectedFiles.forEach(file => body.append('photos[]', file, file.name));
             try {
                 const response = await fetch('/api/timeline.php', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken || '' }, body });
                 const payload = await response.json();
                 if (!response.ok) throw new Error(payload.error || '글을 등록하지 못했습니다.');
                 timelineForm.reset();
+                timelineSelectedFiles = [];
+                renderTimelinePreviews();
                 if (timelineLength) timelineLength.textContent = '0 / 500';
                 await loadTimelineFeed();
                 showToast('타임라인에 글을 남겼습니다.', true);
@@ -4559,36 +6648,39 @@
                 return;
             }
             items.forEach(profile => {
+                const index = peopleDirectoryItems.findIndex(item => item.username === profile.username) + 1;
                 const card = document.createElement('article');
-                card.className = 'cursor-pointer text-left overflow-hidden bg-white/35 border border-[var(--border-light)] hover:border-[var(--accent-red)] hover:-translate-y-1 transition-all';
+                card.className = 'member-directory-card';
                 card.setAttribute('role', 'button');
                 card.setAttribute('tabindex', '0');
                 card.setAttribute('aria-label', `${profile.displayName} 회원 프로필 보기`);
-                const portrait = document.createElement('span');
-                portrait.className = 'flex w-full aspect-[4/3] overflow-hidden bg-[var(--accent-red)]/90 text-white items-center justify-center text-6xl font-serif-en italic';
-                renderProfileAvatar(portrait, profile);
-                const details = document.createElement('span');
-                details.className = 'block p-6';
+
                 const top = document.createElement('div');
-                top.className = 'flex items-center gap-4';
-                const identity = document.createElement('span');
-                identity.className = 'min-w-0';
+                top.className = 'member-directory-top';
+                const number = document.createElement('span');
+                number.className = 'member-directory-index';
+                number.textContent = String(index || 1).padStart(2, '0');
+                const avatar = document.createElement('span');
+                avatar.className = 'member-directory-avatar';
+                renderProfileAvatar(avatar, profile);
+                top.append(number, avatar);
+
                 const name = document.createElement('strong');
-                name.className = 'block text-xl font-serif-ko truncate';
+                name.className = 'member-directory-name';
                 name.textContent = profile.displayName;
                 const username = document.createElement('span');
-                username.className = 'block text-xs opacity-45 mt-1 truncate';
+                username.className = 'member-directory-username';
                 username.textContent = `@${profile.username}`;
-                identity.append(name, username);
-                top.append(identity);
+
                 const bio = document.createElement('p');
-                bio.className = 'text-sm opacity-60 mt-5 line-clamp-2 min-h-[2.5rem]';
+                bio.className = 'member-directory-bio';
                 bio.textContent = profile.bio || '아직 자기소개가 없습니다.';
+
                 const meta = document.createElement('p');
-                meta.className = 'text-xs opacity-40 mt-5 pt-4 border-t border-[var(--border-light)]';
-                meta.textContent = `${profile.region || '지역 미입력'} · Timeline ${profile.postCount}`;
-                details.append(top, bio, meta);
-                card.append(portrait, details);
+                meta.className = 'member-directory-meta';
+                meta.innerHTML = `<span>${escapeHtml(profile.region || 'Region N/A')}</span><span>Timeline ${Number(profile.postCount || 0)}</span>`;
+
+                card.append(top, name, username, bio, meta);
                 card.addEventListener('click', () => openMemberTimeline(profile.username));
                 card.addEventListener('keydown', event => {
                     if (event.target !== card || (event.key !== 'Enter' && event.key !== ' ')) return;
@@ -4630,8 +6722,26 @@
                 renderProfileAvatar(document.getElementById('member-profile-avatar'), profile);
                 document.getElementById('member-profile-name').textContent = profile.displayName;
                 document.getElementById('member-profile-username').textContent = `@${profile.username}`;
-                document.getElementById('member-profile-meta').textContent = [profile.region, profile.personality, profile.relationshipStyle].filter(Boolean).join(' · ') || '공개 프로필 정보가 없습니다.';
-                document.getElementById('member-profile-bio').textContent = profile.bio || '';
+                const meta = document.getElementById('member-profile-meta');
+                const profileRows = [
+                    ['Region', profile.region || '미입력'],
+                    ['Birth Year', profile.birthYear ? `${profile.birthYear}년생` : '미입력'],
+                    ['Personal Pref.', profile.personality || '미입력'],
+                    ['Dating Pref.', profile.relationshipStyle || '미입력'],
+                ];
+                meta.replaceChildren(...profileRows.map(([label, value]) => {
+                    const item = document.createElement('div');
+                    item.className = 'border-b border-[var(--border-light)] pb-3';
+                    const key = document.createElement('span');
+                    key.className = 'block text-[0.62rem] tracking-[0.22em] uppercase opacity-45 mb-2 font-serif-en';
+                    key.textContent = label;
+                    const text = document.createElement('span');
+                    text.className = 'block break-words';
+                    text.textContent = value;
+                    item.append(key, text);
+                    return item;
+                }));
+                document.getElementById('member-profile-bio').textContent = profile.bio || '아직 자기소개가 없습니다.';
                 memberTimelineStatus.classList.add('hidden');
                 renderTimeline(profile, payload.items, memberTimelineList, document.getElementById('member-timeline-count'), 'member');
                 if (navigate) document.getElementById('member-profile-view-trigger').click();
@@ -5397,35 +7507,36 @@
             if (items.length === 0) {
                 galleryStatus.textContent = '아직 등록된 활동 앨범이 없습니다.';
                 galleryStatus.classList.remove('hidden');
+                galleryList.classList.remove('gallery-archive-grid');
                 return;
             }
+            galleryList.classList.add('gallery-archive-grid');
             galleryStatus.classList.add('hidden');
             items.forEach((item) => {
                 const card = document.createElement('article');
-                card.className = 'group bg-white/35 border border-[var(--border-light)] rounded-sm overflow-hidden shadow-sm hover:-translate-y-1 transition-transform cursor-pointer';
+                card.className = 'gallery-archive-card group';
                 card.tabIndex = 0;
                 card.setAttribute('role', 'button');
                 card.setAttribute('aria-label', `${item.title} 자세히 보기`);
                 const imageWrap = document.createElement('div');
-                imageWrap.className = 'aspect-[4/3] bg-gray-100 overflow-hidden relative';
+                imageWrap.className = 'gallery-archive-media';
                 const image = document.createElement('img');
                 image.src = item.coverUrl;
                 image.alt = item.title;
                 image.loading = 'lazy';
-                image.className = 'w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700';
                 const count = document.createElement('span');
-                count.className = 'absolute right-3 bottom-3 bg-black/65 text-white px-3 py-1 text-xs flex items-center gap-1';
-                count.innerHTML = `<i class="ph ph-images"></i> ${item.photoCount}`;
+                count.className = 'gallery-archive-count';
+                count.textContent = `${item.photoCount} Photos`;
                 const body = document.createElement('div');
-                body.className = 'p-6';
+                body.className = 'gallery-archive-body';
                 const meta = document.createElement('p');
-                meta.className = 'text-xs tracking-widest uppercase opacity-45 font-serif-en mb-3';
-                meta.textContent = `${smFormatDate(item.createdAt)} · ${item.authorName} · VIEW ${item.viewCount}`;
+                meta.className = 'gallery-archive-meta';
+                meta.innerHTML = `<span>New Photo</span><time>${escapeHtml(smFormatDate(item.createdAt))}</time>`;
                 const title = document.createElement('h3');
-                title.className = 'text-2xl font-serif-ko font-bold mb-3 group-hover:text-[var(--accent-red)] transition-colors';
+                title.className = 'gallery-archive-card-title';
                 title.textContent = item.title;
                 const content = document.createElement('p');
-                content.className = 'text-sm opacity-70 leading-relaxed line-clamp-3';
+                content.className = 'gallery-archive-summary line-clamp-2';
                 content.textContent = item.description;
                 imageWrap.append(image, count);
                 body.append(meta, title, content);
@@ -5617,11 +7728,13 @@
             calendarMonthYear.textContent = new Date(year, month, 1).toLocaleDateString('en-US', {
                 month: 'long',
                 year: 'numeric'
-            });
+            }).toUpperCase();
             calendarGrid.innerHTML = '';
 
             for (let i = 0; i < firstDay; i += 1) {
-                calendarGrid.appendChild(document.createElement('div'));
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'calendar-cell empty';
+                calendarGrid.appendChild(emptyCell);
             }
 
             for (let day = 1; day <= lastDate; day += 1) {
@@ -5629,23 +7742,36 @@
                 const dateKey = formatDateKey(dayDate);
                 const hasSchedule = Boolean(localSchedules[dateKey]?.length);
                 const isSelected = dateKey === selectedDateKey;
+                const isHoliday = dayDate.getDay() === 0 || dayDate.getDay() === 6 || koreanHolidayKeys.has(dateKey);
                 const dayButton = document.createElement('button');
 
                 dayButton.type = 'button';
-                dayButton.className = 'relative min-h-8 sm:min-h-10 md:min-h-16 flex items-center justify-center transition-colors hover:text-[var(--accent-red)]';
+                dayButton.className = `calendar-cell${isSelected ? ' selected' : ''}${isHoliday ? ' holiday-cell' : ''}`;
 
                 const dayNumber = document.createElement('span');
-                dayNumber.className = [
-                    'w-6 h-6 sm:w-7 sm:h-7 md:w-9 md:h-9 rounded-full flex items-center justify-center transition-colors',
-                    isSelected ? 'bg-[var(--text-dark)] text-white shadow-md' : ''
-                ].join(' ');
+                dayNumber.className = `date-number${isHoliday ? ' holiday' : ''}`;
                 dayNumber.textContent = String(day);
                 dayButton.appendChild(dayNumber);
 
                 if (hasSchedule) {
-                    const dot = document.createElement('span');
-                    dot.className = 'absolute left-1/2 top-1/2 mt-3 sm:mt-4 md:mt-5 -translate-x-1/2 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-[var(--accent-red)]';
-                    dayButton.appendChild(dot);
+                    const badges = document.createElement('span');
+                    badges.className = 'event-badges';
+
+                    localSchedules[dateKey].slice(0, 2).forEach((title, index) => {
+                        const badge = document.createElement('span');
+                        badge.className = `event-badge${index % 2 === 1 ? ' type-party' : ''}`;
+                        badge.textContent = title;
+                        badges.appendChild(badge);
+                    });
+
+                    if (localSchedules[dateKey].length > 2) {
+                        const moreBadge = document.createElement('span');
+                        moreBadge.className = 'event-badge type-party';
+                        moreBadge.textContent = `+ ${localSchedules[dateKey].length - 2}`;
+                        badges.appendChild(moreBadge);
+                    }
+
+                    dayButton.appendChild(badges);
                 }
 
                 dayButton.addEventListener('click', () => {
@@ -5970,6 +8096,8 @@
         window.addEventListener('keydown', (event) => {
             if (event.key !== 'Escape') return;
             if (!initialPasswordModal?.classList.contains('hidden')) return closeInitialPasswordReminder();
+            if (!memberProfileModal?.classList.contains('hidden')) return closeMemberProfileModal();
+            if (!timelinePhotoModal?.classList.contains('hidden')) return closeTimelinePhoto();
             if (!profilePhotoModal?.classList.contains('hidden')) return closeProfilePhoto();
             if (!membershipDetailModal?.classList.contains('hidden')) return closeMembershipDetail();
             if (!galleryModal?.classList.contains('hidden')) return closeGalleryModal();
@@ -5983,6 +8111,14 @@
         profilePhotoModalClose?.addEventListener('click', closeProfilePhoto);
         profilePhotoModal?.addEventListener('click', event => {
             if (event.target === profilePhotoModal) closeProfilePhoto();
+        });
+        timelinePhotoModalClose?.addEventListener('click', closeTimelinePhoto);
+        timelinePhotoModal?.addEventListener('click', event => {
+            if (event.target === timelinePhotoModal) closeTimelinePhoto();
+        });
+        memberProfileModalClose?.addEventListener('click', closeMemberProfileModal);
+        memberProfileModal?.addEventListener('click', event => {
+            if (event.target === memberProfileModal) closeMemberProfileModal();
         });
 
         document.getElementById('gallery-edit-btn')?.addEventListener('click', () => {
@@ -6054,11 +8190,9 @@
                 galleryFormError.classList.remove('hidden');
             } finally {
                 gallerySubmitBtn.disabled = false;
-                if (!galleryFormError.classList.contains('hidden')) {
-                    gallerySubmitBtn.innerHTML = galleryEditingId
-                        ? '<span>Save Changes</span><i class="ph ph-arrow-right"></i>'
-                        : '<span>Publish Album</span><i class="ph ph-arrow-right"></i>';
-                }
+                gallerySubmitBtn.innerHTML = galleryEditingId
+                    ? '<span>Save Changes</span><i class="ph ph-arrow-right"></i>'
+                    : '<span>Publish Album</span><i class="ph ph-arrow-right"></i>';
             }
         });
 

@@ -248,13 +248,13 @@ try {
         $delete->execute(array_merge([$albumId], $removeIds));
     }
 
-    $finfo = new finfo(FILEINFO_MIME_TYPE);
     $sort = (int) $pdo->query("SELECT COALESCE(MAX(sort_order), -1) + 1 FROM activity_album_photos WHERE album_id = {$albumId}")->fetchColumn();
     foreach ($files as $file) {
         if ($file['error'] !== UPLOAD_ERR_OK || $file['size'] < 1 || $file['size'] > ALBUM_MAX_PHOTO_SIZE || !is_uploaded_file($file['tmp_name'])) {
             throw new RuntimeException('각 사진은 8MB 이하여야 합니다.');
         }
-        $mime = (string) $finfo->file($file['tmp_name']);
+        $imageInfo = @getimagesize($file['tmp_name']);
+        $mime = is_array($imageInfo) ? (string) ($imageInfo['mime'] ?? '') : '';
         $extensions = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/gif' => 'gif', 'image/webp' => 'webp'];
         if (!isset($extensions[$mime])) throw new RuntimeException('JPG, PNG, GIF, WEBP 사진만 등록할 수 있습니다.');
         $storedName = bin2hex(random_bytes(18)) . '.' . $extensions[$mime];
@@ -275,6 +275,7 @@ try {
 } catch (Throwable $error) {
     if ($pdo->inTransaction()) $pdo->rollBack();
     foreach ($savedPaths as $path) if (is_file($path)) unlink($path);
+    error_log('[activity-albums] ' . $error->getMessage());
     album_json(['error' => $error instanceof RuntimeException ? $error->getMessage() : '앨범 저장 중 오류가 발생했습니다.'], 422);
 }
 

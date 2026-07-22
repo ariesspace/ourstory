@@ -220,6 +220,37 @@ function site_migrate(PDO $pdo): void
         )'
     );
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_timeline_posts_user_created ON timeline_posts (user_id, created_at DESC, id DESC)');
+    $timelineColumns = array_column($pdo->query('PRAGMA table_info(timeline_posts)')->fetchAll(), 'name');
+    if (!in_array('is_anonymous', $timelineColumns, true)) {
+        $pdo->exec('ALTER TABLE timeline_posts ADD COLUMN is_anonymous INTEGER NOT NULL DEFAULT 0');
+    }
+
+    $pdo->exec(
+        'CREATE TABLE IF NOT EXISTS timeline_photos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            post_id INTEGER NOT NULL,
+            original_name TEXT NOT NULL,
+            stored_name TEXT NOT NULL UNIQUE,
+            mime_type TEXT NOT NULL,
+            file_size INTEGER NOT NULL,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (post_id) REFERENCES timeline_posts(id) ON DELETE CASCADE
+        )'
+    );
+    $pdo->exec('CREATE INDEX IF NOT EXISTS idx_timeline_photos_post ON timeline_photos (post_id, id)');
+
+    $pdo->exec(
+        'CREATE TABLE IF NOT EXISTS timeline_comments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            post_id INTEGER NOT NULL,
+            user_id INTEGER NOT NULL,
+            content TEXT NOT NULL,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (post_id) REFERENCES timeline_posts(id) ON DELETE CASCADE,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )'
+    );
+    $pdo->exec('CREATE INDEX IF NOT EXISTS idx_timeline_comments_post ON timeline_comments (post_id, created_at, id)');
 
     $pdo->exec(
         'CREATE TABLE IF NOT EXISTS anonymous_posts (

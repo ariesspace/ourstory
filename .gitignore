@@ -2,3 +2,4 @@
 app/storage/data/*.sqlite
 app/storage/data/*.sqlite-*
 app/storage/data/*.db
+app/storage/data/**
