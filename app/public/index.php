@@ -2366,25 +2366,13 @@
             padding: 0.85rem 0;
             border-top: 1px solid rgba(42, 59, 50, 0.24);
             border-bottom: 1px solid rgba(42, 59, 50, 0.12);
-            color: var(--accent-red);
+            color: #b42318;
             background: transparent;
             font-family: 'Space Mono', 'Noto Sans KR', monospace;
             font-size: 0.82rem;
             font-weight: 700;
             letter-spacing: 0.12em;
             text-transform: uppercase;
-        }
-        .notice-doc-body h4.notice-alert-heading::before {
-            content: "!";
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 1.45rem;
-            height: 1.45rem;
-            border: 1px solid var(--accent-red);
-            border-radius: 999px;
-            font-size: 0.72rem;
-            line-height: 1;
         }
         .notice-doc-body p {
             margin-bottom: 1rem;
