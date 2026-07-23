@@ -3132,7 +3132,7 @@
             </div>
             <button type="button" class="view-trigger font-serif-en italic text-3xl md:text-4xl tracking-tight" data-target="view-read">our story</button>
             <div class="flex justify-end items-center gap-5 sm:gap-9 font-serif-en text-xs tracking-[0.28em] uppercase">
-                <button type="button" class="view-trigger hidden header-auth-item hover:opacity-100" data-target="view-notice" id="header-notice-btn">Notice</button>
+                <button type="button" class="view-trigger header-auth-item hover:opacity-100" data-target="view-notice" id="header-notice-btn">Notice</button>
                 <button type="button" class="view-trigger hidden header-user-link hover:opacity-100" data-target="view-my-page" id="header-user-btn"></button>
                 <button type="button" class="view-trigger header-auth-item hover:opacity-100" data-target="view-login" id="login-nav-btn">Login</button>
                 <button type="button" id="header-logout-btn" class="logout-trigger hidden header-auth-item hover:text-[var(--accent-red)]">Logout</button>
@@ -4581,7 +4581,7 @@
             systemAddNavLink?.classList.toggle('hidden', !isManager);
             systemMenuSection?.classList.toggle('hidden', !isManager);
             myPageNavLink.classList.toggle('hidden', !user);
-            headerNoticeBtn?.classList.toggle('hidden', !user);
+            headerNoticeBtn?.classList.remove('hidden');
             headerUserBtn?.classList.toggle('hidden', !user);
             headerLogoutBtn.classList.toggle('hidden', !user);
             loginNavBtn.classList.toggle('hidden', Boolean(user));
