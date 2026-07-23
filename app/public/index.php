@@ -1602,6 +1602,70 @@
             color: var(--bg-color);
         }
 
+        @media (max-width: 1100px) {
+            .gallery-home {
+                min-height: auto;
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                gap: clamp(1.75rem, 5vw, 3rem);
+                padding-top: clamp(2rem, 7vw, 4rem);
+                padding-bottom: clamp(2.5rem, 8vw, 4rem);
+            }
+            .gallery-home-art {
+                order: 1;
+                width: 100%;
+            }
+            .gallery-home-image {
+                width: min(100%, 520px);
+                max-width: 76vw;
+            }
+            .gallery-home-title {
+                position: relative;
+                left: auto;
+                bottom: auto;
+                transform: none;
+                width: auto;
+                max-width: 100%;
+                margin: -0.15em auto 0;
+                color: var(--text-dark);
+                mix-blend-mode: normal;
+                font-size: clamp(3.2rem, 11vw, 6.5rem);
+                line-height: 0.9;
+                text-align: center;
+                white-space: normal;
+            }
+            .gallery-home-detail {
+                order: 2;
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 1.5rem;
+                max-width: min(100%, 620px);
+                margin: 0 auto;
+            }
+            .gallery-home-copy {
+                font-size: 0.86rem;
+                line-height: 1.8;
+            }
+            .gallery-home-action {
+                order: 3;
+                min-height: auto;
+                align-items: center;
+                text-align: center;
+                gap: 1rem;
+            }
+            .gallery-home-date {
+                writing-mode: horizontal-tb;
+                transform: none;
+            }
+            .gallery-home-action > div:last-child {
+                display: flex;
+                justify-content: center;
+                gap: 0.75rem;
+                flex-wrap: wrap;
+            }
+        }
+
         @media (max-width: 767px) {
             #main-header > div:first-child {
                 height: 84px;
@@ -1629,9 +1693,92 @@
             }
             .gallery-home {
                 grid-template-columns: 1fr;
+                gap: 1.75rem;
+                padding-top: 1.5rem;
+            }
+            .gallery-home-image {
+                width: min(100%, 420px);
+                max-width: 100%;
+            }
+            .gallery-home-detail {
+                grid-template-columns: 1fr;
+                gap: 1.35rem;
+                width: 100%;
+            }
+            .gallery-home-kicker {
+                font-size: 0.62rem;
+                letter-spacing: 0.2em;
+            }
+            .gallery-home-copy {
+                font-size: 0.84rem;
             }
             .gallery-home-title {
                 font-size: clamp(3rem, 17vw, 5rem);
+                margin-top: -0.1em;
+            }
+            .gallery-home-button {
+                width: min(100%, 240px);
+                justify-content: center;
+                padding: 0.9rem 1.1rem;
+            }
+            #login-modal {
+                align-items: flex-start;
+                overflow-y: auto;
+                padding: 5.25rem 1rem 1.25rem !important;
+            }
+            #login-modal .login-document {
+                width: min(100%, 390px);
+                padding: 0.65rem;
+                box-shadow: 0 18px 52px rgba(17, 17, 17, 0.16);
+            }
+            #login-modal .login-document-inner {
+                padding: 1.45rem 1.2rem 1.35rem;
+            }
+            #login-modal-close {
+                top: -2.6rem !important;
+                right: 0.15rem !important;
+                color: var(--text-dark) !important;
+                font-size: 0.68rem !important;
+            }
+            #login-modal .login-doc-meta {
+                font-size: 0.55rem;
+                letter-spacing: 0.12em;
+            }
+            #login-modal .login-doc-meta.flex {
+                margin-bottom: 1.65rem !important;
+            }
+            #login-modal .text-center {
+                margin-bottom: 1.75rem !important;
+            }
+            #login-modal .login-doc-label {
+                font-size: 0.58rem;
+                letter-spacing: 0.18em;
+            }
+            #login-modal .login-doc-label.mb-8 {
+                margin-bottom: 1rem !important;
+            }
+            #login-modal-title {
+                font-size: clamp(2rem, 11vw, 2.7rem) !important;
+                line-height: 1.05 !important;
+            }
+            #login-modal-title + div {
+                margin-top: 1.35rem !important;
+            }
+            #login-form {
+                gap: 1.25rem !important;
+            }
+            #login-modal .login-doc-input {
+                padding: 0.55rem 0 0.5rem;
+                font-size: 1.08rem;
+            }
+            #login-modal .login-doc-button {
+                margin-top: 1rem !important;
+                padding: 0.95rem;
+                font-size: 0.66rem;
+                letter-spacing: 0.18em;
+            }
+            #login-modal .login-document-inner > .login-doc-meta:last-child {
+                margin-top: 1.35rem !important;
             }
             #view-schedule .schedule-header {
                 padding-top: 2.8rem;
@@ -2210,14 +2357,34 @@
             color: rgba(17, 17, 17, 0.84);
         }
         .notice-doc-body h4.notice-alert-heading {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            width: 100%;
+            margin-top: 2rem;
+            margin-bottom: 0.85rem;
+            padding: 0.85rem 0;
+            border-top: 1px solid rgba(42, 59, 50, 0.24);
+            border-bottom: 1px solid rgba(42, 59, 50, 0.12);
+            color: var(--accent-red);
+            background: transparent;
+            font-family: 'Space Mono', 'Noto Sans KR', monospace;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+        .notice-doc-body h4.notice-alert-heading::before {
+            content: "!";
             display: inline-flex;
             align-items: center;
-            gap: 0.55rem;
-            color: #b42318;
-            background: rgba(180, 35, 24, 0.055);
-            border-left: 3px solid #b42318;
-            padding: 0.48rem 0.8rem;
-            letter-spacing: 0.01em;
+            justify-content: center;
+            width: 1.45rem;
+            height: 1.45rem;
+            border: 1px solid var(--accent-red);
+            border-radius: 999px;
+            font-size: 0.72rem;
+            line-height: 1;
         }
         .notice-doc-body p {
             margin-bottom: 1rem;
