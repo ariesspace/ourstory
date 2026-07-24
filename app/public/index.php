@@ -5447,7 +5447,7 @@
 
             const moveValue = (from, to, predicate) => {
                 if (!from || !to || !predicate(from.value)) return;
-                if (to.value === '연결된 답변 없음' || predicate(from.value)) {
+                if (to.value === '연결된 답변 없음') {
                     to.value = from.value;
                     from.value = '연결된 답변 없음';
                 }
@@ -5472,6 +5472,28 @@
                 take('caregiver', '케어기버란 어떤 성향인가요?', [/^케어기버란\s*어떤\s*성향인가요\??$/i, /^care\s*giver/i]),
             ];
             const storyByKey = new Map(storySections.map(field => [field.key, field]));
+            const looksLikeSwitchAnswer = value => /변바|본인의\s*쾌락만\s*좇|성향자|바닐라틱한\s*변태/.test(value);
+            const looksLikeBdsmAnswer = value => /서로의\s*욕구와\s*한계|합의를\s*바탕으로\s*신뢰|비주류적\s*성적\/연애적\s*행위나\s*관계성|안전과\s*리스크|성적으로\s*쾌감을\s*얻는\s*형태/.test(value);
+            const looksLikeCaregiverAnswer = value => /상대의\s*신체적,\s*정서적\s*안녕|돌봄을\s*통해\s*애정을\s*표현|관계서열\s*아래에\s*있는\s*자신의\s*아이|케어리시버를\s*보살피고\s*만족감을\s*얻습니다|본인이\s*아니면\s*아무것도\s*하지\s*못하게\s*하고\s*싶다|의존성\s*베이스/.test(value);
+            const careField = storyByKey.get('care');
+            const switchField = storyByKey.get('switch');
+            const bdsmField = storyByKey.get('bdsm');
+            const caregiverField = storyByKey.get('caregiver');
+            if (careField && switchField && bdsmField && caregiverField) {
+                const combinedCareMatch = careField.value.match(/^(?<care>[\s\S]*?),\s*(?<switch>bdsm에\s*대한\s*고찰[\s\S]*)$/i);
+                if (combinedCareMatch?.groups && looksLikeSwitchAnswer(combinedCareMatch.groups.switch)) {
+                    const displacedSwitch = switchField.value;
+                    const displacedBdsm = bdsmField.value;
+                    careField.value = combinedCareMatch.groups.care.trim() || '연결된 답변 없음';
+                    switchField.value = combinedCareMatch.groups.switch.trim();
+                    if (looksLikeBdsmAnswer(displacedSwitch)) {
+                        bdsmField.value = displacedSwitch;
+                    }
+                    if (looksLikeCaregiverAnswer(displacedBdsm)) {
+                        caregiverField.value = displacedBdsm;
+                    }
+                }
+            }
             moveValue(
                 storyByKey.get('bdsm'),
                 storyByKey.get('playSex'),
@@ -5480,7 +5502,7 @@
             moveValue(
                 storyByKey.get('bdsm'),
                 storyByKey.get('caregiver'),
-                value => /관계서열\s*아래에\s*있는\s*자신의\s*아이|케어리시버를\s*보살피고\s*만족감을\s*얻습니다|본인이\s*아니면\s*아무것도\s*하지\s*못하게\s*하고\s*싶다/.test(value)
+                looksLikeCaregiverAnswer
             );
 
             const attachments = source
