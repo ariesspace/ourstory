@@ -1575,7 +1575,9 @@
                 gap: 2.5rem;
             }
             .profile-card-box {
+                width: min(100%, 310px);
                 max-width: 310px;
+                margin-inline: auto;
             }
             .feed-container {
                 width: 100%;
@@ -3183,15 +3185,15 @@
             }
             #main-header > div:first-child {
                 height: 84px !important;
-                padding-left: 1rem !important;
-                padding-right: 1rem !important;
-                grid-template-columns: minmax(6.8rem, 1fr) minmax(4.7rem, auto) minmax(3.9rem, 1fr) !important;
-                column-gap: 0.55rem !important;
+                padding-left: max(0.8rem, env(safe-area-inset-left)) !important;
+                padding-right: max(0.8rem, env(safe-area-inset-right)) !important;
+                grid-template-columns: minmax(5.7rem, 1fr) minmax(5rem, auto) minmax(3.55rem, 1fr) !important;
+                column-gap: 0.35rem !important;
                 overflow: hidden !important;
             }
             #main-header #index-menu-open {
-                font-size: 0.62rem !important;
-                letter-spacing: 0.16em !important;
+                font-size: 0.58rem !important;
+                letter-spacing: 0.12em !important;
                 white-space: nowrap !important;
             }
             #main-header .view-trigger[data-target="view-read"] {
@@ -3200,7 +3202,8 @@
                 white-space: nowrap !important;
             }
             #main-header > div:first-child > div:last-child {
-                gap: 0.55rem !important;
+                justify-content: flex-end !important;
+                gap: 0.35rem !important;
                 min-width: 0 !important;
                 overflow: hidden !important;
             }
@@ -3209,9 +3212,59 @@
                 display: none !important;
             }
             #main-header .header-auth-item {
-                font-size: 0.62rem !important;
-                letter-spacing: 0.14em !important;
+                font-size: 0.58rem !important;
+                letter-spacing: 0.11em !important;
                 min-width: 0 !important;
+            }
+            .my-page-shell {
+                width: 100% !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+            }
+            .mypage-layout {
+                width: 100% !important;
+                padding: 2.15rem 1.25rem 3rem !important;
+                gap: 1.75rem !important;
+            }
+            .mypage-content {
+                width: 100% !important;
+                overflow: hidden;
+            }
+            .mypage-header-title {
+                display: block !important;
+                font-size: clamp(3.15rem, 17vw, 4.45rem) !important;
+                line-height: 0.92 !important;
+                white-space: normal !important;
+            }
+            .mypage-header-title span {
+                display: block;
+                margin-top: 0.85rem;
+                font-size: 0.62rem !important;
+                letter-spacing: 0.16em !important;
+            }
+            .mypage-profile-grid {
+                grid-template-columns: 1fr !important;
+                gap: 2.1rem !important;
+            }
+            .mypage-portrait-col,
+            .profile-card-box {
+                width: min(100%, 20.5rem) !important;
+                max-width: 20.5rem !important;
+                margin-left: auto !important;
+                margin-right: auto !important;
+            }
+            .profile-img-frame {
+                width: min(100%, 20.5rem) !important;
+                max-width: 20.5rem !important;
+                aspect-ratio: 3 / 4 !important;
+            }
+            .mypage-form-col {
+                width: 100% !important;
+                padding: 1.7rem 1.35rem !important;
+            }
+            .my-birth-region-grid {
+                grid-template-columns: 1fr !important;
+                gap: 1.55rem !important;
             }
         }
         #view-people {
@@ -3661,10 +3714,15 @@
                             </div>
 
                             <div class="form-row">
-                                <span class="form-label">Birth Year / Region</span>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                                    <input type="number" id="my-birth-year" min="1900" max="2100" class="form-input-edit" placeholder="예: 1995">
-                                    <input type="text" id="my-region" maxlength="80" class="form-input-edit" placeholder="예: 서울">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 my-birth-region-grid">
+                                    <div>
+                                        <label for="my-birth-year" class="form-label">Birth Year</label>
+                                        <input type="number" id="my-birth-year" min="1900" max="2100" class="form-input-edit" placeholder="예: 1995">
+                                    </div>
+                                    <div>
+                                        <label for="my-region" class="form-label">Region</label>
+                                        <input type="text" id="my-region" maxlength="80" class="form-input-edit" placeholder="예: 서울">
+                                    </div>
                                 </div>
                             </div>
 
