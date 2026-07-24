@@ -4761,7 +4761,7 @@
         </section>
 
         <section id="view-member-profile" class="w-full max-w-3xl mx-auto view-hidden fade-in py-8">
-            <button type="button" class="view-trigger text-xs tracking-widest uppercase opacity-60 mb-10" data-target="view-people"><i class="ph ph-arrow-left mr-2"></i>Members</button>
+            <button type="button" id="member-profile-back-btn" class="text-xs tracking-widest uppercase opacity-60 mb-10"><i class="ph ph-arrow-left mr-2"></i>Back</button>
             <div class="border-b border-[var(--border-light)] pb-10 mb-8 flex items-start gap-5">
                 <div id="member-profile-avatar" class="w-20 h-20 shrink-0 rounded-full overflow-hidden bg-[var(--accent-red)] text-white flex items-center justify-center text-3xl font-serif-en italic"></div>
                 <div class="min-w-0">
@@ -5567,6 +5567,10 @@
             isRestoringHistory = true;
             navigateToView(targetId, { history: false, scroll: false });
             isRestoringHistory = false;
+            if (targetId === 'view-member-profile' && event.state?.username) {
+                memberProfileReturnView = event.state.from || 'view-people';
+                openMemberTimeline(event.state.username, false);
+            }
         });
 
         document.getElementById('login-form').addEventListener('submit', async (event) => {
@@ -5814,6 +5818,7 @@
         const memberProfileModalMeta = document.getElementById('member-profile-modal-meta');
         const memberProfileModalBio = document.getElementById('member-profile-modal-bio');
         const memberProfileModalIntro = document.getElementById('member-profile-modal-intro');
+        let memberProfileReturnView = 'view-people';
         const smBoardList = document.getElementById('sm-board-list');
         const smBoardStatus = document.getElementById('sm-board-status');
         const smPagination = document.getElementById('sm-pagination');
@@ -8708,6 +8713,7 @@
         peopleSearch?.addEventListener('input', renderPeopleDirectory);
 
         async function openMemberTimeline(username, navigate = true) {
+            const previousViewId = currentViewId && currentViewId !== 'view-member-profile' ? currentViewId : memberProfileReturnView;
             viewedTimelineUsername = username;
             memberTimelineStatus.textContent = '타임라인을 불러오는 중입니다.';
             memberTimelineStatus.classList.remove('hidden');
@@ -8742,11 +8748,27 @@
                 document.getElementById('member-profile-bio').textContent = profile.bio || '아직 자기소개가 없습니다.';
                 memberTimelineStatus.classList.add('hidden');
                 renderTimeline(profile, payload.items, memberTimelineList, document.getElementById('member-timeline-count'), 'member');
-                if (navigate) document.getElementById('member-profile-view-trigger').click();
+                if (navigate) {
+                    memberProfileReturnView = previousViewId || 'view-people';
+                    navigateToView('view-member-profile', { history: false });
+                    history.pushState(
+                        { view: 'view-member-profile', username: profile.username, from: memberProfileReturnView },
+                        '',
+                        '#member-profile'
+                    );
+                }
             } catch (error) {
                 memberTimelineStatus.textContent = error.message;
             }
         }
+
+        document.getElementById('member-profile-back-btn')?.addEventListener('click', () => {
+            if (history.state?.view === 'view-member-profile') {
+                history.back();
+                return;
+            }
+            navigateToView(memberProfileReturnView || 'view-people');
+        });
 
         async function loadMyProfile() {
             if (!siteUser) return;
