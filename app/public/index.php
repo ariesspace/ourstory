@@ -208,9 +208,10 @@
             padding: 1.05rem 0;
             border-bottom: 1px dashed var(--border-light);
             font-family: 'Space Mono', monospace;
-            font-size: 0.72rem;
-            letter-spacing: 0.12em;
-            color: rgba(17, 17, 17, 0.48);
+            font-size: 0.74rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            color: rgba(17, 17, 17, 0.56);
             cursor: pointer;
             transition: color 0.25s ease, padding-left 0.25s ease;
         }
@@ -224,6 +225,7 @@
         .mypage-nav-item.active {
             color: var(--text-dark);
             font-weight: 700;
+            letter-spacing: 0.08em;
         }
         .mypage-menu-title,
         .mypage-menu-sub {
@@ -288,8 +290,8 @@
         }
         .mypage-profile-grid {
             display: grid;
-            grid-template-columns: minmax(320px, 430px) minmax(520px, 1fr);
-            gap: clamp(4rem, 6vw, 6rem);
+            grid-template-columns: minmax(250px, 330px) minmax(520px, 1fr);
+            gap: clamp(4rem, 7vw, 7rem);
             align-items: start;
         }
         .mypage-portrait-col {
@@ -303,10 +305,12 @@
         .profile-img-frame {
             position: relative;
             width: 100%;
-            aspect-ratio: 1 / 0.82;
+            max-width: 310px;
+            aspect-ratio: 3 / 4;
             border: 1px solid var(--border-light);
             background: var(--accent-red);
             overflow: hidden;
+            margin-inline: auto;
         }
         .profile-img-frame::before,
         .profile-img-frame::after {
@@ -470,8 +474,9 @@
         .mypage-security-mode #my-password-section {
             display: grid !important;
             margin-top: 0;
-            border: 1px solid var(--border-light);
-            padding: clamp(2rem, 4vw, 3rem);
+            border: 0;
+            border-top: 1px dashed var(--border-light);
+            padding: clamp(1.6rem, 3vw, 2.2rem) 0 0;
         }
         .feed-container {
             width: min(100%, 760px);
@@ -1410,7 +1415,7 @@
                 gap: 2.5rem;
             }
             .profile-card-box {
-                max-width: 360px;
+                max-width: 310px;
             }
             .feed-container {
                 width: 100%;
@@ -2380,6 +2385,37 @@
         .notice-doc-body .notice-indent {
             padding-left: 1.15rem;
         }
+        .notice-step {
+            display: grid;
+            grid-template-columns: 2.35rem minmax(0, 1fr);
+            gap: 0.85rem;
+            align-items: start;
+            margin-bottom: 0.75rem;
+        }
+        .notice-step .notice-label {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.1rem;
+            min-height: 1.45rem;
+            border-bottom: 1px solid rgba(42, 59, 50, 0.38);
+            color: var(--accent-red);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            line-height: 1;
+        }
+        .notice-step.is-sub {
+            grid-template-columns: 3.25rem minmax(0, 1fr);
+            margin-left: 1.4rem;
+            color: rgba(17, 17, 17, 0.7);
+        }
+        .notice-step.is-sub .notice-label {
+            width: 2.7rem;
+            color: rgba(42, 59, 50, 0.72);
+            border-color: rgba(42, 59, 50, 0.22);
+        }
         .notice-doc-body ul,
         .notice-doc-body ol {
             padding-left: 1.25rem;
@@ -3173,6 +3209,8 @@
                 <p class="index-menu-section-title">Admin Only</p>
                 <button type="button" class="view-trigger hidden" data-target="view-system-members" id="system-nav-link"><em>08</em><span>Management</span><small>[ 관리 ]</small></button>
                 <button type="button" class="view-trigger hidden" data-target="view-system-add" id="system-add-nav-link"><em>09</em><span>Create Account</span><small>[ 계정 생성 ]</small></button>
+                <button type="button" class="view-trigger hidden" data-target="view-membership-archive" id="membership-nav-link"><em>10</em><span>Applications</span><small>[ 가입 신청 ]</small></button>
+                <button type="button" class="view-trigger hidden" data-target="view-main-image-admin" id="main-image-nav-link"><em>11</em><span>Main Image</span><small>[ 메인 그림 ]</small></button>
             </section>
         </nav>
         <button type="button" id="mobile-login-btn" class="mt-auto border border-[var(--text-dark)] py-4 font-mono text-xs tracking-[0.25em] uppercase hover:bg-[var(--text-dark)] hover:text-white transition-colors">Login</button>
@@ -3227,9 +3265,6 @@
                             <button type="button" class="mypage-nav-item" data-my-action="activity">My Activity Log</button>
                             <button type="button" class="mypage-nav-item" data-my-action="likes">Liked Posts Log</button>
                         </div>
-                    </div>
-                    <div class="mypage-nav-group opacity-55">
-                        <div class="mypage-nav-header">Membership <span>+</span></div>
                     </div>
                 </aside>
 
@@ -3300,7 +3335,7 @@
                             </div>
 
                             <button type="button" id="my-password-toggle" class="text-[11px] font-mono opacity-60 hover:opacity-100 hover:text-[var(--accent-red)] underline underline-offset-4 tracking-wider transition-colors" aria-expanded="false" aria-controls="my-password-section">Change Password</button>
-                            <div id="my-password-section" class="hidden mt-6 grid grid-cols-1 sm:grid-cols-2 gap-7 border border-[var(--border-light)] p-5 sm:p-6">
+                            <div id="my-password-section" class="hidden mt-6 grid grid-cols-1 sm:grid-cols-2 gap-7">
                                 <div>
                                     <label for="my-password" class="form-label">새 비밀번호</label>
                                     <input type="password" id="my-password" minlength="10" maxlength="128" autocomplete="new-password" class="form-input-edit" placeholder="10자 이상 입력하세요">
@@ -3533,6 +3568,35 @@
             </form>
         </section>
 
+        <section id="view-main-image-admin" class="w-full max-w-5xl mx-auto view-hidden fade-in py-8">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 border-b border-[var(--text-dark)] pb-8 mb-10">
+                <div>
+                    <span class="text-xs tracking-[0.28em] uppercase opacity-45 font-mono">Admin Only</span>
+                    <h1 class="font-document italic text-5xl md:text-7xl leading-none mt-3">Main Image</h1>
+                    <p class="mt-5 text-sm opacity-55 font-serif-ko">메인 화면 중앙에 보이는 전시 이미지를 교체합니다.</p>
+                </div>
+                <button type="button" class="view-trigger border border-[var(--text-dark)] px-6 py-3 font-mono text-xs tracking-[0.22em] uppercase hover:bg-[var(--text-dark)] hover:text-white transition-colors" data-target="view-read">Back Home</button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_360px] gap-10 items-start">
+                <div class="border border-[var(--border-light)] bg-white p-4">
+                    <img id="main-image-admin-preview" src="/assets/main.png?v=<?= (int) (@filemtime(__DIR__ . '/assets/main.png') ?: time()) ?>" alt="현재 메인 이미지" class="w-full aspect-[4/5] object-cover grayscale">
+                </div>
+                <form id="main-image-form" class="border border-[var(--border-light)] bg-white p-8 flex flex-col gap-7">
+                    <div>
+                        <span class="form-label">Recommended Size</span>
+                        <p class="text-sm leading-relaxed opacity-65 font-serif-ko">세로형 이미지 권장: 900 x 1200px 이상. JPG, PNG, WEBP / 최대 10MB.</p>
+                    </div>
+                    <div>
+                        <label for="main-image-input" class="form-label">Image File</label>
+                        <input type="file" id="main-image-input" accept="image/jpeg,image/png,image/webp" class="block w-full text-sm">
+                    </div>
+                    <p id="main-image-error" class="hidden text-sm text-[var(--accent-red)]"></p>
+                    <button type="submit" id="main-image-submit" class="btn-save-changes w-full mt-0">Save Main Image</button>
+                </form>
+            </div>
+        </section>
+
         <section id="view-read" class="w-full fade-in">
             <div class="gallery-home">
                 <div class="gallery-home-detail">
@@ -3555,7 +3619,7 @@
                 </div>
 
                 <div class="gallery-home-art">
-                    <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop" alt="Abstract archive artwork" class="gallery-home-image">
+                    <img id="home-main-image" src="/assets/main.png?v=<?= (int) (@filemtime(__DIR__ . '/assets/main.png') ?: time()) ?>" alt="Abstract archive artwork" class="gallery-home-image">
                     <h1 class="gallery-home-title">Private <i>Archive</i></h1>
                 </div>
 
@@ -3627,7 +3691,6 @@
                 </div>
 
                 <div class="notice-doc-body font-serif-ko">
-                    <h4>[공지] 필독</h4>
                     <p>저희 단톡방은 특이하고 특수한 단톡방입니다. 그러므로 서로의 다름을 이해하고 인정해 주세요. 또한 모르면 공부해 보세요. 새로운 세상을 알 수 있습니다.</p>
 
                     <section>
@@ -3642,12 +3705,12 @@
                         <h3>Ⅱ. 모임</h3>
                         <p>ⅰ. 모임은 누구나 만들고 주최할 수 있습니다.<br>단, 모임에서 일어나는 사건이나 사고에 대해 운영진은 책임지지 않습니다.</p>
                         <p>ⅱ. 모임 주최 방식은 아래와 같습니다.</p>
-                        <p>① 모임 양식 작성</p>
-                        <p>② 일정 등록 및 단톡방 생성</p>
-                        <p class="notice-indent">㉠ 단톡방은 운영진이 생성해 드립니다.</p>
-                        <p class="notice-indent">㉡ 단톡방은 모임 관련된 이야기만 할 수 있으며, 주로 모임 장소 및 당일 위치 확인, 정산에만 사용합니다.</p>
-                        <p class="notice-indent">㉢ 모임 종료 및 정산 완료 후 단톡방은 폐쇄됩니다.</p>
-                        <p>③ 모임 내 있었던 일에 대하여 단톡방에 이야기하는 것은 좋으나, 모임에 참여하지 않은 사람들을 위해 배려해 주세요.</p>
+                        <div class="notice-step"><span class="notice-label">01</span><span>모임 양식 작성</span></div>
+                        <div class="notice-step"><span class="notice-label">02</span><span>일정 등록 및 단톡방 생성</span></div>
+                        <div class="notice-step is-sub"><span class="notice-label">A</span><span>단톡방은 운영진이 생성해 드립니다.</span></div>
+                        <div class="notice-step is-sub"><span class="notice-label">B</span><span>단톡방은 모임 관련된 이야기만 할 수 있으며, 주로 모임 장소 및 당일 위치 확인, 정산에만 사용합니다.</span></div>
+                        <div class="notice-step is-sub"><span class="notice-label">C</span><span>모임 종료 및 정산 완료 후 단톡방은 폐쇄됩니다.</span></div>
+                        <div class="notice-step"><span class="notice-label">03</span><span>모임 내 있었던 일에 대하여 단톡방에 이야기하는 것은 좋으나, 모임에 참여하지 않은 사람들을 위해 배려해 주세요.</span></div>
                     </section>
 
                     <section>
@@ -3660,13 +3723,13 @@
                     <section>
                         <h3>Ⅳ. ETC</h3>
                         <p>ⅰ. <b>합의되지 않은 관계는 인정하지 않습니다.</b> 이 경우 경고 혹은 강퇴가 될 수 있습니다. 사례는 아래와 같습니다.</p>
-                        <p>① 합의되지 않은 반말, 욕설, 과한 친목</p>
-                        <p>② 상대가 거절했음에도 불구하고 진행된 과도한 플러팅</p>
-                        <p>③ 합의되지 않은 관계성<br>(오픈릴이어도 합의가 되지 않았다면 바람입니다.)</p>
-                        <p>④ 법에 위반되는 사례</p>
-                        <p>⑤ 분쟁/제보 발생의 경우</p>
+                        <div class="notice-step"><span class="notice-label">01</span><span>합의되지 않은 반말, 욕설, 과한 친목</span></div>
+                        <div class="notice-step"><span class="notice-label">02</span><span>상대가 거절했음에도 불구하고 진행된 과도한 플러팅</span></div>
+                        <div class="notice-step"><span class="notice-label">03</span><span>합의되지 않은 관계성<br>(오픈릴이어도 합의가 되지 않았다면 바람입니다.)</span></div>
+                        <div class="notice-step"><span class="notice-label">04</span><span>법에 위반되는 사례</span></div>
+                        <div class="notice-step"><span class="notice-label">05</span><span>분쟁/제보 발생의 경우</span></div>
                         <h4 class="notice-alert-heading">분쟁 / 제보 발생의 경우</h4>
-                        <p class="notice-indent">㉠ 분쟁 혹은 제보가 발생된 경우 운영진 측에서 사실 확인에 들어갈 수 있습니다. 이 경우 소환되는 경우도 있으니 참고해 주세요.</p>
+                        <div class="notice-step is-sub"><span class="notice-label">A</span><span>분쟁 혹은 제보가 발생된 경우 운영진 측에서 사실 확인에 들어갈 수 있습니다. 이 경우 소환되는 경우도 있으니 참고해 주세요.</span></div>
                         <p>ⅱ. 활동이 저조한 경우 내보내질 수 있습니다.</p>
                         <p>ⅲ. 이유 없이 나간 경우 재입장이 불가능합니다. 사유가 있는 경우 꼭 운영진에게 공유 부탁드립니다.</p>
                         <p>ⅳ. 저희는 바이, 호모플렉시블, 레즈비언을 차별하지 않습니다. 여성을 좋아하면 되는 여성애자면 입장이 가능하오니 참고 부탁드립니다.</p>
@@ -4273,6 +4336,8 @@
         const indexMenuClose = document.getElementById('index-menu-close');
         const systemNavLink = document.getElementById('system-nav-link');
         const systemAddNavLink = document.getElementById('system-add-nav-link');
+        const membershipNavLink = document.getElementById('membership-nav-link');
+        const mainImageNavLink = document.getElementById('main-image-nav-link');
         const systemMenuSection = document.getElementById('system-menu-section');
         const myPageNavLink = document.getElementById('my-page-nav-link');
         const loginNavBtn = document.getElementById('login-nav-btn');
@@ -4289,6 +4354,12 @@
         const initialPasswordClose = document.getElementById('initial-password-close');
         const initialPasswordLater = document.getElementById('initial-password-later');
         const initialPasswordGo = document.getElementById('initial-password-go');
+        const homeMainImage = document.getElementById('home-main-image');
+        const mainImageForm = document.getElementById('main-image-form');
+        const mainImageInput = document.getElementById('main-image-input');
+        const mainImagePreview = document.getElementById('main-image-admin-preview');
+        const mainImageSubmit = document.getElementById('main-image-submit');
+        const mainImageError = document.getElementById('main-image-error');
         const lastViewKey = 'ourstory:last-view';
         const pendingAuthViewKey = 'ourstory:pending-auth-view';
 
@@ -4435,6 +4506,12 @@
                 openLoginModal();
                 return null;
             }
+            if (targetId === 'view-main-image-admin' && !['superuser', 'admin'].includes(siteUser?.role)) {
+                showToast('관리자 로그인이 필요합니다.', false);
+                localStorage.setItem(pendingAuthViewKey, targetId);
+                openLoginModal();
+                return null;
+            }
             if (targetId === 'view-my-page' && !siteUser) {
                 showToast('로그인이 필요합니다.', false);
                 localStorage.setItem(pendingAuthViewKey, targetId);
@@ -4534,7 +4611,8 @@
                     return;
                 }
 
-                if (targetId && targetId !== currentViewId && !trigger.classList.contains('hidden')) {
+                const shouldAnimate = trigger.closest('#index-menu') && targetId && targetId !== currentViewId && !trigger.classList.contains('hidden');
+                if (shouldAnimate) {
                     await runPageTransition();
                 }
                 navigateToView(targetId);
@@ -4579,6 +4657,8 @@
 
             systemNavLink.classList.toggle('hidden', !isManager);
             systemAddNavLink?.classList.toggle('hidden', !isManager);
+            membershipNavLink?.classList.toggle('hidden', !isManager);
+            mainImageNavLink?.classList.toggle('hidden', !isManager);
             systemMenuSection?.classList.toggle('hidden', !isManager);
             myPageNavLink.classList.toggle('hidden', !user);
             headerNoticeBtn?.classList.remove('hidden');
@@ -4614,6 +4694,49 @@
                 option.hidden = user?.role !== 'superuser' && option.value !== 'member';
             });
         }
+
+        mainImageInput?.addEventListener('change', () => {
+            const file = mainImageInput.files?.[0];
+            if (!file || !mainImagePreview) return;
+            mainImageError?.classList.add('hidden');
+            mainImagePreview.src = URL.createObjectURL(file);
+        });
+
+        mainImageForm?.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const file = mainImageInput?.files?.[0];
+            if (!file) {
+                mainImageError.textContent = '새 메인 이미지를 선택해 주세요.';
+                mainImageError.classList.remove('hidden');
+                return;
+            }
+
+            mainImageSubmit.disabled = true;
+            mainImageSubmit.textContent = 'Saving...';
+            mainImageError.classList.add('hidden');
+
+            try {
+                const formData = new FormData();
+                formData.append('mainImage', file);
+                const response = await fetch('/api/main-image.php', {
+                    method: 'POST',
+                    headers: { 'X-CSRF-Token': csrfToken || '' },
+                    body: formData,
+                });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '메인 이미지를 저장하지 못했습니다.');
+                if (homeMainImage) homeMainImage.src = payload.imageUrl;
+                if (mainImagePreview) mainImagePreview.src = payload.imageUrl;
+                mainImageInput.value = '';
+                showToast('메인 이미지를 교체했습니다.', true);
+            } catch (error) {
+                mainImageError.textContent = error.message;
+                mainImageError.classList.remove('hidden');
+            } finally {
+                mainImageSubmit.disabled = false;
+                mainImageSubmit.textContent = 'Save Main Image';
+            }
+        });
 
         async function loadSiteSession() {
             try {
