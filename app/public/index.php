@@ -5477,6 +5477,11 @@
                 storyByKey.get('playSex'),
                 value => /비주류적\s*성적\/연애적\s*행위나\s*관계성/.test(value)
             );
+            moveValue(
+                storyByKey.get('bdsm'),
+                storyByKey.get('caregiver'),
+                value => /관계서열\s*아래에\s*있는\s*자신의\s*아이|케어리시버를\s*보살피고\s*만족감을\s*얻습니다|본인이\s*아니면\s*아무것도\s*하지\s*못하게\s*하고\s*싶다/.test(value)
+            );
 
             const attachments = source
                 .filter(field => !used.has(field.index) && field.photoUrls.length)
