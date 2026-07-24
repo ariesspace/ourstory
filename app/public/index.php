@@ -4769,7 +4769,7 @@
                     <p id="member-profile-username" class="mt-2 opacity-45"></p>
                     <div id="member-profile-meta" class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-sm"></div>
                     <div id="member-profile-intro" class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-sm"></div>
-                    <div id="member-profile-appeal-block" class="mt-6 border-t border-[var(--border-light)] pt-5">
+                    <div id="member-profile-appeal-block" class="mt-6 border-b border-[var(--border-light)] pb-3">
                         <span class="block text-[0.62rem] tracking-[0.22em] uppercase opacity-45 mb-2 font-serif-en">어필</span>
                         <p id="member-profile-bio" class="text-sm leading-relaxed whitespace-pre-wrap"></p>
                     </div>
