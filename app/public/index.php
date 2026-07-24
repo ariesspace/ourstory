@@ -1142,36 +1142,79 @@
         .questionnaire-hero {
             max-width: 1500px;
             margin: 0 auto;
-            padding: clamp(3rem, 7vw, 6rem) clamp(1.5rem, 4vw, 4rem) clamp(2rem, 4vw, 3.5rem);
+            padding: clamp(2.25rem, 4.4vw, 4rem) clamp(1.5rem, 4vw, 4rem) clamp(1.75rem, 3.4vw, 2.75rem);
         }
         .questionnaire-title {
             font-family: 'Cormorant Garamond', serif;
             font-style: italic;
-            font-size: clamp(4rem, 9vw, 8.5rem);
-            line-height: 0.88;
+            font-size: clamp(3.4rem, 6.8vw, 6.2rem);
+            line-height: 0.92;
             font-weight: 300;
-            letter-spacing: -0.055em;
+            letter-spacing: -0.045em;
         }
         .questionnaire-card-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 1.35rem;
         }
         .questionnaire-card {
-            min-height: 320px;
-            padding: 1.45rem;
+            min-height: 0;
+            padding: 0;
             border: 1px solid var(--border-light);
-            background: rgba(255,255,255,0.66);
+            background: #fff;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             text-align: left;
-            transition: border-color 0.35s ease, transform 0.35s ease, background-color 0.35s ease;
+            overflow: hidden;
+            transition: border-color 0.35s ease, transform 0.35s ease, box-shadow 0.35s ease;
         }
         .questionnaire-card:hover {
             border-color: var(--text-dark);
             transform: translateY(-3px);
-            background: #fff;
+            box-shadow: 0 18px 45px rgba(17, 17, 17, 0.06);
+        }
+        .questionnaire-card-media {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            border-bottom: 1px solid var(--border-light);
+            background: #f3f3f1;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .questionnaire-card-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%) contrast(1.04);
+            transition: filter 0.55s ease, transform 0.55s ease;
+        }
+        .questionnaire-card:hover .questionnaire-card-image {
+            filter: grayscale(18%) contrast(1);
+            transform: scale(1.025);
+        }
+        .questionnaire-card-fallback {
+            width: 100%;
+            height: 100%;
+            background: var(--accent-red);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .questionnaire-card-fallback i {
+            font-size: 4rem;
+            line-height: 1;
+            opacity: 0.92;
+        }
+        .questionnaire-card-body {
+            min-height: 172px;
+            padding: 1.2rem 1.35rem 1.05rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
         .questionnaire-card-status {
             width: fit-content;
@@ -1182,15 +1225,15 @@
             color: var(--accent-red);
         }
         .questionnaire-card-title {
-            margin-top: 2.25rem;
+            margin-top: 0.75rem;
             font-family: 'Cormorant Garamond', serif;
             font-style: italic;
-            font-size: clamp(2.1rem, 5vw, 3.4rem);
-            line-height: 0.94;
+            font-size: clamp(1.75rem, 3.2vw, 2.55rem);
+            line-height: 1;
             letter-spacing: -0.04em;
         }
         .questionnaire-card-meta {
-            margin-top: 1.25rem;
+            margin-top: 0.75rem;
             font-size: 0.82rem;
             line-height: 1.7;
             color: rgba(17,17,17,0.55);
@@ -1776,24 +1819,23 @@
 
         @media (max-width: 767px) {
             .questionnaire-hero {
-                padding-top: 2.35rem;
+                padding-top: 2rem;
                 padding-bottom: 1.5rem;
             }
             .questionnaire-title {
-                font-size: clamp(3rem, 18vw, 5rem);
-                letter-spacing: -0.05em;
+                font-size: clamp(2.8rem, 14vw, 4rem);
+                letter-spacing: -0.04em;
             }
             .questionnaire-card-grid {
                 grid-template-columns: 1fr;
                 gap: 1rem;
             }
             .questionnaire-card {
-                min-height: 230px;
-                padding: 1.15rem;
+                min-height: 0;
             }
             .questionnaire-card-title {
-                margin-top: 1.25rem;
-                font-size: 2.2rem;
+                margin-top: 0.7rem;
+                font-size: 2rem;
             }
             #index-menu {
                 width: min(94vw, 420px) !important;
@@ -6700,6 +6742,13 @@
             ].join(' ').toLocaleLowerCase('ko-KR');
         }
 
+        function getQuestionnaireCoverUrl(item) {
+            const urls = Array.isArray(item.fields)
+                ? item.fields.flatMap(field => membershipPhotoUrls(field))
+                : [];
+            return [...new Set(urls)][0] || item.avatarUrl || '';
+        }
+
         function renderQuestionnaires(items) {
             if (!questionnaireList || !questionnaireStatus || !questionnaireCount) return;
             questionnaireList.replaceChildren();
@@ -6714,15 +6763,34 @@
             items.forEach((item, index) => {
                 const fields = questionnaireTemplateFields(item.fields || []);
                 const meta = [item.region || '지역 미입력', item.birthYear ? `${item.birthYear}년생` : '년생 미입력', item.personality || '주성향 미입력'].join(' · ');
+                const coverUrl = getQuestionnaireCoverUrl(item);
                 const card = document.createElement('article');
                 card.className = 'questionnaire-card group';
 
                 const open = document.createElement('button');
                 open.type = 'button';
-                open.className = 'w-full h-full flex flex-col justify-between text-left';
+                open.className = 'w-full h-full flex flex-col text-left';
                 open.setAttribute('aria-haspopup', 'dialog');
                 open.setAttribute('aria-label', `${item.displayName || item.username || '질문지'} 질문지 보기`);
 
+                const media = document.createElement('div');
+                media.className = 'questionnaire-card-media';
+                if (coverUrl) {
+                    const image = document.createElement('img');
+                    image.className = 'questionnaire-card-image';
+                    image.src = coverUrl;
+                    image.alt = `${item.displayName || item.username || '지원자'} 업로드 사진`;
+                    image.loading = 'lazy';
+                    media.appendChild(image);
+                } else {
+                    const fallback = document.createElement('div');
+                    fallback.className = 'questionnaire-card-fallback';
+                    fallback.innerHTML = '<i class="ph ph-user"></i>';
+                    media.appendChild(fallback);
+                }
+
+                const body = document.createElement('div');
+                body.className = 'questionnaire-card-body';
                 const top = document.createElement('div');
                 const status = document.createElement('span');
                 status.className = 'questionnaire-card-status';
@@ -6742,7 +6810,8 @@
                 const read = document.createElement('span');
                 read.textContent = 'Open ↗';
                 footer.append(sequence, read);
-                open.append(top, footer);
+                body.append(top, footer);
+                open.append(media, body);
                 open.addEventListener('click', () => {
                     openMembershipDetail(
                         { ...item, submittedAt: item.publishedAt || item.draftUpdatedAt || '', status: item.status || 'linked' },
