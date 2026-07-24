@@ -1136,6 +1136,9 @@
             transform: translateX(-0.18rem);
             letter-spacing: 0.14em;
         }
+        #system-menu-section .index-menu-section-title {
+            color: var(--accent-red);
+        }
 
         #site-loader {
             background-color: var(--bg-color);
@@ -1703,6 +1706,75 @@
         }
 
         @media (max-width: 767px) {
+            #index-menu {
+                width: min(94vw, 420px) !important;
+                padding: 1.45rem 1.35rem 1.65rem !important;
+            }
+            .index-menu-head {
+                padding-bottom: 1.15rem;
+                margin-bottom: 1.35rem;
+            }
+            .index-menu-title {
+                font-size: 1.1rem;
+            }
+            .index-menu-close {
+                font-size: 0.64rem;
+                letter-spacing: 0.26em;
+            }
+            .index-menu-links {
+                gap: 0;
+            }
+            .index-menu-section {
+                padding-bottom: 0.9rem;
+                margin-bottom: 1.15rem;
+            }
+            .index-menu-section-title {
+                margin-bottom: 0.75rem;
+                font-size: 0.62rem;
+                letter-spacing: 0.16em;
+            }
+            .index-menu-links button {
+                grid-template-columns: 2.55rem minmax(0, 1fr) auto;
+                gap: 0.65rem;
+                padding: 0.45rem 0;
+                font-size: 0.74rem;
+                letter-spacing: 0.14em;
+            }
+            .index-menu-links button em {
+                font-size: 0.58rem;
+            }
+            .index-menu-links button small {
+                font-size: 0.68rem;
+                letter-spacing: 0.06em;
+            }
+            #system-menu-section {
+                padding-bottom: 0.65rem;
+                margin-bottom: 0.9rem;
+            }
+            #system-menu-section .index-menu-section-title {
+                margin-bottom: 0.6rem;
+            }
+            #system-menu-section button {
+                grid-template-columns: 2rem minmax(0, 1fr);
+                gap: 0.45rem;
+                padding: 0.52rem 0;
+                font-size: 0.68rem;
+                letter-spacing: 0.1em;
+            }
+            #system-menu-section button small {
+                grid-column: 2;
+                margin-top: -0.18rem;
+                font-size: 0.6rem;
+                opacity: 0.62;
+            }
+            .index-menu-links button:hover,
+            .index-menu-links button:hover span,
+            .index-menu-links button:hover small,
+            .index-menu-links button:hover em {
+                transform: none;
+                padding-left: 0;
+                padding-right: 0;
+            }
             #main-header > div:first-child {
                 height: 84px;
                 padding-left: 1.25rem;
