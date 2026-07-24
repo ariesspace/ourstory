@@ -25,6 +25,206 @@ function membership_verify_signature(string $payload): bool
     return hash_equals(base64_encode(hash_hmac('sha256', $payload, $secret, true)), $received);
 }
 
+function membership_require_manager(?array $viewer): void
+{
+    if (!$viewer || !in_array($viewer['role'], ['superuser', 'admin'], true)) {
+        membership_json(['error' => '관리자 권한이 필요합니다.'], 403);
+    }
+    $csrf = (string) ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? '');
+    if ($csrf === '' || !hash_equals(site_csrf_token(), $csrf)) {
+        membership_json(['error' => '요청 검증에 실패했습니다. 페이지를 새로고침해주세요.'], 403);
+    }
+}
+
+function membership_field_text(array $field): string
+{
+    $options = [];
+    foreach (is_array($field['options'] ?? null) ? $field['options'] : [] as $option) {
+        if (is_array($option) && isset($option['id'])) {
+            $options[(string) $option['id']] = (string) ($option['text'] ?? $option['label'] ?? '');
+        }
+    }
+
+    $flatten = static function (mixed $value) use (&$flatten, $options): array {
+        if ($value === null || $value === '') return [];
+        if (is_array($value)) {
+            if (isset($value['name'])) return [(string) $value['name']];
+            if (isset($value['text'])) return [(string) $value['text']];
+            $items = [];
+            foreach ($value as $child) {
+                array_push($items, ...$flatten($child));
+            }
+            return $items;
+        }
+        $text = (string) $value;
+        return [$options[$text] ?? $text];
+    };
+
+    return trim(implode(', ', array_filter($flatten($field['value'] ?? ''))));
+}
+
+function membership_find_field(array $fields, array $patterns): string
+{
+    foreach ($fields as $field) {
+        $label = (string) ($field['label'] ?? '');
+        foreach ($patterns as $pattern) {
+            if (preg_match($pattern, $label)) {
+                return membership_field_text($field);
+            }
+        }
+    }
+    return '';
+}
+
+function membership_slug(string $value): string
+{
+    $slug = strtolower(preg_replace('/[^a-zA-Z0-9._-]+/', '-', $value) ?? '');
+    $slug = trim($slug, '-._');
+    if (strlen($slug) < 3) {
+        $slug = 'member-' . substr(bin2hex(random_bytes(4)), 0, 6);
+    }
+    return substr($slug, 0, 32);
+}
+
+function membership_temporary_password(): string
+{
+    return 'A9!' . substr(strtr(base64_encode(random_bytes(12)), '+/', 'xz'), 0, 14);
+}
+
+function membership_intro_text(array $fields): string
+{
+    $intro = membership_find_field($fields, ['/자기소개|소개|intro|about/i']);
+    if ($intro !== '') {
+        return $intro;
+    }
+
+    $lines = [];
+    foreach ($fields as $field) {
+        $label = trim((string) ($field['label'] ?? ''));
+        $value = membership_field_text($field);
+        if ($label !== '' && $value !== '') {
+            $lines[] = $label . "\n" . $value;
+        }
+    }
+    return implode("\n\n", $lines);
+}
+
+function membership_approve(PDO $pdo, array $viewer, string $submissionId): void
+{
+    $stmt = $pdo->prepare('SELECT * FROM tally_membership_applications WHERE submission_id = :submission_id');
+    $stmt->execute([':submission_id' => $submissionId]);
+    $application = $stmt->fetch();
+    if (!$application) {
+        membership_json(['error' => '가입 신청 기록을 찾을 수 없습니다.'], 404);
+    }
+    if (($application['status'] ?? 'pending') === 'approved' && !empty($application['approved_user_id'])) {
+        membership_json(['error' => '이미 승인된 가입 신청입니다.'], 422);
+    }
+
+    $fields = json_decode((string) $application['fields_json'], true);
+    $fields = is_array($fields) ? $fields : [];
+    $displayName = trim((string) ($_POST['displayName'] ?? ''));
+    if ($displayName === '') {
+        $displayName = membership_find_field($fields, ['/닉네임|이름|name|nickname/i']);
+    }
+    if ($displayName === '') {
+        $displayName = '신규 회원';
+    }
+
+    $username = trim((string) ($_POST['username'] ?? ''));
+    $username = $username === '' ? membership_slug($displayName) : membership_slug($username);
+    $password = (string) ($_POST['password'] ?? '');
+    $password = $password === '' ? membership_temporary_password() : $password;
+    if (strlen($password) < 10 || strlen($password) > 128) {
+        membership_json(['error' => '임시 비밀번호는 10~128자로 입력해주세요.'], 422);
+    }
+
+    $birthYearText = membership_find_field($fields, ['/년생|출생|birth/i']);
+    $birthYear = preg_match('/(19|20)\d{2}/', $birthYearText, $match) ? (int) $match[0] : null;
+    $region = membership_find_field($fields, ['/^(지역|region)$/iu', '/지역/i']);
+    $personality = membership_find_field($fields, ['/주\s*성향|개인\s*성향|성향/i']);
+    $relationshipStyle = membership_find_field($fields, ['/연애\s*유형|연애\s*성향|relationship|dating/i']);
+    $bio = mb_substr(membership_intro_text($fields), 0, 1000);
+    $profileJson = json_encode($fields, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?: '[]';
+
+    try {
+        $pdo->beginTransaction();
+        $baseUsername = $username;
+        $userId = 0;
+        for ($attempt = 0; $attempt < 20; $attempt++) {
+            $candidate = $attempt === 0 ? $baseUsername : substr($baseUsername, 0, 26) . '-' . substr(bin2hex(random_bytes(3)), 0, 5);
+            try {
+                $userStmt = $pdo->prepare(
+                    'INSERT INTO users
+                        (username, password_hash, display_name, role, birth_year, region, personality, relationship_style, bio, must_change_password)
+                     VALUES
+                        (:username, :password_hash, :display_name, \'member\', :birth_year, :region, :personality, :relationship_style, :bio, 1)'
+                );
+                $userStmt->execute([
+                    ':username' => $candidate,
+                    ':password_hash' => password_hash($password, PASSWORD_DEFAULT),
+                    ':display_name' => mb_substr($displayName, 0, 60),
+                    ':birth_year' => $birthYear,
+                    ':region' => mb_substr($region, 0, 80),
+                    ':personality' => mb_substr($personality, 0, 120),
+                    ':relationship_style' => mb_substr($relationshipStyle, 0, 120),
+                    ':bio' => $bio,
+                ]);
+                $username = $candidate;
+                $userId = (int) $pdo->lastInsertId();
+                break;
+            } catch (PDOException $error) {
+                if ($error->getCode() !== '23000' || $attempt === 19) {
+                    throw $error;
+                }
+            }
+        }
+
+        $profileStmt = $pdo->prepare(
+            'INSERT INTO profiles
+                (user_id, source_application_id, author_snapshot, nickname_snapshot, profile_data_json, intro_text)
+             VALUES
+                (:user_id, :source_application_id, :author_snapshot, :nickname_snapshot, :profile_data_json, :intro_text)'
+        );
+        $profileStmt->execute([
+            ':user_id' => $userId,
+            ':source_application_id' => (int) $application['id'],
+            ':author_snapshot' => $username,
+            ':nickname_snapshot' => mb_substr($displayName, 0, 100),
+            ':profile_data_json' => $profileJson,
+            ':intro_text' => $bio,
+        ]);
+
+        $update = $pdo->prepare(
+            "UPDATE tally_membership_applications
+             SET status = 'approved', reviewed_by = :reviewed_by, reviewed_at = CURRENT_TIMESTAMP,
+                 approved_user_id = :approved_user_id, is_hidden = 0
+             WHERE submission_id = :submission_id"
+        );
+        $update->execute([
+            ':reviewed_by' => $viewer['id'],
+            ':approved_user_id' => $userId,
+            ':submission_id' => $submissionId,
+        ]);
+        $pdo->commit();
+    } catch (Throwable $error) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+        membership_json(['error' => '가입 승인 중 오류가 발생했습니다.'], 422);
+    }
+
+    membership_json([
+        'ok' => true,
+        'user' => [
+            'id' => $userId,
+            'username' => $username,
+            'displayName' => mb_substr($displayName, 0, 60),
+            'temporaryPassword' => $password,
+        ],
+    ], 201);
+}
+
 $pdo = site_db();
 $viewer = site_current_user($pdo);
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
@@ -36,7 +236,8 @@ if ($method === 'GET') {
     }
     $visibility = $canManage ? '' : 'WHERE is_hidden = 0';
     $rows = $pdo->query(
-        "SELECT submission_id, respondent_id, form_id, form_name, submitted_at, fields_json, is_hidden
+        "SELECT submission_id, respondent_id, form_id, form_name, submitted_at, fields_json,
+                status, reviewed_at, approved_user_id, is_hidden
          FROM tally_membership_applications {$visibility}
          ORDER BY submitted_at DESC, id DESC LIMIT 200"
     )->fetchAll();
@@ -47,6 +248,9 @@ if ($method === 'GET') {
         'formName' => $row['form_name'],
         'submittedAt' => $row['submitted_at'],
         'fields' => json_decode($row['fields_json'], true) ?: [],
+        'status' => $row['status'] ?: 'pending',
+        'reviewedAt' => $row['reviewed_at'],
+        'approvedUserId' => $row['approved_user_id'] !== null ? (int) $row['approved_user_id'] : null,
         'isHidden' => (bool) $row['is_hidden'],
     ], $rows);
     membership_json(['items' => $items, 'canManage' => (bool) $canManage]);
@@ -58,25 +262,32 @@ if ($method !== 'POST') {
 }
 
 $action = (string) ($_POST['action'] ?? '');
-if (in_array($action, ['hide', 'show', 'delete'], true)) {
-    if (!$canManage) {
-        membership_json(['error' => '관리자 권한이 필요합니다.'], 403);
-    }
-    $csrf = (string) ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? '');
-    if ($csrf === '' || !hash_equals(site_csrf_token(), $csrf)) {
-        membership_json(['error' => '요청 검증에 실패했습니다. 페이지를 새로고침해 주세요.'], 403);
-    }
+if (in_array($action, ['hide', 'show', 'delete', 'approve', 'reject'], true)) {
+    membership_require_manager($viewer);
     $submissionId = trim((string) ($_POST['submissionId'] ?? ''));
     if ($submissionId === '') {
         membership_json(['error' => '가입 신청 응답 ID가 필요합니다.'], 422);
     }
-    if ($action === 'delete') {
+
+    if ($action === 'approve') {
+        membership_approve($pdo, $viewer, $submissionId);
+    }
+
+    if ($action === 'reject') {
+        $stmt = $pdo->prepare(
+            "UPDATE tally_membership_applications
+             SET status = 'rejected', reviewed_by = :reviewed_by, reviewed_at = CURRENT_TIMESTAMP
+             WHERE submission_id = :submission_id"
+        );
+        $stmt->execute([':reviewed_by' => $viewer['id'], ':submission_id' => $submissionId]);
+    } elseif ($action === 'delete') {
         $stmt = $pdo->prepare('DELETE FROM tally_membership_applications WHERE submission_id = :submission_id');
         $stmt->execute([':submission_id' => $submissionId]);
     } else {
         $stmt = $pdo->prepare('UPDATE tally_membership_applications SET is_hidden = :is_hidden WHERE submission_id = :submission_id');
         $stmt->execute([':is_hidden' => $action === 'hide' ? 1 : 0, ':submission_id' => $submissionId]);
     }
+
     if ($stmt->rowCount() !== 1) {
         membership_json(['error' => '해당 가입 신청 기록을 찾지 못했습니다.'], 404);
     }

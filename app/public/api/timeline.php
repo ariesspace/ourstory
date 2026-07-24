@@ -176,7 +176,6 @@ if ($method === 'GET' && $action === 'feed') {
                 u.username, u.display_name, u.role, u.avatar_stored_name
          FROM timeline_posts t
          JOIN users u ON u.id = t.user_id
-         WHERE u.is_active = 1
          ORDER BY t.created_at DESC, t.id DESC
          LIMIT 100'
     )->fetchAll();

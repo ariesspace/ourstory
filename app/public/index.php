@@ -5346,6 +5346,30 @@
             membershipDetailActions.classList.toggle('hidden', !canManage);
             membershipDetailActions.classList.toggle('flex', canManage);
             if (canManage) {
+                const statusBadge = document.createElement('span');
+                statusBadge.className = 'mr-auto px-3 py-2 text-[0.65rem] tracking-widest uppercase border border-[var(--border-light)]';
+                statusBadge.textContent = item.status === 'approved' ? 'Approved' : item.status === 'rejected' ? 'Rejected' : 'Pending';
+                membershipDetailActions.appendChild(statusBadge);
+                if (item.status !== 'approved') {
+                    const approve = document.createElement('button');
+                    approve.type = 'button';
+                    approve.className = 'bg-[var(--accent-red)] text-white px-5 py-2.5 text-xs tracking-widest uppercase';
+                    approve.textContent = '승인 / 계정 생성';
+                    approve.addEventListener('click', async () => {
+                        if (await approveMembershipApplication(item, fields, name)) closeMembershipDetail();
+                    });
+                    membershipDetailActions.appendChild(approve);
+                }
+                if (item.status !== 'rejected') {
+                    const reject = document.createElement('button');
+                    reject.type = 'button';
+                    reject.className = 'border border-[var(--accent-red)] text-[var(--accent-red)] px-5 py-2.5 text-xs tracking-widest uppercase';
+                    reject.textContent = '거절';
+                    reject.addEventListener('click', async () => {
+                        if (await manageMembershipApplication('reject', item.submissionId)) closeMembershipDetail();
+                    });
+                    membershipDetailActions.appendChild(reject);
+                }
                 const visibility = document.createElement('button');
                 visibility.type = 'button';
                 visibility.className = 'border border-[var(--text-dark)] px-5 py-2.5 text-xs tracking-widest uppercase';
@@ -5437,6 +5461,12 @@
                 } else {
                     titleLine.appendChild(title);
                 }
+                if (item.status && item.status !== 'pending') {
+                    const status = document.createElement('span');
+                    status.className = 'mt-2 inline-block text-[0.58rem] tracking-widest uppercase opacity-50';
+                    status.textContent = item.status === 'approved' ? 'Approved' : 'Rejected';
+                    title.appendChild(status);
+                }
                 const meta = document.createElement('p');
                 meta.className = 'mt-3 text-xs leading-5 opacity-60 min-h-[2.5rem]';
                 const birthLabel = birthYear?.displayValue
@@ -5470,6 +5500,7 @@
         async function manageMembershipApplication(action, submissionId) {
             const message = action === 'delete'
                 ? '이 가입 신청 기록을 영구 삭제하시겠습니까? 삭제 후에는 복구할 수 없습니다.'
+                : action === 'reject' ? '이 가입 신청을 거절 처리하시겠습니까?'
                 : action === 'hide' ? '이 가입 신청 기록을 목록에서 숨기시겠습니까?' : '이 가입 신청 기록을 다시 표시하시겠습니까?';
             if (!window.confirm(message)) return false;
             const body = new FormData();
@@ -5480,7 +5511,7 @@
                 const payload = await response.json();
                 if (!response.ok) throw new Error(payload.error || '가입 신청 기록을 관리하지 못했습니다.');
                 await loadMembershipApplications();
-                showToast(action === 'delete' ? '가입 신청 기록을 삭제했습니다.' : action === 'hide' ? '가입 신청 기록을 숨겼습니다.' : '가입 신청 기록을 다시 표시했습니다.', true);
+                showToast(action === 'delete' ? '가입 신청 기록을 삭제했습니다.' : action === 'reject' ? '가입 신청을 거절 처리했습니다.' : action === 'hide' ? '가입 신청 기록을 숨겼습니다.' : '가입 신청 기록을 다시 표시했습니다.', true);
                 return true;
             } catch (error) {
                 showToast(error.message, false);
@@ -6166,6 +6197,38 @@
             profilePhotoModalImage.removeAttribute('src');
             if (membershipDetailModal.classList.contains('hidden') && memberProfileModal.classList.contains('hidden')) {
                 document.body.classList.remove('overflow-hidden');
+            }
+        }
+
+        async function approveMembershipApplication(item, fields, fallbackName) {
+            const nameField = fields.find(field => /이름|닉네임|name|nickname/i.test(field.label || ''));
+            const displayName = window.prompt('표시 이름을 확인해주세요.', nameField?.displayValue || fallbackName || '신규 회원');
+            if (displayName === null) return false;
+            const usernameSeed = displayName.trim().toLowerCase().replace(/[^a-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '') || `member-${Date.now().toString().slice(-6)}`;
+            const username = window.prompt('생성할 로그인 ID를 입력해주세요. 비워두면 자동 생성됩니다.', usernameSeed);
+            if (username === null) return false;
+            const password = window.prompt('임시 비밀번호를 입력해주세요. 비워두면 자동 생성됩니다.', '');
+            if (password === null) return false;
+
+            const body = new FormData();
+            body.append('action', 'approve');
+            body.append('submissionId', item.submissionId);
+            body.append('displayName', displayName.trim());
+            body.append('username', username.trim());
+            body.append('password', password);
+            try {
+                const response = await fetch('/api/tally-memberships.php', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken || '' }, body });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '가입 신청을 승인하지 못했습니다.');
+                await loadMembershipApplications();
+                await loadMembers();
+                const account = payload.user || {};
+                window.alert(`계정이 생성되었습니다.\n\nID: ${account.username || ''}\n임시 비밀번호: ${account.temporaryPassword || '(입력한 비밀번호)'}`);
+                showToast('가입 신청을 승인하고 계정을 생성했습니다.', true);
+                return true;
+            } catch (error) {
+                showToast(error.message, false);
+                return false;
             }
         }
 

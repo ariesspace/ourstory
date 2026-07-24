@@ -177,7 +177,11 @@ if ($method === 'DELETE') {
         users_json(['error' => 'Superuser 계정은 삭제할 수 없습니다.'], 422);
     }
 
-    $stmt = $pdo->prepare('DELETE FROM users WHERE id = :id');
+    $stmt = $pdo->prepare(
+        'UPDATE users
+         SET is_active = 0, deleted_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
+         WHERE id = :id'
+    );
     $stmt->execute([':id' => $targetId]);
     users_json(['ok' => true]);
 }

@@ -99,13 +99,34 @@ function site_migrate(PDO $pdo): void
             form_name TEXT NOT NULL DEFAULT \'\',
             submitted_at TEXT NOT NULL,
             fields_json TEXT NOT NULL,
+            status TEXT NOT NULL DEFAULT \'pending\' CHECK (status IN (\'pending\', \'approved\', \'rejected\')),
+            reviewed_by INTEGER,
+            reviewed_at TEXT,
+            approved_user_id INTEGER,
             is_hidden INTEGER NOT NULL DEFAULT 0,
-            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (reviewed_by) REFERENCES users(id) ON DELETE SET NULL,
+            FOREIGN KEY (approved_user_id) REFERENCES users(id) ON DELETE SET NULL
         )'
     );
+    $membershipColumns = array_column($pdo->query('PRAGMA table_info(tally_membership_applications)')->fetchAll(), 'name');
+    foreach ([
+        'status' => "TEXT NOT NULL DEFAULT 'pending'",
+        'reviewed_by' => 'INTEGER',
+        'reviewed_at' => 'TEXT',
+        'approved_user_id' => 'INTEGER',
+    ] as $name => $definition) {
+        if (!in_array($name, $membershipColumns, true)) {
+            $pdo->exec("ALTER TABLE tally_membership_applications ADD COLUMN {$name} {$definition}");
+        }
+    }
     $pdo->exec(
         'CREATE INDEX IF NOT EXISTS idx_tally_membership_applications_submitted_at
          ON tally_membership_applications (submitted_at DESC)'
+    );
+    $pdo->exec(
+        'CREATE INDEX IF NOT EXISTS idx_tally_membership_applications_status
+         ON tally_membership_applications (status, submitted_at DESC)'
     );
 
     $pdo->exec(
@@ -124,6 +145,26 @@ function site_migrate(PDO $pdo): void
 
     site_migrate_user_roles($pdo);
     site_migrate_user_profile_columns($pdo);
+
+    $pdo->exec(
+        'CREATE TABLE IF NOT EXISTS profiles (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            source_application_id INTEGER,
+            author_snapshot TEXT NOT NULL DEFAULT \'\',
+            nickname_snapshot TEXT NOT NULL DEFAULT \'\',
+            profile_data_json TEXT NOT NULL DEFAULT \'[]\',
+            intro_text TEXT NOT NULL DEFAULT \'\',
+            is_visible INTEGER NOT NULL DEFAULT 1,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
+            FOREIGN KEY (source_application_id) REFERENCES tally_membership_applications(id) ON DELETE SET NULL
+        )'
+    );
+    $pdo->exec('CREATE INDEX IF NOT EXISTS idx_profiles_user ON profiles (user_id)');
+    $pdo->exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_profiles_user_unique ON profiles (user_id) WHERE user_id IS NOT NULL');
+    $pdo->exec('CREATE INDEX IF NOT EXISTS idx_profiles_visible_created ON profiles (is_visible, created_at DESC)');
 
     $pdo->exec(
         'CREATE TABLE IF NOT EXISTS sm_posts (
@@ -323,6 +364,7 @@ function site_migrate_user_profile_columns(PDO $pdo): void
         'avatar_stored_name' => "TEXT NOT NULL DEFAULT ''",
         'avatar_mime_type' => "TEXT NOT NULL DEFAULT ''",
         'must_change_password' => 'INTEGER NOT NULL DEFAULT 0',
+        'deleted_at' => 'TEXT',
     ];
 
     foreach ($definitions as $name => $definition) {
