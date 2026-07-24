@@ -307,14 +307,13 @@ $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $canManage = $viewer && in_array($viewer['role'], ['superuser', 'admin'], true);
 
 if ($method === 'GET') {
-    if (!$viewer) {
-        membership_json(['error' => '회원 로그인이 필요합니다.'], 401);
+    if (!$canManage) {
+        membership_json(['error' => '관리자 권한이 필요합니다.'], $viewer ? 403 : 401);
     }
-    $visibility = $canManage ? '' : 'WHERE is_hidden = 0';
     $rows = $pdo->query(
         "SELECT submission_id, respondent_id, form_id, form_name, submitted_at, fields_json,
                 status, reviewed_at, approved_user_id, is_hidden
-         FROM tally_membership_applications {$visibility}
+         FROM tally_membership_applications
          ORDER BY submitted_at DESC, id DESC LIMIT 200"
     )->fetchAll();
     $items = array_map(static fn(array $row): array => [

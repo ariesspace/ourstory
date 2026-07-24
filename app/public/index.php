@@ -2421,9 +2421,12 @@
         }
         #view-timeline .comment-delete {
             align-self: flex-start;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
             font-family: 'Space Mono', monospace;
-            font-size: 0.62rem;
-            color: rgba(17,17,17,.45);
+            font-size: 0.72rem;
+            color: #b84a4a;
         }
         #view-timeline .comment-delete:hover {
             color: #8f2424;
@@ -4928,8 +4931,8 @@
                 openLoginModal();
                 return null;
             }
-            if (targetId === 'view-membership-archive' && !siteUser) {
-                showToast('가입 신청 기록은 회원 로그인 후 볼 수 있습니다.', false);
+            if (targetId === 'view-membership-archive' && !['superuser', 'admin'].includes(siteUser?.role)) {
+                showToast('가입 신청 기록은 관리자만 볼 수 있습니다.', false);
                 localStorage.setItem(pendingAuthViewKey, targetId);
                 openLoginModal();
                 return null;
@@ -4962,11 +4965,24 @@
             return targetId;
         }
 
+        function closeTransientPanelsForNavigation() {
+            closeOpenIntroduction({ history: false });
+            if (loginModal?.classList.contains('open')) closeLoginModal();
+            if (!membershipDetailModal?.classList.contains('hidden')) closeMembershipDetail();
+            if (!profilePhotoModal?.classList.contains('hidden')) closeProfilePhoto();
+            if (!memberProfileModal?.classList.contains('hidden')) closeMemberProfileModal();
+            if (!galleryModal?.classList.contains('hidden')) closeGalleryModal({ history: false });
+            if (!smBarModal?.classList.contains('hidden')) closeSmBarModal();
+            if (!scheduleModal?.classList.contains('hidden')) closeScheduleModal();
+            if (!scheduleAddModal?.classList.contains('hidden')) closeScheduleAddModal();
+        }
+
         function navigateToView(targetId, options = {}) {
             const resolvedTargetId = resolveViewAccess(targetId);
             if (!resolvedTargetId) return;
             const shouldPushHistory = options.history !== false && !isRestoringHistory;
 
+            closeTransientPanelsForNavigation();
             if (isMenuOpen) closeMenu();
 
             showView(resolvedTargetId, options);
@@ -5171,6 +5187,9 @@
         window.addEventListener('popstate', event => {
             if (!galleryModal?.classList.contains('hidden')) {
                 closeGalleryModal({ history: false });
+            }
+            if (closeOpenIntroduction({ history: false })) {
+                return;
             }
             const hashView = location.hash ? `view-${location.hash.slice(1)}` : '';
             const targetId = event.state?.view || (views.some(view => view.id === hashView) ? hashView : 'view-read');
@@ -5641,6 +5660,22 @@
             return [...normalized.summary, ...normalized.storySections];
         }
 
+        function closeOpenIntroduction(options = {}) {
+            const openAnswers = introList?.querySelector('dl:not(.hidden)');
+            if (!openAnswers) return false;
+            if (options.history !== false && history.state?.panel === 'introduction') {
+                history.back();
+                return true;
+            }
+            openAnswers.classList.add('hidden');
+            const card = openAnswers.closest('article');
+            const summary = card?.querySelector('button[aria-expanded="true"]');
+            const arrow = summary?.querySelector('.ph-caret-down');
+            summary?.setAttribute('aria-expanded', 'false');
+            arrow?.classList.remove('rotate-180');
+            return true;
+        }
+
         function renderIntroductions(items, canManage = false) {
             introList.innerHTML = '';
 
@@ -5724,9 +5759,21 @@
                 }
                 summary.addEventListener('click', () => {
                     const willOpen = answers.classList.contains('hidden');
+                    if (!willOpen && history.state?.panel === 'introduction' && history.state?.id === item.submissionId) {
+                        history.back();
+                        return;
+                    }
+                    closeOpenIntroduction({ history: false });
                     answers.classList.toggle('hidden', !willOpen);
                     arrow.classList.toggle('rotate-180', willOpen);
                     summary.setAttribute('aria-expanded', String(willOpen));
+                    if (willOpen && !isRestoringHistory) {
+                        history.pushState(
+                            { view: currentViewId, panel: 'introduction', id: item.submissionId },
+                            '',
+                            location.hash || `#${currentViewId.replace(/^view-/, '')}`
+                        );
+                    }
                 });
                 summary.setAttribute('aria-expanded', 'false');
                 card.append(summary, answers);
@@ -7758,7 +7805,7 @@
                         const deleteComment = document.createElement('button');
                         deleteComment.type = 'button';
                         deleteComment.className = 'comment-delete';
-                        deleteComment.textContent = '[ DELETE ]';
+                        deleteComment.innerHTML = '<i class="ph ph-trash"></i><span>Delete</span>';
                         deleteComment.addEventListener('click', () => deleteTimelineComment(comment.id));
                         commentBody.appendChild(deleteComment);
                     }
