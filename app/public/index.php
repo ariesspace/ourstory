@@ -1796,8 +1796,8 @@
                 padding-right: 0;
             }
             #view-schedule .calendar-box {
-                padding: 0.8rem;
-                overflow-x: auto;
+                padding: 0.45rem;
+                overflow-x: visible;
             }
             #view-schedule .calendar-nav {
                 margin-bottom: 1rem;
@@ -1808,24 +1808,34 @@
             }
             #view-schedule .calendar-weekdays,
             #view-schedule .calendar-days-grid {
-                min-width: 620px;
+                min-width: 0;
+                width: 100%;
             }
             #view-schedule .calendar-weekday {
-                padding: 0.7rem 0.3rem;
-                font-size: 0.56rem;
+                padding: 0.48rem 0.1rem;
+                font-size: 0.48rem;
+                letter-spacing: 0;
             }
             #view-schedule .calendar-cell {
-                min-height: 5.8rem;
-                padding: 0.62rem 0.48rem;
-                gap: 0.4rem;
+                min-height: 4.2rem;
+                padding: 0.4rem 0.28rem;
+                gap: 0.24rem;
             }
             #view-schedule .date-number {
-                font-size: 0.72rem;
+                font-size: 0.66rem;
+            }
+            #view-schedule .event-badges {
+                gap: 0.18rem;
             }
             #view-schedule .event-badge {
-                padding: 0.28rem 0.34rem;
-                font-size: 0.58rem;
-                line-height: 1.2;
+                width: 0.34rem;
+                height: 0.34rem;
+                padding: 0;
+                border-radius: 999px;
+                overflow: hidden;
+                color: transparent;
+                font-size: 0;
+                line-height: 0;
             }
         }
 
@@ -3207,7 +3217,7 @@
 
             <section class="index-menu-section hidden" id="system-menu-section">
                 <p class="index-menu-section-title">Admin Only</p>
-                <button type="button" class="view-trigger hidden" data-target="view-system-members" id="system-nav-link"><em>08</em><span>Management</span><small>[ 관리 ]</small></button>
+                <button type="button" class="view-trigger hidden" data-target="view-system-members" id="system-nav-link"><em>08</em><span>Management</span><small>[ 계정관리 ]</small></button>
                 <button type="button" class="view-trigger hidden" data-target="view-system-add" id="system-add-nav-link"><em>09</em><span>Create Account</span><small>[ 계정 생성 ]</small></button>
                 <button type="button" class="view-trigger hidden" data-target="view-membership-archive" id="membership-nav-link"><em>10</em><span>Applications</span><small>[ 가입 신청 ]</small></button>
                 <button type="button" class="view-trigger hidden" data-target="view-main-image-admin" id="main-image-nav-link"><em>11</em><span>Main Image</span><small>[ 메인 그림 ]</small></button>
