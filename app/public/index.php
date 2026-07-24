@@ -3360,7 +3360,7 @@
                                 </div>
                                 <span id="my-questionnaire-date" class="text-xs tracking-[0.16em] uppercase opacity-45 font-mono"></span>
                             </div>
-                            <p id="my-questionnaire-empty" class="hidden py-12 text-center text-sm opacity-45 font-serif-ko">연결된 가입 질문지가 없습니다.</p>
+                            <p id="my-questionnaire-empty" class="hidden"></p>
                             <div id="my-questionnaire-list" class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8"></div>
                         </div>
                     </div>
@@ -6584,7 +6584,7 @@
                 }))
                 .filter(field => field.value || field.photoUrls.length);
 
-            myQuestionnaireEmpty.classList.toggle('hidden', displayFields.length > 0);
+            myQuestionnaireEmpty.classList.add('hidden');
             if (myQuestionnaireDate) {
                 const date = questionnaire?.createdAt ? new Date(questionnaire.createdAt.replace(' ', 'T')) : null;
                 myQuestionnaireDate.textContent = date && !Number.isNaN(date.getTime())
@@ -6592,9 +6592,19 @@
                     : '';
             }
 
-            displayFields.forEach(field => {
+            const fieldsToRender = displayFields.length > 0 ? displayFields : [
+                { label: '사용할 닉네임', value: '연결된 답변 없음', photoUrls: [] },
+                { label: '지원자 년생', value: '연결된 답변 없음', photoUrls: [] },
+                { label: '지역', value: '연결된 답변 없음', photoUrls: [] },
+                { label: '본인의 주 성향은?', value: '연결된 답변 없음', photoUrls: [] },
+                { label: 'Questionnaire Status', value: '연결된 가입 질문지가 없습니다.', photoUrls: [] },
+            ];
+
+            fieldsToRender.forEach(field => {
                 const group = document.createElement('dl');
-                group.className = field.value.length > 260 || field.photoUrls.length ? 'md:col-span-2 border-t border-[var(--border-light)] pt-5' : 'border-t border-[var(--border-light)] pt-5';
+                group.className = field.value.length > 260 || field.photoUrls.length || field.label === 'Questionnaire Status'
+                    ? 'md:col-span-2 border-t border-[var(--border-light)] pt-5'
+                    : 'border-t border-[var(--border-light)] pt-5';
                 const label = document.createElement('dt');
                 label.className = 'text-xs opacity-45 mb-3 leading-relaxed font-sans';
                 label.textContent = field.label;
@@ -6617,7 +6627,7 @@
                         value.appendChild(button);
                     });
                 } else {
-                    value.className = 'font-serif-ko text-sm sm:text-base leading-[1.9] whitespace-pre-wrap break-words';
+                    value.className = `font-serif-ko text-sm sm:text-base leading-[1.9] whitespace-pre-wrap break-words${displayFields.length > 0 ? '' : ' opacity-45'}`;
                     value.textContent = field.value;
                 }
 
