@@ -5787,8 +5787,7 @@
             }
         });
 
-        function membershipPhotoUrls(field) {
-            if (!/사진|프로필|file\s*upload|photo|image/i.test(field.label || '')) return [];
+        function membershipFieldUrls(field) {
             const urls = [];
             const collect = value => {
                 if (!value) return;
@@ -5801,10 +5800,25 @@
                     return;
                 }
                 const text = String(value).trim();
-                if (/^https?:\/\//i.test(text)) urls.push(text);
+                const matches = text.match(/https?:\/\/[^\s"'<>]+/gi) || [];
+                matches.forEach(url => urls.push(url));
             };
             collect(field.value);
             return [...new Set(urls)];
+        }
+
+        function isMembershipImageUrl(url) {
+            return /\.(?:png|jpe?g|gif|webp|avif)(?:[?#].*)?$/i.test(url)
+                || /storage\.tally\.so/i.test(url);
+        }
+
+        function membershipPhotoUrls(field) {
+            const urls = membershipFieldUrls(field).filter(isMembershipImageUrl);
+            if (!urls.length) return [];
+            if (/사진|프로필|file\s*upload|photo|image|첨부|upload|attachment/i.test(field.label || '')) {
+                return urls;
+            }
+            return urls;
         }
 
         function openMembershipPhoto(url, name) {
