@@ -207,10 +207,10 @@
             text-align: left;
             padding: 1.05rem 0;
             border-bottom: 1px dashed var(--border-light);
-            font-family: 'Space Mono', monospace;
-            font-size: 0.74rem;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 0.82rem;
             font-weight: 500;
-            letter-spacing: 0.06em;
+            letter-spacing: 0.02em;
             color: rgba(17, 17, 17, 0.56);
             cursor: pointer;
             transition: color 0.25s ease, padding-left 0.25s ease;
@@ -224,8 +224,8 @@
         }
         .mypage-nav-item.active {
             color: var(--text-dark);
-            font-weight: 700;
-            letter-spacing: 0.08em;
+            font-weight: 600;
+            letter-spacing: 0.02em;
         }
         .mypage-menu-title,
         .mypage-menu-sub {
