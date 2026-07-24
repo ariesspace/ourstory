@@ -10228,7 +10228,7 @@
                 if (!response.ok) throw new Error(payload.error || '앨범을 저장하지 못했습니다.');
                 showToast(galleryEditingId ? '앨범을 수정했습니다.' : '앨범을 등록했습니다.', true);
                 resetGalleryEditor();
-                document.querySelector('.view-trigger[data-target="view-gallery"]').click();
+                navigateToView('view-gallery', { history: false });
                 await openGalleryModal(payload.id);
             } catch (error) {
                 galleryFormError.textContent = error.message;
