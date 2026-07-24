@@ -4768,7 +4768,11 @@
                     <h1 id="member-profile-name" class="text-4xl md:text-5xl font-serif-ko font-bold break-words"></h1>
                     <p id="member-profile-username" class="mt-2 opacity-45"></p>
                     <div id="member-profile-meta" class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-sm"></div>
-                    <p id="member-profile-bio" class="mt-6 border-t border-[var(--border-light)] pt-5 text-sm leading-relaxed whitespace-pre-wrap"></p>
+                    <div class="mt-6 border-t border-[var(--border-light)] pt-5">
+                        <span class="block text-[0.62rem] tracking-[0.22em] uppercase opacity-45 mb-2 font-serif-en">어필</span>
+                        <p id="member-profile-bio" class="text-sm leading-relaxed whitespace-pre-wrap"></p>
+                    </div>
+                    <div id="member-profile-intro" class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-sm"></div>
                 </div>
             </div>
             <div class="flex items-end justify-between gap-4 mb-5">
@@ -8248,6 +8252,46 @@
             memberProfileModalIntro.classList.remove('hidden');
         }
 
+        function getSelfIntroductionFields(profile) {
+            const intro = profile.selfIntroduction || {};
+            const ratio = intro.giveRatio !== null && intro.giveRatio !== undefined && intro.takeRatio !== null && intro.takeRatio !== undefined
+                ? `깁 ${intro.giveRatio}% / 텍 ${intro.takeRatio}%`
+                : '';
+
+            return [
+                ['MBTI', intro.mbti],
+                ['잠자리 성향', ratio],
+                ['현재 관계', intro.currentRelationship],
+                ['원하는 관계', intro.desiredRelationship],
+                ['내 키워드', intro.myKeywords],
+                ['상대 키워드', intro.partnerKeywords],
+            ].filter(([, value]) => value !== null && value !== undefined && String(value).trim() !== '');
+        }
+
+        function renderMemberProfilePageIntro(profile) {
+            const introContainer = document.getElementById('member-profile-intro');
+            if (!introContainer) return;
+            const fields = getSelfIntroductionFields(profile);
+            introContainer.replaceChildren();
+            if (!fields.length) {
+                introContainer.classList.add('hidden');
+                return;
+            }
+            introContainer.classList.remove('hidden');
+            fields.forEach(([label, value]) => {
+                const item = document.createElement('div');
+                item.className = 'border-b border-[var(--border-light)] pb-3';
+                const key = document.createElement('span');
+                key.className = 'block text-[0.62rem] tracking-[0.22em] uppercase opacity-45 mb-2 font-serif-en';
+                key.textContent = label;
+                const text = document.createElement('span');
+                text.className = 'block break-words whitespace-pre-wrap';
+                text.textContent = String(value);
+                item.append(key, text);
+                introContainer.appendChild(item);
+            });
+        }
+
         async function openMemberProfileModal(username) {
             if (!username || !memberProfileModal) return;
             try {
@@ -8745,7 +8789,8 @@
                     item.append(key, text);
                     return item;
                 }));
-                document.getElementById('member-profile-bio').textContent = profile.bio || '아직 자기소개가 없습니다.';
+                document.getElementById('member-profile-bio').textContent = profile.selfIntroduction?.appeal || profile.bio || '아직 자기소개가 없습니다.';
+                renderMemberProfilePageIntro(profile);
                 memberTimelineStatus.classList.add('hidden');
                 renderTimeline(profile, payload.items, memberTimelineList, document.getElementById('member-timeline-count'), 'member');
                 if (navigate) {
