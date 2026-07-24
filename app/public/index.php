@@ -478,6 +478,145 @@
             border-top: 1px dashed var(--border-light);
             padding: clamp(1.6rem, 3vw, 2.2rem) 0 0;
         }
+        .self-intro-shell {
+            width: min(100%, 1240px);
+            margin: 0 auto;
+            padding: clamp(3rem, 6vw, 5.5rem) 0 5rem;
+        }
+        .self-intro-head {
+            border-bottom: 1px solid var(--text-dark);
+            padding-bottom: clamp(1.5rem, 3vw, 2rem);
+            margin-bottom: clamp(2rem, 5vw, 4rem);
+        }
+        .self-intro-kicker {
+            display: block;
+            margin-bottom: 0.95rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.34em;
+            text-transform: uppercase;
+            color: rgba(17, 17, 17, 0.42);
+        }
+        .self-intro-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(3.4rem, 8vw, 6.5rem);
+            font-style: italic;
+            font-weight: 400;
+            line-height: 0.88;
+            letter-spacing: -0.045em;
+        }
+        .self-intro-document {
+            border: 1px solid var(--border-light);
+            background: rgba(255, 255, 255, 0.78);
+            padding: clamp(1.4rem, 4vw, 3.2rem);
+        }
+        .self-intro-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 2rem 3rem;
+        }
+        .self-intro-field {
+            border-top: 1px solid var(--border-light);
+            padding-top: 1.15rem;
+        }
+        .self-intro-field.full {
+            grid-column: 1 / -1;
+        }
+        .self-intro-label {
+            display: block;
+            margin-bottom: 0.8rem;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 0.88rem;
+            color: rgba(17, 17, 17, 0.64);
+            letter-spacing: -0.01em;
+        }
+        .self-intro-label.is-required::after {
+            content: '*';
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.05rem;
+            height: 1.05rem;
+            margin-left: 0.35rem;
+            border-radius: 999px;
+            background: rgba(42, 59, 50, 0.12);
+            color: var(--accent-red);
+            font-size: 0.7rem;
+            vertical-align: 0.12em;
+        }
+        .self-intro-input,
+        .self-intro-select,
+        .self-intro-textarea {
+            width: 100%;
+            border: 0;
+            border-bottom: 1px solid var(--text-dark);
+            background: transparent;
+            padding: 0.35rem 0 0.7rem;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-dark);
+            outline: none;
+        }
+        .self-intro-textarea {
+            min-height: 7.5rem;
+            resize: vertical;
+            border: 1px solid var(--border-light);
+            padding: 1rem;
+        }
+        .self-intro-input:focus,
+        .self-intro-select:focus,
+        .self-intro-textarea:focus {
+            border-color: var(--accent-red);
+        }
+        .self-intro-help {
+            margin-top: 0.45rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.66rem;
+            letter-spacing: 0.08em;
+            color: rgba(17, 17, 17, 0.38);
+        }
+        .ratio-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.55rem;
+        }
+        .ratio-option {
+            min-width: 2.65rem;
+            border: 1px solid var(--border-light);
+            background: #fff;
+            padding: 0.48rem 0.65rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+        }
+        .ratio-option.active {
+            border-color: var(--accent-red);
+            background: var(--accent-red);
+            color: #fff;
+        }
+        .self-intro-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-light);
+        }
+        .self-intro-submit {
+            background: var(--text-dark);
+            color: #fff;
+            padding: 1rem 2.4rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.76rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            transition: background 0.25s ease;
+        }
+        .self-intro-submit:hover {
+            background: var(--accent-red);
+        }
         .feed-container {
             width: min(100%, 760px);
             margin: 0 auto;
@@ -3253,6 +3392,32 @@
                 margin-left: auto !important;
                 margin-right: auto !important;
             }
+            .self-intro-shell {
+                padding: 2.4rem 1.1rem 3.5rem !important;
+            }
+            .self-intro-head {
+                margin-bottom: 1.7rem !important;
+            }
+            .self-intro-title {
+                font-size: clamp(3rem, 17vw, 4.5rem) !important;
+            }
+            .self-intro-document {
+                padding: 1.15rem !important;
+            }
+            .self-intro-grid {
+                grid-template-columns: 1fr !important;
+                gap: 1.45rem !important;
+            }
+            .self-intro-textarea {
+                min-height: 6.25rem !important;
+            }
+            .self-intro-actions {
+                align-items: stretch !important;
+                flex-direction: column !important;
+            }
+            .self-intro-submit {
+                width: 100% !important;
+            }
             .profile-img-frame {
                 width: min(100%, 20.5rem) !important;
                 max-width: 20.5rem !important;
@@ -3600,14 +3765,15 @@
             <section class="index-menu-section">
                 <p class="index-menu-section-title">Personal</p>
                 <button type="button" class="view-trigger hidden" data-target="view-my-page" id="my-page-nav-link"><em>08</em><span>My Profile</span><small>[ 설정 ]</small></button>
+                <button type="button" class="view-trigger hidden" data-target="view-self-introduction" id="self-intro-nav-link"><em>09</em><span>Self Introduction</span><small>[ 자기소개 ]</small></button>
             </section>
 
             <section class="index-menu-section hidden" id="system-menu-section">
                 <p class="index-menu-section-title">Admin Only</p>
-                <button type="button" class="view-trigger hidden" data-target="view-system-members" id="system-nav-link"><em>09</em><span>Management</span><small>[ 계정관리 ]</small></button>
-                <button type="button" class="view-trigger hidden" data-target="view-system-add" id="system-add-nav-link"><em>10</em><span>Create Account</span><small>[ 계정 생성 ]</small></button>
-                <button type="button" class="view-trigger hidden" data-target="view-membership-archive" id="membership-nav-link"><em>11</em><span>Applications</span><small>[ 가입 신청 ]</small></button>
-                <button type="button" class="view-trigger hidden" data-target="view-main-image-admin" id="main-image-nav-link"><em>12</em><span>Main Image</span><small>[ 메인 그림 ]</small></button>
+                <button type="button" class="view-trigger hidden" data-target="view-system-members" id="system-nav-link"><em>10</em><span>Management</span><small>[ 계정관리 ]</small></button>
+                <button type="button" class="view-trigger hidden" data-target="view-system-add" id="system-add-nav-link"><em>11</em><span>Create Account</span><small>[ 계정 생성 ]</small></button>
+                <button type="button" class="view-trigger hidden" data-target="view-membership-archive" id="membership-nav-link"><em>12</em><span>Applications</span><small>[ 가입 신청 ]</small></button>
+                <button type="button" class="view-trigger hidden" data-target="view-main-image-admin" id="main-image-nav-link"><em>13</em><span>Main Image</span><small>[ 메인 그림 ]</small></button>
             </section>
         </nav>
         <button type="button" id="mobile-login-btn" class="mt-auto border border-[var(--text-dark)] py-4 font-mono text-xs tracking-[0.25em] uppercase hover:bg-[var(--text-dark)] hover:text-white transition-colors">Login</button>
@@ -3771,6 +3937,87 @@
                     </div>
                 </div>
             </div>
+        </section>
+
+        <section id="view-self-introduction" class="self-intro-shell view-hidden fade-in">
+            <div class="self-intro-head">
+                <span class="self-intro-kicker">Personal Archive</span>
+                <h1 class="self-intro-title">Self Introduction</h1>
+            </div>
+
+            <p id="self-intro-status" class="py-14 text-center text-sm opacity-50">자기소개를 불러오는 중입니다.</p>
+            <form id="self-intro-form" class="self-intro-document hidden">
+                <div class="self-intro-grid">
+                    <div class="self-intro-field">
+                        <label for="self-intro-nickname" class="self-intro-label is-required">카톡방에서 사용 중인 닉네임</label>
+                        <input type="text" id="self-intro-nickname" class="self-intro-input" maxlength="60" placeholder="닉네임" required>
+                    </div>
+                    <div class="self-intro-field">
+                        <label for="self-intro-birth-year" class="self-intro-label is-required">출생년도</label>
+                        <input type="number" id="self-intro-birth-year" class="self-intro-input" min="1900" max="2100" placeholder="예: 1995" required>
+                    </div>
+                    <div class="self-intro-field">
+                        <label for="self-intro-personality" class="self-intro-label is-required">본인의 주성향</label>
+                        <input type="text" id="self-intro-personality" class="self-intro-input" maxlength="120" placeholder="예: Brat, Care Giver, Switch" required>
+                    </div>
+                    <div class="self-intro-field">
+                        <label for="self-intro-relationship-style" class="self-intro-label is-required">연애 유형</label>
+                        <input type="text" id="self-intro-relationship-style" class="self-intro-input" maxlength="120" placeholder="예: 모노, 논모노, 오픈릴" required>
+                    </div>
+                    <div class="self-intro-field">
+                        <label for="self-intro-mbti" class="self-intro-label is-required">MBTI</label>
+                        <select id="self-intro-mbti" class="self-intro-select" required>
+                            <option value="">선택</option>
+                            <option>INTJ</option><option>INTP</option><option>ENTJ</option><option>ENTP</option>
+                            <option>INFJ</option><option>INFP</option><option>ENFJ</option><option>ENFP</option>
+                            <option>ISTJ</option><option>ISFJ</option><option>ESTJ</option><option>ESFJ</option>
+                            <option>ISTP</option><option>ISFP</option><option>ESTP</option><option>ESFP</option>
+                            <option>모름</option>
+                        </select>
+                    </div>
+                    <div class="self-intro-field">
+                        <span class="self-intro-label is-required">나의 잠자리 성향</span>
+                        <div class="mb-4">
+                            <p class="self-intro-help mb-2">GIVE RATIO</p>
+                            <div class="ratio-options" data-ratio-group="giveRatio"></div>
+                        </div>
+                        <div>
+                            <p class="self-intro-help mb-2">TAKE RATIO</p>
+                            <div class="ratio-options" data-ratio-group="takeRatio"></div>
+                        </div>
+                    </div>
+                    <div class="self-intro-field full">
+                        <label for="self-intro-my-keywords" class="self-intro-label is-required">내 키워드</label>
+                        <textarea id="self-intro-my-keywords" class="self-intro-textarea" maxlength="2000" placeholder="예: 성격, 외모, 머리 길이, 술 담배 여부 등" required></textarea>
+                    </div>
+                    <div class="self-intro-field full">
+                        <label for="self-intro-partner-keywords" class="self-intro-label is-required">상대 키워드</label>
+                        <textarea id="self-intro-partner-keywords" class="self-intro-textarea" maxlength="2000" placeholder="예: 선호하는 관계, 대화 방식, 원하는 분위기 등" required></textarea>
+                    </div>
+                    <div class="self-intro-field">
+                        <label for="self-intro-current-relationship" class="self-intro-label is-required">현재 관계</label>
+                        <select id="self-intro-current-relationship" class="self-intro-select" required>
+                            <option value="">선택</option>
+                            <option>솔로</option><option>연애</option><option>디엣</option><option>파트너</option><option>기타</option>
+                        </select>
+                    </div>
+                    <div class="self-intro-field">
+                        <label for="self-intro-desired-relationship" class="self-intro-label is-required">원하는 관계</label>
+                        <select id="self-intro-desired-relationship" class="self-intro-select" required>
+                            <option value="">선택</option>
+                            <option>솔로</option><option>연애</option><option>디엣</option><option>파트너</option><option>기타</option>
+                        </select>
+                    </div>
+                    <div class="self-intro-field full">
+                        <label for="self-intro-appeal" class="self-intro-label">나를 어필하기</label>
+                        <textarea id="self-intro-appeal" class="self-intro-textarea" maxlength="4000" placeholder="나를 소개하고 싶은 내용을 자유롭게 적어주세요."></textarea>
+                    </div>
+                </div>
+                <div class="self-intro-actions">
+                    <p id="self-intro-error" class="hidden text-sm text-[var(--accent-red)]"></p>
+                    <button type="submit" id="self-intro-submit" class="self-intro-submit">Save Introduction</button>
+                </div>
+            </form>
         </section>
 
         <section id="view-my-timeline" class="w-full max-w-3xl mx-auto view-hidden fade-in py-8">
@@ -4792,6 +5039,7 @@
         const mainImageNavLink = document.getElementById('main-image-nav-link');
         const systemMenuSection = document.getElementById('system-menu-section');
         const myPageNavLink = document.getElementById('my-page-nav-link');
+        const selfIntroNavLink = document.getElementById('self-intro-nav-link');
         const loginNavBtn = document.getElementById('login-nav-btn');
         const headerNoticeBtn = document.getElementById('header-notice-btn');
         const headerUserBtn = document.getElementById('header-user-btn');
@@ -4944,6 +5192,7 @@
             if (targetId === 'view-read') loadLatestDashboard();
             if (targetId === 'view-system-members') loadMembers();
             if (targetId === 'view-my-page') loadMyProfile();
+            if (targetId === 'view-self-introduction') loadSelfIntroduction();
             if (targetId === 'view-my-timeline') loadMyTimeline();
             if (targetId === 'view-timeline') loadTimelineFeed();
             if (targetId === 'view-sm-board') loadSmBoard();
@@ -4965,7 +5214,7 @@
                 openLoginModal();
                 return null;
             }
-            if (targetId === 'view-my-page' && !siteUser) {
+            if ((targetId === 'view-my-page' || targetId === 'view-self-introduction') && !siteUser) {
                 showToast('로그인이 필요합니다.', false);
                 localStorage.setItem(pendingAuthViewKey, targetId);
                 openLoginModal();
@@ -5133,6 +5382,7 @@
             mainImageNavLink?.classList.toggle('hidden', !isManager);
             systemMenuSection?.classList.toggle('hidden', !isManager);
             myPageNavLink.classList.toggle('hidden', !user);
+            selfIntroNavLink?.classList.toggle('hidden', !user);
             headerNoticeBtn?.classList.remove('hidden');
             headerUserBtn?.classList.toggle('hidden', !user);
             headerLogoutBtn.classList.toggle('hidden', !user);
@@ -5448,6 +5698,23 @@
         const myAvatarFallback = document.getElementById('my-avatar-fallback');
         const myAvatarRemove = document.getElementById('my-avatar-remove');
         const myAvatarError = document.getElementById('my-avatar-error');
+        const selfIntroStatus = document.getElementById('self-intro-status');
+        const selfIntroForm = document.getElementById('self-intro-form');
+        const selfIntroError = document.getElementById('self-intro-error');
+        const selfIntroSubmit = document.getElementById('self-intro-submit');
+        const selfIntroFields = {
+            nickname: document.getElementById('self-intro-nickname'),
+            birthYear: document.getElementById('self-intro-birth-year'),
+            personality: document.getElementById('self-intro-personality'),
+            relationshipStyle: document.getElementById('self-intro-relationship-style'),
+            mbti: document.getElementById('self-intro-mbti'),
+            myKeywords: document.getElementById('self-intro-my-keywords'),
+            partnerKeywords: document.getElementById('self-intro-partner-keywords'),
+            currentRelationship: document.getElementById('self-intro-current-relationship'),
+            desiredRelationship: document.getElementById('self-intro-desired-relationship'),
+            appeal: document.getElementById('self-intro-appeal'),
+        };
+        const selfIntroRatioState = { giveRatio: null, takeRatio: null };
         const myTimelineSection = document.getElementById('my-timeline-section');
         const myTimelineForm = document.getElementById('my-timeline-form');
         const myTimelineInput = document.getElementById('my-timeline-input');
@@ -7318,6 +7585,124 @@
                 openProfilePhoto(profile);
             };
         }
+
+        function renderSelfIntroRatioOptions() {
+            document.querySelectorAll('[data-ratio-group]').forEach(group => {
+                const key = group.dataset.ratioGroup;
+                group.replaceChildren();
+                for (let value = 0; value <= 100; value += 10) {
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = 'ratio-option';
+                    button.textContent = String(value);
+                    button.dataset.value = String(value);
+                    button.addEventListener('click', () => {
+                        selfIntroRatioState[key] = value;
+                        updateSelfIntroRatioButtons();
+                    });
+                    group.appendChild(button);
+                }
+            });
+            updateSelfIntroRatioButtons();
+        }
+
+        function updateSelfIntroRatioButtons() {
+            document.querySelectorAll('[data-ratio-group]').forEach(group => {
+                const key = group.dataset.ratioGroup;
+                group.querySelectorAll('.ratio-option').forEach(button => {
+                    button.classList.toggle('active', Number(button.dataset.value) === Number(selfIntroRatioState[key]));
+                });
+            });
+        }
+
+        function fillSelfIntroduction(introduction = {}) {
+            selfIntroFields.nickname.value = introduction.nickname || siteUser?.displayName || '';
+            selfIntroFields.birthYear.value = introduction.birthYear || '';
+            selfIntroFields.personality.value = introduction.personality || '';
+            selfIntroFields.relationshipStyle.value = introduction.relationshipStyle || '';
+            selfIntroFields.mbti.value = introduction.mbti || '';
+            selfIntroFields.myKeywords.value = introduction.myKeywords || '';
+            selfIntroFields.partnerKeywords.value = introduction.partnerKeywords || '';
+            selfIntroFields.currentRelationship.value = introduction.currentRelationship || '';
+            selfIntroFields.desiredRelationship.value = introduction.desiredRelationship || '';
+            selfIntroFields.appeal.value = introduction.appeal || '';
+            selfIntroRatioState.giveRatio = introduction.giveRatio ?? null;
+            selfIntroRatioState.takeRatio = introduction.takeRatio ?? null;
+            updateSelfIntroRatioButtons();
+        }
+
+        async function loadSelfIntroduction() {
+            if (!siteUser || !selfIntroForm) return;
+            selfIntroStatus?.classList.remove('hidden');
+            selfIntroForm.classList.add('hidden');
+            selfIntroError?.classList.add('hidden');
+            try {
+                const response = await fetch('/api/self-introduction.php', {
+                    headers: { Accept: 'application/json' },
+                    credentials: 'same-origin',
+                });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '자기소개를 불러오지 못했습니다.');
+                fillSelfIntroduction(payload.introduction);
+                selfIntroStatus?.classList.add('hidden');
+                selfIntroForm.classList.remove('hidden');
+            } catch (error) {
+                if (selfIntroStatus) selfIntroStatus.textContent = error.message;
+            }
+        }
+
+        selfIntroForm?.addEventListener('submit', async event => {
+            event.preventDefault();
+            selfIntroError?.classList.add('hidden');
+            if (selfIntroSubmit) {
+                selfIntroSubmit.disabled = true;
+                selfIntroSubmit.textContent = 'Saving...';
+            }
+            const payload = {
+                nickname: selfIntroFields.nickname.value.trim(),
+                birthYear: selfIntroFields.birthYear.value,
+                personality: selfIntroFields.personality.value.trim(),
+                relationshipStyle: selfIntroFields.relationshipStyle.value.trim(),
+                mbti: selfIntroFields.mbti.value,
+                giveRatio: selfIntroRatioState.giveRatio,
+                takeRatio: selfIntroRatioState.takeRatio,
+                myKeywords: selfIntroFields.myKeywords.value.trim(),
+                partnerKeywords: selfIntroFields.partnerKeywords.value.trim(),
+                currentRelationship: selfIntroFields.currentRelationship.value,
+                desiredRelationship: selfIntroFields.desiredRelationship.value,
+                appeal: selfIntroFields.appeal.value.trim(),
+            };
+            try {
+                const response = await fetch('/api/self-introduction.php', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        'X-CSRF-Token': csrfToken || '',
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify(payload),
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || '자기소개를 저장하지 못했습니다.');
+                if (result.user) applySiteAuth(result.user, csrfToken);
+                fillSelfIntroduction(result.introduction);
+                showToast('자기소개를 저장했습니다.', true);
+            } catch (error) {
+                if (selfIntroError) {
+                    selfIntroError.textContent = error.message;
+                    selfIntroError.classList.remove('hidden');
+                }
+                showToast(error.message, false);
+            } finally {
+                if (selfIntroSubmit) {
+                    selfIntroSubmit.disabled = false;
+                    selfIntroSubmit.textContent = 'Save Introduction';
+                }
+            }
+        });
+
+        renderSelfIntroRatioOptions();
 
         function setMyPasswordEditorOpen(open) {
             if (!myPasswordSection) return;

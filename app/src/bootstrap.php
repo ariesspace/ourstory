@@ -307,6 +307,28 @@ function site_migrate(PDO $pdo): void
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_timeline_comments_post ON timeline_comments (post_id, created_at, id)');
 
     $pdo->exec(
+        'CREATE TABLE IF NOT EXISTS self_introductions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL UNIQUE,
+            nickname TEXT NOT NULL DEFAULT \'\',
+            birth_year INTEGER,
+            personality TEXT NOT NULL DEFAULT \'\',
+            relationship_style TEXT NOT NULL DEFAULT \'\',
+            mbti TEXT NOT NULL DEFAULT \'\',
+            give_ratio INTEGER,
+            take_ratio INTEGER,
+            my_keywords TEXT NOT NULL DEFAULT \'\',
+            partner_keywords TEXT NOT NULL DEFAULT \'\',
+            current_relationship TEXT NOT NULL DEFAULT \'\',
+            desired_relationship TEXT NOT NULL DEFAULT \'\',
+            appeal TEXT NOT NULL DEFAULT \'\',
+            updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )'
+    );
+
+    $pdo->exec(
         'CREATE TABLE IF NOT EXISTS anonymous_posts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
@@ -488,7 +510,8 @@ function site_current_user(PDO $pdo): ?array
     }
 
     $stmt = $pdo->prepare(
-        'SELECT id, username, display_name, role, must_change_password
+        'SELECT id, username, display_name, role, birth_year, region, personality,
+                relationship_style, bio, must_change_password
          FROM users
          WHERE id = :id AND is_active = 1'
     );
@@ -505,6 +528,11 @@ function site_current_user(PDO $pdo): ?array
         'username' => $user['username'],
         'displayName' => $user['display_name'],
         'role' => $user['role'],
+        'birth_year' => $user['birth_year'] !== null ? (int) $user['birth_year'] : null,
+        'region' => $user['region'],
+        'personality' => $user['personality'],
+        'relationship_style' => $user['relationship_style'],
+        'bio' => $user['bio'],
         'mustChangePassword' => (bool) $user['must_change_password'],
     ];
 }
