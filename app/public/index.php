@@ -3132,6 +3132,85 @@
         #main-header > div:first-child > div:last-child button {
             white-space: nowrap !important;
         }
+        @media (max-width: 640px) {
+            html,
+            body {
+                max-width: 100%;
+                overflow-x: hidden;
+            }
+            #index-menu {
+                width: min(94vw, 420px) !important;
+                max-width: 94vw !important;
+                height: 100vh !important;
+                max-height: 100vh !important;
+                padding: 2rem 1.55rem max(1.8rem, calc(env(safe-area-inset-bottom) + 1.2rem)) !important;
+                overflow-x: hidden !important;
+                overflow-y: auto !important;
+            }
+            @supports (height: 100dvh) {
+                #index-menu {
+                    height: 100dvh !important;
+                    max-height: 100dvh !important;
+                }
+            }
+            .index-menu-head {
+                padding-bottom: 1.25rem !important;
+                margin-bottom: 1.25rem !important;
+            }
+            .index-menu-section {
+                padding-bottom: 0.85rem !important;
+                margin-bottom: 1rem !important;
+            }
+            .index-menu-section-title {
+                margin-bottom: 0.65rem !important;
+            }
+            .index-menu-links {
+                gap: 0 !important;
+            }
+            .index-menu-links button {
+                grid-template-columns: 2.4rem minmax(0, 1fr) auto !important;
+                gap: 0.58rem !important;
+                padding: 0.42rem 0 !important;
+                font-size: 0.72rem !important;
+                letter-spacing: 0.12em !important;
+            }
+            .index-menu-links button small {
+                font-size: 0.64rem !important;
+                letter-spacing: 0.03em !important;
+            }
+            #main-header > div:first-child {
+                height: 84px !important;
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+                grid-template-columns: minmax(6.8rem, 1fr) minmax(4.7rem, auto) minmax(3.9rem, 1fr) !important;
+                column-gap: 0.55rem !important;
+                overflow: hidden !important;
+            }
+            #main-header #index-menu-open {
+                font-size: 0.62rem !important;
+                letter-spacing: 0.16em !important;
+                white-space: nowrap !important;
+            }
+            #main-header .view-trigger[data-target="view-read"] {
+                font-size: clamp(1.2rem, 7.1vw, 1.75rem) !important;
+                line-height: 1 !important;
+                white-space: nowrap !important;
+            }
+            #main-header > div:first-child > div:last-child {
+                gap: 0.55rem !important;
+                min-width: 0 !important;
+                overflow: hidden !important;
+            }
+            #main-header #header-notice-btn,
+            #main-header .header-user-link {
+                display: none !important;
+            }
+            #main-header .header-auth-item {
+                font-size: 0.62rem !important;
+                letter-spacing: 0.14em !important;
+                min-width: 0 !important;
+            }
+        }
         #view-people {
             width: min(100%, 1320px) !important;
             margin: 0 auto !important;
@@ -3596,7 +3675,6 @@
                                 <input type="text" id="my-relationship-style" maxlength="120" class="form-input-edit" placeholder="선택 입력">
                             </div>
 
-                            <button type="button" id="my-password-toggle" class="text-[11px] font-mono opacity-60 hover:opacity-100 hover:text-[var(--accent-red)] underline underline-offset-4 tracking-wider transition-colors" aria-expanded="false" aria-controls="my-password-section">Change Password</button>
                             <div id="my-password-section" class="hidden mt-6 grid grid-cols-1 sm:grid-cols-2 gap-7">
                                 <div>
                                     <label for="my-password" class="form-label">새 비밀번호</label>
@@ -5465,21 +5543,21 @@
             ];
 
             const storySections = [
-                take('reason', '선택한 성향이 주성향이라고 생각하는 이유는 무엇인가요?', [/^선택한\s*성향이\s*주성향이라고\s*생각하는\s*이유는\s*무엇인가요\??$/i, /^주성향이라고\s*생각하는\s*이유/i]),
-                take('trigger', '성향을 깨닫게 된 계기는 어떻게 되시나요?', [/^성향을\s*깨닫게\s*된\s*계기는\s*어떻게\s*되시나요\??$/i]),
-                take('preference', '선택하신 성향에 대해 설명해주세요.', [/^선택하신\s*성향에\s*대해\s*설명해주세요\.?\??$/i]),
-                take('care', '주로 본인이 사용하는 케어 방식은 어떤 방법인가요?', [/^주로\s*본인이\s*사용하는\s*케어\s*방식은\s*어떤\s*방법인가요\??$/i]),
-                take('switch', '어떤 사람이 변바라고 생각하십니까?', [/^어떤\s*사람이\s*변바라고\s*생각하십니까\??$/i]),
-                take('bdsm', 'BDSM이란 무엇이라고 생각하나요?', [/^BDSM이란\s*무엇이라고\s*생각하나요\??$/i, /^비디에스엠이란\s*무엇/i]),
-                take('playSex', '플과 섹스의 차이점은 무엇이라고 생각하나요?', [/^플과\s*섹스의\s*차이점은\s*무엇이라고\s*생각하나요\??$/i]),
-                take('caregiver', '케어기버란 어떤 성향인가요?', [/^케어기버란\s*어떤\s*성향인가요\??$/i, /^care\s*giver/i]),
+                take('reason', '선택한 성향이 주성향이라고 생각하는 이유는 무엇인가요?', [/선택한\s*성향이\s*주성향이라고\s*생각하는\s*이유/i, /주성향이라고\s*생각하는\s*이유/i]),
+                take('trigger', '성향을 깨닫게 된 계기는 어떻게 되시나요?', [/성향을\s*깨닫게\s*된\s*계기/i]),
+                take('preference', '선택하신 성향에 대해 설명해주세요.', [/선택하신\s*성향.*설명/i, /보조\s*성향.*설명/i]),
+                take('care', '주로 본인이 사용하는 케어 방식은 어떤 방법인가요?', [/주로\s*본인이\s*사용하는\s*케어\s*방식/i]),
+                take('switch', '어떤 사람이 변바라고 생각하십니까?', [/어떤\s*사람이\s*변바라고\s*생각/i]),
+                take('bdsm', 'BDSM이란 무엇이라고 생각하나요?', [/BDSM이란\s*무엇이라고\s*생각/i, /비디에스엠이란\s*무엇/i]),
+                take('playSex', '플과 섹스의 차이점은 무엇이라고 생각하나요?', [/플과\s*섹스의\s*차이점/i]),
+                take('caregiver', '케어기버란 어떤 성향인가요?', [/케어기버란\s*어떤\s*성향/i, /care\s*giver/i]),
             ];
             const storyByKey = new Map(storySections.map(field => [field.key, field]));
             const looksLikeSwitchAnswer = value => /변바|본인의\s*쾌락만\s*좇|성향자|바닐라틱한\s*변태|사실\s*저\s*스스로도\s*변바|BDSM에\s*대해서\s*깊게\s*고민|쾌락만을\s*좇/.test(value);
-            const looksLikeBdsmAnswer = value => /서로의\s*욕구와\s*한계|합의를\s*바탕으로\s*신뢰|비주류적\s*성적\/연애적\s*행위나\s*관계성|안전과\s*리스크|성적으로\s*쾌감을\s*얻는\s*형태|일반적인\s*섹스와\s*달리\s*지배,\s*복종,\s*수치심|합의된\s*조건\s*하에\s*안전하게\s*플레이|상대와\s*동의하는\s*플|동의&합의|동의와\s*합의/.test(value);
+            const looksLikeBdsmAnswer = value => /서로의\s*욕구와\s*한계|합의를\s*바탕으로\s*신뢰|비주류적\s*성적\/연애적\s*행위나\s*관계성|안전과\s*리스크|성적으로\s*쾌감을\s*얻는\s*형태|일반적인\s*섹스와\s*달리\s*지배,\s*복종,\s*수치심|합의된\s*조건\s*하에\s*안전하게\s*플레이|상대와\s*동의하는\s*플|동의&합의|동의와\s*합의|Smer들이\s*하는\s*play|대표적인\s*네가지/.test(value);
             const looksLikeCaregiverAnswer = value => /상대의\s*신체적,\s*정서적\s*안녕|돌봄을\s*통해\s*애정을\s*표현|관계서열\s*아래에\s*있는\s*자신의\s*아이|케어리시버를\s*보살피고\s*만족감을\s*얻습니다|본인이\s*아니면\s*아무것도\s*하지\s*못하게\s*하고\s*싶다|의존성\s*베이스|케어\s*기버란\s*정신적이거나\s*물리적인\s*깁|자기\s*효용감|타인이\s*기쁨을\s*얻고/.test(value);
             const looksLikeTriggerAnswer = value => /성향을\s*가지고\s*있구나|신세계|첫플|SM이라는\s*개념|머리에서\s*맴도/.test(value);
-            const looksLikePlaySexAnswer = value => /플.*섹스|섹스.*플|신체\s*삽입|권력교환|섹스없는\s*플레이/.test(value);
+            const looksLikePlaySexAnswer = value => /플.*섹스|섹스.*플|신체\s*삽입|권력교환|섹스없는\s*플레이|성적인\s*만족감만이\s*전부가\s*아니라|플레?이라고\s*정의된\s*모든\s*플레이|스펙트럼/.test(value);
             const looksLikeCareAnswer = value => /오구오구|안아주기|뽀뽀|정서적으로\s*지지|감정적으로\s*의지|서러움을\s*달래/.test(value);
             const preferenceField = storyByKey.get('preference');
             const triggerField = storyByKey.get('trigger');
@@ -5895,6 +5973,10 @@
                 || /storage\.tally\.so/i.test(url);
         }
 
+        function isMembershipVideoUrl(url) {
+            return /\.(?:mp4|mov|m4v|webm)(?:[?#].*)?$/i.test(url);
+        }
+
         function membershipPhotoUrls(field) {
             const urls = membershipFieldUrls(field).filter(isMembershipImageUrl);
             if (!urls.length) return [];
@@ -5905,8 +5987,22 @@
         }
 
         function openMembershipPhoto(url, name) {
-            profilePhotoModalImage.src = url;
-            profilePhotoModalImage.alt = `${name} 가입 신청 사진`;
+            const isVideo = isMembershipVideoUrl(url);
+            const previousVideo = profilePhotoModal.querySelector('video[data-membership-media]');
+            previousVideo?.remove();
+            profilePhotoModalImage.classList.toggle('hidden', isVideo);
+            if (isVideo) {
+                const video = document.createElement('video');
+                video.dataset.membershipMedia = 'true';
+                video.src = url;
+                video.controls = true;
+                video.playsInline = true;
+                video.className = 'max-w-full max-h-full object-contain shadow-2xl bg-black';
+                profilePhotoModal.appendChild(video);
+            } else {
+                profilePhotoModalImage.src = url;
+                profilePhotoModalImage.alt = `${name} 가입 신청 사진`;
+            }
             profilePhotoModal.classList.remove('hidden');
             profilePhotoModal.classList.add('flex');
             document.body.classList.add('overflow-hidden');
@@ -5964,13 +6060,20 @@
                         const button = document.createElement('button');
                         button.type = 'button';
                         button.className = 'aspect-square overflow-hidden bg-black/5 cursor-zoom-in';
-                        button.setAttribute('aria-label', `${name} 첨부 사진 확대`);
-                        const image = document.createElement('img');
-                        image.src = url;
-                        image.alt = `${name} 첨부 사진 ${index + 1}`;
-                        image.loading = 'lazy';
-                        image.className = 'w-full h-full object-cover hover:scale-105 transition-transform duration-300';
-                        button.appendChild(image);
+                        button.setAttribute('aria-label', `${name} 첨부 자료 확대`);
+                        if (isMembershipVideoUrl(url)) {
+                            const media = document.createElement('span');
+                            media.className = 'w-full h-full flex flex-col items-center justify-center gap-2 font-mono text-[10px] tracking-[0.18em] uppercase bg-[var(--accent-red)] text-white';
+                            media.innerHTML = '<i class="ph ph-play-circle text-2xl"></i><span>Video</span>';
+                            button.appendChild(media);
+                        } else {
+                            const image = document.createElement('img');
+                            image.src = url;
+                            image.alt = `${name} 첨부 사진 ${index + 1}`;
+                            image.loading = 'lazy';
+                            image.className = 'w-full h-full object-cover hover:scale-105 transition-transform duration-300';
+                            button.appendChild(image);
+                        }
                         button.addEventListener('click', () => openMembershipPhoto(url, name));
                         value.appendChild(button);
                     });
@@ -6805,6 +6908,9 @@
         function closeProfilePhoto() {
             profilePhotoModal.classList.add('hidden');
             profilePhotoModal.classList.remove('flex');
+            const previousVideo = profilePhotoModal.querySelector('video[data-membership-media]');
+            previousVideo?.remove();
+            profilePhotoModalImage.classList.remove('hidden');
             profilePhotoModalImage.removeAttribute('src');
             if (membershipDetailModal.classList.contains('hidden') && memberProfileModal.classList.contains('hidden')) {
                 document.body.classList.remove('overflow-hidden');
@@ -6873,6 +6979,26 @@
                 item.displayName, item.username, item.region, item.personality, item.relationshipStyle,
                 ...(Array.isArray(item.fields) ? item.fields.flatMap(field => [field.label, formatIntroductionAnswer(field)]) : [])
             ].join(' ').toLocaleLowerCase('ko-KR');
+        }
+
+        function questionnaireSearchScore(item, query) {
+            const normalize = value => String(value || '').trim().toLocaleLowerCase('ko-KR');
+            const name = normalize(item.displayName);
+            const username = normalize(item.username);
+            const primary = [
+                item.region,
+                item.birthYear,
+                item.personality,
+                item.relationshipStyle,
+            ].map(normalize);
+
+            if (name === query || username === query) return 0;
+            if (name.startsWith(query) || username.startsWith(query)) return 1;
+            if (name.includes(query) || username.includes(query)) return 2;
+            if (primary.some(value => value === query)) return 3;
+            if (primary.some(value => value.includes(query))) return 4;
+            if (questionnaireSearchText(item).includes(query)) return 8;
+            return 99;
         }
 
         function getQuestionnaireCoverUrl(item) {
@@ -6979,7 +7105,13 @@
 
         function filterQuestionnaires() {
             const query = questionnaireSearch?.value.trim().toLocaleLowerCase('ko-KR') || '';
-            const items = query ? questionnaireItems.filter(item => questionnaireSearchText(item).includes(query)) : questionnaireItems;
+            const items = query
+                ? questionnaireItems
+                    .map((item, index) => ({ item, index, score: questionnaireSearchScore(item, query) }))
+                    .filter(entry => entry.score < 99)
+                    .sort((a, b) => a.score - b.score || a.index - b.index)
+                    .map(entry => entry.item)
+                : questionnaireItems;
             renderQuestionnaires(items);
         }
 
@@ -7083,10 +7215,10 @@
         }
 
         function setMyPasswordEditorOpen(open) {
-            if (!myPasswordSection || !myPasswordToggle) return;
+            if (!myPasswordSection) return;
             myPasswordSection.classList.toggle('hidden', !open);
-            myPasswordToggle.setAttribute('aria-expanded', String(open));
-            myPasswordToggle.textContent = open ? 'Cancel Password Change' : 'Change Password';
+            myPasswordToggle?.setAttribute('aria-expanded', String(open));
+            if (myPasswordToggle) myPasswordToggle.textContent = open ? 'Cancel Password Change' : 'Change Password';
             if (!open) {
                 document.getElementById('my-password').value = '';
                 document.getElementById('my-password-confirm').value = '';
