@@ -6813,7 +6813,7 @@
 
         async function approveMembershipApplication(item, fields, fallbackName) {
             const nameField = fields.find(field => /이름|닉네임|name|nickname/i.test(field.label || ''));
-            const displayName = window.prompt('표시 이름을 확인해주세요.', nameField?.displayValue || fallbackName || '신규 회원');
+            const displayName = window.prompt('사용할 닉네임을 확인해주세요.', nameField?.displayValue || fallbackName || '신규 회원');
             if (displayName === null) return false;
             const usernameSeed = displayName.trim().toLowerCase().replace(/[^a-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '') || `member-${Date.now().toString().slice(-6)}`;
             const username = window.prompt('생성할 로그인 ID를 입력해주세요. 비워두면 자동 생성됩니다.', usernameSeed);
