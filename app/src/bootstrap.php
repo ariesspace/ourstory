@@ -162,6 +162,19 @@ function site_migrate(PDO $pdo): void
             FOREIGN KEY (source_application_id) REFERENCES tally_membership_applications(id) ON DELETE SET NULL
         )'
     );
+    $profileColumns = array_column($pdo->query('PRAGMA table_info(profiles)')->fetchAll(), 'name');
+    foreach ([
+        'draft_profile_data_json' => 'TEXT',
+        'draft_intro_text' => "TEXT NOT NULL DEFAULT ''",
+        'draft_updated_at' => 'TEXT',
+        'published_at' => 'TEXT',
+    ] as $column => $definition) {
+        if (!in_array($column, $profileColumns, true)) {
+            $pdo->exec("ALTER TABLE profiles ADD COLUMN {$column} {$definition}");
+        }
+    }
+    $pdo->exec("UPDATE profiles SET draft_profile_data_json = profile_data_json WHERE draft_profile_data_json IS NULL");
+    $pdo->exec("UPDATE profiles SET draft_intro_text = intro_text WHERE draft_intro_text = '' AND intro_text <> ''");
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_profiles_user ON profiles (user_id)');
     $pdo->exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_profiles_user_unique ON profiles (user_id) WHERE user_id IS NOT NULL');
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_profiles_visible_created ON profiles (is_visible, created_at DESC)');

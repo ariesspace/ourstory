@@ -255,9 +255,11 @@ function membership_approve(PDO $pdo, array $viewer, string $submissionId): void
 
         $profileStmt = $pdo->prepare(
             'INSERT INTO profiles
-                (user_id, source_application_id, author_snapshot, nickname_snapshot, profile_data_json, intro_text)
+                (user_id, source_application_id, author_snapshot, nickname_snapshot, profile_data_json, intro_text,
+                 draft_profile_data_json, draft_intro_text, draft_updated_at, published_at)
              VALUES
-                (:user_id, :source_application_id, :author_snapshot, :nickname_snapshot, :profile_data_json, :intro_text)'
+                (:user_id, :source_application_id, :author_snapshot, :nickname_snapshot, :profile_data_json, :intro_text,
+                 :profile_data_json, :intro_text, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)'
         );
         $profileStmt->execute([
             ':user_id' => $userId,

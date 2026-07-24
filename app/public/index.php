@@ -780,39 +780,70 @@
         .calendar-cell.selected .date-number {
             color: var(--accent-red);
         }
+        .calendar-cell.today .date-number {
+            color: #fff;
+            background: var(--accent-red);
+            box-shadow: 0 0 0 1px var(--accent-red);
+        }
         .date-number {
             font-family: 'Space Mono', monospace;
             font-size: 0.86rem;
             letter-spacing: 0.02em;
             color: var(--text-dark);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 999px;
         }
         .date-number.holiday {
             color: #b42318;
             font-weight: 700;
         }
+        .calendar-cell.today .date-number.holiday {
+            color: #fff;
+        }
         .event-badges {
             width: 100%;
             display: flex;
-            flex-direction: column;
-            gap: 0.34rem;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 0.28rem;
             margin-top: auto;
         }
         .event-badge {
             align-self: flex-start;
-            max-width: 100%;
-            padding: 0.42rem 0.5rem;
-            background: #171717;
-            color: #fff;
+            width: 0.42rem;
+            height: 0.42rem;
+            padding: 0;
+            border-radius: 999px;
+            background: var(--accent-red);
+            color: transparent;
             font-family: 'Noto Sans KR', sans-serif;
-            font-size: 0.72rem;
-            font-weight: 700;
-            line-height: 1.25;
-            text-align: left;
-            word-break: keep-all;
-            overflow-wrap: break-word;
+            font-size: 0;
+            overflow: hidden;
         }
         .event-badge.type-party {
             background: #2A3B32;
+        }
+        .today-schedule-panel {
+            max-width: 1000px;
+            margin: 1.5rem auto 0;
+            border: 1px solid var(--border-light);
+            background: rgba(255, 255, 255, 0.55);
+            padding: 1.25rem;
+        }
+        .today-schedule-row {
+            display: grid;
+            grid-template-columns: 4rem minmax(0, 1fr);
+            gap: 1rem;
+            align-items: baseline;
+            padding: 0.9rem 0;
+            border-top: 1px solid var(--border-light);
+        }
+        .today-schedule-row:first-child {
+            border-top: 0;
         }
         .selected-date-header {
             border-bottom: 1px solid var(--text-dark);
@@ -3200,27 +3231,28 @@
                 <p class="index-menu-section-title">Community</p>
                 <button type="button" class="view-trigger" data-target="view-timeline"><em>01</em><span>Timeline</span><small>[ 기록 ]</small></button>
                 <button type="button" class="view-trigger" data-target="view-schedule"><em>02</em><span>Schedule</span><small>[ 일정 ]</small></button>
+                <button type="button" class="view-trigger" data-target="view-questionnaires"><em>03</em><span>Questionnaires</span><small>[ 질문지 ]</small></button>
             </section>
 
             <section class="index-menu-section">
                 <p class="index-menu-section-title">Archive</p>
-                <button type="button" class="view-trigger" data-target="view-gallery"><em>03</em><span>Album</span><small>[ 갤러리 ]</small></button>
-                <button type="button" class="view-trigger" data-target="view-sm-bar-list"><em>04</em><span>SM Bar List</span><small>[ 장소 ]</small></button>
-                <button type="button" class="view-trigger" data-target="view-sm-board"><em>05</em><span>Information</span><small>[ 정보 ]</small></button>
+                <button type="button" class="view-trigger" data-target="view-gallery"><em>04</em><span>Album</span><small>[ 갤러리 ]</small></button>
+                <button type="button" class="view-trigger" data-target="view-sm-bar-list"><em>05</em><span>SM Bar List</span><small>[ 장소 ]</small></button>
+                <button type="button" class="view-trigger" data-target="view-sm-board"><em>06</em><span>Information</span><small>[ 정보 ]</small></button>
             </section>
 
             <section class="index-menu-section">
                 <p class="index-menu-section-title">Personal</p>
-                <button type="button" class="view-trigger" data-target="view-people"><em>06</em><span>Members</span><small>[ 회원 ]</small></button>
-                <button type="button" class="view-trigger hidden" data-target="view-my-page" id="my-page-nav-link"><em>07</em><span>My Profile</span><small>[ 설정 ]</small></button>
+                <button type="button" class="view-trigger" data-target="view-people"><em>07</em><span>Members</span><small>[ 회원 ]</small></button>
+                <button type="button" class="view-trigger hidden" data-target="view-my-page" id="my-page-nav-link"><em>08</em><span>My Profile</span><small>[ 설정 ]</small></button>
             </section>
 
             <section class="index-menu-section hidden" id="system-menu-section">
                 <p class="index-menu-section-title">Admin Only</p>
-                <button type="button" class="view-trigger hidden" data-target="view-system-members" id="system-nav-link"><em>08</em><span>Management</span><small>[ 계정관리 ]</small></button>
-                <button type="button" class="view-trigger hidden" data-target="view-system-add" id="system-add-nav-link"><em>09</em><span>Create Account</span><small>[ 계정 생성 ]</small></button>
-                <button type="button" class="view-trigger hidden" data-target="view-membership-archive" id="membership-nav-link"><em>10</em><span>Applications</span><small>[ 가입 신청 ]</small></button>
-                <button type="button" class="view-trigger hidden" data-target="view-main-image-admin" id="main-image-nav-link"><em>11</em><span>Main Image</span><small>[ 메인 그림 ]</small></button>
+                <button type="button" class="view-trigger hidden" data-target="view-system-members" id="system-nav-link"><em>09</em><span>Management</span><small>[ 계정관리 ]</small></button>
+                <button type="button" class="view-trigger hidden" data-target="view-system-add" id="system-add-nav-link"><em>10</em><span>Create Account</span><small>[ 계정 생성 ]</small></button>
+                <button type="button" class="view-trigger hidden" data-target="view-membership-archive" id="membership-nav-link"><em>11</em><span>Applications</span><small>[ 가입 신청 ]</small></button>
+                <button type="button" class="view-trigger hidden" data-target="view-main-image-admin" id="main-image-nav-link"><em>12</em><span>Main Image</span><small>[ 메인 그림 ]</small></button>
             </section>
         </nav>
         <button type="button" id="mobile-login-btn" class="mt-auto border border-[var(--text-dark)] py-4 font-mono text-xs tracking-[0.25em] uppercase hover:bg-[var(--text-dark)] hover:text-white transition-colors">Login</button>
@@ -3372,6 +3404,10 @@
                             </div>
                             <p id="my-questionnaire-empty" class="hidden"></p>
                             <div id="my-questionnaire-list" class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8"></div>
+                            <div class="mt-10 pt-6 border-t border-[var(--border-light)] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                                <p id="my-questionnaire-save-status" class="text-xs opacity-45 font-serif-ko">수정 내용은 관리자 연동 후 공개 질문지에 반영됩니다.</p>
+                                <button type="button" id="my-questionnaire-save" class="border border-[var(--text-dark)] px-6 py-3 text-xs tracking-[0.22em] uppercase hover:bg-[var(--text-dark)] hover:text-white transition-colors">Save Draft</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -3872,6 +3908,29 @@
             <div id="intro-list" class="border-t-2 border-[var(--text-dark)]"></div>
         </section>
 
+        <section id="view-questionnaires" class="w-full view-hidden fade-in">
+            <div class="page-header">
+                <h2 class="page-title">Questionnaires</h2>
+                <p class="page-subtitle">Member Application Archive</p>
+            </div>
+            <div class="content-container">
+                <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 border-b-2 border-[var(--text-dark)] pb-8 mb-8">
+                    <div>
+                        <p class="text-xs tracking-[0.28em] uppercase opacity-45 font-mono">Published Profiles</p>
+                        <p class="mt-3 text-sm opacity-60 font-serif-ko">관리자가 승인한 공개 질문지만 표시됩니다. 본인이 수정한 질문지는 관리자 연동 후 반영됩니다.</p>
+                    </div>
+                    <span id="questionnaire-count" class="text-xs tracking-[0.24em] uppercase opacity-45 font-mono">0 Records</span>
+                </div>
+                <div class="mb-8 border-b border-[var(--border-light)] flex items-center gap-3">
+                    <i class="ph ph-magnifying-glass text-xl opacity-45" aria-hidden="true"></i>
+                    <label for="questionnaire-search" class="sr-only">질문지 검색</label>
+                    <input type="search" id="questionnaire-search" class="w-full bg-transparent py-4 outline-none placeholder:opacity-40" placeholder="닉네임, 지역, 성향 또는 답변 검색">
+                </div>
+                <p id="questionnaire-status" class="py-16 text-center text-sm opacity-50 font-serif-ko">질문지를 불러오는 중입니다.</p>
+                <div id="questionnaire-list" class="divide-y divide-[var(--border-light)]"></div>
+            </div>
+        </section>
+
         <section id="view-membership-archive" class="w-full view-hidden fade-in">
             <div class="w-full py-16 md:py-20 mb-10 flex flex-col justify-center items-center text-center border-b border-[var(--border-light)]">
                 <span class="text-xs tracking-[0.3em] uppercase opacity-50 font-bold mb-5">Members</span>
@@ -4073,6 +4132,17 @@
 
                     <div id="calendar-grid" class="calendar-days-grid font-serif-en text-xl"></div>
                 </div>
+            </div>
+
+            <div class="today-schedule-panel">
+                <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 pb-4 border-b border-[var(--text-dark)]">
+                    <div>
+                        <p class="text-[0.65rem] tracking-[0.28em] uppercase opacity-45 font-mono">Today</p>
+                        <h2 id="today-schedule-title" class="mt-2 font-document italic text-2xl sm:text-3xl">Today's Schedule</h2>
+                    </div>
+                    <span id="today-schedule-count" class="text-xs tracking-[0.18em] uppercase opacity-45 font-mono"></span>
+                </div>
+                <div id="today-schedule-list" class="font-serif-ko"></div>
             </div>
 
             <div class="hidden max-w-6xl mx-auto px-4 mb-20">
@@ -4511,6 +4581,7 @@
             if (targetId === 'view-introduce') loadIntroductions();
             if (targetId === 'view-anonymous') loadAnonymousTalk();
             if (targetId === 'view-membership-archive') loadMembershipApplications();
+            if (targetId === 'view-questionnaires') loadQuestionnaires();
             if (targetId === 'view-read') loadLatestDashboard();
             if (targetId === 'view-system-members') loadMembers();
             if (targetId === 'view-my-page') loadMyProfile();
@@ -4561,6 +4632,12 @@
             }
             if (targetId === 'view-membership-archive' && !siteUser) {
                 showToast('가입 신청 기록은 회원 로그인 후 볼 수 있습니다.', false);
+                localStorage.setItem(pendingAuthViewKey, targetId);
+                openLoginModal();
+                return null;
+            }
+            if (targetId === 'view-questionnaires' && !siteUser) {
+                showToast('회원 질문지는 로그인 후 볼 수 있습니다.', false);
                 localStorage.setItem(pendingAuthViewKey, targetId);
                 openLoginModal();
                 return null;
@@ -4797,7 +4874,8 @@
             if (!galleryModal?.classList.contains('hidden')) {
                 closeGalleryModal({ history: false });
             }
-            const targetId = event.state?.view || 'view-read';
+            const hashView = location.hash ? `view-${location.hash.slice(1)}` : '';
+            const targetId = event.state?.view || (views.some(view => view.id === hashView) ? hashView : 'view-read');
             if (!views.some(view => view.id === targetId)) return;
             isRestoringHistory = true;
             navigateToView(targetId, { history: false, scroll: false });
@@ -4904,6 +4982,9 @@
         const monthlyScheduleTitle = document.getElementById('monthly-schedule-title');
         const monthlyScheduleCount = document.getElementById('monthly-schedule-count');
         const monthlyScheduleList = document.getElementById('monthly-schedule-list');
+        const todayScheduleTitle = document.getElementById('today-schedule-title');
+        const todayScheduleCount = document.getElementById('today-schedule-count');
+        const todayScheduleList = document.getElementById('today-schedule-list');
         const scheduleModal = document.getElementById('schedule-modal');
         const scheduleModalClose = document.getElementById('schedule-modal-close');
         const scheduleModalDate = document.getElementById('schedule-modal-date');
@@ -4944,6 +5025,10 @@
         const membershipRefreshBtn = document.getElementById('membership-refresh-btn');
         const membershipSearch = document.getElementById('membership-search');
         const membershipSearchCount = document.getElementById('membership-search-count');
+        const questionnaireList = document.getElementById('questionnaire-list');
+        const questionnaireStatus = document.getElementById('questionnaire-status');
+        const questionnaireSearch = document.getElementById('questionnaire-search');
+        const questionnaireCount = document.getElementById('questionnaire-count');
         const membershipDetailModal = document.getElementById('membership-detail-modal');
         const membershipDetailClose = document.getElementById('membership-detail-close');
         const membershipDetailTitle = document.getElementById('membership-detail-title');
@@ -4973,6 +5058,8 @@
         const myQuestionnaireList = document.getElementById('my-questionnaire-list');
         const myQuestionnaireEmpty = document.getElementById('my-questionnaire-empty');
         const myQuestionnaireDate = document.getElementById('my-questionnaire-date');
+        const myQuestionnaireSave = document.getElementById('my-questionnaire-save');
+        const myQuestionnaireSaveStatus = document.getElementById('my-questionnaire-save-status');
         const securityPasswordModal = document.getElementById('security-password-modal');
         const securityPasswordForm = document.getElementById('security-password-form');
         const securityCurrentPassword = document.getElementById('security-current-password');
@@ -5083,6 +5170,8 @@
         let introductionCanManage = false;
         let membershipApplicationItems = [];
         let membershipApplicationCanManage = false;
+        let questionnaireItems = [];
+        let questionnaireCanManage = false;
         let currentMyProfile = null;
         let smCurrentPost = null;
         let smEditingPostId = null;
@@ -5090,6 +5179,7 @@
         let smFileUploads = [];
 
         function formatIntroductionAnswer(field) {
+            if (membershipPhotoUrls(field).length) return '';
             const options = new Map((Array.isArray(field.options) ? field.options : []).map(option => [String(option.id), option.text]));
 
             const flatten = (value) => {
@@ -5105,7 +5195,7 @@
                 return [options.get(text) || text];
             };
 
-            return flatten(field.value).filter(Boolean).join(', ');
+            return [...new Set(flatten(field.value).map(value => String(value).trim()).filter(Boolean))].join(', ');
         }
 
         function normalizeMembershipDetailFields(fields) {
@@ -5121,13 +5211,15 @@
             const used = new Set();
 
             const take = (key, label, patterns) => {
-                const found = source.find(field => !used.has(field.index) && patterns.some(pattern => pattern.test(field.label)));
-                if (found) used.add(found.index);
+                const found = source.filter(field => !used.has(field.index) && patterns.some(pattern => pattern.test(field.label)));
+                found.forEach(field => used.add(field.index));
+                const values = [...new Set(found.map(field => field.displayValue).filter(Boolean))];
+                const photos = found.flatMap(field => field.photoUrls || []);
                 return {
                     key,
                     label,
-                    value: found?.displayValue || '미입력',
-                    photoUrls: found?.photoUrls || [],
+                    value: values.length ? values.join('\n\n') : '연결된 답변 없음',
+                    photoUrls: [...new Set(photos)],
                 };
             };
 
@@ -5136,17 +5228,18 @@
                 take('birth', '지원자 년생', [/년생|출생|birth|나이/i]),
                 take('region', '지역', [/지역|region/i]),
                 take('mainType', '본인의 주 성향은?', [/주\s*성향|본인.*성향|main.*type/i]),
-                take('subType', '보조 성향', [/보조.*성향|복수.*응답|sub.*type/i]),
-                take('relationship', '연애 유형 / 관계 성향', [/연애.*유형|연애.*성향|relationship|dating/i]),
+                take('subType', '보조 성향?', [/보조.*성향|복수.*응답|sub.*type/i]),
             ];
 
             const storySections = [
                 take('reason', '선택한 성향이 주성향이라고 생각하는 이유는 무엇인가요?', [/주성향.*이유|선택한.*성향|생각.*이유/i]),
                 take('trigger', '성향을 깨닫게 된 계기는 어떻게 되시나요?', [/깨닫|계기|어떻게.*되/i]),
-                take('preference', '진락하신 성향에 대해 설명해주세요.', [/진락|설명|좋아|플레이|취향/i]),
-                take('care', '주로 본인이 사용하는 케어 방식은 어떤 방법인가요?', [/케어|aftercare|애프터/i]),
+                take('preference', '선택하신 성향에 대해 설명해주세요.', [/선택.*성향.*설명|성향.*설명|진락|좋아|플레이|취향/i]),
+                take('care', '주로 본인이 사용하는 케어 방식은 어떤 방법인가요?', [/케어\s*방식|사용.*케어|aftercare|애프터/i]),
                 take('switch', '어떤 사람이 변바라고 생각하십니까?', [/변바|스위치|switch/i]),
                 take('bdsm', 'BDSM이란 무엇이라고 생각하나요?', [/BDSM|비디에스엠|무엇/i]),
+                take('playSex', '플과 섹스의 차이점은 무엇이라고 생각하나요?', [/플.*섹스|섹스.*차이|sex/i]),
+                take('caregiver', '케어기버란 어떤 성향인가요?', [/케어기버|care\s*giver/i]),
             ];
 
             const attachments = source
@@ -5166,6 +5259,11 @@
                 }));
 
             return { summary, storySections, attachments, extra };
+        }
+
+        function questionnaireTemplateFields(fields) {
+            const normalized = normalizeMembershipDetailFields(fields);
+            return [...normalized.summary, ...normalized.storySections];
         }
 
         function renderIntroductions(items, canManage = false) {
@@ -5629,8 +5727,9 @@
                 return;
             }
             membershipStatus.classList.add('hidden');
-            membershipList.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 border-t-2 border-[var(--text-dark)] pt-6';
-            items.forEach(item => {
+            membershipList.className = 'border-t-2 border-[var(--text-dark)] divide-y divide-[var(--border-light)]';
+            const sortedItems = [...items].sort((a, b) => String(b.submittedAt || '').localeCompare(String(a.submittedAt || '')));
+            sortedItems.forEach((item, index) => {
                 const fields = (Array.isArray(item.fields) ? item.fields : [])
                     .map(field => ({ ...field, displayValue: formatIntroductionAnswer(field), photoUrls: membershipPhotoUrls(field) }))
                     .filter(field => field.displayValue || field.photoUrls.length);
@@ -5638,78 +5737,51 @@
                 const region = fields.find(field => /^(지역|region)$/i.test((field.label || '').trim()));
                 const birthYear = fields.find(field => /년생|출생|birth/i.test(field.label || ''));
                 const tendency = fields.find(field => /주\s*성향/i.test(field.label || ''));
-                const photos = fields.flatMap(field => field.photoUrls);
                 const name = identity?.displayValue || '이름 미입력';
 
-                const card = document.createElement('article');
-                card.className = 'min-w-0 border border-[var(--border-light)] bg-white/30 overflow-hidden flex flex-col';
-                const photoButton = document.createElement('button');
-                photoButton.type = 'button';
-                photoButton.className = 'relative w-full aspect-square overflow-hidden bg-[var(--accent-red)]/10 flex items-center justify-center';
-                photoButton.setAttribute('aria-label', `${name} 사진 확대`);
-                if (photos.length) {
-                    const image = document.createElement('img');
-                    image.src = photos[0];
-                    image.alt = `${name} 가입 신청 사진`;
-                    image.loading = 'lazy';
-                    image.className = 'w-full h-full object-cover hover:scale-105 transition-transform duration-500';
-                    const zoom = document.createElement('span');
-                    zoom.className = 'absolute right-2 bottom-2 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center';
-                    zoom.innerHTML = '<i class="ph ph-magnifying-glass-plus"></i>';
-                    photoButton.append(image, zoom);
-                    image.addEventListener('error', () => {
-                        photoButton.replaceChildren();
-                        const fallback = document.createElement('span');
-                        fallback.className = 'text-4xl font-serif-en italic text-[var(--accent-red)] opacity-70';
-                        fallback.textContent = name.charAt(0).toUpperCase() || '?';
-                        photoButton.appendChild(fallback);
-                        photoButton.disabled = true;
-                    }, { once: true });
-                    photoButton.addEventListener('click', () => openMembershipPhoto(photos[0], name));
-                } else {
-                    const fallback = document.createElement('span');
-                    fallback.className = 'text-4xl font-serif-en italic text-[var(--accent-red)] opacity-70';
-                    fallback.textContent = name.charAt(0).toUpperCase() || '?';
-                    photoButton.appendChild(fallback);
-                    photoButton.disabled = true;
-                }
-
-                const body = document.createElement('div');
-                body.className = 'p-4 flex flex-col flex-1';
-                const titleLine = document.createElement('div');
-                titleLine.className = 'flex items-start justify-between gap-2';
-                const title = document.createElement('h3');
-                title.className = 'font-serif-ko text-lg font-bold truncate';
+                const ticket = document.createElement('button');
+                ticket.type = 'button';
+                ticket.className = 'group w-full grid grid-cols-[4rem_minmax(0,1fr)_auto] md:grid-cols-[5.5rem_minmax(0,1.3fr)_minmax(0,1.4fr)_auto_auto_auto] gap-4 md:gap-8 items-center py-5 text-left hover:bg-white/40 transition-colors';
+                ticket.setAttribute('aria-haspopup', 'dialog');
+                const sequence = document.createElement('span');
+                sequence.className = 'text-xs tracking-[0.22em] opacity-45 font-mono';
+                sequence.textContent = `T-${String(sortedItems.length - index).padStart(3, '0')}`;
+                const titleLine = document.createElement('span');
+                titleLine.className = 'min-w-0';
+                const title = document.createElement('strong');
+                title.className = 'block font-serif-ko text-base sm:text-lg font-bold truncate group-hover:text-[var(--accent-red)]';
                 title.textContent = name;
                 if (item.isHidden) {
                     const badge = document.createElement('span');
-                    badge.className = 'shrink-0 text-[0.6rem] tracking-widest uppercase text-[var(--accent-red)]';
+                    badge.className = 'ml-2 text-[0.6rem] tracking-widest uppercase text-[var(--accent-red)]';
                     badge.textContent = '숨김';
                     titleLine.append(title, badge);
                 } else {
                     titleLine.appendChild(title);
                 }
-                if (item.status && item.status !== 'pending') {
-                    const status = document.createElement('span');
-                    status.className = 'mt-2 inline-block text-[0.58rem] tracking-widest uppercase opacity-50';
-                    status.textContent = item.status === 'approved' ? 'Approved' : 'Rejected';
-                    title.appendChild(status);
-                }
-                const meta = document.createElement('p');
-                meta.className = 'mt-3 text-xs leading-5 opacity-60 min-h-[2.5rem]';
                 const birthLabel = birthYear?.displayValue
                     ? (/^\d{4}$/.test(birthYear.displayValue) ? `${birthYear.displayValue}년생` : birthYear.displayValue)
                     : '';
+                const mobileMeta = document.createElement('small');
+                mobileMeta.className = 'mt-1 block md:hidden text-xs opacity-45 truncate';
+                mobileMeta.textContent = [region?.displayValue, birthLabel, tendency?.displayValue].filter(Boolean).join(' · ') || '기본 정보 미입력';
+                titleLine.appendChild(mobileMeta);
+                const meta = document.createElement('span');
+                meta.className = 'hidden md:block min-w-0 text-sm opacity-55 truncate';
                 meta.textContent = [region?.displayValue, birthLabel, tendency?.displayValue].filter(Boolean).join(' · ') || '기본 정보 미입력';
-                const detailsButton = document.createElement('button');
-                detailsButton.type = 'button';
-                detailsButton.className = 'mt-4 pt-3 border-t border-[var(--border-light)] text-[0.65rem] tracking-widest uppercase flex items-center justify-between hover:text-[var(--accent-red)]';
-                detailsButton.innerHTML = '<span>전체 답변</span><i class="ph ph-arrow-up-right"></i>';
-                detailsButton.setAttribute('aria-haspopup', 'dialog');
-                detailsButton.addEventListener('click', () => openMembershipDetail(item, fields, canManage, name, meta.textContent));
-                body.append(titleLine, meta, detailsButton);
-                card.append(photoButton, body);
-                membershipList.appendChild(card);
+                const status = document.createElement('span');
+                status.className = `hidden md:inline-flex justify-center px-3 py-1.5 text-[0.62rem] tracking-widest uppercase ${item.status === 'approved' ? 'bg-[var(--accent-red)] text-white' : item.status === 'rejected' ? 'border border-[var(--accent-red)] text-[var(--accent-red)]' : 'bg-black/5 opacity-70'}`;
+                status.textContent = item.status || 'pending';
+                const submitted = document.createElement('time');
+                submitted.className = 'text-[0.65rem] tracking-widest opacity-45 uppercase whitespace-nowrap';
+                const submittedAt = new Date(item.submittedAt);
+                submitted.dateTime = item.submittedAt || '';
+                submitted.textContent = Number.isNaN(submittedAt.getTime()) ? '' : submittedAt.toLocaleDateString('ko-KR');
+                const arrow = document.createElement('i');
+                arrow.className = 'hidden md:block ph ph-arrow-up-right opacity-30 group-hover:opacity-100 group-hover:text-[var(--accent-red)]';
+                ticket.append(sequence, titleLine, meta, status, submitted, arrow);
+                ticket.addEventListener('click', () => openMembershipDetail(item, fields, canManage, name, meta.textContent || mobileMeta.textContent));
+                membershipList.appendChild(ticket);
             });
         }
 
@@ -6460,6 +6532,113 @@
             }
         }
 
+        function questionnaireSearchText(item) {
+            return [
+                item.displayName, item.username, item.region, item.personality, item.relationshipStyle,
+                ...(Array.isArray(item.fields) ? item.fields.flatMap(field => [field.label, formatIntroductionAnswer(field)]) : [])
+            ].join(' ').toLocaleLowerCase('ko-KR');
+        }
+
+        function renderQuestionnaires(items) {
+            if (!questionnaireList || !questionnaireStatus || !questionnaireCount) return;
+            questionnaireList.replaceChildren();
+            questionnaireCount.textContent = `${items.length} Records`;
+            if (!items.length) {
+                questionnaireStatus.textContent = questionnaireSearch?.value.trim() ? '검색 결과가 없습니다.' : '공개된 질문지가 없습니다.';
+                questionnaireStatus.classList.remove('hidden');
+                return;
+            }
+            questionnaireStatus.classList.add('hidden');
+
+            items.forEach(item => {
+                const article = document.createElement('article');
+                article.className = 'py-8';
+                const head = document.createElement('div');
+                head.className = 'flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6';
+                const titleWrap = document.createElement('div');
+                const title = document.createElement('h3');
+                title.className = 'font-document italic text-3xl sm:text-4xl';
+                title.textContent = item.displayName || item.username || 'Member';
+                const meta = document.createElement('p');
+                meta.className = 'mt-2 text-xs tracking-[0.18em] uppercase opacity-45 font-mono';
+                meta.textContent = [item.region || 'Region N/A', item.birthYear ? `${item.birthYear}` : 'Birth N/A', item.personality || 'Type N/A'].join('  /  ');
+                titleWrap.append(title, meta);
+                const actions = document.createElement('div');
+                actions.className = 'flex items-center gap-3';
+                if (item.hasDraftChanges && questionnaireCanManage) {
+                    const sync = document.createElement('button');
+                    sync.type = 'button';
+                    sync.className = 'bg-[var(--accent-red)] text-white px-5 py-3 text-xs tracking-[0.18em] uppercase';
+                    sync.textContent = '연동하기';
+                    sync.addEventListener('click', () => syncQuestionnaire(item.id));
+                    actions.appendChild(sync);
+                }
+                head.append(titleWrap, actions);
+
+                const body = document.createElement('div');
+                body.className = 'grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-7';
+                questionnaireTemplateFields(item.fields || []).forEach(field => {
+                    const group = document.createElement('dl');
+                    group.className = field.value.length > 260 ? 'md:col-span-2 border-t border-[var(--border-light)] pt-5' : 'border-t border-[var(--border-light)] pt-5';
+                    const label = document.createElement('dt');
+                    label.className = 'text-xs opacity-45 mb-3 leading-relaxed font-sans';
+                    label.textContent = field.label;
+                    const value = document.createElement('dd');
+                    value.className = 'font-serif-ko text-sm sm:text-base leading-[1.9] whitespace-pre-wrap break-words';
+                    value.textContent = field.value || '연결된 답변 없음';
+                    group.append(label, value);
+                    body.appendChild(group);
+                });
+
+                article.append(head, body);
+                questionnaireList.appendChild(article);
+            });
+        }
+
+        function filterQuestionnaires() {
+            const query = questionnaireSearch?.value.trim().toLocaleLowerCase('ko-KR') || '';
+            const items = query ? questionnaireItems.filter(item => questionnaireSearchText(item).includes(query)) : questionnaireItems;
+            renderQuestionnaires(items);
+        }
+
+        async function loadQuestionnaires() {
+            if (!questionnaireList || !questionnaireStatus) return;
+            questionnaireStatus.textContent = '질문지를 불러오는 중입니다.';
+            questionnaireStatus.classList.remove('hidden');
+            try {
+                const response = await fetch('/api/questionnaires.php', { headers: { Accept: 'application/json' }, cache: 'no-store', credentials: 'same-origin' });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '질문지를 불러오지 못했습니다.');
+                questionnaireItems = Array.isArray(payload.items) ? payload.items : [];
+                questionnaireCanManage = Boolean(payload.canManage);
+                filterQuestionnaires();
+            } catch (error) {
+                questionnaireList.replaceChildren();
+                questionnaireStatus.textContent = error.message;
+                questionnaireStatus.classList.remove('hidden');
+            }
+        }
+
+        async function syncQuestionnaire(profileId) {
+            if (!window.confirm('이 회원의 초안을 공개 질문지에 연동하시겠습니까?')) return;
+            try {
+                const response = await fetch('/api/questionnaires.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-Token': csrfToken || '' },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ action: 'sync', profileId })
+                });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '질문지를 연동하지 못했습니다.');
+                await loadQuestionnaires();
+                showToast('공개 질문지를 연동했습니다.', true);
+            } catch (error) {
+                showToast(error.message, false);
+            }
+        }
+
+        questionnaireSearch?.addEventListener('input', filterQuestionnaires);
+
         function openTimelinePhoto(url, alt = 'timeline image') {
             if (!timelinePhotoModal || !timelinePhotoModalImage || !url) return;
             timelinePhotoModalImage.src = url;
@@ -6586,17 +6765,11 @@
             if (!myQuestionnaireList || !myQuestionnaireEmpty) return;
             myQuestionnaireList.replaceChildren();
             const fields = Array.isArray(questionnaire?.fields) ? questionnaire.fields : [];
-            const displayFields = fields
-                .map(field => ({
-                    label: String(field.label || '').trim() || 'Answer',
-                    value: formatIntroductionAnswer(field),
-                    photoUrls: membershipPhotoUrls(field),
-                }))
-                .filter(field => field.value || field.photoUrls.length);
+            const displayFields = fields.length ? questionnaireTemplateFields(fields) : [];
 
             myQuestionnaireEmpty.classList.add('hidden');
             if (myQuestionnaireDate) {
-                const date = questionnaire?.createdAt ? new Date(questionnaire.createdAt.replace(' ', 'T')) : null;
+                const date = questionnaire?.draftUpdatedAt || questionnaire?.createdAt ? new Date((questionnaire.draftUpdatedAt || questionnaire.createdAt).replace(' ', 'T')) : null;
                 myQuestionnaireDate.textContent = date && !Number.isNaN(date.getTime())
                     ? date.toLocaleDateString('ko-KR')
                     : '';
@@ -6607,12 +6780,20 @@
                 { label: '지원자 년생', value: '연결된 답변 없음', photoUrls: [] },
                 { label: '지역', value: '연결된 답변 없음', photoUrls: [] },
                 { label: '본인의 주 성향은?', value: '연결된 답변 없음', photoUrls: [] },
-                { label: 'Questionnaire Status', value: '연결된 가입 질문지가 없습니다.', photoUrls: [] },
+                { label: '보조 성향?', value: '연결된 답변 없음', photoUrls: [] },
+                { label: '선택한 성향이 주성향이라고 생각하는 이유는 무엇인가요?', value: '연결된 답변 없음', photoUrls: [] },
+                { label: '성향을 깨닫게 된 계기는 어떻게 되시나요?', value: '연결된 답변 없음', photoUrls: [] },
+                { label: '선택하신 성향에 대해 설명해주세요.', value: '연결된 답변 없음', photoUrls: [] },
+                { label: '주로 본인이 사용하는 케어 방식은 어떤 방법인가요?', value: '연결된 답변 없음', photoUrls: [] },
+                { label: '어떤 사람이 변바라고 생각하십니까?', value: '연결된 답변 없음', photoUrls: [] },
+                { label: 'BDSM이란 무엇이라고 생각하나요?', value: '연결된 답변 없음', photoUrls: [] },
+                { label: '플과 섹스의 차이점은 무엇이라고 생각하나요?', value: '연결된 답변 없음', photoUrls: [] },
+                { label: '케어기버란 어떤 성향인가요?', value: '연결된 답변 없음', photoUrls: [] },
             ];
 
-            fieldsToRender.forEach(field => {
+            fieldsToRender.forEach((field, index) => {
                 const group = document.createElement('dl');
-                group.className = field.value.length > 260 || field.photoUrls.length || field.label === 'Questionnaire Status'
+                group.className = field.value.length > 260 || field.photoUrls?.length
                     ? 'md:col-span-2 border-t border-[var(--border-light)] pt-5'
                     : 'border-t border-[var(--border-light)] pt-5';
                 const label = document.createElement('dt');
@@ -6637,14 +6818,49 @@
                         value.appendChild(button);
                     });
                 } else {
-                    value.className = `font-serif-ko text-sm sm:text-base leading-[1.9] whitespace-pre-wrap break-words${displayFields.length > 0 ? '' : ' opacity-45'}`;
-                    value.textContent = field.value;
+                    value.className = 'font-serif-ko text-sm sm:text-base leading-[1.9]';
+                    const input = document.createElement('textarea');
+                    input.className = `w-full min-h-[5rem] bg-transparent border-0 border-b border-[var(--border-light)] resize-y outline-none py-2 leading-[1.8]${displayFields.length > 0 ? '' : ' opacity-45'}`;
+                    input.value = field.value;
+                    input.dataset.questionnaireIndex = String(index);
+                    input.dataset.questionnaireLabel = field.label;
+                    input.disabled = displayFields.length === 0;
+                    value.appendChild(input);
                 }
 
                 group.append(label, value);
                 myQuestionnaireList.appendChild(group);
             });
         }
+
+        myQuestionnaireSave?.addEventListener('click', async () => {
+            if (!currentMyProfile?.questionnaire) return;
+            const fields = [...myQuestionnaireList.querySelectorAll('[data-questionnaire-index]')].map(input => ({
+                label: input.dataset.questionnaireLabel || 'Answer',
+                value: input.value.trim(),
+            }));
+            myQuestionnaireSave.disabled = true;
+            if (myQuestionnaireSaveStatus) myQuestionnaireSaveStatus.textContent = '질문지 초안을 저장하는 중입니다.';
+            try {
+                const response = await fetch('/api/profile.php', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-Token': csrfToken || '' },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ action: 'questionnaire', fields })
+                });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '질문지 초안을 저장하지 못했습니다.');
+                fillMyProfile(payload.profile);
+                activateMyPageTab('questionnaire');
+                if (myQuestionnaireSaveStatus) myQuestionnaireSaveStatus.textContent = '초안을 저장했습니다. 관리자 연동 전까지 공개 질문지는 기존 내용으로 유지됩니다.';
+                showToast('질문지 초안을 저장했습니다.', true);
+            } catch (error) {
+                if (myQuestionnaireSaveStatus) myQuestionnaireSaveStatus.textContent = error.message;
+                showToast(error.message, false);
+            } finally {
+                myQuestionnaireSave.disabled = false;
+            }
+        });
 
         function fillMyProfile(profile, cacheBust = false) {
             currentMyProfile = profile;
@@ -8371,11 +8587,12 @@
                 const dateKey = formatDateKey(dayDate);
                 const hasSchedule = Boolean(localSchedules[dateKey]?.length);
                 const isSelected = dateKey === selectedDateKey;
+                const isToday = dateKey === formatDateKey(new Date());
                 const isHoliday = dayDate.getDay() === 0 || dayDate.getDay() === 6 || koreanHolidayKeys.has(dateKey);
                 const dayButton = document.createElement('button');
 
                 dayButton.type = 'button';
-                dayButton.className = `calendar-cell${isSelected ? ' selected' : ''}${isHoliday ? ' holiday-cell' : ''}`;
+                dayButton.className = `calendar-cell${isSelected ? ' selected' : ''}${isToday ? ' today' : ''}${isHoliday ? ' holiday-cell' : ''}`;
 
                 const dayNumber = document.createElement('span');
                 dayNumber.className = `date-number${isHoliday ? ' holiday' : ''}`;
@@ -8414,6 +8631,45 @@
             }
 
             renderMonthlySchedules();
+            renderTodaySchedules();
+        }
+
+        function renderTodaySchedules() {
+            if (!todayScheduleTitle || !todayScheduleCount || !todayScheduleList) return;
+            const todayKey = formatDateKey(new Date());
+            const [year, month, day] = todayKey.split('-');
+            const items = localSchedules[todayKey] || [];
+            todayScheduleTitle.textContent = `${Number(month)}월 ${Number(day)}일 일정`;
+            todayScheduleCount.textContent = items.length ? `${items.length} Events` : 'No Events';
+            todayScheduleList.replaceChildren();
+
+            if (!items.length) {
+                const empty = document.createElement('p');
+                empty.className = 'py-7 text-sm opacity-50 font-serif-ko text-center';
+                empty.textContent = '오늘 일정이 없습니다.';
+                todayScheduleList.appendChild(empty);
+                return;
+            }
+
+            items.forEach((item, index) => {
+                const row = document.createElement('button');
+                row.type = 'button';
+                row.className = 'today-schedule-row w-full text-left hover:text-[var(--accent-red)] transition-colors';
+                const number = document.createElement('span');
+                number.className = 'text-xs tracking-[0.18em] opacity-45 font-mono';
+                number.textContent = String(index + 1).padStart(2, '0');
+                const title = document.createElement('strong');
+                title.className = 'text-sm sm:text-base font-serif-ko font-normal leading-relaxed';
+                title.textContent = item;
+                row.append(number, title);
+                row.addEventListener('click', () => {
+                    selectedDateKey = todayKey;
+                    renderCalendar();
+                    renderSchedules();
+                    openScheduleModal();
+                });
+                todayScheduleList.appendChild(row);
+            });
         }
 
         function renderMonthlySchedules() {

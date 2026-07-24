@@ -13,6 +13,31 @@ function profile_json(array $body, int $status = 200): never
     exit;
 }
 
+function profile_field_answer(array $field): string
+{
+    $value = $field['value'] ?? '';
+    if (is_array($value)) {
+        return trim(implode(', ', array_map(static fn ($item): string => is_scalar($item) ? (string) $item : json_encode($item, JSON_UNESCAPED_UNICODE), $value)));
+    }
+    return trim(is_scalar($value) ? (string) $value : '');
+}
+
+function profile_intro_from_fields(array $fields): string
+{
+    $lines = [];
+    foreach ($fields as $field) {
+        if (!is_array($field)) {
+            continue;
+        }
+        $label = trim((string) ($field['label'] ?? ''));
+        $answer = profile_field_answer($field);
+        if ($label !== '' && $answer !== '') {
+            $lines[] = $label . "\n" . $answer;
+        }
+    }
+    return mb_substr(implode("\n\n", $lines), 0, 20000);
+}
+
 function profile_row(PDO $pdo, int $userId): array
 {
     $stmt = $pdo->prepare(
@@ -44,7 +69,8 @@ function profile_row(PDO $pdo, int $userId): array
     ];
 
     $questionnaire = $pdo->prepare(
-        'SELECT profile_data_json, intro_text, created_at, updated_at
+        'SELECT profile_data_json, intro_text, draft_profile_data_json, draft_intro_text,
+                draft_updated_at, published_at, created_at, updated_at
          FROM profiles
          WHERE user_id = :user_id
          ORDER BY id DESC
@@ -54,12 +80,24 @@ function profile_row(PDO $pdo, int $userId): array
     $questionnaireRow = $questionnaire->fetch();
     $profile['questionnaire'] = null;
     if ($questionnaireRow) {
-        $fields = json_decode((string) $questionnaireRow['profile_data_json'], true);
+        $publicFields = json_decode((string) $questionnaireRow['profile_data_json'], true);
+        $draftJson = (string) ($questionnaireRow['draft_profile_data_json'] ?? '');
+        $draftFields = $draftJson !== '' ? json_decode($draftJson, true) : $publicFields;
+        $draftIntro = (string) ($questionnaireRow['draft_intro_text'] ?? '');
+        $publicIntro = (string) $questionnaireRow['intro_text'];
+        $fields = is_array($draftFields) ? $draftFields : (is_array($publicFields) ? $publicFields : []);
+        $publicFields = is_array($publicFields) ? $publicFields : [];
         $profile['questionnaire'] = [
-            'fields' => is_array($fields) ? $fields : [],
-            'introText' => (string) $questionnaireRow['intro_text'],
+            'fields' => $fields,
+            'publicFields' => $publicFields,
+            'introText' => $draftIntro !== '' ? $draftIntro : $publicIntro,
+            'publicIntroText' => $publicIntro,
             'createdAt' => $questionnaireRow['created_at'],
             'updatedAt' => $questionnaireRow['updated_at'],
+            'draftUpdatedAt' => $questionnaireRow['draft_updated_at'],
+            'publishedAt' => $questionnaireRow['published_at'],
+            'hasDraftChanges' => json_encode($fields, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+                !== json_encode($publicFields, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
         ];
     }
 
@@ -89,6 +127,69 @@ if ($receivedCsrf === '' || !hash_equals(site_csrf_token(), $receivedCsrf)) {
 
 $body = json_decode((string) file_get_contents('php://input'), true);
 $body = is_array($body) ? $body : [];
+
+if (($body['action'] ?? '') === 'questionnaire') {
+    $fields = $body['fields'] ?? [];
+    if (!is_array($fields)) {
+        profile_json(['error' => 'Questionnaire fields must be an array.'], 422);
+    }
+
+    $cleanFields = [];
+    foreach ($fields as $field) {
+        if (!is_array($field)) {
+            continue;
+        }
+        $cleanField = $field;
+        $cleanField['label'] = mb_substr(trim((string) ($field['label'] ?? '')), 0, 200);
+        if (array_key_exists('value', $field) && !is_array($field['value'])) {
+            $cleanField['value'] = mb_substr((string) $field['value'], 0, 10000);
+        }
+        $cleanFields[] = $cleanField;
+    }
+
+    $draftJson = json_encode($cleanFields, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    $draftIntro = profile_intro_from_fields($cleanFields);
+    $existing = $pdo->prepare('SELECT id FROM profiles WHERE user_id = :user_id ORDER BY id DESC LIMIT 1');
+    $existing->execute([':user_id' => $user['id']]);
+    $profileId = $existing->fetchColumn();
+
+    if ($profileId) {
+        $stmt = $pdo->prepare(
+            'UPDATE profiles
+             SET draft_profile_data_json = :draft_json,
+                 draft_intro_text = :draft_intro,
+                 draft_updated_at = CURRENT_TIMESTAMP
+             WHERE id = :id AND user_id = :user_id'
+        );
+        $stmt->execute([
+            ':draft_json' => $draftJson,
+            ':draft_intro' => $draftIntro,
+            ':id' => (int) $profileId,
+            ':user_id' => $user['id'],
+        ]);
+    } else {
+        $stmt = $pdo->prepare(
+            'INSERT INTO profiles
+                (user_id, author_snapshot, nickname_snapshot, profile_data_json, intro_text,
+                 draft_profile_data_json, draft_intro_text, draft_updated_at, is_visible)
+             VALUES
+                (:user_id, :author_snapshot, :nickname_snapshot, :profile_json, :intro_text,
+                 :draft_json, :draft_intro, CURRENT_TIMESTAMP, 1)'
+        );
+        $stmt->execute([
+            ':user_id' => $user['id'],
+            ':author_snapshot' => (string) $user['username'],
+            ':nickname_snapshot' => (string) $user['display_name'],
+            ':profile_json' => '[]',
+            ':intro_text' => '',
+            ':draft_json' => $draftJson,
+            ':draft_intro' => $draftIntro,
+        ]);
+    }
+
+    profile_json(['ok' => true, 'profile' => profile_row($pdo, $user['id'])]);
+}
+
 $username = trim((string) ($body['username'] ?? ''));
 $displayName = trim((string) ($body['displayName'] ?? ''));
 $birthYearValue = trim((string) ($body['birthYear'] ?? ''));
