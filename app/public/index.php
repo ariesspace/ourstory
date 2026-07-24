@@ -5399,7 +5399,6 @@
         let smFileUploads = [];
 
         function formatIntroductionAnswer(field) {
-            if (membershipPhotoUrls(field).length) return '';
             const options = new Map((Array.isArray(field.options) ? field.options : []).map(option => [String(option.id), option.text]));
 
             const flatten = (value) => {
@@ -5415,7 +5414,11 @@
                 return [options.get(text) || text];
             };
 
-            return [...new Set(flatten(field.value).map(value => String(value).trim()).filter(Boolean))].join(', ');
+            return [...new Set(flatten(field.value)
+                .map(value => String(value).trim())
+                .filter(Boolean)
+                .filter(value => !/^https?:\/\//i.test(value) && !isMembershipImageUrl(value)))]
+                .join(', ');
         }
 
         function normalizeMembershipDetailFields(fields) {
@@ -5473,12 +5476,40 @@
             ];
             const storyByKey = new Map(storySections.map(field => [field.key, field]));
             const looksLikeSwitchAnswer = value => /변바|본인의\s*쾌락만\s*좇|성향자|바닐라틱한\s*변태|사실\s*저\s*스스로도\s*변바|BDSM에\s*대해서\s*깊게\s*고민|쾌락만을\s*좇/.test(value);
-            const looksLikeBdsmAnswer = value => /서로의\s*욕구와\s*한계|합의를\s*바탕으로\s*신뢰|비주류적\s*성적\/연애적\s*행위나\s*관계성|안전과\s*리스크|성적으로\s*쾌감을\s*얻는\s*형태|일반적인\s*섹스와\s*달리\s*지배,\s*복종,\s*수치심|합의된\s*조건\s*하에\s*안전하게\s*플레이/.test(value);
+            const looksLikeBdsmAnswer = value => /서로의\s*욕구와\s*한계|합의를\s*바탕으로\s*신뢰|비주류적\s*성적\/연애적\s*행위나\s*관계성|안전과\s*리스크|성적으로\s*쾌감을\s*얻는\s*형태|일반적인\s*섹스와\s*달리\s*지배,\s*복종,\s*수치심|합의된\s*조건\s*하에\s*안전하게\s*플레이|상대와\s*동의하는\s*플|동의&합의|동의와\s*합의/.test(value);
             const looksLikeCaregiverAnswer = value => /상대의\s*신체적,\s*정서적\s*안녕|돌봄을\s*통해\s*애정을\s*표현|관계서열\s*아래에\s*있는\s*자신의\s*아이|케어리시버를\s*보살피고\s*만족감을\s*얻습니다|본인이\s*아니면\s*아무것도\s*하지\s*못하게\s*하고\s*싶다|의존성\s*베이스|케어\s*기버란\s*정신적이거나\s*물리적인\s*깁|자기\s*효용감|타인이\s*기쁨을\s*얻고/.test(value);
+            const looksLikeTriggerAnswer = value => /성향을\s*가지고\s*있구나|신세계|첫플|SM이라는\s*개념|머리에서\s*맴도/.test(value);
+            const looksLikePlaySexAnswer = value => /플.*섹스|섹스.*플|신체\s*삽입|권력교환|섹스없는\s*플레이/.test(value);
+            const looksLikeCareAnswer = value => /오구오구|안아주기|뽀뽀|정서적으로\s*지지|감정적으로\s*의지|서러움을\s*달래/.test(value);
+            const preferenceField = storyByKey.get('preference');
+            const triggerField = storyByKey.get('trigger');
+            const playSexField = storyByKey.get('playSex');
             const careField = storyByKey.get('care');
             const switchField = storyByKey.get('switch');
             const bdsmField = storyByKey.get('bdsm');
             const caregiverField = storyByKey.get('caregiver');
+            if (preferenceField && triggerField && playSexField && careField && switchField && bdsmField) {
+                const combinedPreferenceMatch = preferenceField.value.match(/^(?<preference>[\s\S]*?),\s*(?<trigger>[\s\S]*)$/i);
+                if (
+                    combinedPreferenceMatch?.groups
+                    && looksLikeTriggerAnswer(combinedPreferenceMatch.groups.trigger)
+                    && looksLikePlaySexAnswer(triggerField.value)
+                    && looksLikeCareAnswer(playSexField.value)
+                ) {
+                    const shiftedPlaySex = triggerField.value;
+                    const shiftedCare = playSexField.value;
+                    const shiftedSwitch = careField.value;
+                    const shiftedBdsm = switchField.value;
+                    preferenceField.value = combinedPreferenceMatch.groups.preference.trim() || '연결된 답변 없음';
+                    triggerField.value = combinedPreferenceMatch.groups.trigger.trim();
+                    playSexField.value = shiftedPlaySex;
+                    careField.value = shiftedCare;
+                    switchField.value = shiftedSwitch;
+                    if (looksLikeBdsmAnswer(shiftedBdsm)) {
+                        bdsmField.value = shiftedBdsm;
+                    }
+                }
+            }
             if (careField && switchField && bdsmField && caregiverField) {
                 const combinedCareMatch = careField.value.match(/^(?<care>[\s\S]*?),\s*(?<switch>[\s\S]*)$/i);
                 if (combinedCareMatch?.groups && looksLikeSwitchAnswer(combinedCareMatch.groups.switch)) {
@@ -5504,6 +5535,9 @@
                 storyByKey.get('caregiver'),
                 looksLikeCaregiverAnswer
             );
+            if (caregiverField?.value === '연결된 답변 없음' && caregiverField.photoUrls.length) {
+                caregiverField.value = '-';
+            }
 
             const attachments = source
                 .filter(field => !used.has(field.index) && field.photoUrls.length)
