@@ -3666,13 +3666,13 @@
                             </div>
 
                             <div class="form-row">
-                                <label for="my-personality" class="form-label">Personal Preferences</label>
-                                <input type="text" id="my-personality" maxlength="120" class="form-input-edit" placeholder="선택 입력">
+                                <label for="my-personality" class="form-label">BDSM 주 성향</label>
+                                <input type="text" id="my-personality" maxlength="120" class="form-input-edit" placeholder="예: 마스터, 슬레이브">
                             </div>
 
                             <div class="form-row">
-                                <label for="my-relationship-style" class="form-label">Dating Preferences</label>
-                                <input type="text" id="my-relationship-style" maxlength="120" class="form-input-edit" placeholder="선택 입력">
+                                <label for="my-relationship-style" class="form-label">연애 성향</label>
+                                <input type="text" id="my-relationship-style" maxlength="120" class="form-input-edit" placeholder="예: 모노, 논모노, 오픈릴">
                             </div>
 
                             <div id="my-password-section" class="hidden mt-6 grid grid-cols-1 sm:grid-cols-2 gap-7">
@@ -3826,12 +3826,12 @@
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div>
-                            <label for="edit-personality" class="block text-xs tracking-widest uppercase opacity-60 mb-2">개인 성향 (선택)</label>
-                            <input type="text" id="edit-personality" maxlength="120" class="w-full bg-transparent border-b border-[var(--border-light)] py-3">
+                            <label for="edit-personality" class="block text-xs tracking-widest uppercase opacity-60 mb-2">BDSM 주 성향 (선택)</label>
+                            <input type="text" id="edit-personality" maxlength="120" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" placeholder="예: 마스터, 슬레이브">
                         </div>
                         <div>
                             <label for="edit-relationship-style" class="block text-xs tracking-widest uppercase opacity-60 mb-2">연애 성향 (선택)</label>
-                            <input type="text" id="edit-relationship-style" maxlength="120" class="w-full bg-transparent border-b border-[var(--border-light)] py-3">
+                            <input type="text" id="edit-relationship-style" maxlength="120" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" placeholder="예: 모노, 논모노, 오픈릴">
                         </div>
                     </div>
                     <div>
@@ -3886,12 +3886,12 @@
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-7">
                     <div>
-                        <label for="new-personality" class="block text-xs tracking-widest uppercase opacity-60 mb-3">개인 성향 (선택)</label>
-                        <input type="text" id="new-personality" maxlength="120" class="w-full bg-transparent border-b border-[var(--border-light)] py-3">
+                        <label for="new-personality" class="block text-xs tracking-widest uppercase opacity-60 mb-3">BDSM 주 성향 (선택)</label>
+                        <input type="text" id="new-personality" maxlength="120" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" placeholder="예: 마스터, 슬레이브">
                     </div>
                     <div>
                         <label for="new-relationship-style" class="block text-xs tracking-widest uppercase opacity-60 mb-3">연애 성향 (선택)</label>
-                        <input type="text" id="new-relationship-style" maxlength="120" class="w-full bg-transparent border-b border-[var(--border-light)] py-3">
+                        <input type="text" id="new-relationship-style" maxlength="120" class="w-full bg-transparent border-b border-[var(--border-light)] py-3" placeholder="예: 모노, 논모노, 오픈릴">
                     </div>
                 </div>
                 <div>
@@ -7613,8 +7613,8 @@
                 renderProfileFields(memberProfileModalMeta, [
                     ['Region', profile.region],
                     ['Birth Year', profile.birthYear ? `${profile.birthYear}년생` : ''],
-                    ['Personal Pref.', profile.personality],
-                    ['Dating Pref.', profile.relationshipStyle],
+                    ['BDSM 주 성향', profile.personality],
+                    ['연애 성향', profile.relationshipStyle],
                 ], 'member-profile-modal');
                 memberProfileModalBio.textContent = profile.bio || '아직 자기소개가 없습니다.';
                 memberProfileModal.classList.remove('hidden');
@@ -8079,8 +8079,8 @@
                 const profileRows = [
                     ['Region', profile.region || '미입력'],
                     ['Birth Year', profile.birthYear ? `${profile.birthYear}년생` : '미입력'],
-                    ['Personal Pref.', profile.personality || '미입력'],
-                    ['Dating Pref.', profile.relationshipStyle || '미입력'],
+                    ['BDSM 주 성향', profile.personality || '미입력'],
+                    ['연애 성향', profile.relationshipStyle || '미입력'],
                 ];
                 meta.replaceChildren(...profileRows.map(([label, value]) => {
                     const item = document.createElement('div');
