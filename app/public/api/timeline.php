@@ -26,7 +26,7 @@ function timeline_csrf(): void
 
 function timeline_public_profile(array $row): array
 {
-    return [
+    $profile = [
         'id' => (int) $row['id'],
         'username' => $row['username'],
         'displayName' => $row['display_name'],
@@ -39,6 +39,25 @@ function timeline_public_profile(array $row): array
             ? '/api/avatar.php?username=' . rawurlencode($row['username']) . '&version=' . rawurlencode($row['avatar_stored_name'])
             : '',
     ];
+
+    if (array_key_exists('intro_nickname', $row)) {
+        $profile['selfIntroduction'] = [
+            'nickname' => (string) ($row['intro_nickname'] ?? ''),
+            'birthYear' => $row['intro_birth_year'] !== null ? (int) $row['intro_birth_year'] : null,
+            'personality' => (string) ($row['intro_personality'] ?? ''),
+            'relationshipStyle' => (string) ($row['intro_relationship_style'] ?? ''),
+            'mbti' => (string) ($row['intro_mbti'] ?? ''),
+            'giveRatio' => $row['intro_give_ratio'] !== null ? (int) $row['intro_give_ratio'] : null,
+            'takeRatio' => $row['intro_take_ratio'] !== null ? (int) $row['intro_take_ratio'] : null,
+            'myKeywords' => (string) ($row['intro_my_keywords'] ?? ''),
+            'partnerKeywords' => (string) ($row['intro_partner_keywords'] ?? ''),
+            'currentRelationship' => (string) ($row['intro_current_relationship'] ?? ''),
+            'desiredRelationship' => (string) ($row['intro_desired_relationship'] ?? ''),
+            'appeal' => (string) ($row['intro_appeal'] ?? ''),
+        ];
+    }
+
+    return $profile;
 }
 
 $pdo = site_db();
@@ -216,8 +235,22 @@ if ($method === 'GET' && $action === 'feed') {
 if ($method === 'GET' && $action === 'profile') {
     $username = trim((string) ($_GET['username'] ?? $viewer['username']));
     $stmt = $pdo->prepare(
-        'SELECT id, username, display_name, birth_year, region, personality, relationship_style, bio, avatar_stored_name
-         FROM users WHERE username = :username COLLATE NOCASE AND is_active = 1'
+        'SELECT u.id, u.username, u.display_name, u.birth_year, u.region, u.personality, u.relationship_style, u.bio, u.avatar_stored_name,
+                si.nickname AS intro_nickname,
+                si.birth_year AS intro_birth_year,
+                si.personality AS intro_personality,
+                si.relationship_style AS intro_relationship_style,
+                si.mbti AS intro_mbti,
+                si.give_ratio AS intro_give_ratio,
+                si.take_ratio AS intro_take_ratio,
+                si.my_keywords AS intro_my_keywords,
+                si.partner_keywords AS intro_partner_keywords,
+                si.current_relationship AS intro_current_relationship,
+                si.desired_relationship AS intro_desired_relationship,
+                si.appeal AS intro_appeal
+         FROM users u
+         LEFT JOIN self_introductions si ON si.user_id = u.id
+         WHERE u.username = :username COLLATE NOCASE AND u.is_active = 1'
     );
     $stmt->execute([':username' => $username]);
     $profile = $stmt->fetch();

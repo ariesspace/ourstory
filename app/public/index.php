@@ -438,6 +438,11 @@
             letter-spacing: 0.14em;
             text-transform: uppercase;
         }
+        .form-badge.role-admin,
+        .form-badge.role-superuser {
+            background: var(--accent-red);
+            color: #fff;
+        }
         .form-value {
             font-family: 'Cormorant Garamond', serif;
             font-size: 1.45rem;
@@ -459,6 +464,8 @@
         .btn-save-changes {
             width: min(100%, 420px);
             margin-top: 2rem;
+            margin-left: auto;
+            margin-right: auto;
             padding: 1.25rem 2rem;
             background: #1b1b1a;
             color: white;
@@ -581,6 +588,11 @@
             flex-wrap: wrap;
             gap: 0.55rem;
         }
+        .multi-choice-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.55rem;
+        }
         .ratio-option {
             min-width: 2.65rem;
             border: 1px solid var(--border-light);
@@ -591,6 +603,20 @@
             transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
         }
         .ratio-option.active {
+            border-color: var(--accent-red);
+            background: var(--accent-red);
+            color: #fff;
+        }
+        .multi-choice-option {
+            border: 1px solid var(--border-light);
+            background: #fff;
+            padding: 0.56rem 0.9rem;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 0.88rem;
+            color: rgba(17, 17, 17, 0.74);
+            transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+        }
+        .multi-choice-option.active {
             border-color: var(--accent-red);
             background: var(--accent-red);
             color: #fff;
@@ -2685,6 +2711,47 @@
             white-space: pre-wrap;
             color: rgba(17, 17, 17, 0.78);
         }
+        .member-profile-modal-intro {
+            position: relative;
+            z-index: 1;
+            margin-top: 1rem;
+            border-top: 1px solid rgba(17, 17, 17, 0.12);
+            padding-top: 1rem;
+        }
+        .member-profile-modal-intro-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.62rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(17, 17, 17, 0.42);
+            margin-bottom: 0.7rem;
+        }
+        .member-profile-modal-intro-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.65rem;
+        }
+        .member-profile-modal-intro-item {
+            border-bottom: 1px solid rgba(17, 17, 17, 0.08);
+            padding-bottom: 0.65rem;
+        }
+        .member-profile-modal-intro-label {
+            display: block;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.55rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: rgba(17, 17, 17, 0.35);
+            margin-bottom: 0.25rem;
+        }
+        .member-profile-modal-intro-value {
+            font-size: 0.85rem;
+            line-height: 1.55;
+            color: rgba(17, 17, 17, 0.74);
+            white-space: pre-wrap;
+            word-break: keep-all;
+            overflow-wrap: break-word;
+        }
         .notice-document {
             background: rgba(255, 255, 255, 0.74);
             border: 1px solid rgba(17, 17, 17, 0.12);
@@ -3995,18 +4062,12 @@
                         <textarea id="self-intro-partner-keywords" class="self-intro-textarea" maxlength="2000" placeholder="예: 선호하는 관계, 대화 방식, 원하는 분위기 등" required></textarea>
                     </div>
                     <div class="self-intro-field">
-                        <label for="self-intro-current-relationship" class="self-intro-label is-required">현재 관계</label>
-                        <select id="self-intro-current-relationship" class="self-intro-select" required>
-                            <option value="">선택</option>
-                            <option>솔로</option><option>연애</option><option>디엣</option><option>파트너</option><option>기타</option>
-                        </select>
+                        <span class="self-intro-label is-required">현재 관계</span>
+                        <div id="self-intro-current-relationship" class="multi-choice-group" data-multi-field="currentRelationship"></div>
                     </div>
                     <div class="self-intro-field">
-                        <label for="self-intro-desired-relationship" class="self-intro-label is-required">원하는 관계</label>
-                        <select id="self-intro-desired-relationship" class="self-intro-select" required>
-                            <option value="">선택</option>
-                            <option>솔로</option><option>연애</option><option>디엣</option><option>파트너</option><option>기타</option>
-                        </select>
+                        <span class="self-intro-label is-required">원하는 관계</span>
+                        <div id="self-intro-desired-relationship" class="multi-choice-group" data-multi-field="desiredRelationship"></div>
                     </div>
                     <div class="self-intro-field full">
                         <label for="self-intro-appeal" class="self-intro-label">나를 어필하기</label>
@@ -4992,6 +5053,7 @@
             </div>
             <div id="member-profile-modal-meta" class="member-profile-modal-grid"></div>
             <p id="member-profile-modal-bio" class="member-profile-modal-bio"></p>
+            <div id="member-profile-modal-intro" class="member-profile-modal-intro hidden"></div>
         </div>
     </div>
 
@@ -5710,11 +5772,11 @@
             mbti: document.getElementById('self-intro-mbti'),
             myKeywords: document.getElementById('self-intro-my-keywords'),
             partnerKeywords: document.getElementById('self-intro-partner-keywords'),
-            currentRelationship: document.getElementById('self-intro-current-relationship'),
-            desiredRelationship: document.getElementById('self-intro-desired-relationship'),
             appeal: document.getElementById('self-intro-appeal'),
         };
         const selfIntroRatioState = { giveRatio: null, takeRatio: null };
+        const selfIntroRelationshipOptions = ['솔로', '연애', '디엣', '파트너', '기타'];
+        const selfIntroMultiState = { currentRelationship: [], desiredRelationship: [] };
         const myTimelineSection = document.getElementById('my-timeline-section');
         const myTimelineForm = document.getElementById('my-timeline-form');
         const myTimelineInput = document.getElementById('my-timeline-input');
@@ -5751,6 +5813,7 @@
         const memberProfileModalUsername = document.getElementById('member-profile-modal-username');
         const memberProfileModalMeta = document.getElementById('member-profile-modal-meta');
         const memberProfileModalBio = document.getElementById('member-profile-modal-bio');
+        const memberProfileModalIntro = document.getElementById('member-profile-modal-intro');
         const smBoardList = document.getElementById('sm-board-list');
         const smBoardStatus = document.getElementById('sm-board-status');
         const smPagination = document.getElementById('sm-pagination');
@@ -7615,6 +7678,49 @@
             });
         }
 
+        function splitSelfIntroMulti(value) {
+            if (Array.isArray(value)) {
+                return value.map(item => String(item).trim()).filter(Boolean);
+            }
+            return String(value || '')
+                .split(',')
+                .map(item => item.trim())
+                .filter(Boolean);
+        }
+
+        function updateSelfIntroMultiButtons() {
+            document.querySelectorAll('[data-multi-field]').forEach(group => {
+                const key = group.dataset.multiField;
+                const selected = selfIntroMultiState[key] || [];
+                group.querySelectorAll('.multi-choice-option').forEach(button => {
+                    button.classList.toggle('active', selected.includes(button.dataset.value));
+                });
+            });
+        }
+
+        function renderSelfIntroMultiOptions() {
+            document.querySelectorAll('[data-multi-field]').forEach(group => {
+                const key = group.dataset.multiField;
+                group.replaceChildren();
+                selfIntroRelationshipOptions.forEach(option => {
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = 'multi-choice-option';
+                    button.dataset.value = option;
+                    button.textContent = option;
+                    button.addEventListener('click', () => {
+                        const selected = selfIntroMultiState[key] || [];
+                        selfIntroMultiState[key] = selected.includes(option)
+                            ? selected.filter(item => item !== option)
+                            : [...selected, option];
+                        updateSelfIntroMultiButtons();
+                    });
+                    group.appendChild(button);
+                });
+            });
+            updateSelfIntroMultiButtons();
+        }
+
         function fillSelfIntroduction(introduction = {}) {
             selfIntroFields.nickname.value = introduction.nickname || siteUser?.displayName || '';
             selfIntroFields.birthYear.value = introduction.birthYear || '';
@@ -7623,12 +7729,13 @@
             selfIntroFields.mbti.value = introduction.mbti || '';
             selfIntroFields.myKeywords.value = introduction.myKeywords || '';
             selfIntroFields.partnerKeywords.value = introduction.partnerKeywords || '';
-            selfIntroFields.currentRelationship.value = introduction.currentRelationship || '';
-            selfIntroFields.desiredRelationship.value = introduction.desiredRelationship || '';
             selfIntroFields.appeal.value = introduction.appeal || '';
             selfIntroRatioState.giveRatio = introduction.giveRatio ?? null;
             selfIntroRatioState.takeRatio = introduction.takeRatio ?? null;
+            selfIntroMultiState.currentRelationship = splitSelfIntroMulti(introduction.currentRelationship);
+            selfIntroMultiState.desiredRelationship = splitSelfIntroMulti(introduction.desiredRelationship);
             updateSelfIntroRatioButtons();
+            updateSelfIntroMultiButtons();
         }
 
         async function loadSelfIntroduction() {
@@ -7668,8 +7775,8 @@
                 takeRatio: selfIntroRatioState.takeRatio,
                 myKeywords: selfIntroFields.myKeywords.value.trim(),
                 partnerKeywords: selfIntroFields.partnerKeywords.value.trim(),
-                currentRelationship: selfIntroFields.currentRelationship.value,
-                desiredRelationship: selfIntroFields.desiredRelationship.value,
+                currentRelationship: selfIntroMultiState.currentRelationship.join(', '),
+                desiredRelationship: selfIntroMultiState.desiredRelationship.join(', '),
                 appeal: selfIntroFields.appeal.value.trim(),
             };
             try {
@@ -7703,6 +7810,7 @@
         });
 
         renderSelfIntroRatioOptions();
+        renderSelfIntroMultiOptions();
 
         function setMyPasswordEditorOpen(open) {
             if (!myPasswordSection) return;
@@ -7883,7 +7991,11 @@
             const roleLabel = profile.role === 'superuser' ? 'Superuser' : profile.role === 'admin' ? 'Admin' : 'Member';
             if (cardName) cardName.textContent = profile.displayName || profile.username || '회원';
             if (cardRole) cardRole.textContent = `${roleLabel} user`;
-            if (accessBadge) accessBadge.textContent = roleLabel;
+            if (accessBadge) {
+                accessBadge.textContent = roleLabel;
+                accessBadge.classList.toggle('role-admin', profile.role === 'admin');
+                accessBadge.classList.toggle('role-superuser', profile.role === 'superuser');
+            }
             myAvatarFallback.innerHTML = '<i class="ph ph-user"></i>';
             if (profile.avatarUrl) {
                 myAvatarPreview.src = `${profile.avatarUrl}&v=${cacheBust ? Date.now() : '1'}`;
@@ -8089,6 +8201,48 @@
             }));
         }
 
+        function renderMemberProfileIntro(profile) {
+            if (!memberProfileModalIntro) return;
+            const intro = profile.selfIntroduction || {};
+            const ratio = intro.giveRatio !== null && intro.giveRatio !== undefined && intro.takeRatio !== null && intro.takeRatio !== undefined
+                ? `깁 ${intro.giveRatio}% / 텍 ${intro.takeRatio}%`
+                : '';
+            const fields = [
+                ['MBTI', intro.mbti],
+                ['잠자리 성향', ratio],
+                ['현재 관계', intro.currentRelationship],
+                ['원하는 관계', intro.desiredRelationship],
+                ['내 키워드', intro.myKeywords],
+                ['상대 키워드', intro.partnerKeywords],
+            ].filter(([, value]) => value !== null && value !== undefined && String(value).trim() !== '');
+
+            memberProfileModalIntro.replaceChildren();
+            if (!fields.length) {
+                memberProfileModalIntro.classList.add('hidden');
+                return;
+            }
+
+            const title = document.createElement('div');
+            title.className = 'member-profile-modal-intro-title';
+            title.textContent = 'Self Introduction';
+            const grid = document.createElement('div');
+            grid.className = 'member-profile-modal-intro-grid';
+            fields.forEach(([label, value]) => {
+                const item = document.createElement('div');
+                item.className = 'member-profile-modal-intro-item';
+                const labelEl = document.createElement('span');
+                labelEl.className = 'member-profile-modal-intro-label';
+                labelEl.textContent = label;
+                const valueEl = document.createElement('div');
+                valueEl.className = 'member-profile-modal-intro-value';
+                valueEl.textContent = String(value);
+                item.append(labelEl, valueEl);
+                grid.appendChild(item);
+            });
+            memberProfileModalIntro.append(title, grid);
+            memberProfileModalIntro.classList.remove('hidden');
+        }
+
         async function openMemberProfileModal(username) {
             if (!username || !memberProfileModal) return;
             try {
@@ -8106,7 +8260,8 @@
                     ['BDSM 주 성향', profile.personality],
                     ['연애 성향', profile.relationshipStyle],
                 ], 'member-profile-modal');
-                memberProfileModalBio.textContent = profile.bio || '아직 자기소개가 없습니다.';
+                memberProfileModalBio.textContent = profile.selfIntroduction?.appeal || profile.bio || '아직 자기소개가 없습니다.';
+                renderMemberProfileIntro(profile);
                 memberProfileModal.classList.remove('hidden');
                 memberProfileModal.classList.add('flex');
                 document.body.classList.add('overflow-hidden');

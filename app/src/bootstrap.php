@@ -486,12 +486,22 @@ function site_session_start(): void
         return;
     }
 
+    $sessionLifetime = 60 * 60 * 24 * 30;
+    $sessionPath = dirname(__DIR__) . '/storage/data/sessions';
+    if (!is_dir($sessionPath)) {
+        @mkdir($sessionPath, 0775, true);
+    }
+    if (is_dir($sessionPath) && is_writable($sessionPath)) {
+        session_save_path($sessionPath);
+    }
+    ini_set('session.gc_maxlifetime', (string) $sessionLifetime);
+
     $isHttps = ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https'
         || (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
 
     session_name('ourstory_session');
     session_set_cookie_params([
-        'lifetime' => 0,
+        'lifetime' => $sessionLifetime,
         'path' => '/',
         'secure' => $isHttps,
         'httponly' => true,
