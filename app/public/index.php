@@ -3909,15 +3909,15 @@
         </section>
 
         <section id="view-questionnaires" class="w-full view-hidden fade-in">
-            <div class="page-header">
-                <h2 class="page-title">Questionnaires</h2>
-                <p class="page-subtitle">Member Application Archive</p>
+            <div class="px-6 md:px-10 pt-16 md:pt-24 pb-10 max-w-[1500px] mx-auto">
+                <p class="text-xs tracking-[0.32em] uppercase opacity-45 font-mono mb-5">Member Application Archive</p>
+                <h2 class="font-document italic text-5xl sm:text-7xl md:text-8xl leading-none">Questionnaires</h2>
             </div>
             <div class="content-container">
                 <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 border-b-2 border-[var(--text-dark)] pb-8 mb-8">
                     <div>
-                        <p class="text-xs tracking-[0.28em] uppercase opacity-45 font-mono">Published Profiles</p>
-                        <p class="mt-3 text-sm opacity-60 font-serif-ko">관리자가 승인한 공개 질문지만 표시됩니다. 본인이 수정한 질문지는 관리자 연동 후 반영됩니다.</p>
+                        <p class="text-xs tracking-[0.28em] uppercase opacity-45 font-mono">All Applications</p>
+                        <p class="mt-3 text-sm opacity-60 font-serif-ko">가입 신청 원본과 회원 질문지를 함께 표시합니다. 본인이 수정한 질문지는 관리자 연동 후 공개본에 반영됩니다.</p>
                     </div>
                     <span id="questionnaire-count" class="text-xs tracking-[0.24em] uppercase opacity-45 font-mono">0 Records</span>
                 </div>
@@ -5227,19 +5227,19 @@
                 take('nickname', '사용할 닉네임', [/닉네임|nickname|name/i]),
                 take('birth', '지원자 년생', [/년생|출생|birth|나이/i]),
                 take('region', '지역', [/지역|region/i]),
-                take('mainType', '본인의 주 성향은?', [/주\s*성향|본인.*성향|main.*type/i]),
-                take('subType', '보조 성향?', [/보조.*성향|복수.*응답|sub.*type/i]),
+                take('mainType', '본인의 주 성향은?', [/^본인의\s*주\s*성향은\??$/i, /^주\s*성향\??$/i, /^main\s*type\??$/i]),
+                take('subType', '보조 성향?', [/^보조\s*성향\??$/i, /^보조\s*성향을?\s*선택/i, /^복수\s*응답/i, /^sub\s*type\??$/i]),
             ];
 
             const storySections = [
-                take('reason', '선택한 성향이 주성향이라고 생각하는 이유는 무엇인가요?', [/주성향.*이유|선택한.*성향|생각.*이유/i]),
-                take('trigger', '성향을 깨닫게 된 계기는 어떻게 되시나요?', [/깨닫|계기|어떻게.*되/i]),
-                take('preference', '선택하신 성향에 대해 설명해주세요.', [/선택.*성향.*설명|성향.*설명|진락|좋아|플레이|취향/i]),
-                take('care', '주로 본인이 사용하는 케어 방식은 어떤 방법인가요?', [/케어\s*방식|사용.*케어|aftercare|애프터/i]),
-                take('switch', '어떤 사람이 변바라고 생각하십니까?', [/변바|스위치|switch/i]),
-                take('bdsm', 'BDSM이란 무엇이라고 생각하나요?', [/BDSM|비디에스엠|무엇/i]),
-                take('playSex', '플과 섹스의 차이점은 무엇이라고 생각하나요?', [/플.*섹스|섹스.*차이|sex/i]),
-                take('caregiver', '케어기버란 어떤 성향인가요?', [/케어기버|care\s*giver/i]),
+                take('reason', '선택한 성향이 주성향이라고 생각하는 이유는 무엇인가요?', [/^선택한\s*성향이\s*주성향이라고\s*생각하는\s*이유는\s*무엇인가요\??$/i, /^주성향이라고\s*생각하는\s*이유/i]),
+                take('trigger', '성향을 깨닫게 된 계기는 어떻게 되시나요?', [/^성향을\s*깨닫게\s*된\s*계기는\s*어떻게\s*되시나요\??$/i]),
+                take('preference', '선택하신 성향에 대해 설명해주세요.', [/^선택하신\s*성향에\s*대해\s*설명해주세요\.?\??$/i]),
+                take('care', '주로 본인이 사용하는 케어 방식은 어떤 방법인가요?', [/^주로\s*본인이\s*사용하는\s*케어\s*방식은\s*어떤\s*방법인가요\??$/i]),
+                take('switch', '어떤 사람이 변바라고 생각하십니까?', [/^어떤\s*사람이\s*변바라고\s*생각하십니까\??$/i]),
+                take('bdsm', 'BDSM이란 무엇이라고 생각하나요?', [/^BDSM이란\s*무엇이라고\s*생각하나요\??$/i, /^비디에스엠이란\s*무엇/i]),
+                take('playSex', '플과 섹스의 차이점은 무엇이라고 생각하나요?', [/^플과\s*섹스의\s*차이점은\s*무엇이라고\s*생각하나요\??$/i]),
+                take('caregiver', '케어기버란 어떤 성향인가요?', [/^케어기버란\s*어떤\s*성향인가요\??$/i, /^care\s*giver/i]),
             ];
 
             const attachments = source
