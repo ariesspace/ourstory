@@ -1140,17 +1140,22 @@
             color: var(--accent-red);
         }
         .questionnaire-hero {
-            max-width: 1500px;
+            max-width: 1320px;
             margin: 0 auto;
-            padding: clamp(2.25rem, 4.4vw, 4rem) clamp(1.5rem, 4vw, 4rem) clamp(1.75rem, 3.4vw, 2.75rem);
+            padding: clamp(2rem, 3.4vw, 3rem) clamp(1.5rem, 4vw, 3.5rem) clamp(1.35rem, 2.4vw, 2rem);
+        }
+        #view-questionnaires .content-container {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 0 clamp(1.5rem, 4vw, 3.5rem) clamp(3.5rem, 7vw, 6rem);
         }
         .questionnaire-title {
             font-family: 'Cormorant Garamond', serif;
             font-style: italic;
-            font-size: clamp(3.4rem, 6.8vw, 6.2rem);
-            line-height: 0.92;
+            font-size: clamp(3rem, 5.2vw, 5.2rem);
+            line-height: 0.98;
             font-weight: 300;
-            letter-spacing: -0.045em;
+            letter-spacing: -0.035em;
         }
         .questionnaire-card-grid {
             display: grid;
@@ -1183,6 +1188,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+        .questionnaire-card-media.has-image {
+            cursor: zoom-in;
         }
         .questionnaire-card-image {
             width: 100%;
@@ -1819,12 +1827,15 @@
 
         @media (max-width: 767px) {
             .questionnaire-hero {
-                padding-top: 2rem;
-                padding-bottom: 1.5rem;
+                padding-top: 1.6rem;
+                padding-bottom: 1.15rem;
+            }
+            #view-questionnaires .content-container {
+                padding-bottom: 3rem;
             }
             .questionnaire-title {
-                font-size: clamp(2.8rem, 14vw, 4rem);
-                letter-spacing: -0.04em;
+                font-size: clamp(2.45rem, 11.5vw, 3.45rem);
+                letter-spacing: -0.032em;
             }
             .questionnaire-card-grid {
                 grid-template-columns: 1fr;
@@ -6776,12 +6787,18 @@
                 const media = document.createElement('div');
                 media.className = 'questionnaire-card-media';
                 if (coverUrl) {
+                    media.classList.add('has-image');
                     const image = document.createElement('img');
                     image.className = 'questionnaire-card-image';
                     image.src = coverUrl;
                     image.alt = `${item.displayName || item.username || '지원자'} 업로드 사진`;
                     image.loading = 'lazy';
                     media.appendChild(image);
+                    media.addEventListener('click', event => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        openMembershipPhoto(coverUrl, item.displayName || item.username || '지원자');
+                    });
                 } else {
                     const fallback = document.createElement('div');
                     fallback.className = 'questionnaire-card-fallback';
