@@ -3262,7 +3262,7 @@
                         <div class="mypage-nav-list">
                             <button type="button" class="mypage-nav-item active" data-my-action="account">Account Info</button>
                             <button type="button" class="mypage-nav-item" data-my-action="security">Privacy &amp; Security</button>
-                            <button type="button" class="mypage-nav-item" data-my-action="activity">My Activity Log</button>
+                            <button type="button" class="mypage-nav-item" data-my-action="questionnaire">My Questionnaire</button>
                             <button type="button" class="mypage-nav-item" data-my-action="likes">Liked Posts Log</button>
                         </div>
                     </div>
@@ -3350,6 +3350,20 @@
                             <button type="submit" id="my-page-submit" class="btn-save-changes">Save Changes</button>
                         </div>
                     </form>
+
+                    <div id="my-questionnaire-panel" class="hidden">
+                        <div class="border border-[var(--border-light)] bg-white p-6 sm:p-10">
+                            <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 border-b border-[var(--text-dark)] pb-6 mb-8">
+                                <div>
+                                    <span class="text-xs tracking-[0.24em] uppercase opacity-45 font-mono">Original Application</span>
+                                    <h2 class="font-document italic text-4xl sm:text-5xl mt-3">Questionnaire</h2>
+                                </div>
+                                <span id="my-questionnaire-date" class="text-xs tracking-[0.16em] uppercase opacity-45 font-mono"></span>
+                            </div>
+                            <p id="my-questionnaire-empty" class="hidden py-12 text-center text-sm opacity-45 font-serif-ko">연결된 가입 질문지가 없습니다.</p>
+                            <div id="my-questionnaire-list" class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -3575,7 +3589,6 @@
                     <h1 class="font-document italic text-5xl md:text-7xl leading-none mt-3">Main Image</h1>
                     <p class="mt-5 text-sm opacity-55 font-serif-ko">메인 화면 중앙에 보이는 전시 이미지를 교체합니다.</p>
                 </div>
-                <button type="button" class="view-trigger border border-[var(--text-dark)] px-6 py-3 font-mono text-xs tracking-[0.22em] uppercase hover:bg-[var(--text-dark)] hover:text-white transition-colors" data-target="view-read">Back Home</button>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_360px] gap-10 items-start">
@@ -4946,6 +4959,10 @@
         const myPasswordSection = document.getElementById('my-password-section');
         const myPageHeading = document.getElementById('my-page-heading');
         const myPageKicker = document.getElementById('my-page-kicker');
+        const myQuestionnairePanel = document.getElementById('my-questionnaire-panel');
+        const myQuestionnaireList = document.getElementById('my-questionnaire-list');
+        const myQuestionnaireEmpty = document.getElementById('my-questionnaire-empty');
+        const myQuestionnaireDate = document.getElementById('my-questionnaire-date');
         const securityPasswordModal = document.getElementById('security-password-modal');
         const securityPasswordForm = document.getElementById('security-password-form');
         const securityCurrentPassword = document.getElementById('security-current-password');
@@ -5056,6 +5073,7 @@
         let introductionCanManage = false;
         let membershipApplicationItems = [];
         let membershipApplicationCanManage = false;
+        let currentMyProfile = null;
         let smCurrentPost = null;
         let smEditingPostId = null;
         let smInlineUploads = [];
@@ -6507,6 +6525,8 @@
         function activateMyPageTab(action) {
             document.querySelectorAll('[data-my-action]').forEach(nav => nav.classList.toggle('active', nav.dataset.myAction === action));
             document.getElementById('view-my-page')?.classList.toggle('mypage-security-mode', action === 'security');
+            myPageForm?.classList.toggle('hidden', action === 'questionnaire');
+            myQuestionnairePanel?.classList.toggle('hidden', action !== 'questionnaire');
             if (action === 'account') {
                 if (myPageHeading) myPageHeading.textContent = 'Account Info';
                 if (myPageKicker) myPageKicker.textContent = '[ Profile Dossier ]';
@@ -6520,6 +6540,13 @@
                 if (myPageKicker) myPageKicker.textContent = '[ ID & Passcode Settings ]';
                 setMyPasswordEditorOpen(true);
                 setTimeout(() => document.getElementById('my-password')?.focus(), 250);
+            }
+            if (action === 'questionnaire') {
+                if (myPageHeading) myPageHeading.textContent = 'My Questionnaire';
+                if (myPageKicker) myPageKicker.textContent = '[ Original Application ]';
+                setMyPasswordEditorOpen(false);
+                renderMyQuestionnaire(currentMyProfile?.questionnaire || null);
+                myQuestionnairePanel?.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
 
@@ -6545,7 +6572,62 @@
             document.body.classList.remove('overflow-hidden');
         }
 
+        function renderMyQuestionnaire(questionnaire) {
+            if (!myQuestionnaireList || !myQuestionnaireEmpty) return;
+            myQuestionnaireList.replaceChildren();
+            const fields = Array.isArray(questionnaire?.fields) ? questionnaire.fields : [];
+            const displayFields = fields
+                .map(field => ({
+                    label: String(field.label || '').trim() || 'Answer',
+                    value: formatIntroductionAnswer(field),
+                    photoUrls: membershipPhotoUrls(field),
+                }))
+                .filter(field => field.value || field.photoUrls.length);
+
+            myQuestionnaireEmpty.classList.toggle('hidden', displayFields.length > 0);
+            if (myQuestionnaireDate) {
+                const date = questionnaire?.createdAt ? new Date(questionnaire.createdAt.replace(' ', 'T')) : null;
+                myQuestionnaireDate.textContent = date && !Number.isNaN(date.getTime())
+                    ? date.toLocaleDateString('ko-KR')
+                    : '';
+            }
+
+            displayFields.forEach(field => {
+                const group = document.createElement('dl');
+                group.className = field.value.length > 260 || field.photoUrls.length ? 'md:col-span-2 border-t border-[var(--border-light)] pt-5' : 'border-t border-[var(--border-light)] pt-5';
+                const label = document.createElement('dt');
+                label.className = 'text-xs opacity-45 mb-3 leading-relaxed font-sans';
+                label.textContent = field.label;
+                const value = document.createElement('dd');
+
+                if (field.photoUrls.length) {
+                    value.className = 'grid grid-cols-3 sm:grid-cols-5 gap-3';
+                    field.photoUrls.forEach((url, index) => {
+                        const button = document.createElement('button');
+                        button.type = 'button';
+                        button.className = 'aspect-square overflow-hidden bg-black/5 cursor-zoom-in';
+                        button.setAttribute('aria-label', `첨부 사진 ${index + 1} 확대`);
+                        const image = document.createElement('img');
+                        image.src = url;
+                        image.alt = `첨부 사진 ${index + 1}`;
+                        image.loading = 'lazy';
+                        image.className = 'w-full h-full object-cover grayscale hover:grayscale-0 hover:scale-105 transition-all duration-300';
+                        button.appendChild(image);
+                        button.addEventListener('click', () => openMembershipPhoto(url, currentMyProfile?.displayName || '내 질문지'));
+                        value.appendChild(button);
+                    });
+                } else {
+                    value.className = 'font-serif-ko text-sm sm:text-base leading-[1.9] whitespace-pre-wrap break-words';
+                    value.textContent = field.value;
+                }
+
+                group.append(label, value);
+                myQuestionnaireList.appendChild(group);
+            });
+        }
+
         function fillMyProfile(profile, cacheBust = false) {
+            currentMyProfile = profile;
             document.getElementById('my-username').value = profile.username || '';
             document.getElementById('my-role').value = profile.role || '';
             document.getElementById('my-display-name').value = profile.displayName || '';
@@ -6612,8 +6694,8 @@
                     openSecurityPasswordModal();
                     return;
                 }
-                if (action === 'activity') {
-                    document.querySelector('.view-trigger[data-target="view-my-timeline"]')?.click();
+                if (action === 'questionnaire') {
+                    activateMyPageTab('questionnaire');
                     return;
                 }
                 showToast('Liked Posts Log는 아직 준비 중입니다.', false);
@@ -7276,6 +7358,7 @@
             myPageStatus.textContent = '프로필을 불러오는 중입니다.';
             myPageStatus.classList.remove('hidden');
             myPageForm.classList.add('hidden');
+            myQuestionnairePanel?.classList.add('hidden');
 
             try {
                 const response = await fetch('/api/profile.php', { headers: { Accept: 'application/json' }, cache: 'no-store' });
@@ -7283,7 +7366,12 @@
                 if (!response.ok) throw new Error(payload.error || '프로필을 불러오지 못했습니다.');
                 fillMyProfile(payload.profile);
                 myPageStatus.classList.add('hidden');
-                myPageForm.classList.remove('hidden');
+                const activeAction = document.querySelector('[data-my-action].active')?.dataset.myAction || 'account';
+                if (activeAction === 'questionnaire') {
+                    activateMyPageTab('questionnaire');
+                } else {
+                    myPageForm.classList.remove('hidden');
+                }
             } catch (error) {
                 myPageStatus.textContent = error.message;
             }

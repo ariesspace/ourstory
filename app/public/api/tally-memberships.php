@@ -91,6 +91,78 @@ function membership_temporary_password(): string
     return 'A9!' . substr(strtr(base64_encode(random_bytes(12)), '+/', 'xz'), 0, 14);
 }
 
+function membership_photo_urls(array $field): array
+{
+    $label = (string) ($field['label'] ?? '');
+    if (!preg_match('/사진|프로필|file\s*upload|photo|image/i', $label)) {
+        return [];
+    }
+
+    $urls = [];
+    $collect = static function (mixed $value) use (&$collect, &$urls): void {
+        if ($value === null || $value === '') return;
+        if (is_array($value)) {
+            foreach ($value as $child) $collect($child);
+            return;
+        }
+        if (is_object($value)) {
+            foreach (get_object_vars($value) as $child) $collect($child);
+            return;
+        }
+        $text = trim((string) $value);
+        if (preg_match('/^https?:\/\//i', $text)) {
+            $urls[] = $text;
+        }
+    };
+    $collect($field['value'] ?? null);
+
+    return array_values(array_unique($urls));
+}
+
+function membership_avatar_directory(): string
+{
+    $directory = dirname(__DIR__, 2) . '/storage/data/avatars';
+    if (!is_dir($directory) && !mkdir($directory, 0775, true) && !is_dir($directory)) {
+        throw new RuntimeException('프로필 사진 저장 공간을 만들 수 없습니다.');
+    }
+    return $directory;
+}
+
+function membership_try_import_avatar(PDO $pdo, int $userId, array $fields): void
+{
+    $avatarUrl = '';
+    foreach ($fields as $field) {
+        $urls = membership_photo_urls($field);
+        if ($urls) {
+            $avatarUrl = $urls[0];
+            break;
+        }
+    }
+    if ($avatarUrl === '') return;
+
+    $context = stream_context_create([
+        'http' => [
+            'timeout' => 12,
+            'follow_location' => 1,
+            'user_agent' => 'OurStory/1.0',
+        ],
+    ]);
+    $data = @file_get_contents($avatarUrl, false, $context);
+    if ($data === false || strlen($data) < 1 || strlen($data) > 5242880) return;
+
+    $mime = (string) (new finfo(FILEINFO_MIME_TYPE))->buffer($data);
+    $extensions = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/gif' => 'gif', 'image/webp' => 'webp'];
+    if (!isset($extensions[$mime])) return;
+
+    $storedName = bin2hex(random_bytes(18)) . '.' . $extensions[$mime];
+    $path = membership_avatar_directory() . '/' . $storedName;
+    if (file_put_contents($path, $data, LOCK_EX) === false) return;
+
+    $pdo->prepare(
+        'UPDATE users SET avatar_stored_name = :stored_name, avatar_mime_type = :mime, updated_at = CURRENT_TIMESTAMP WHERE id = :id'
+    )->execute([':stored_name' => $storedName, ':mime' => $mime, ':id' => $userId]);
+}
+
 function membership_intro_text(array $fields): string
 {
     $intro = membership_find_field($fields, ['/자기소개|소개|intro|about/i']);
@@ -144,7 +216,8 @@ function membership_approve(PDO $pdo, array $viewer, string $submissionId): void
     $region = membership_find_field($fields, ['/^(지역|region)$/iu', '/지역/i']);
     $personality = membership_find_field($fields, ['/주\s*성향|개인\s*성향|성향/i']);
     $relationshipStyle = membership_find_field($fields, ['/연애\s*유형|연애\s*성향|relationship|dating/i']);
-    $bio = mb_substr(membership_intro_text($fields), 0, 1000);
+    $introText = membership_intro_text($fields);
+    $bio = '';
     $profileJson = json_encode($fields, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?: '[]';
 
     try {
@@ -192,7 +265,7 @@ function membership_approve(PDO $pdo, array $viewer, string $submissionId): void
             ':author_snapshot' => $username,
             ':nickname_snapshot' => mb_substr($displayName, 0, 100),
             ':profile_data_json' => $profileJson,
-            ':intro_text' => $bio,
+            ':intro_text' => $introText,
         ]);
 
         $update = $pdo->prepare(
@@ -206,6 +279,7 @@ function membership_approve(PDO $pdo, array $viewer, string $submissionId): void
             ':approved_user_id' => $userId,
             ':submission_id' => $submissionId,
         ]);
+        membership_try_import_avatar($pdo, $userId, $fields);
         $pdo->commit();
     } catch (Throwable $error) {
         if ($pdo->inTransaction()) {

@@ -27,7 +27,7 @@ function profile_row(PDO $pdo, int $userId): array
         profile_json(['error' => '계정을 찾을 수 없습니다.'], 404);
     }
 
-    return [
+    $profile = [
         'id' => (int) $row['id'],
         'username' => $row['username'],
         'displayName' => $row['display_name'],
@@ -42,6 +42,28 @@ function profile_row(PDO $pdo, int $userId): array
             ? '/api/avatar.php?username=' . rawurlencode($row['username']) . '&version=' . rawurlencode($row['avatar_stored_name'])
             : '',
     ];
+
+    $questionnaire = $pdo->prepare(
+        'SELECT profile_data_json, intro_text, created_at, updated_at
+         FROM profiles
+         WHERE user_id = :user_id
+         ORDER BY id DESC
+         LIMIT 1'
+    );
+    $questionnaire->execute([':user_id' => $userId]);
+    $questionnaireRow = $questionnaire->fetch();
+    $profile['questionnaire'] = null;
+    if ($questionnaireRow) {
+        $fields = json_decode((string) $questionnaireRow['profile_data_json'], true);
+        $profile['questionnaire'] = [
+            'fields' => is_array($fields) ? $fields : [],
+            'introText' => (string) $questionnaireRow['intro_text'],
+            'createdAt' => $questionnaireRow['created_at'],
+            'updatedAt' => $questionnaireRow['updated_at'],
+        ];
+    }
+
+    return $profile;
 }
 
 $pdo = site_db();
