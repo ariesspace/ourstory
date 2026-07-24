@@ -3586,19 +3586,19 @@
                 <p class="index-menu-section-title">Community</p>
                 <button type="button" class="view-trigger" data-target="view-timeline"><em>01</em><span>Timeline</span><small>[ 기록 ]</small></button>
                 <button type="button" class="view-trigger" data-target="view-schedule"><em>02</em><span>Schedule</span><small>[ 일정 ]</small></button>
-                <button type="button" class="view-trigger" data-target="view-questionnaires"><em>03</em><span>Questionnaires</span><small>[ 질문지 ]</small></button>
+                <button type="button" class="view-trigger" data-target="view-people"><em>03</em><span>Members</span><small>[ 회원 ]</small></button>
             </section>
 
             <section class="index-menu-section">
                 <p class="index-menu-section-title">Archive</p>
-                <button type="button" class="view-trigger" data-target="view-gallery"><em>04</em><span>Album</span><small>[ 갤러리 ]</small></button>
-                <button type="button" class="view-trigger" data-target="view-sm-bar-list"><em>05</em><span>SM Bar List</span><small>[ 장소 ]</small></button>
-                <button type="button" class="view-trigger" data-target="view-sm-board"><em>06</em><span>Information</span><small>[ 정보 ]</small></button>
+                <button type="button" class="view-trigger" data-target="view-questionnaires"><em>04</em><span>Questionnaires</span><small>[ 질문지 ]</small></button>
+                <button type="button" class="view-trigger" data-target="view-gallery"><em>05</em><span>Album</span><small>[ 갤러리 ]</small></button>
+                <button type="button" class="view-trigger" data-target="view-sm-bar-list"><em>06</em><span>SM Bar List</span><small>[ 장소 ]</small></button>
+                <button type="button" class="view-trigger" data-target="view-sm-board"><em>07</em><span>Information</span><small>[ 정보 ]</small></button>
             </section>
 
             <section class="index-menu-section">
                 <p class="index-menu-section-title">Personal</p>
-                <button type="button" class="view-trigger" data-target="view-people"><em>07</em><span>Members</span><small>[ 회원 ]</small></button>
                 <button type="button" class="view-trigger hidden" data-target="view-my-page" id="my-page-nav-link"><em>08</em><span>My Profile</span><small>[ 설정 ]</small></button>
             </section>
 
