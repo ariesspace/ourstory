@@ -1234,11 +1234,17 @@
         }
         .questionnaire-card-title {
             margin-top: 0.75rem;
-            font-family: 'Cormorant Garamond', serif;
+            font-family: 'Noto Serif KR', 'Cormorant Garamond', serif;
             font-style: italic;
-            font-size: clamp(1.75rem, 3.2vw, 2.55rem);
-            line-height: 1;
-            letter-spacing: -0.04em;
+            font-size: clamp(1.55rem, 2.2vw, 2.15rem);
+            line-height: 1.18;
+            letter-spacing: -0.025em;
+            word-break: keep-all;
+            overflow-wrap: anywhere;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
         .questionnaire-card-meta {
             margin-top: 0.75rem;
@@ -1846,7 +1852,7 @@
             }
             .questionnaire-card-title {
                 margin-top: 0.7rem;
-                font-size: 2rem;
+                font-size: 1.85rem;
             }
             #index-menu {
                 width: min(94vw, 420px) !important;
@@ -5427,7 +5433,9 @@
             const take = (key, label, patterns) => {
                 const found = source.filter(field => !used.has(field.index) && patterns.some(pattern => pattern.test(field.label)));
                 found.forEach(field => used.add(field.index));
-                const values = [...new Set(found.map(field => field.displayValue).filter(Boolean))];
+                const values = [...new Set(found
+                    .map(field => field.displayValue)
+                    .filter(value => value && !isMembershipImageUrl(String(value).trim())))];
                 const photos = found.flatMap(field => field.photoUrls || []);
                 return {
                     key,
@@ -5435,6 +5443,14 @@
                     value: values.length ? values.join('\n\n') : '연결된 답변 없음',
                     photoUrls: [...new Set(photos)],
                 };
+            };
+
+            const moveValue = (from, to, predicate) => {
+                if (!from || !to || !predicate(from.value)) return;
+                if (to.value === '연결된 답변 없음' || predicate(from.value)) {
+                    to.value = from.value;
+                    from.value = '연결된 답변 없음';
+                }
             };
 
             const summary = [
@@ -5455,6 +5471,12 @@
                 take('playSex', '플과 섹스의 차이점은 무엇이라고 생각하나요?', [/^플과\s*섹스의\s*차이점은\s*무엇이라고\s*생각하나요\??$/i]),
                 take('caregiver', '케어기버란 어떤 성향인가요?', [/^케어기버란\s*어떤\s*성향인가요\??$/i, /^care\s*giver/i]),
             ];
+            const storyByKey = new Map(storySections.map(field => [field.key, field]));
+            moveValue(
+                storyByKey.get('bdsm'),
+                storyByKey.get('playSex'),
+                value => /비주류적\s*성적\/연애적\s*행위나\s*관계성/.test(value)
+            );
 
             const attachments = source
                 .filter(field => !used.has(field.index) && field.photoUrls.length)
