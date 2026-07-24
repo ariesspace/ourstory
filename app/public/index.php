@@ -1139,6 +1139,75 @@
         #system-menu-section .index-menu-section-title {
             color: var(--accent-red);
         }
+        .questionnaire-hero {
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: clamp(3rem, 7vw, 6rem) clamp(1.5rem, 4vw, 4rem) clamp(2rem, 4vw, 3.5rem);
+        }
+        .questionnaire-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: clamp(4rem, 9vw, 8.5rem);
+            line-height: 0.88;
+            font-weight: 300;
+            letter-spacing: -0.055em;
+        }
+        .questionnaire-card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.35rem;
+        }
+        .questionnaire-card {
+            min-height: 320px;
+            padding: 1.45rem;
+            border: 1px solid var(--border-light);
+            background: rgba(255,255,255,0.66);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            text-align: left;
+            transition: border-color 0.35s ease, transform 0.35s ease, background-color 0.35s ease;
+        }
+        .questionnaire-card:hover {
+            border-color: var(--text-dark);
+            transform: translateY(-3px);
+            background: #fff;
+        }
+        .questionnaire-card-status {
+            width: fit-content;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.62rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--accent-red);
+        }
+        .questionnaire-card-title {
+            margin-top: 2.25rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: clamp(2.1rem, 5vw, 3.4rem);
+            line-height: 0.94;
+            letter-spacing: -0.04em;
+        }
+        .questionnaire-card-meta {
+            margin-top: 1.25rem;
+            font-size: 0.82rem;
+            line-height: 1.7;
+            color: rgba(17,17,17,0.55);
+            word-break: keep-all;
+        }
+        .questionnaire-card-footer {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid var(--border-light);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.62rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: rgba(17,17,17,0.45);
+        }
 
         #site-loader {
             background-color: var(--bg-color);
@@ -1706,6 +1775,26 @@
         }
 
         @media (max-width: 767px) {
+            .questionnaire-hero {
+                padding-top: 2.35rem;
+                padding-bottom: 1.5rem;
+            }
+            .questionnaire-title {
+                font-size: clamp(3rem, 18vw, 5rem);
+                letter-spacing: -0.05em;
+            }
+            .questionnaire-card-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .questionnaire-card {
+                min-height: 230px;
+                padding: 1.15rem;
+            }
+            .questionnaire-card-title {
+                margin-top: 1.25rem;
+                font-size: 2.2rem;
+            }
             #index-menu {
                 width: min(94vw, 420px) !important;
                 padding: 1.45rem 1.35rem 1.65rem !important;
@@ -3981,9 +4070,9 @@
         </section>
 
         <section id="view-questionnaires" class="w-full view-hidden fade-in">
-            <div class="px-6 md:px-10 pt-16 md:pt-24 pb-10 max-w-[1500px] mx-auto">
+            <div class="questionnaire-hero">
                 <p class="text-xs tracking-[0.32em] uppercase opacity-45 font-mono mb-5">Member Application Archive</p>
-                <h2 class="font-document italic text-5xl sm:text-7xl md:text-8xl leading-none">Questionnaires</h2>
+                <h2 class="questionnaire-title">Questionnaires</h2>
             </div>
             <div class="content-container">
                 <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 border-b-2 border-[var(--text-dark)] pb-8 mb-8">
@@ -3999,7 +4088,7 @@
                     <input type="search" id="questionnaire-search" class="w-full bg-transparent py-4 outline-none placeholder:opacity-40" placeholder="닉네임, 지역, 성향 또는 답변 검색">
                 </div>
                 <p id="questionnaire-status" class="py-16 text-center text-sm opacity-50 font-serif-ko">질문지를 불러오는 중입니다.</p>
-                <div id="questionnaire-list" class="divide-y divide-[var(--border-light)]"></div>
+                <div id="questionnaire-list" class="questionnaire-card-grid"></div>
             </div>
         </section>
 
@@ -6616,54 +6705,67 @@
             questionnaireList.replaceChildren();
             questionnaireCount.textContent = `${items.length} Records`;
             if (!items.length) {
-                questionnaireStatus.textContent = questionnaireSearch?.value.trim() ? '검색 결과가 없습니다.' : '공개된 질문지가 없습니다.';
+                questionnaireStatus.textContent = questionnaireSearch?.value.trim() ? '검색 결과가 없습니다.' : '등록된 질문지가 없습니다.';
                 questionnaireStatus.classList.remove('hidden');
                 return;
             }
             questionnaireStatus.classList.add('hidden');
 
-            items.forEach(item => {
-                const article = document.createElement('article');
-                article.className = 'py-8';
-                const head = document.createElement('div');
-                head.className = 'flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6';
-                const titleWrap = document.createElement('div');
+            items.forEach((item, index) => {
+                const fields = questionnaireTemplateFields(item.fields || []);
+                const meta = [item.region || '지역 미입력', item.birthYear ? `${item.birthYear}년생` : '년생 미입력', item.personality || '주성향 미입력'].join(' · ');
+                const card = document.createElement('article');
+                card.className = 'questionnaire-card group';
+
+                const open = document.createElement('button');
+                open.type = 'button';
+                open.className = 'w-full h-full flex flex-col justify-between text-left';
+                open.setAttribute('aria-haspopup', 'dialog');
+                open.setAttribute('aria-label', `${item.displayName || item.username || '질문지'} 질문지 보기`);
+
+                const top = document.createElement('div');
+                const status = document.createElement('span');
+                status.className = 'questionnaire-card-status';
+                status.textContent = item.source === 'application' ? (item.status || 'application') : (item.hasDraftChanges ? 'Draft Pending' : 'Linked Profile');
                 const title = document.createElement('h3');
-                title.className = 'font-document italic text-3xl sm:text-4xl';
-                title.textContent = item.displayName || item.username || 'Member';
-                const meta = document.createElement('p');
-                meta.className = 'mt-2 text-xs tracking-[0.18em] uppercase opacity-45 font-mono';
-                meta.textContent = [item.region || 'Region N/A', item.birthYear ? `${item.birthYear}` : 'Birth N/A', item.personality || 'Type N/A'].join('  /  ');
-                titleWrap.append(title, meta);
-                const actions = document.createElement('div');
-                actions.className = 'flex items-center gap-3';
+                title.className = 'questionnaire-card-title';
+                title.textContent = item.displayName || item.username || 'Untitled';
+                const info = document.createElement('p');
+                info.className = 'questionnaire-card-meta';
+                info.textContent = meta;
+                top.append(status, title, info);
+
+                const footer = document.createElement('div');
+                footer.className = 'questionnaire-card-footer';
+                const sequence = document.createElement('span');
+                sequence.textContent = `No. ${String(items.length - index).padStart(2, '0')}`;
+                const read = document.createElement('span');
+                read.textContent = 'Open ↗';
+                footer.append(sequence, read);
+                open.append(top, footer);
+                open.addEventListener('click', () => {
+                    openMembershipDetail(
+                        { ...item, submittedAt: item.publishedAt || item.draftUpdatedAt || '', status: item.status || 'linked' },
+                        fields,
+                        false,
+                        item.displayName || item.username || 'Questionnaire',
+                        meta
+                    );
+                });
+                card.appendChild(open);
+
                 if (item.hasDraftChanges && questionnaireCanManage) {
                     const sync = document.createElement('button');
                     sync.type = 'button';
-                    sync.className = 'bg-[var(--accent-red)] text-white px-5 py-3 text-xs tracking-[0.18em] uppercase';
+                    sync.className = 'mt-3 w-full bg-[var(--accent-red)] text-white px-4 py-3 text-[0.65rem] tracking-[0.18em] uppercase';
                     sync.textContent = '연동하기';
-                    sync.addEventListener('click', () => syncQuestionnaire(item.id));
-                    actions.appendChild(sync);
+                    sync.addEventListener('click', event => {
+                        event.stopPropagation();
+                        syncQuestionnaire(item.id);
+                    });
+                    card.appendChild(sync);
                 }
-                head.append(titleWrap, actions);
-
-                const body = document.createElement('div');
-                body.className = 'grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-7';
-                questionnaireTemplateFields(item.fields || []).forEach(field => {
-                    const group = document.createElement('dl');
-                    group.className = field.value.length > 260 ? 'md:col-span-2 border-t border-[var(--border-light)] pt-5' : 'border-t border-[var(--border-light)] pt-5';
-                    const label = document.createElement('dt');
-                    label.className = 'text-xs opacity-45 mb-3 leading-relaxed font-sans';
-                    label.textContent = field.label;
-                    const value = document.createElement('dd');
-                    value.className = 'font-serif-ko text-sm sm:text-base leading-[1.9] whitespace-pre-wrap break-words';
-                    value.textContent = field.value || '연결된 답변 없음';
-                    group.append(label, value);
-                    body.appendChild(group);
-                });
-
-                article.append(head, body);
-                questionnaireList.appendChild(article);
+                questionnaireList.appendChild(card);
             });
         }
 
