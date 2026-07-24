@@ -5080,6 +5080,66 @@
             return flatten(field.value).filter(Boolean).join(', ');
         }
 
+        function normalizeMembershipDetailFields(fields) {
+            const source = (Array.isArray(fields) ? fields : [])
+                .map((field, index) => ({
+                    ...field,
+                    index,
+                    label: String(field.label || '').trim(),
+                    displayValue: field.displayValue || formatIntroductionAnswer(field),
+                    photoUrls: field.photoUrls || membershipPhotoUrls(field),
+                }))
+                .filter(field => field.displayValue || field.photoUrls.length);
+            const used = new Set();
+
+            const take = (key, label, patterns) => {
+                const found = source.find(field => !used.has(field.index) && patterns.some(pattern => pattern.test(field.label)));
+                if (found) used.add(found.index);
+                return {
+                    key,
+                    label,
+                    value: found?.displayValue || '미입력',
+                    photoUrls: found?.photoUrls || [],
+                };
+            };
+
+            const summary = [
+                take('nickname', '사용할 닉네임', [/닉네임|nickname|name/i]),
+                take('birth', '지원자 년생', [/년생|출생|birth|나이/i]),
+                take('region', '지역', [/지역|region/i]),
+                take('mainType', '본인의 주 성향은?', [/주\s*성향|본인.*성향|main.*type/i]),
+                take('subType', '보조 성향', [/보조.*성향|복수.*응답|sub.*type/i]),
+                take('relationship', '연애 유형 / 관계 성향', [/연애.*유형|연애.*성향|relationship|dating/i]),
+            ];
+
+            const storySections = [
+                take('reason', '선택한 성향이 주성향이라고 생각하는 이유는 무엇인가요?', [/주성향.*이유|선택한.*성향|생각.*이유/i]),
+                take('trigger', '성향을 깨닫게 된 계기는 어떻게 되시나요?', [/깨닫|계기|어떻게.*되/i]),
+                take('preference', '진락하신 성향에 대해 설명해주세요.', [/진락|설명|좋아|플레이|취향/i]),
+                take('care', '주로 본인이 사용하는 케어 방식은 어떤 방법인가요?', [/케어|aftercare|애프터/i]),
+                take('switch', '어떤 사람이 변바라고 생각하십니까?', [/변바|스위치|switch/i]),
+                take('bdsm', 'BDSM이란 무엇이라고 생각하나요?', [/BDSM|비디에스엠|무엇/i]),
+            ];
+
+            const attachments = source
+                .filter(field => !used.has(field.index) && field.photoUrls.length)
+                .map(field => {
+                    used.add(field.index);
+                    return field;
+                });
+
+            const extra = source
+                .filter(field => !used.has(field.index) && !field.photoUrls.length)
+                .map(field => ({
+                    key: `extra-${field.index}`,
+                    label: field.label || '추가 답변',
+                    value: field.displayValue || '미입력',
+                    photoUrls: [],
+                }));
+
+            return { summary, storySections, attachments, extra };
+        }
+
         function renderIntroductions(items, canManage = false) {
             introList.innerHTML = '';
 
@@ -5434,21 +5494,40 @@
             const submittedAt = new Date(item.submittedAt);
             membershipDetailDate.textContent = Number.isNaN(submittedAt.getTime()) ? '' : submittedAt.toLocaleDateString('ko-KR');
             membershipDetailAnswers.replaceChildren();
-            fields.forEach(field => {
+            const normalized = normalizeMembershipDetailFields(fields);
+            const orderedFields = [
+                ...normalized.summary,
+                ...normalized.storySections,
+                ...normalized.extra,
+            ];
+
+            orderedFields.forEach(field => {
                 const group = document.createElement('dl');
                 group.className = 'border-t border-[var(--border-light)] pt-4 min-w-0';
                 const label = document.createElement('dt');
-                label.className = 'text-xs opacity-45 mb-2 leading-relaxed';
+                label.className = 'text-xs opacity-45 mb-2 leading-relaxed font-sans';
                 label.textContent = field.label || 'Answer';
                 const value = document.createElement('dd');
                 value.className = 'font-serif-ko text-sm sm:text-base leading-relaxed whitespace-pre-wrap break-words';
-                if (field.photoUrls.length) {
-                    value.className = 'grid grid-cols-3 sm:grid-cols-4 gap-2';
+                value.textContent = field.value || field.displayValue || '미입력';
+                group.append(label, value);
+                membershipDetailAnswers.appendChild(group);
+            });
+
+            if (normalized.attachments.length) {
+                const group = document.createElement('dl');
+                group.className = 'md:col-span-2 border-t border-[var(--border-light)] pt-4 min-w-0';
+                const label = document.createElement('dt');
+                label.className = 'text-xs opacity-45 mb-3 leading-relaxed font-sans';
+                label.textContent = '첨부 자료';
+                const value = document.createElement('dd');
+                value.className = 'grid grid-cols-3 sm:grid-cols-5 gap-3';
+                normalized.attachments.forEach(field => {
                     field.photoUrls.forEach((url, index) => {
                         const button = document.createElement('button');
                         button.type = 'button';
                         button.className = 'aspect-square overflow-hidden bg-black/5 cursor-zoom-in';
-                        button.setAttribute('aria-label', `${name} 첨부 사진 ${index + 1} 확대`);
+                        button.setAttribute('aria-label', `${name} 첨부 사진 확대`);
                         const image = document.createElement('img');
                         image.src = url;
                         image.alt = `${name} 첨부 사진 ${index + 1}`;
@@ -5458,12 +5537,10 @@
                         button.addEventListener('click', () => openMembershipPhoto(url, name));
                         value.appendChild(button);
                     });
-                } else {
-                    value.textContent = field.displayValue;
-                }
+                });
                 group.append(label, value);
                 membershipDetailAnswers.appendChild(group);
-            });
+            }
 
             membershipDetailActions.replaceChildren();
             membershipDetailActions.classList.toggle('hidden', !canManage);
