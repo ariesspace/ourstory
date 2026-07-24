@@ -6811,6 +6811,24 @@
             }
         }
 
+        async function copyTextToClipboard(text) {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(text);
+                return true;
+            }
+
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.setAttribute('readonly', '');
+            textarea.style.position = 'fixed';
+            textarea.style.left = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.select();
+            const copied = document.execCommand('copy');
+            textarea.remove();
+            return copied;
+        }
+
         async function approveMembershipApplication(item, fields, fallbackName) {
             const nameField = fields.find(field => /이름|닉네임|name|nickname/i.test(field.label || ''));
             const displayName = window.prompt('사용할 닉네임을 확인해주세요.', nameField?.displayValue || fallbackName || '신규 회원');
@@ -6834,8 +6852,15 @@
                 await loadMembershipApplications();
                 await loadMembers();
                 const account = payload.user || {};
-                window.alert(`계정이 생성되었습니다.\n\nID: ${account.username || ''}\n임시 비밀번호: ${account.temporaryPassword || '(입력한 비밀번호)'}`);
-                showToast('가입 신청을 승인하고 계정을 생성했습니다.', true);
+                const credentials = `ID: ${account.username || ''}\n임시 비밀번호: ${account.temporaryPassword || '(입력한 비밀번호)'}`;
+                try {
+                    await copyTextToClipboard(credentials);
+                    window.alert(`계정이 생성되었습니다.\n계정 정보가 클립보드에 복사되었습니다.\n\n${credentials}`);
+                    showToast('계정 정보를 클립보드에 복사했습니다.', true);
+                } catch (copyError) {
+                    window.prompt('계정 정보 복사에 실패했습니다. 아래 내용을 직접 복사해주세요.', credentials);
+                    showToast('가입 신청을 승인하고 계정을 생성했습니다.', true);
+                }
                 return true;
             } catch (error) {
                 showToast(error.message, false);
