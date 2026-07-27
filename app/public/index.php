@@ -35,6 +35,115 @@
             -webkit-font-smoothing: antialiased;
         }
 
+        .ambient-bubbles {
+            position: fixed;
+            inset: -12vh -10vw;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.58;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 9% 22%, rgba(255, 183, 213, 0.42) 0 4.8rem, transparent 7.2rem),
+                radial-gradient(circle at 88% 18%, rgba(255, 232, 151, 0.38) 0 5.8rem, transparent 8.6rem),
+                radial-gradient(circle at 76% 74%, rgba(202, 218, 255, 0.30) 0 7.2rem, transparent 10.6rem),
+                radial-gradient(circle at 18% 84%, rgba(255, 210, 156, 0.27) 0 6.2rem, transparent 9.6rem),
+                radial-gradient(circle at 50% 46%, rgba(245, 191, 225, 0.20) 0 8rem, transparent 12rem);
+            filter: blur(0.8px) saturate(1.06);
+            animation: ambientBubbleDrift 24s ease-in-out infinite alternate;
+        }
+
+        .ambient-bubbles::before,
+        .ambient-bubbles::after {
+            content: '';
+            position: absolute;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.72);
+            box-shadow:
+                inset 1.2rem 1.2rem 3rem rgba(255, 255, 255, 0.34),
+                0 1.4rem 5rem rgba(244, 178, 205, 0.22);
+        }
+
+        .ambient-bubbles::before {
+            width: 13rem;
+            height: 13rem;
+            left: 8vw;
+            top: 56vh;
+            background: radial-gradient(circle at 35% 28%, rgba(255,255,255,0.54), rgba(255, 200, 224, 0.16) 42%, transparent 70%);
+        }
+
+        .ambient-bubbles::after {
+            width: 9rem;
+            height: 9rem;
+            right: 10vw;
+            top: 34vh;
+            background: radial-gradient(circle at 33% 24%, rgba(255,255,255,0.58), rgba(255, 230, 160, 0.18) 44%, transparent 72%);
+        }
+
+        body.ambient-bubbles-disabled .ambient-bubbles {
+            display: none;
+        }
+
+        body > main {
+            position: relative;
+            z-index: 1;
+        }
+
+        .settings-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+            padding: 2rem 0;
+            border-top: 1px solid var(--border-light);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .settings-switch {
+            width: 4.6rem;
+            height: 2.35rem;
+            border: 1px solid var(--text-dark);
+            border-radius: 999px;
+            padding: 0.22rem;
+            background: transparent;
+            transition: background-color 0.25s ease, border-color 0.25s ease;
+        }
+
+        .settings-switch::before {
+            content: '';
+            display: block;
+            width: 1.78rem;
+            height: 1.78rem;
+            border-radius: 999px;
+            background: var(--text-dark);
+            transition: transform 0.25s ease, background-color 0.25s ease;
+        }
+
+        .settings-switch.is-on {
+            background: rgba(255, 225, 164, 0.55);
+            border-color: var(--accent-red);
+        }
+
+        .settings-switch.is-on::before {
+            transform: translateX(2.15rem);
+            background: var(--accent-red);
+        }
+
+        @media (max-width: 640px) {
+            .settings-toggle {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+
+        @keyframes ambientBubbleDrift {
+            from {
+                transform: translate3d(0, 0, 0) scale(1);
+            }
+            to {
+                transform: translate3d(1.8vw, -1.5vh, 0) scale(1.025);
+            }
+        }
+
         .font-serif-en { font-family: 'Cormorant Garamond', serif; }
         .font-serif-ko { font-family: 'Nanum Myeongjo', serif; }
         .font-document { font-family: 'Cormorant Garamond', serif; }
@@ -3789,6 +3898,7 @@
     </style>
 </head>
 <body class="loading-lock">
+    <div id="ambient-bubbles" class="ambient-bubbles" aria-hidden="true"></div>
 
     <div id="site-loader" class="fixed inset-0 z-[100] flex flex-col items-center justify-center">
         <div id="loader-status" class="system-status">Initializing private archive</div>
@@ -3857,6 +3967,7 @@
                 <button type="button" class="view-trigger hidden" data-target="view-system-add" id="system-add-nav-link"><em>11</em><span>Create Account</span><small>[ 계정 생성 ]</small></button>
                 <button type="button" class="view-trigger hidden" data-target="view-membership-archive" id="membership-nav-link"><em>12</em><span>Applications</span><small>[ 가입 신청 ]</small></button>
                 <button type="button" class="view-trigger hidden" data-target="view-main-image-admin" id="main-image-nav-link"><em>13</em><span>Main Image</span><small>[ 메인 그림 ]</small></button>
+                <button type="button" class="view-trigger hidden" data-target="view-system-settings" id="system-settings-nav-link"><em>14</em><span>Environment</span><small>[ 환경설정 ]</small></button>
             </section>
         </nav>
         <button type="button" id="mobile-login-btn" class="mt-auto border border-[var(--text-dark)] py-4 font-mono text-xs tracking-[0.25em] uppercase hover:bg-[var(--text-dark)] hover:text-white transition-colors">Login</button>
@@ -4336,6 +4447,29 @@
                     <p id="main-image-error" class="hidden text-sm text-[var(--accent-red)]"></p>
                     <button type="submit" id="main-image-submit" class="btn-save-changes w-full mt-0">Save Main Image</button>
                 </form>
+            </div>
+        </section>
+
+        <section id="view-system-settings" class="w-full max-w-5xl mx-auto view-hidden fade-in py-8">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 border-b border-[var(--text-dark)] pb-8 mb-10">
+                <div>
+                    <span class="text-xs tracking-[0.28em] uppercase opacity-45 font-mono">Admin Only</span>
+                    <h1 class="font-document italic text-5xl md:text-7xl leading-none mt-3">Environment</h1>
+                    <p class="mt-5 text-sm opacity-55 font-serif-ko">사이트의 시각 효과와 전역 분위기를 관리합니다.</p>
+                </div>
+            </div>
+
+            <div class="border border-[var(--border-light)] bg-white/70 p-8 md:p-10">
+                <div class="settings-toggle">
+                    <div>
+                        <span class="form-label">Ambient Bubble Background</span>
+                        <p class="mt-3 text-sm leading-relaxed opacity-65 font-serif-ko">
+                            흰 배경 위에 연핑크, 노랑, 하늘빛 비눗방울을 아주 옅게 표시합니다.
+                        </p>
+                    </div>
+                    <button type="button" id="ambient-bubbles-toggle" class="settings-switch" aria-pressed="true" aria-label="비눗방울 배경 켜기 또는 끄기"></button>
+                </div>
+                <p id="system-settings-error" class="hidden mt-6 text-sm text-[var(--accent-red)]"></p>
             </div>
         </section>
 
@@ -5142,12 +5276,16 @@
         const mainImagePreview = document.getElementById('main-image-admin-preview');
         const mainImageSubmit = document.getElementById('main-image-submit');
         const mainImageError = document.getElementById('main-image-error');
+        const systemSettingsNavLink = document.getElementById('system-settings-nav-link');
+        const ambientBubblesToggle = document.getElementById('ambient-bubbles-toggle');
+        const systemSettingsError = document.getElementById('system-settings-error');
         const lastViewKey = 'ourstory:last-view';
         const pendingAuthViewKey = 'ourstory:pending-auth-view';
 
         let isMenuOpen = false;
         let siteUser = null;
         let csrfToken = null;
+        let siteSettings = { ambientBubbles: true };
         let passwordReminderShownFor = null;
         let currentViewId = 'view-read';
         let isRestoringHistory = false;
@@ -5177,6 +5315,63 @@
         window.addEventListener('scroll', updateScrollState, { passive: true });
         window.addEventListener('resize', updateScrollProgress);
         updateScrollState();
+
+        function applySiteSettings(settings = {}) {
+            siteSettings = { ...siteSettings, ...settings };
+            const isOn = siteSettings.ambientBubbles !== false;
+            document.body.classList.toggle('ambient-bubbles-disabled', !isOn);
+            ambientBubblesToggle?.classList.toggle('is-on', isOn);
+            ambientBubblesToggle?.setAttribute('aria-pressed', isOn ? 'true' : 'false');
+        }
+
+        async function loadSiteSettings() {
+            try {
+                const response = await fetch('/api/settings.php', { credentials: 'same-origin' });
+                const payload = await response.json();
+                if (!response.ok || !payload.ok) throw new Error(payload.error || '설정을 불러오지 못했습니다.');
+                applySiteSettings(payload.settings || {});
+            } catch (error) {
+                console.warn(error);
+                applySiteSettings(siteSettings);
+            }
+        }
+
+        async function saveSiteSettings(nextSettings) {
+            if (!csrfToken) {
+                openLoginModal();
+                return;
+            }
+            if (systemSettingsError) systemSettingsError.classList.add('hidden');
+            const previousSettings = { ...siteSettings };
+            applySiteSettings(nextSettings);
+            try {
+                const response = await fetch('/api/settings.php', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        'X-CSRF-Token': csrfToken || '',
+                    },
+                    body: JSON.stringify(nextSettings),
+                });
+                const payload = await response.json();
+                if (!response.ok || !payload.ok) throw new Error(payload.error || '설정을 저장하지 못했습니다.');
+                applySiteSettings(payload.settings || nextSettings);
+                showToast('환경설정을 저장했습니다.');
+            } catch (error) {
+                applySiteSettings(previousSettings);
+                if (systemSettingsError) {
+                    systemSettingsError.textContent = error.message || '설정 저장 중 오류가 발생했습니다.';
+                    systemSettingsError.classList.remove('hidden');
+                }
+                showToast(error.message || '설정 저장 중 오류가 발생했습니다.', false);
+            }
+        }
+
+        ambientBubblesToggle?.addEventListener('click', () => {
+            saveSiteSettings({ ambientBubbles: siteSettings.ambientBubbles === false });
+        });
 
         function openMenu() {
             indexMenu.classList.add('open');
@@ -5273,6 +5468,7 @@
             if (targetId === 'view-questionnaires') loadQuestionnaires();
             if (targetId === 'view-read') loadLatestDashboard();
             if (targetId === 'view-system-members') loadMembers();
+            if (targetId === 'view-system-settings') loadSiteSettings();
             if (targetId === 'view-my-page') loadMyProfile();
             if (targetId === 'view-self-introduction') loadSelfIntroduction();
             if (targetId === 'view-my-timeline') loadMyTimeline();
@@ -5462,6 +5658,7 @@
             systemAddNavLink?.classList.toggle('hidden', !isManager);
             membershipNavLink?.classList.toggle('hidden', !isManager);
             mainImageNavLink?.classList.toggle('hidden', !isManager);
+            systemSettingsNavLink?.classList.toggle('hidden', !isManager);
             systemMenuSection?.classList.toggle('hidden', !isManager);
             myPageNavLink.classList.toggle('hidden', !user);
             selfIntroNavLink?.classList.toggle('hidden', !user);
@@ -10379,6 +10576,7 @@
         }
 
         runSiteLoader();
+        loadSiteSettings();
         bootstrapInitialView();
         initAuth();
         renderCalendar();

@@ -29,6 +29,14 @@ function site_db(): PDO
 function site_migrate(PDO $pdo): void
 {
     $pdo->exec(
+        'CREATE TABLE IF NOT EXISTS site_settings (
+            setting_key TEXT PRIMARY KEY,
+            setting_value TEXT NOT NULL,
+            updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )'
+    );
+
+    $pdo->exec(
         'CREATE TABLE IF NOT EXISTS posts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             type TEXT NOT NULL,
