@@ -90,11 +90,11 @@
             background:
                 radial-gradient(circle at 28% 22%, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.24) 26%, transparent 50%),
                 radial-gradient(circle at 64% 72%, var(--bubble-color, rgba(255, 190, 220, 0.38)), transparent 68%);
-            border: 1px solid var(--bubble-line, rgba(255, 172, 210, 0.48));
+            border: 1px solid var(--bubble-line, rgba(255, 172, 210, 0.24));
             box-shadow:
-                inset 0.45rem 0.45rem 1.35rem rgba(255, 255, 255, 0.62),
-                inset -0.4rem -0.4rem 1.2rem var(--bubble-color, rgba(255, 190, 220, 0.22)),
-                0 0.75rem 2.8rem var(--bubble-shadow, rgba(255, 184, 214, 0.28));
+                inset 0.45rem 0.45rem 1.45rem rgba(255, 255, 255, 0.68),
+                inset -0.35rem -0.35rem 1.35rem var(--bubble-color, rgba(255, 190, 220, 0.18)),
+                0 0.75rem 2.8rem var(--bubble-shadow, rgba(255, 184, 214, 0.22));
             opacity: var(--opacity, 0.82);
             animation:
                 ambientBubbleRise var(--duration, 10s) linear var(--delay, 0s) infinite,
@@ -109,7 +109,7 @@
             --duration: 9s;
             --delay: -1s;
             --bubble-color: rgba(255, 176, 212, 0.34);
-            --bubble-line: rgba(255, 155, 202, 0.54);
+            --bubble-line: rgba(255, 155, 202, 0.25);
         }
 
         .ambient-bubble:nth-child(2) {
@@ -120,7 +120,7 @@
             --delay: -4s;
             --bubble-color: rgba(255, 226, 145, 0.32);
             --bubble-shadow: rgba(255, 223, 146, 0.18);
-            --bubble-line: rgba(244, 205, 118, 0.48);
+            --bubble-line: rgba(244, 205, 118, 0.23);
         }
 
         .ambient-bubble:nth-child(3) {
@@ -131,7 +131,7 @@
             --delay: -3s;
             --opacity: 0.58;
             --bubble-color: rgba(202, 220, 255, 0.32);
-            --bubble-line: rgba(170, 195, 245, 0.46);
+            --bubble-line: rgba(170, 195, 245, 0.22);
         }
 
         .ambient-bubble:nth-child(4) {
@@ -142,7 +142,7 @@
             --delay: -7s;
             --opacity: 0.46;
             --bubble-color: rgba(255, 205, 160, 0.27);
-            --bubble-line: rgba(238, 185, 134, 0.44);
+            --bubble-line: rgba(238, 185, 134, 0.21);
         }
 
         .ambient-bubble:nth-child(5) {
@@ -153,7 +153,7 @@
             --delay: -2s;
             --opacity: 0.72;
             --bubble-color: rgba(255, 180, 214, 0.34);
-            --bubble-line: rgba(255, 155, 202, 0.52);
+            --bubble-line: rgba(255, 155, 202, 0.24);
         }
 
         .ambient-bubble:nth-child(6) {
@@ -164,7 +164,7 @@
             --delay: -5s;
             --opacity: 0.62;
             --bubble-color: rgba(255, 236, 172, 0.30);
-            --bubble-line: rgba(234, 202, 120, 0.46);
+            --bubble-line: rgba(234, 202, 120, 0.22);
         }
 
         .ambient-bubble:nth-child(7) {
@@ -175,7 +175,7 @@
             --delay: -6s;
             --opacity: 0.78;
             --bubble-color: rgba(207, 226, 255, 0.36);
-            --bubble-line: rgba(168, 198, 246, 0.50);
+            --bubble-line: rgba(168, 198, 246, 0.24);
         }
 
         .ambient-bubble:nth-child(8) {
@@ -186,7 +186,7 @@
             --delay: -8s;
             --opacity: 0.68;
             --bubble-color: rgba(255, 200, 230, 0.32);
-            --bubble-line: rgba(255, 165, 210, 0.48);
+            --bubble-line: rgba(255, 165, 210, 0.23);
         }
 
         .ambient-bubble:nth-child(9) {
@@ -197,7 +197,7 @@
             --delay: -10s;
             --opacity: 0.58;
             --bubble-color: rgba(255, 224, 150, 0.24);
-            --bubble-line: rgba(238, 205, 128, 0.40);
+            --bubble-line: rgba(238, 205, 128, 0.18);
         }
 
         .ambient-bubble:nth-child(10) {
@@ -208,7 +208,7 @@
             --delay: -4.5s;
             --opacity: 0.74;
             --bubble-color: rgba(255, 177, 215, 0.35);
-            --bubble-line: rgba(255, 150, 201, 0.50);
+            --bubble-line: rgba(255, 150, 201, 0.24);
         }
 
         .ambient-bubble:nth-child(11) {
@@ -219,7 +219,7 @@
             --delay: -8.5s;
             --opacity: 0.64;
             --bubble-color: rgba(204, 224, 255, 0.32);
-            --bubble-line: rgba(160, 194, 244, 0.44);
+            --bubble-line: rgba(160, 194, 244, 0.20);
         }
 
         .ambient-bubble:nth-child(12) {
@@ -230,7 +230,7 @@
             --delay: -1.5s;
             --opacity: 0.82;
             --bubble-color: rgba(255, 207, 232, 0.38);
-            --bubble-line: rgba(255, 158, 211, 0.56);
+            --bubble-line: rgba(255, 158, 211, 0.26);
         }
 
         @media (min-width: 1024px) {
