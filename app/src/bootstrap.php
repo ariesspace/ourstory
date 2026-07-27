@@ -123,11 +123,17 @@ function site_migrate(PDO $pdo): void
         'reviewed_by' => 'INTEGER',
         'reviewed_at' => 'TEXT',
         'approved_user_id' => 'INTEGER',
+        'admin_tag' => "TEXT NOT NULL DEFAULT '비회원'",
+        'synced_profile_id' => 'INTEGER',
+        'synced_profile_data_json' => 'TEXT',
+        'synced_intro_text' => "TEXT NOT NULL DEFAULT ''",
+        'synced_at' => 'TEXT',
     ] as $name => $definition) {
         if (!in_array($name, $membershipColumns, true)) {
             $pdo->exec("ALTER TABLE tally_membership_applications ADD COLUMN {$name} {$definition}");
         }
     }
+    $pdo->exec("UPDATE tally_membership_applications SET admin_tag = '회원' WHERE approved_user_id IS NOT NULL AND (admin_tag IS NULL OR admin_tag = '')");
     $pdo->exec(
         'CREATE INDEX IF NOT EXISTS idx_tally_membership_applications_submitted_at
          ON tally_membership_applications (submitted_at DESC)'

@@ -183,6 +183,13 @@ if ($method === 'DELETE') {
          WHERE id = :id'
     );
     $stmt->execute([':id' => $targetId]);
+    $tagStmt = $pdo->prepare(
+        "UPDATE tally_membership_applications
+         SET admin_tag = '비회원'
+         WHERE approved_user_id = :id
+            OR synced_profile_id IN (SELECT id FROM profiles WHERE user_id = :id)"
+    );
+    $tagStmt->execute([':id' => $targetId]);
     users_json(['ok' => true]);
 }
 
@@ -233,6 +240,15 @@ $sql .= ' WHERE id = :id';
 
 try {
     $pdo->prepare($sql)->execute($params);
+    if (!$isActive) {
+        $tagStmt = $pdo->prepare(
+            "UPDATE tally_membership_applications
+             SET admin_tag = '비회원'
+             WHERE approved_user_id = :id
+                OR synced_profile_id IN (SELECT id FROM profiles WHERE user_id = :id)"
+        );
+        $tagStmt->execute([':id' => $targetId]);
+    }
 } catch (PDOException $error) {
     if ($error->getCode() === '23000') {
         users_json(['error' => '이미 사용 중인 아이디입니다.'], 409);

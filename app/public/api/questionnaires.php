@@ -30,28 +30,60 @@ function questionnaire_field_answer(array $field): string
         $parts = [];
         array_walk_recursive($value, static function ($item) use (&$parts): void {
             if (is_scalar($item)) {
-                $parts[] = trim((string) $item);
+                $text = trim((string) $item);
+                if ($text !== '') {
+                    $parts[] = $text;
+                }
             }
         });
-        return trim(implode(', ', array_filter($parts)));
+        return trim(implode(', ', $parts));
     }
     return trim(is_scalar($value) ? (string) $value : '');
 }
 
-function questionnaire_find_answer(array $fields, array $patterns): string
+function questionnaire_find_answer(array $fields, array $needles): string
 {
     foreach ($fields as $field) {
         if (!is_array($field)) {
             continue;
         }
-        $label = (string) ($field['label'] ?? '');
-        foreach ($patterns as $pattern) {
-            if (preg_match($pattern, $label)) {
+        $label = trim((string) ($field['label'] ?? ''));
+        $normalized = questionnaire_normalize_label($label);
+        foreach ($needles as $needle) {
+            if (str_contains($normalized, questionnaire_normalize_label($needle))) {
                 return questionnaire_field_answer($field);
             }
         }
     }
     return '';
+}
+
+function questionnaire_normalize_label(string $value): string
+{
+    $lower = function_exists('mb_strtolower') ? mb_strtolower($value, 'UTF-8') : strtolower($value);
+    return preg_replace('/\s+/u', '', $lower) ?: '';
+}
+
+function questionnaire_profile_row(PDO $pdo, int $applicationId, ?int $approvedUserId): ?array
+{
+    $stmt = $pdo->prepare(
+        "SELECT p.id, p.user_id, p.profile_data_json, p.intro_text, p.draft_profile_data_json,
+                p.draft_intro_text, p.draft_updated_at, p.updated_at,
+                u.username, u.display_name, u.role, u.birth_year, u.region,
+                u.personality, u.relationship_style, u.bio, u.avatar_stored_name
+         FROM profiles p
+         LEFT JOIN users u ON u.id = p.user_id
+         WHERE p.source_application_id = :application_id
+            OR (:user_id IS NOT NULL AND p.user_id = :user_id)
+         ORDER BY p.updated_at DESC, p.id DESC
+         LIMIT 1"
+    );
+    $stmt->execute([
+        ':application_id' => $applicationId,
+        ':user_id' => $approvedUserId,
+    ]);
+    $row = $stmt->fetch();
+    return $row ?: null;
 }
 
 $pdo = site_db();
@@ -64,108 +96,77 @@ $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $canManage = in_array((string) $viewer['role'], ['superuser', 'admin'], true);
 
 if ($method === 'GET') {
-    $profileStmt = $pdo->query(
-        "SELECT p.id, p.user_id, p.source_application_id, p.author_snapshot, p.nickname_snapshot,
-                p.profile_data_json, p.intro_text, p.draft_profile_data_json, p.draft_intro_text,
-                p.draft_updated_at, p.published_at, p.created_at, p.updated_at,
-                u.username, u.display_name, u.role, u.birth_year, u.region,
-                u.personality, u.relationship_style, u.bio, u.avatar_stored_name
-         FROM profiles p
-         LEFT JOIN users u ON u.id = p.user_id
-         WHERE p.is_visible = 1
-           AND (
-                p.profile_data_json <> '[]'
-                OR COALESCE(p.draft_profile_data_json, '') <> ''
-           )
-         ORDER BY COALESCE(p.published_at, p.updated_at, p.created_at) DESC, p.id DESC"
-    );
-
-    $items = [];
-    $profileSourceIds = [];
-    foreach ($profileStmt->fetchAll() as $row) {
-        $fields = json_decode((string) $row['profile_data_json'], true);
-        $draft = json_decode((string) ($row['draft_profile_data_json'] ?? ''), true);
-        $fields = is_array($fields) ? $fields : [];
-        $draft = is_array($draft) ? $draft : $fields;
-        $visibleFields = $fields ?: $draft;
-        if ($row['source_application_id'] !== null) {
-            $profileSourceIds[] = (int) $row['source_application_id'];
-        }
-        $items[] = [
-            'id' => (int) $row['id'],
-            'source' => 'profile',
-            'status' => 'linked',
-            'userId' => $row['user_id'] !== null ? (int) $row['user_id'] : null,
-            'username' => (string) ($row['username'] ?: $row['author_snapshot']),
-            'displayName' => (string) ($row['display_name'] ?: $row['nickname_snapshot'] ?: $row['author_snapshot']),
-            'role' => (string) ($row['role'] ?? ''),
-            'birthYear' => $row['birth_year'] !== null ? (int) $row['birth_year'] : null,
-            'region' => (string) ($row['region'] ?? ''),
-            'personality' => (string) ($row['personality'] ?? ''),
-            'relationshipStyle' => (string) ($row['relationship_style'] ?? ''),
-            'bio' => (string) ($row['bio'] ?? ''),
-            'avatarUrl' => questionnaire_avatar_url($row),
-            'fields' => $visibleFields,
-            'introText' => (string) $row['intro_text'],
-            'publishedAt' => $row['published_at'] ?: $row['updated_at'],
-            'draftUpdatedAt' => $row['draft_updated_at'],
-            'hasDraftChanges' => $canManage && (
-                json_encode($draft, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
-                !== json_encode($fields, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
-                || (string) ($row['draft_intro_text'] ?? '') !== '' && (string) $row['draft_intro_text'] !== (string) $row['intro_text']
-            ),
-        ];
-    }
-
-    $applicationStmt = $pdo->query(
-        "SELECT id, submission_id, form_name, submitted_at, fields_json, status, is_hidden
+    $stmt = $pdo->query(
+        "SELECT id, submission_id, form_name, submitted_at, fields_json, status, is_hidden,
+                approved_user_id, admin_tag, synced_profile_id, synced_profile_data_json,
+                synced_intro_text, synced_at
          FROM tally_membership_applications
          WHERE is_hidden = 0
          ORDER BY submitted_at DESC, id DESC"
     );
 
-    foreach ($applicationStmt->fetchAll() as $row) {
+    $items = [];
+    foreach ($stmt->fetchAll() as $row) {
         $applicationId = (int) $row['id'];
-        if (in_array($applicationId, $profileSourceIds, true)) {
-            continue;
+        $approvedUserId = $row['approved_user_id'] !== null ? (int) $row['approved_user_id'] : null;
+        $profile = questionnaire_profile_row($pdo, $applicationId, $approvedUserId);
+
+        $originalFields = json_decode((string) $row['fields_json'], true);
+        $originalFields = is_array($originalFields) ? $originalFields : [];
+        $syncedFields = json_decode((string) ($row['synced_profile_data_json'] ?? ''), true);
+        $fields = is_array($syncedFields) && $syncedFields !== [] ? $syncedFields : $originalFields;
+
+        $displayName = questionnaire_find_answer($fields, ['사용할닉네임', '닉네임', 'nickname', 'name']);
+        $birthYear = questionnaire_find_answer($fields, ['지원자년생', '출생년도', '년생', 'birth']);
+        $region = questionnaire_find_answer($fields, ['지역', 'region']);
+        $personality = questionnaire_find_answer($fields, ['본인의주성향', '주성향', 'main type']);
+
+        $profileFields = [];
+        $draftFields = [];
+        if ($profile) {
+            $profileFields = json_decode((string) ($profile['profile_data_json'] ?? ''), true);
+            $draftFields = json_decode((string) ($profile['draft_profile_data_json'] ?? ''), true);
+            $profileFields = is_array($profileFields) ? $profileFields : [];
+            $draftFields = is_array($draftFields) ? $draftFields : $profileFields;
         }
-        $fields = json_decode((string) $row['fields_json'], true);
-        $fields = is_array($fields) ? $fields : [];
-        $displayName = questionnaire_find_answer($fields, ['/(닉네임|nickname|name)/i']);
-        $birthYear = questionnaire_find_answer($fields, ['/(년생|출생|birth|나이)/i']);
-        $region = questionnaire_find_answer($fields, ['/(지역|region)/i']);
-        $personality = questionnaire_find_answer($fields, [
-            '/^본인의\s*주\s*성향은\??$/iu',
-            '/^주\s*성향\??$/iu',
-            '/^main\s*type\??$/i',
-        ]);
+        $hasDraftChanges = false;
+        if ($canManage && $profile) {
+            $hasDraftChanges =
+                json_encode($draftFields, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+                !== json_encode($profileFields, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+                || ((string) ($profile['draft_intro_text'] ?? '') !== ''
+                    && (string) ($profile['draft_intro_text'] ?? '') !== (string) ($profile['intro_text'] ?? ''));
+        }
 
         $items[] = [
-            'id' => 'application-' . $applicationId,
+            'id' => $applicationId,
             'source' => 'application',
+            'questionnaireAdmin' => true,
             'status' => (string) ($row['status'] ?: 'pending'),
             'submissionId' => (string) $row['submission_id'],
-            'userId' => null,
-            'username' => '',
+            'userId' => $approvedUserId,
+            'profileId' => $profile ? (int) $profile['id'] : null,
+            'username' => $profile ? (string) ($profile['username'] ?? '') : '',
             'displayName' => $displayName !== '' ? $displayName : '이름 미입력',
-            'role' => '',
+            'role' => $profile ? (string) ($profile['role'] ?? '') : '',
             'birthYear' => preg_match('/^\d{4}$/', $birthYear) ? (int) $birthYear : null,
             'region' => $region,
             'personality' => $personality,
-            'relationshipStyle' => '',
-            'bio' => '',
-            'avatarUrl' => '',
+            'relationshipStyle' => $profile ? (string) ($profile['relationship_style'] ?? '') : '',
+            'bio' => $profile ? (string) ($profile['bio'] ?? '') : '',
+            'avatarUrl' => $profile ? questionnaire_avatar_url($profile) : '',
             'fields' => $fields,
-            'introText' => '',
+            'originalFields' => $canManage ? $originalFields : [],
+            'introText' => (string) ($row['synced_intro_text'] ?: ''),
             'publishedAt' => (string) $row['submitted_at'],
-            'draftUpdatedAt' => null,
-            'hasDraftChanges' => false,
+            'draftUpdatedAt' => $profile ? (string) ($profile['draft_updated_at'] ?? '') : null,
+            'adminTag' => (string) ($row['admin_tag'] ?: ($approvedUserId ? '회원' : '비회원')),
+            'syncedAt' => (string) ($row['synced_at'] ?? ''),
+            'hasSyncedProfile' => (string) ($row['synced_profile_data_json'] ?? '') !== '',
+            'hasProfile' => $profile !== null,
+            'hasDraftChanges' => $hasDraftChanges,
         ];
     }
-
-    usort($items, static function (array $a, array $b): int {
-        return strcmp((string) ($b['publishedAt'] ?? ''), (string) ($a['publishedAt'] ?? ''));
-    });
 
     questionnaires_json(['items' => $items, 'canManage' => $canManage]);
 }
@@ -186,7 +187,61 @@ if ($receivedCsrf === '' || !hash_equals(site_csrf_token(), $receivedCsrf)) {
 
 $body = json_decode((string) file_get_contents('php://input'), true);
 $body = is_array($body) ? $body : [];
-if (($body['action'] ?? '') !== 'sync') {
+$action = (string) ($body['action'] ?? '');
+
+if ($action === 'updateTag') {
+    $applicationId = (int) ($body['applicationId'] ?? 0);
+    $tag = trim((string) ($body['tag'] ?? ''));
+    if ($applicationId <= 0) {
+        questionnaires_json(['error' => 'Application id is required.'], 422);
+    }
+    if (!in_array($tag, ['비회원', '회원'], true)) {
+        questionnaires_json(['error' => '지원하지 않는 태그입니다.'], 422);
+    }
+    $stmt = $pdo->prepare('UPDATE tally_membership_applications SET admin_tag = :tag WHERE id = :id');
+    $stmt->execute([':tag' => $tag, ':id' => $applicationId]);
+    questionnaires_json(['ok' => true]);
+}
+
+if ($action === 'syncApplicationProfile') {
+    $applicationId = (int) ($body['applicationId'] ?? 0);
+    if ($applicationId <= 0) {
+        questionnaires_json(['error' => 'Application id is required.'], 422);
+    }
+    $appStmt = $pdo->prepare('SELECT id, approved_user_id FROM tally_membership_applications WHERE id = :id');
+    $appStmt->execute([':id' => $applicationId]);
+    $application = $appStmt->fetch();
+    if (!$application) {
+        questionnaires_json(['error' => 'Questionnaire not found.'], 404);
+    }
+    $profile = questionnaire_profile_row($pdo, $applicationId, $application['approved_user_id'] !== null ? (int) $application['approved_user_id'] : null);
+    if (!$profile) {
+        questionnaires_json(['error' => '연동할 회원 질문지가 없습니다.'], 422);
+    }
+
+    $draftJson = (string) ($profile['draft_profile_data_json'] ?? '');
+    $draftIntro = (string) ($profile['draft_intro_text'] ?? '');
+    $publicJson = $draftJson !== '' ? $draftJson : (string) $profile['profile_data_json'];
+    $publicIntro = $draftIntro !== '' ? $draftIntro : (string) $profile['intro_text'];
+
+    $update = $pdo->prepare(
+        "UPDATE tally_membership_applications
+         SET synced_profile_id = :profile_id,
+             synced_profile_data_json = :profile_json,
+             synced_intro_text = :intro_text,
+             synced_at = CURRENT_TIMESTAMP
+         WHERE id = :id"
+    );
+    $update->execute([
+        ':profile_id' => (int) $profile['id'],
+        ':profile_json' => $publicJson,
+        ':intro_text' => $publicIntro,
+        ':id' => $applicationId,
+    ]);
+    questionnaires_json(['ok' => true]);
+}
+
+if ($action !== 'sync') {
     questionnaires_json(['error' => 'Unsupported action.'], 422);
 }
 

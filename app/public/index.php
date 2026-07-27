@@ -6988,6 +6988,36 @@
             membershipDetailActions.classList.toggle('hidden', !canManage);
             membershipDetailActions.classList.toggle('flex', canManage);
             if (canManage) {
+                if (item.questionnaireAdmin) {
+                    const statusBadge = document.createElement('span');
+                    statusBadge.className = 'mr-auto px-3 py-2 text-[0.65rem] tracking-widest uppercase border border-[var(--border-light)]';
+                    statusBadge.textContent = item.hasSyncedProfile ? 'Synced' : 'Original';
+
+                    const tagSelect = document.createElement('select');
+                    tagSelect.className = 'bg-transparent border border-[var(--text-dark)] px-4 py-2.5 text-xs tracking-widest uppercase outline-none';
+                    ['비회원', '회원'].forEach(tag => {
+                        const option = document.createElement('option');
+                        option.value = tag;
+                        option.textContent = tag;
+                        option.selected = (item.adminTag || '비회원') === tag;
+                        tagSelect.appendChild(option);
+                    });
+                    tagSelect.addEventListener('change', async () => {
+                        await updateQuestionnaireTag(item.id, tagSelect.value);
+                    });
+
+                    const sync = document.createElement('button');
+                    sync.type = 'button';
+                    sync.className = 'bg-[var(--accent-red)] text-white px-5 py-2.5 text-xs tracking-widest uppercase disabled:opacity-35 disabled:cursor-not-allowed';
+                    sync.textContent = item.hasSyncedProfile ? '다시 연동하기' : '연동하기';
+                    sync.disabled = !item.hasProfile;
+                    sync.title = item.hasProfile ? '회원이 마이페이지에서 작성한 질문지를 이 원본 질문지에 수동 반영합니다.' : '승인되어 연결된 회원 질문지가 없습니다.';
+                    sync.addEventListener('click', async () => {
+                        await syncApplicationQuestionnaire(item.id);
+                    });
+
+                    membershipDetailActions.append(statusBadge, tagSelect, sync);
+                } else {
                 const statusBadge = document.createElement('span');
                 statusBadge.className = 'mr-auto px-3 py-2 text-[0.65rem] tracking-widest uppercase border border-[var(--border-light)]';
                 statusBadge.textContent = item.status === 'approved' ? 'Approved' : item.status === 'rejected' ? 'Rejected' : 'Pending';
@@ -7027,6 +7057,7 @@
                     if (await manageMembershipApplication('delete', item.submissionId)) closeMembershipDetail();
                 });
                 membershipDetailActions.append(visibility, remove);
+                }
             }
 
             membershipDetailModal.classList.remove('hidden');
@@ -7961,7 +7992,9 @@
                 const top = document.createElement('div');
                 const status = document.createElement('span');
                 status.className = 'questionnaire-card-status';
-                status.textContent = item.source === 'application' ? (item.status || 'application') : (item.hasDraftChanges ? 'Draft Pending' : 'Linked Profile');
+                status.textContent = questionnaireCanManage && item.adminTag
+                    ? `${item.adminTag} · ${item.hasSyncedProfile ? 'Synced' : 'Original'}`
+                    : (item.status || 'application');
                 const title = document.createElement('h3');
                 title.className = 'questionnaire-card-title';
                 title.textContent = item.displayName || item.username || 'Untitled';
@@ -7981,26 +8014,14 @@
                 open.append(media, body);
                 open.addEventListener('click', () => {
                     openMembershipDetail(
-                        { ...item, submittedAt: item.publishedAt || item.draftUpdatedAt || '', status: item.status || 'linked' },
+                        { ...item, submittedAt: item.publishedAt || item.draftUpdatedAt || '', status: item.status || 'linked', questionnaireAdmin: true },
                         fields,
-                        false,
+                        questionnaireCanManage,
                         item.displayName || item.username || 'Questionnaire',
                         meta
                     );
                 });
                 card.appendChild(open);
-
-                if (item.hasDraftChanges && questionnaireCanManage) {
-                    const sync = document.createElement('button');
-                    sync.type = 'button';
-                    sync.className = 'mt-3 w-full bg-[var(--accent-red)] text-white px-4 py-3 text-[0.65rem] tracking-[0.18em] uppercase';
-                    sync.textContent = '연동하기';
-                    sync.addEventListener('click', event => {
-                        event.stopPropagation();
-                        syncQuestionnaire(item.id);
-                    });
-                    card.appendChild(sync);
-                }
                 questionnaireList.appendChild(card);
             });
         }
@@ -8048,6 +8069,44 @@
                 if (!response.ok) throw new Error(payload.error || '질문지를 연동하지 못했습니다.');
                 await loadQuestionnaires();
                 showToast('공개 질문지를 연동했습니다.', true);
+            } catch (error) {
+                showToast(error.message, false);
+            }
+        }
+
+        async function updateQuestionnaireTag(applicationId, tag) {
+            try {
+                const response = await fetch('/api/questionnaires.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-Token': csrfToken || '' },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ action: 'updateTag', applicationId, tag })
+                });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '태그를 저장하지 못했습니다.');
+                questionnaireItems = questionnaireItems.map(item => String(item.id) === String(applicationId) ? { ...item, adminTag: tag } : item);
+                filterQuestionnaires();
+                showToast(`질문지 태그를 ${tag}(으)로 변경했습니다.`, true);
+            } catch (error) {
+                showToast(error.message, false);
+                await loadQuestionnaires();
+            }
+        }
+
+        async function syncApplicationQuestionnaire(applicationId) {
+            if (!window.confirm('이 회원이 마이페이지에서 작성한 질문지를 현재 질문지에 수동 반영하시겠습니까? 원본 신청서는 보존됩니다.')) return;
+            try {
+                const response = await fetch('/api/questionnaires.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-Token': csrfToken || '' },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ action: 'syncApplicationProfile', applicationId })
+                });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '질문지를 연동하지 못했습니다.');
+                closeMembershipDetail();
+                await loadQuestionnaires();
+                showToast('회원 질문지를 수동 연동했습니다.', true);
             } catch (error) {
                 showToast(error.message, false);
             }

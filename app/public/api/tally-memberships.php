@@ -273,7 +273,7 @@ function membership_approve(PDO $pdo, array $viewer, string $submissionId): void
         $update = $pdo->prepare(
             "UPDATE tally_membership_applications
              SET status = 'approved', reviewed_by = :reviewed_by, reviewed_at = CURRENT_TIMESTAMP,
-                 approved_user_id = :approved_user_id, is_hidden = 0
+                 approved_user_id = :approved_user_id, admin_tag = '회원', is_hidden = 0
              WHERE submission_id = :submission_id"
         );
         $update->execute([
