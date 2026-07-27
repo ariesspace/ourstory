@@ -1693,6 +1693,21 @@
             background: #eef1ee;
             color: #4d5a52;
         }
+        .questionnaire-count-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 2.15rem;
+            padding: 0.52rem 0.85rem;
+            border: 1px solid rgba(42, 59, 50, 0.2);
+            background: rgba(42, 59, 50, 0.1);
+            color: var(--accent-red);
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 0.76rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
         .questionnaire-card {
             min-height: 0;
             padding: 0;
@@ -5022,7 +5037,7 @@
                         <p class="text-xs tracking-[0.28em] uppercase opacity-45 font-mono">All Applications</p>
                         <p class="mt-3 text-sm opacity-60 font-serif-ko">가입 신청 원본과 회원 질문지를 함께 표시합니다. 본인이 수정한 질문지는 관리자 연동 후 공개본에 반영됩니다.</p>
                     </div>
-                    <span id="questionnaire-count" class="text-xs tracking-[0.24em] uppercase opacity-45 font-mono">0 Records</span>
+                    <span id="questionnaire-count" class="questionnaire-count-badge">0 Records</span>
                 </div>
                 <div id="questionnaire-tag-filters" class="hidden mb-6 flex flex-wrap items-center gap-2">
                     <button type="button" class="questionnaire-filter active" data-questionnaire-filter="all">전체 보기</button>
@@ -8066,7 +8081,12 @@
                 open.append(media, body);
                 open.addEventListener('click', () => {
                     openMembershipDetail(
-                        { ...item, submittedAt: item.publishedAt || item.draftUpdatedAt || '', status: item.status || 'linked', questionnaireAdmin: true },
+                        {
+                            ...item,
+                            submittedAt: item.publishedAt || item.draftUpdatedAt || '',
+                            status: item.status || 'linked',
+                            questionnaireAdmin: item.questionnaireAdmin !== false
+                        },
                         fields,
                         questionnaireCanManage,
                         item.displayName || item.username || 'Questionnaire',
