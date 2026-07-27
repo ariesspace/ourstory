@@ -49,7 +49,7 @@
                 radial-gradient(circle at 18% 84%, rgba(255, 210, 156, 0.27) 0 6.2rem, transparent 9.6rem),
                 radial-gradient(circle at 50% 46%, rgba(245, 191, 225, 0.20) 0 8rem, transparent 12rem);
             filter: blur(0.8px) saturate(1.06);
-            animation: ambientBubbleDrift 24s ease-in-out infinite alternate;
+            animation: ambientBubbleDrift 18s ease-in-out infinite alternate;
         }
 
         .ambient-bubbles::before,
@@ -69,6 +69,7 @@
             left: 8vw;
             top: 56vh;
             background: radial-gradient(circle at 35% 28%, rgba(255,255,255,0.54), rgba(255, 200, 224, 0.16) 42%, transparent 70%);
+            animation: ambientBubbleFloatA 12s ease-in-out infinite;
         }
 
         .ambient-bubbles::after {
@@ -77,6 +78,7 @@
             right: 10vw;
             top: 34vh;
             background: radial-gradient(circle at 33% 24%, rgba(255,255,255,0.58), rgba(255, 230, 160, 0.18) 44%, transparent 72%);
+            animation: ambientBubbleFloatB 15s ease-in-out infinite;
         }
 
         body.ambient-bubbles-disabled .ambient-bubbles {
@@ -137,10 +139,48 @@
 
         @keyframes ambientBubbleDrift {
             from {
-                transform: translate3d(0, 0, 0) scale(1);
+                transform: translate3d(-0.8vw, 0.8vh, 0) scale(1);
             }
             to {
-                transform: translate3d(1.8vw, -1.5vh, 0) scale(1.025);
+                transform: translate3d(2.8vw, -2.6vh, 0) scale(1.035);
+            }
+        }
+
+        @keyframes ambientBubbleFloatA {
+            0%, 100% {
+                transform: translate3d(0, 0, 0) scale(1);
+                opacity: 0.72;
+            }
+            45% {
+                transform: translate3d(2.2vw, -8vh, 0) scale(1.08);
+                opacity: 0.46;
+            }
+            72% {
+                transform: translate3d(-1.4vw, -13vh, 0) scale(0.96);
+                opacity: 0.58;
+            }
+        }
+
+        @keyframes ambientBubbleFloatB {
+            0%, 100% {
+                transform: translate3d(0, 0, 0) scale(1);
+                opacity: 0.62;
+            }
+            38% {
+                transform: translate3d(-2.4vw, -6vh, 0) scale(1.12);
+                opacity: 0.42;
+            }
+            76% {
+                transform: translate3d(1.2vw, -12vh, 0) scale(0.98);
+                opacity: 0.55;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .ambient-bubbles,
+            .ambient-bubbles::before,
+            .ambient-bubbles::after {
+                animation: none;
             }
         }
 
