@@ -40,7 +40,7 @@
             inset: -12vh -10vw;
             z-index: 0;
             pointer-events: none;
-            opacity: 0.86;
+            opacity: 0.96;
             overflow: hidden;
             background:
                 radial-gradient(circle at 8% 18%, rgba(255, 183, 213, 0.10) 0 4rem, transparent 8rem),
@@ -88,13 +88,14 @@
             top: var(--top, 50%);
             border-radius: 999px;
             background:
-                radial-gradient(circle at 30% 24%, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.20) 28%, transparent 52%),
-                radial-gradient(circle at 64% 72%, var(--bubble-color, rgba(255, 190, 220, 0.28)), transparent 68%);
-            border: 1px solid rgba(255, 255, 255, 0.82);
+                radial-gradient(circle at 28% 22%, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.24) 26%, transparent 50%),
+                radial-gradient(circle at 64% 72%, var(--bubble-color, rgba(255, 190, 220, 0.38)), transparent 68%);
+            border: 1px solid var(--bubble-line, rgba(255, 172, 210, 0.48));
             box-shadow:
-                inset 0.45rem 0.45rem 1.4rem rgba(255, 255, 255, 0.54),
-                0 0.6rem 2.4rem var(--bubble-shadow, rgba(255, 184, 214, 0.24));
-            opacity: var(--opacity, 0.74);
+                inset 0.45rem 0.45rem 1.35rem rgba(255, 255, 255, 0.62),
+                inset -0.4rem -0.4rem 1.2rem var(--bubble-color, rgba(255, 190, 220, 0.22)),
+                0 0.75rem 2.8rem var(--bubble-shadow, rgba(255, 184, 214, 0.28));
+            opacity: var(--opacity, 0.82);
             animation:
                 ambientBubbleRise var(--duration, 10s) linear var(--delay, 0s) infinite,
                 ambientBubbleWobble 3.8s ease-in-out var(--delay, 0s) infinite alternate;
@@ -108,6 +109,7 @@
             --duration: 9s;
             --delay: -1s;
             --bubble-color: rgba(255, 176, 212, 0.34);
+            --bubble-line: rgba(255, 155, 202, 0.54);
         }
 
         .ambient-bubble:nth-child(2) {
@@ -118,6 +120,7 @@
             --delay: -4s;
             --bubble-color: rgba(255, 226, 145, 0.32);
             --bubble-shadow: rgba(255, 223, 146, 0.18);
+            --bubble-line: rgba(244, 205, 118, 0.48);
         }
 
         .ambient-bubble:nth-child(3) {
@@ -128,6 +131,7 @@
             --delay: -3s;
             --opacity: 0.58;
             --bubble-color: rgba(202, 220, 255, 0.32);
+            --bubble-line: rgba(170, 195, 245, 0.46);
         }
 
         .ambient-bubble:nth-child(4) {
@@ -138,6 +142,7 @@
             --delay: -7s;
             --opacity: 0.46;
             --bubble-color: rgba(255, 205, 160, 0.27);
+            --bubble-line: rgba(238, 185, 134, 0.44);
         }
 
         .ambient-bubble:nth-child(5) {
@@ -148,6 +153,7 @@
             --delay: -2s;
             --opacity: 0.72;
             --bubble-color: rgba(255, 180, 214, 0.34);
+            --bubble-line: rgba(255, 155, 202, 0.52);
         }
 
         .ambient-bubble:nth-child(6) {
@@ -158,6 +164,7 @@
             --delay: -5s;
             --opacity: 0.62;
             --bubble-color: rgba(255, 236, 172, 0.30);
+            --bubble-line: rgba(234, 202, 120, 0.46);
         }
 
         .ambient-bubble:nth-child(7) {
@@ -168,6 +175,7 @@
             --delay: -6s;
             --opacity: 0.78;
             --bubble-color: rgba(207, 226, 255, 0.36);
+            --bubble-line: rgba(168, 198, 246, 0.50);
         }
 
         .ambient-bubble:nth-child(8) {
@@ -178,6 +186,67 @@
             --delay: -8s;
             --opacity: 0.68;
             --bubble-color: rgba(255, 200, 230, 0.32);
+            --bubble-line: rgba(255, 165, 210, 0.48);
+        }
+
+        .ambient-bubble:nth-child(9) {
+            --size: 6rem;
+            --left: 39%;
+            --top: 98%;
+            --duration: 15s;
+            --delay: -10s;
+            --opacity: 0.58;
+            --bubble-color: rgba(255, 224, 150, 0.24);
+            --bubble-line: rgba(238, 205, 128, 0.40);
+        }
+
+        .ambient-bubble:nth-child(10) {
+            --size: 3.1rem;
+            --left: 58%;
+            --top: 97%;
+            --duration: 9.5s;
+            --delay: -4.5s;
+            --opacity: 0.74;
+            --bubble-color: rgba(255, 177, 215, 0.35);
+            --bubble-line: rgba(255, 150, 201, 0.50);
+        }
+
+        .ambient-bubble:nth-child(11) {
+            --size: 4.7rem;
+            --left: 4%;
+            --top: 102%;
+            --duration: 14s;
+            --delay: -8.5s;
+            --opacity: 0.64;
+            --bubble-color: rgba(204, 224, 255, 0.32);
+            --bubble-line: rgba(160, 194, 244, 0.44);
+        }
+
+        .ambient-bubble:nth-child(12) {
+            --size: 2.8rem;
+            --left: 82%;
+            --top: 100%;
+            --duration: 7.8s;
+            --delay: -1.5s;
+            --opacity: 0.82;
+            --bubble-color: rgba(255, 207, 232, 0.38);
+            --bubble-line: rgba(255, 158, 211, 0.56);
+        }
+
+        @media (min-width: 1024px) {
+            .ambient-bubble {
+                --size: calc(var(--size, 5rem) * 1.18);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .ambient-bubbles {
+                opacity: 0.78;
+            }
+
+            .ambient-bubble:nth-child(n+9) {
+                display: none;
+            }
         }
 
         body.ambient-bubbles-disabled .ambient-bubbles {
@@ -4062,6 +4131,10 @@
 </head>
 <body class="loading-lock">
     <div id="ambient-bubbles" class="ambient-bubbles" aria-hidden="true">
+        <span class="ambient-bubble"></span>
+        <span class="ambient-bubble"></span>
+        <span class="ambient-bubble"></span>
+        <span class="ambient-bubble"></span>
         <span class="ambient-bubble"></span>
         <span class="ambient-bubble"></span>
         <span class="ambient-bubble"></span>
