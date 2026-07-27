@@ -2546,7 +2546,8 @@
         }
         #view-timeline .comment-item {
             margin-bottom: 15px;
-            display: flex;
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr) auto;
             align-items: flex-start;
             gap: 0.75rem;
         }
@@ -2587,6 +2588,7 @@
             white-space: pre-wrap;
         }
         #view-timeline .comment-delete {
+            justify-self: end;
             align-self: flex-start;
             display: inline-flex;
             align-items: center;
@@ -2594,9 +2596,23 @@
             font-family: 'Space Mono', monospace;
             font-size: 0.72rem;
             color: #b84a4a;
+            padding-top: 0.15rem;
+            white-space: nowrap;
         }
         #view-timeline .comment-delete:hover {
             color: #8f2424;
+        }
+        @media (max-width: 640px) {
+            #view-timeline .comment-item {
+                grid-template-columns: auto minmax(0, 1fr) auto;
+                gap: 0.65rem;
+            }
+            #view-timeline .comment-delete span {
+                display: none;
+            }
+            #view-timeline .comment-delete {
+                font-size: 0.95rem;
+            }
         }
         .member-profile-modal-card {
             width: min(100%, 560px);
@@ -8448,15 +8464,18 @@
                     commentText.className = 'comment-text';
                     commentText.textContent = comment.content;
                     commentBody.append(commentAuthor, commentText);
+                    let deleteComment = null;
                     if (comment.canDelete) {
-                        const deleteComment = document.createElement('button');
+                        deleteComment = document.createElement('button');
                         deleteComment.type = 'button';
                         deleteComment.className = 'comment-delete';
                         deleteComment.innerHTML = '<i class="ph ph-trash"></i><span>Delete</span>';
                         deleteComment.addEventListener('click', () => deleteTimelineComment(comment.id));
-                        commentBody.appendChild(deleteComment);
                     }
                     item.append(commentAvatar, commentBody);
+                    if (deleteComment) {
+                        item.appendChild(deleteComment);
+                    }
                     comments.appendChild(item);
                 });
                 const commentForm = document.createElement('form');
