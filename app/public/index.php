@@ -81,6 +81,64 @@
             animation: ambientBubbleFloatB 15s ease-in-out infinite;
         }
 
+        .ambient-bubble {
+            position: absolute;
+            display: block;
+            width: var(--size, 5rem);
+            height: var(--size, 5rem);
+            left: var(--left, 50%);
+            top: var(--top, 50%);
+            border-radius: 999px;
+            background:
+                radial-gradient(circle at 30% 24%, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.20) 28%, transparent 52%),
+                radial-gradient(circle at 64% 72%, var(--bubble-color, rgba(255, 190, 220, 0.28)), transparent 68%);
+            border: 1px solid rgba(255, 255, 255, 0.68);
+            box-shadow:
+                inset 0.65rem 0.65rem 1.8rem rgba(255, 255, 255, 0.34),
+                0 1rem 4rem var(--bubble-shadow, rgba(255, 184, 214, 0.16));
+            opacity: var(--opacity, 0.5);
+            animation: ambientBubbleRise var(--duration, 18s) ease-in-out var(--delay, 0s) infinite;
+        }
+
+        .ambient-bubble:nth-child(1) {
+            --size: 5.8rem;
+            --left: 6%;
+            --top: 82%;
+            --duration: 16s;
+            --delay: -2s;
+            --bubble-color: rgba(255, 176, 212, 0.34);
+        }
+
+        .ambient-bubble:nth-child(2) {
+            --size: 4.4rem;
+            --left: 86%;
+            --top: 78%;
+            --duration: 19s;
+            --delay: -7s;
+            --bubble-color: rgba(255, 226, 145, 0.32);
+            --bubble-shadow: rgba(255, 223, 146, 0.18);
+        }
+
+        .ambient-bubble:nth-child(3) {
+            --size: 3.2rem;
+            --left: 72%;
+            --top: 94%;
+            --duration: 13s;
+            --delay: -4s;
+            --opacity: 0.42;
+            --bubble-color: rgba(202, 220, 255, 0.32);
+        }
+
+        .ambient-bubble:nth-child(4) {
+            --size: 6.6rem;
+            --left: 28%;
+            --top: 96%;
+            --duration: 22s;
+            --delay: -10s;
+            --opacity: 0.34;
+            --bubble-color: rgba(255, 205, 160, 0.27);
+        }
+
         body.ambient-bubbles-disabled .ambient-bubbles {
             display: none;
         }
@@ -176,10 +234,31 @@
             }
         }
 
+        @keyframes ambientBubbleRise {
+            0% {
+                transform: translate3d(0, 8vh, 0) scale(0.86);
+                opacity: 0;
+            }
+            16% {
+                opacity: var(--opacity, 0.5);
+            }
+            52% {
+                transform: translate3d(2.2vw, -34vh, 0) scale(1.05);
+            }
+            84% {
+                opacity: var(--opacity, 0.5);
+            }
+            100% {
+                transform: translate3d(-1.4vw, -78vh, 0) scale(1.18);
+                opacity: 0;
+            }
+        }
+
         @media (prefers-reduced-motion: reduce) {
             .ambient-bubbles,
             .ambient-bubbles::before,
-            .ambient-bubbles::after {
+            .ambient-bubbles::after,
+            .ambient-bubble {
                 animation: none;
             }
         }
@@ -3938,7 +4017,12 @@
     </style>
 </head>
 <body class="loading-lock">
-    <div id="ambient-bubbles" class="ambient-bubbles" aria-hidden="true"></div>
+    <div id="ambient-bubbles" class="ambient-bubbles" aria-hidden="true">
+        <span class="ambient-bubble"></span>
+        <span class="ambient-bubble"></span>
+        <span class="ambient-bubble"></span>
+        <span class="ambient-bubble"></span>
+    </div>
 
     <div id="site-loader" class="fixed inset-0 z-[100] flex flex-col items-center justify-center">
         <div id="loader-status" class="system-status">Initializing private archive</div>
