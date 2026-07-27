@@ -1668,6 +1668,31 @@
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 1.35rem;
         }
+        .questionnaire-filter {
+            border: 1px solid var(--border-light);
+            padding: 0.72rem 1.05rem;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.42);
+            transition: border-color 0.25s ease, color 0.25s ease, background 0.25s ease;
+        }
+        .questionnaire-filter:hover,
+        .questionnaire-filter.active {
+            border-color: var(--text-dark);
+            color: var(--text-dark);
+            background: #fff;
+        }
+        .questionnaire-filter[data-questionnaire-filter="회원"].active {
+            border-color: var(--accent-red);
+            background: var(--accent-red);
+            color: #fff;
+        }
+        .questionnaire-filter[data-questionnaire-filter="비회원"].active {
+            border-color: #b8beb9;
+            background: #eef1ee;
+            color: #4d5a52;
+        }
         .questionnaire-card {
             min-height: 0;
             padding: 0;
@@ -1737,6 +1762,22 @@
             letter-spacing: 0.18em;
             text-transform: uppercase;
             color: var(--accent-red);
+        }
+        .questionnaire-card-status.is-member,
+        .questionnaire-card-status.is-guest {
+            padding: 0.24rem 0.46rem;
+            letter-spacing: 0.14em;
+            border: 1px solid transparent;
+        }
+        .questionnaire-card-status.is-member {
+            background: var(--accent-red);
+            border-color: var(--accent-red);
+            color: #fff;
+        }
+        .questionnaire-card-status.is-guest {
+            background: #eef1ee;
+            border-color: #d8ddd8;
+            color: #56635b;
         }
         .questionnaire-card-title {
             margin-top: 0.75rem;
@@ -4983,6 +5024,11 @@
                     </div>
                     <span id="questionnaire-count" class="text-xs tracking-[0.24em] uppercase opacity-45 font-mono">0 Records</span>
                 </div>
+                <div id="questionnaire-tag-filters" class="hidden mb-6 flex flex-wrap items-center gap-2">
+                    <button type="button" class="questionnaire-filter active" data-questionnaire-filter="all">전체 보기</button>
+                    <button type="button" class="questionnaire-filter" data-questionnaire-filter="회원">회원만 보기</button>
+                    <button type="button" class="questionnaire-filter" data-questionnaire-filter="비회원">비회원 보기</button>
+                </div>
                 <div class="mb-8 border-b border-[var(--border-light)] flex items-center gap-3">
                     <i class="ph ph-magnifying-glass text-xl opacity-45" aria-hidden="true"></i>
                     <label for="questionnaire-search" class="sr-only">질문지 검색</label>
@@ -6182,6 +6228,7 @@
         const questionnaireStatus = document.getElementById('questionnaire-status');
         const questionnaireSearch = document.getElementById('questionnaire-search');
         const questionnaireCount = document.getElementById('questionnaire-count');
+        const questionnaireTagFilters = document.getElementById('questionnaire-tag-filters');
         const membershipDetailModal = document.getElementById('membership-detail-modal');
         const membershipDetailClose = document.getElementById('membership-detail-close');
         const membershipDetailTitle = document.getElementById('membership-detail-title');
@@ -6344,6 +6391,7 @@
         let membershipApplicationCanManage = false;
         let questionnaireItems = [];
         let questionnaireCanManage = false;
+        let questionnaireTagFilter = 'all';
         let currentMyProfile = null;
         let smCurrentPost = null;
         let smEditingPostId = null;
@@ -7010,8 +7058,9 @@
                     sync.type = 'button';
                     sync.className = 'bg-[var(--accent-red)] text-white px-5 py-2.5 text-xs tracking-widest uppercase disabled:opacity-35 disabled:cursor-not-allowed';
                     sync.textContent = item.hasSyncedProfile ? '다시 연동하기' : '연동하기';
-                    sync.disabled = !item.hasProfile;
-                    sync.title = item.hasProfile ? '회원이 마이페이지에서 작성한 질문지를 이 원본 질문지에 수동 반영합니다.' : '승인되어 연결된 회원 질문지가 없습니다.';
+                    const isMemberApplication = (item.adminTag || '비회원') === '회원';
+                    sync.disabled = !isMemberApplication;
+                    sync.title = isMemberApplication ? '회원이 마이페이지에서 작성한 질문지를 이 원본 질문지에 수동 반영합니다.' : '회원 태그로 변경한 뒤 연동할 수 있습니다.';
                     sync.addEventListener('click', async () => {
                         await syncApplicationQuestionnaire(item.id);
                     });
@@ -7946,7 +7995,7 @@
             questionnaireList.replaceChildren();
             questionnaireCount.textContent = `${items.length} Records`;
             if (!items.length) {
-                questionnaireStatus.textContent = questionnaireSearch?.value.trim() ? '검색 결과가 없습니다.' : '등록된 질문지가 없습니다.';
+                questionnaireStatus.textContent = questionnaireSearch?.value.trim() || questionnaireTagFilter !== 'all' ? '검색 결과가 없습니다.' : '등록된 질문지가 없습니다.';
                 questionnaireStatus.classList.remove('hidden');
                 return;
             }
@@ -7995,6 +8044,9 @@
                 status.textContent = questionnaireCanManage && item.adminTag
                     ? `${item.adminTag} · ${item.hasSyncedProfile ? 'Synced' : 'Original'}`
                     : (item.status || 'application');
+                if (questionnaireCanManage && item.adminTag) {
+                    status.classList.add(item.adminTag === '회원' ? 'is-member' : 'is-guest');
+                }
                 const title = document.createElement('h3');
                 title.className = 'questionnaire-card-title';
                 title.textContent = item.displayName || item.username || 'Untitled';
@@ -8028,13 +8080,16 @@
 
         function filterQuestionnaires() {
             const query = questionnaireSearch?.value.trim().toLocaleLowerCase('ko-KR') || '';
-            const items = query
+            const taggedItems = questionnaireTagFilter === 'all'
                 ? questionnaireItems
+                : questionnaireItems.filter(item => (item.adminTag || '비회원') === questionnaireTagFilter);
+            const items = query
+                ? taggedItems
                     .map((item, index) => ({ item, index, score: questionnaireSearchScore(item, query) }))
                     .filter(entry => entry.score < 99)
                     .sort((a, b) => a.score - b.score || a.index - b.index)
                     .map(entry => entry.item)
-                : questionnaireItems;
+                : taggedItems;
             renderQuestionnaires(items);
         }
 
@@ -8048,6 +8103,7 @@
                 if (!response.ok) throw new Error(payload.error || '질문지를 불러오지 못했습니다.');
                 questionnaireItems = Array.isArray(payload.items) ? payload.items : [];
                 questionnaireCanManage = Boolean(payload.canManage);
+                questionnaireTagFilters?.classList.toggle('hidden', !questionnaireCanManage);
                 filterQuestionnaires();
             } catch (error) {
                 questionnaireList.replaceChildren();
@@ -8113,6 +8169,15 @@
         }
 
         questionnaireSearch?.addEventListener('input', filterQuestionnaires);
+        questionnaireTagFilters?.addEventListener('click', event => {
+            const button = event.target.closest('[data-questionnaire-filter]');
+            if (!button) return;
+            questionnaireTagFilter = button.dataset.questionnaireFilter || 'all';
+            questionnaireTagFilters.querySelectorAll('[data-questionnaire-filter]').forEach(filter => {
+                filter.classList.toggle('active', filter === button);
+            });
+            filterQuestionnaires();
+        });
 
         function openTimelinePhoto(url, alt = 'timeline image') {
             if (!timelinePhotoModal || !timelinePhotoModalImage || !url) return;
