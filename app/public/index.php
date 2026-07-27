@@ -40,16 +40,14 @@
             inset: -12vh -10vw;
             z-index: 0;
             pointer-events: none;
-            opacity: 0.58;
+            opacity: 0.72;
             overflow: hidden;
             background:
-                radial-gradient(circle at 9% 22%, rgba(255, 183, 213, 0.42) 0 4.8rem, transparent 7.2rem),
-                radial-gradient(circle at 88% 18%, rgba(255, 232, 151, 0.38) 0 5.8rem, transparent 8.6rem),
-                radial-gradient(circle at 76% 74%, rgba(202, 218, 255, 0.30) 0 7.2rem, transparent 10.6rem),
-                radial-gradient(circle at 18% 84%, rgba(255, 210, 156, 0.27) 0 6.2rem, transparent 9.6rem),
-                radial-gradient(circle at 50% 46%, rgba(245, 191, 225, 0.20) 0 8rem, transparent 12rem);
-            filter: blur(0.8px) saturate(1.06);
-            animation: ambientBubbleDrift 18s ease-in-out infinite alternate;
+                radial-gradient(circle at 10% 22%, rgba(255, 183, 213, 0.16) 0 5rem, transparent 9rem),
+                radial-gradient(circle at 90% 18%, rgba(255, 232, 151, 0.14) 0 5.5rem, transparent 10rem),
+                radial-gradient(circle at 76% 74%, rgba(202, 218, 255, 0.14) 0 6rem, transparent 11rem);
+            filter: saturate(1.06);
+            animation: ambientBubbleDrift 14s ease-in-out infinite alternate;
         }
 
         .ambient-bubbles::before,
@@ -64,21 +62,21 @@
         }
 
         .ambient-bubbles::before {
-            width: 13rem;
-            height: 13rem;
+            width: 8rem;
+            height: 8rem;
             left: 8vw;
-            top: 56vh;
+            top: 62vh;
             background: radial-gradient(circle at 35% 28%, rgba(255,255,255,0.54), rgba(255, 200, 224, 0.16) 42%, transparent 70%);
-            animation: ambientBubbleFloatA 12s ease-in-out infinite;
+            animation: ambientBubbleFloatA 9s ease-in-out infinite;
         }
 
         .ambient-bubbles::after {
-            width: 9rem;
-            height: 9rem;
+            width: 6rem;
+            height: 6rem;
             right: 10vw;
             top: 34vh;
             background: radial-gradient(circle at 33% 24%, rgba(255,255,255,0.58), rgba(255, 230, 160, 0.18) 44%, transparent 72%);
-            animation: ambientBubbleFloatB 15s ease-in-out infinite;
+            animation: ambientBubbleFloatB 11s ease-in-out infinite;
         }
 
         .ambient-bubble {
@@ -92,50 +90,51 @@
             background:
                 radial-gradient(circle at 30% 24%, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.20) 28%, transparent 52%),
                 radial-gradient(circle at 64% 72%, var(--bubble-color, rgba(255, 190, 220, 0.28)), transparent 68%);
-            border: 1px solid rgba(255, 255, 255, 0.68);
+            border: 1px solid rgba(255, 255, 255, 0.82);
             box-shadow:
-                inset 0.65rem 0.65rem 1.8rem rgba(255, 255, 255, 0.34),
-                0 1rem 4rem var(--bubble-shadow, rgba(255, 184, 214, 0.16));
-            opacity: var(--opacity, 0.5);
-            animation: ambientBubbleRise var(--duration, 18s) ease-in-out var(--delay, 0s) infinite;
+                inset 0.45rem 0.45rem 1.4rem rgba(255, 255, 255, 0.44),
+                0 0.6rem 2.4rem var(--bubble-shadow, rgba(255, 184, 214, 0.18));
+            opacity: var(--opacity, 0.64);
+            animation: ambientBubbleRise var(--duration, 10s) linear var(--delay, 0s) infinite;
+            will-change: transform, opacity;
         }
 
         .ambient-bubble:nth-child(1) {
-            --size: 5.8rem;
-            --left: 6%;
-            --top: 82%;
-            --duration: 16s;
-            --delay: -2s;
+            --size: 4.8rem;
+            --left: 7%;
+            --top: 88%;
+            --duration: 9s;
+            --delay: -1s;
             --bubble-color: rgba(255, 176, 212, 0.34);
         }
 
         .ambient-bubble:nth-child(2) {
-            --size: 4.4rem;
+            --size: 3.8rem;
             --left: 86%;
-            --top: 78%;
-            --duration: 19s;
-            --delay: -7s;
+            --top: 86%;
+            --duration: 11s;
+            --delay: -4s;
             --bubble-color: rgba(255, 226, 145, 0.32);
             --bubble-shadow: rgba(255, 223, 146, 0.18);
         }
 
         .ambient-bubble:nth-child(3) {
-            --size: 3.2rem;
-            --left: 72%;
-            --top: 94%;
-            --duration: 13s;
-            --delay: -4s;
-            --opacity: 0.42;
+            --size: 3rem;
+            --left: 68%;
+            --top: 92%;
+            --duration: 8s;
+            --delay: -3s;
+            --opacity: 0.58;
             --bubble-color: rgba(202, 220, 255, 0.32);
         }
 
         .ambient-bubble:nth-child(4) {
-            --size: 6.6rem;
+            --size: 5.4rem;
             --left: 28%;
-            --top: 96%;
-            --duration: 22s;
-            --delay: -10s;
-            --opacity: 0.34;
+            --top: 90%;
+            --duration: 13s;
+            --delay: -7s;
+            --opacity: 0.46;
             --bubble-color: rgba(255, 205, 160, 0.27);
         }
 
@@ -236,20 +235,23 @@
 
         @keyframes ambientBubbleRise {
             0% {
-                transform: translate3d(0, 8vh, 0) scale(0.86);
+                transform: translate3d(0, 10vh, 0) scale(0.78);
                 opacity: 0;
             }
-            16% {
+            10% {
                 opacity: var(--opacity, 0.5);
             }
-            52% {
-                transform: translate3d(2.2vw, -34vh, 0) scale(1.05);
+            36% {
+                transform: translate3d(2.8vw, -28vh, 0) scale(1);
             }
-            84% {
+            68% {
+                transform: translate3d(-2vw, -62vh, 0) scale(1.1);
+            }
+            86% {
                 opacity: var(--opacity, 0.5);
             }
             100% {
-                transform: translate3d(-1.4vw, -78vh, 0) scale(1.18);
+                transform: translate3d(1.4vw, -108vh, 0) scale(1.22);
                 opacity: 0;
             }
         }
