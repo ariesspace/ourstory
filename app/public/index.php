@@ -40,12 +40,12 @@
             inset: -12vh -10vw;
             z-index: 0;
             pointer-events: none;
-            opacity: 0.72;
+            opacity: 0.86;
             overflow: hidden;
             background:
-                radial-gradient(circle at 10% 22%, rgba(255, 183, 213, 0.16) 0 5rem, transparent 9rem),
-                radial-gradient(circle at 90% 18%, rgba(255, 232, 151, 0.14) 0 5.5rem, transparent 10rem),
-                radial-gradient(circle at 76% 74%, rgba(202, 218, 255, 0.14) 0 6rem, transparent 11rem);
+                radial-gradient(circle at 8% 18%, rgba(255, 183, 213, 0.10) 0 4rem, transparent 8rem),
+                radial-gradient(circle at 92% 18%, rgba(255, 232, 151, 0.09) 0 4rem, transparent 8rem),
+                radial-gradient(circle at 78% 76%, rgba(202, 218, 255, 0.10) 0 4.5rem, transparent 9rem);
             filter: saturate(1.06);
             animation: ambientBubbleDrift 14s ease-in-out infinite alternate;
         }
@@ -92,10 +92,12 @@
                 radial-gradient(circle at 64% 72%, var(--bubble-color, rgba(255, 190, 220, 0.28)), transparent 68%);
             border: 1px solid rgba(255, 255, 255, 0.82);
             box-shadow:
-                inset 0.45rem 0.45rem 1.4rem rgba(255, 255, 255, 0.44),
-                0 0.6rem 2.4rem var(--bubble-shadow, rgba(255, 184, 214, 0.18));
-            opacity: var(--opacity, 0.64);
-            animation: ambientBubbleRise var(--duration, 10s) linear var(--delay, 0s) infinite;
+                inset 0.45rem 0.45rem 1.4rem rgba(255, 255, 255, 0.54),
+                0 0.6rem 2.4rem var(--bubble-shadow, rgba(255, 184, 214, 0.24));
+            opacity: var(--opacity, 0.74);
+            animation:
+                ambientBubbleRise var(--duration, 10s) linear var(--delay, 0s) infinite,
+                ambientBubbleWobble 3.8s ease-in-out var(--delay, 0s) infinite alternate;
             will-change: transform, opacity;
         }
 
@@ -136,6 +138,46 @@
             --delay: -7s;
             --opacity: 0.46;
             --bubble-color: rgba(255, 205, 160, 0.27);
+        }
+
+        .ambient-bubble:nth-child(5) {
+            --size: 2.6rem;
+            --left: 48%;
+            --top: 94%;
+            --duration: 7.5s;
+            --delay: -2s;
+            --opacity: 0.72;
+            --bubble-color: rgba(255, 180, 214, 0.34);
+        }
+
+        .ambient-bubble:nth-child(6) {
+            --size: 4.2rem;
+            --left: 16%;
+            --top: 96%;
+            --duration: 12s;
+            --delay: -5s;
+            --opacity: 0.62;
+            --bubble-color: rgba(255, 236, 172, 0.30);
+        }
+
+        .ambient-bubble:nth-child(7) {
+            --size: 2.2rem;
+            --left: 76%;
+            --top: 90%;
+            --duration: 8.5s;
+            --delay: -6s;
+            --opacity: 0.78;
+            --bubble-color: rgba(207, 226, 255, 0.36);
+        }
+
+        .ambient-bubble:nth-child(8) {
+            --size: 3.4rem;
+            --left: 94%;
+            --top: 92%;
+            --duration: 10.5s;
+            --delay: -8s;
+            --opacity: 0.68;
+            --bubble-color: rgba(255, 200, 230, 0.32);
         }
 
         body.ambient-bubbles-disabled .ambient-bubbles {
@@ -256,12 +298,12 @@
             }
         }
 
-        @media (prefers-reduced-motion: reduce) {
-            .ambient-bubbles,
-            .ambient-bubbles::before,
-            .ambient-bubbles::after,
-            .ambient-bubble {
-                animation: none;
+        @keyframes ambientBubbleWobble {
+            from {
+                margin-left: -0.8rem;
+            }
+            to {
+                margin-left: 0.8rem;
             }
         }
 
@@ -4020,6 +4062,10 @@
 </head>
 <body class="loading-lock">
     <div id="ambient-bubbles" class="ambient-bubbles" aria-hidden="true">
+        <span class="ambient-bubble"></span>
+        <span class="ambient-bubble"></span>
+        <span class="ambient-bubble"></span>
+        <span class="ambient-bubble"></span>
         <span class="ambient-bubble"></span>
         <span class="ambient-bubble"></span>
         <span class="ambient-bubble"></span>
