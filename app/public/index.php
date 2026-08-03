@@ -4262,8 +4262,7 @@
                 <button type="button" class="view-trigger hidden" data-target="view-system-members" id="system-nav-link"><em>10</em><span>Management</span><small>[ 계정관리 ]</small></button>
                 <button type="button" class="view-trigger hidden" data-target="view-system-add" id="system-add-nav-link"><em>11</em><span>Create Account</span><small>[ 계정 생성 ]</small></button>
                 <button type="button" class="view-trigger hidden" data-target="view-membership-archive" id="membership-nav-link"><em>12</em><span>Applications</span><small>[ 가입 신청 ]</small></button>
-                <button type="button" class="view-trigger hidden" data-target="view-main-image-admin" id="main-image-nav-link"><em>13</em><span>Main Image</span><small>[ 메인 그림 ]</small></button>
-                <button type="button" class="view-trigger hidden" data-target="view-system-settings" id="system-settings-nav-link"><em>14</em><span>Environment</span><small>[ 환경설정 ]</small></button>
+                <button type="button" class="view-trigger hidden" data-target="view-system-settings" id="system-settings-nav-link"><em>13</em><span>Environment</span><small>[ 환경설정 ]</small></button>
             </section>
         </nav>
         <button type="button" id="mobile-login-btn" class="mt-auto border border-[var(--text-dark)] py-4 font-mono text-xs tracking-[0.25em] uppercase hover:bg-[var(--text-dark)] hover:text-white transition-colors">Login</button>
@@ -4718,44 +4717,17 @@
             </form>
         </section>
 
-        <section id="view-main-image-admin" class="w-full max-w-5xl mx-auto view-hidden fade-in py-8">
-            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 border-b border-[var(--text-dark)] pb-8 mb-10">
-                <div>
-                    <span class="text-xs tracking-[0.28em] uppercase opacity-45 font-mono">Admin Only</span>
-                    <h1 class="font-document italic text-5xl md:text-7xl leading-none mt-3">Main Image</h1>
-                    <p class="mt-5 text-sm opacity-55 font-serif-ko">메인 화면 중앙에 보이는 전시 이미지를 교체합니다.</p>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_360px] gap-10 items-start">
-                <div class="border border-[var(--border-light)] bg-white p-4">
-                    <img id="main-image-admin-preview" src="/assets/main.png?v=<?= (int) (@filemtime(__DIR__ . '/assets/main.png') ?: time()) ?>" alt="현재 메인 이미지" class="w-full aspect-[4/5] object-cover grayscale">
-                </div>
-                <form id="main-image-form" class="border border-[var(--border-light)] bg-white p-8 flex flex-col gap-7">
-                    <div>
-                        <span class="form-label">Recommended Size</span>
-                        <p class="text-sm leading-relaxed opacity-65 font-serif-ko">세로형 이미지 권장: 900 x 1200px 이상. JPG, PNG, WEBP / 최대 10MB.</p>
-                    </div>
-                    <div>
-                        <label for="main-image-input" class="form-label">Image File</label>
-                        <input type="file" id="main-image-input" accept="image/jpeg,image/png,image/webp" class="block w-full text-sm">
-                    </div>
-                    <p id="main-image-error" class="hidden text-sm text-[var(--accent-red)]"></p>
-                    <button type="submit" id="main-image-submit" class="btn-save-changes w-full mt-0">Save Main Image</button>
-                </form>
-            </div>
-        </section>
-
         <section id="view-system-settings" class="w-full max-w-5xl mx-auto view-hidden fade-in py-8">
             <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 border-b border-[var(--text-dark)] pb-8 mb-10">
                 <div>
                     <span class="text-xs tracking-[0.28em] uppercase opacity-45 font-mono">Admin Only</span>
                     <h1 class="font-document italic text-5xl md:text-7xl leading-none mt-3">Environment</h1>
-                    <p class="mt-5 text-sm opacity-55 font-serif-ko">사이트의 시각 효과와 전역 분위기를 관리합니다.</p>
+                    <p class="mt-5 text-sm opacity-55 font-serif-ko">사이트의 시각 효과와 메인 화면 이미지를 관리합니다.</p>
                 </div>
             </div>
 
-            <div class="border border-[var(--border-light)] bg-white/70 p-8 md:p-10">
+            <div class="space-y-8">
+                <div class="border border-[var(--border-light)] bg-white/70 p-8 md:p-10">
                 <div class="settings-toggle">
                     <div>
                         <span class="form-label">Ambient Bubble Background</span>
@@ -4766,6 +4738,30 @@
                     <button type="button" id="ambient-bubbles-toggle" class="settings-switch" aria-pressed="true" aria-label="비눗방울 배경 켜기 또는 끄기"></button>
                 </div>
                 <p id="system-settings-error" class="hidden mt-6 text-sm text-[var(--accent-red)]"></p>
+                </div>
+
+                <div class="border border-[var(--border-light)] bg-white/70 p-8 md:p-10">
+                    <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_340px] gap-8 lg:gap-10 items-start">
+                        <div>
+                            <span class="form-label">Main Exhibition Image</span>
+                            <p class="mt-3 text-sm leading-relaxed opacity-65 font-serif-ko">
+                                메인 화면 중앙에 보이는 전시 이미지를 교체합니다. 세로형 이미지 권장: 900 x 1200px 이상.
+                            </p>
+                            <form id="main-image-form" class="mt-8 flex flex-col gap-6">
+                                <div>
+                                    <label for="main-image-input" class="form-label">Image File</label>
+                                    <input type="file" id="main-image-input" accept="image/jpeg,image/png,image/webp" class="block w-full text-sm">
+                                    <p class="mt-3 text-xs opacity-45 font-serif-ko">JPG, PNG, WEBP / 최대 10MB.</p>
+                                </div>
+                                <p id="main-image-error" class="hidden text-sm text-[var(--accent-red)]"></p>
+                                <button type="submit" id="main-image-submit" class="btn-save-changes w-full sm:w-auto mt-0">Save Main Image</button>
+                            </form>
+                        </div>
+                        <div class="border border-[var(--border-light)] bg-white p-3">
+                            <img id="main-image-admin-preview" src="/assets/main.png?v=<?= (int) (@filemtime(__DIR__ . '/assets/main.png') ?: time()) ?>" alt="현재 메인 이미지" class="w-full aspect-[4/5] object-cover grayscale">
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -5570,7 +5566,6 @@
         const systemNavLink = document.getElementById('system-nav-link');
         const systemAddNavLink = document.getElementById('system-add-nav-link');
         const membershipNavLink = document.getElementById('membership-nav-link');
-        const mainImageNavLink = document.getElementById('main-image-nav-link');
         const systemMenuSection = document.getElementById('system-menu-section');
         const myPageNavLink = document.getElementById('my-page-nav-link');
         const selfIntroNavLink = document.getElementById('self-intro-nav-link');
@@ -5804,12 +5799,6 @@
                 openLoginModal();
                 return null;
             }
-            if (targetId === 'view-main-image-admin' && !['superuser', 'admin'].includes(siteUser?.role)) {
-                showToast('관리자 로그인이 필요합니다.', false);
-                localStorage.setItem(pendingAuthViewKey, targetId);
-                openLoginModal();
-                return null;
-            }
             if ((targetId === 'view-my-page' || targetId === 'view-self-introduction') && !siteUser) {
                 showToast('로그인이 필요합니다.', false);
                 localStorage.setItem(pendingAuthViewKey, targetId);
@@ -5976,7 +5965,6 @@
             systemNavLink.classList.toggle('hidden', !isManager);
             systemAddNavLink?.classList.toggle('hidden', !isManager);
             membershipNavLink?.classList.toggle('hidden', !isManager);
-            mainImageNavLink?.classList.toggle('hidden', !isManager);
             systemSettingsNavLink?.classList.toggle('hidden', !isManager);
             systemMenuSection?.classList.toggle('hidden', !isManager);
             myPageNavLink.classList.toggle('hidden', !user);
@@ -7120,11 +7108,7 @@
                             : '현재 회원을 직접 선택해 질문지를 연동합니다.')
                         : '회원 태그로 변경한 뒤 연동할 수 있습니다.';
                     sync.addEventListener('click', async () => {
-                        if (item.userId && siteUser?.role !== 'superuser') {
-                            await syncApplicationQuestionnaire(item.id);
-                        } else {
-                            await openQuestionnaireSyncModal(item.id, item.userId || null);
-                        }
+                        await openQuestionnaireSyncModal(item.id, item.userId || null);
                     });
 
                     membershipDetailActions.append(statusBadge, tagSelect, sync);
@@ -8340,7 +8324,6 @@
         }
 
         async function syncApplicationQuestionnaire(applicationId, userId = null) {
-            if (!window.confirm('이 회원이 마이페이지에서 작성한 질문지를 현재 질문지에 수동 반영하시겠습니까? 원본 신청서는 보존됩니다.')) return;
             try {
                 const requestBody = { action: 'syncApplicationProfile', applicationId };
                 if (userId) requestBody.userId = userId;
