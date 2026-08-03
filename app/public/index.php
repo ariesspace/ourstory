@@ -572,21 +572,37 @@
             display: none;
         }
         .mypage-mobile-tab {
-            flex: 0 0 auto;
-            border: 1px solid var(--border-light);
-            padding: 0.7rem 0.95rem;
+            position: relative;
+            min-height: 3rem;
+            border-bottom: 1px dashed var(--border-light);
+            padding: 0.82rem 0.45rem 0.72rem;
             font-family: 'Noto Sans KR', sans-serif;
             font-size: 0.78rem;
             font-weight: 600;
             letter-spacing: 0.02em;
-            color: rgba(17, 17, 17, 0.56);
-            background: rgba(255, 255, 255, 0.72);
-            transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+            text-align: left;
+            color: rgba(17, 17, 17, 0.48);
+            transition: color 0.2s ease, border-color 0.2s ease, padding-left 0.2s ease;
+        }
+        .mypage-mobile-tab::after {
+            content: '→';
+            position: absolute;
+            right: 0.45rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            color: rgba(42, 59, 50, 0.38);
+            opacity: 0;
+            transition: opacity 0.2s ease;
         }
         .mypage-mobile-tab.active {
-            border-color: var(--accent-red);
             color: var(--text-dark);
-            background: rgba(42, 59, 50, 0.08);
+            border-bottom-color: var(--accent-color);
+            padding-left: 0.15rem;
+        }
+        .mypage-mobile-tab.active::after {
+            opacity: 1;
         }
         .mypage-menu-title,
         .mypage-menu-sub {
@@ -1661,6 +1677,64 @@
             color: var(--accent-red);
             transform: translateX(-0.18rem);
             letter-spacing: 0.14em;
+        }
+        .index-menu-submenu {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.42s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+        .index-menu-submenu-inner {
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            padding-left: 4.35rem;
+        }
+        .index-menu-submenu.open {
+            grid-template-rows: 1fr;
+        }
+        .index-menu-subitem {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 0.56rem 0 0.56rem 0.9rem;
+            border-left: 1px solid var(--border-light);
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            color: rgba(17, 17, 17, 0.56);
+            text-align: left;
+            opacity: 0;
+            transform: translateY(-0.35rem);
+            transition: opacity 0.28s ease, transform 0.28s ease, color 0.22s ease, padding-left 0.22s ease;
+        }
+        .index-menu-submenu.open .index-menu-subitem {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .index-menu-submenu.open .index-menu-subitem:nth-child(1) { transition-delay: 0.04s; }
+        .index-menu-submenu.open .index-menu-subitem:nth-child(2) { transition-delay: 0.08s; }
+        .index-menu-submenu.open .index-menu-subitem:nth-child(3) { transition-delay: 0.12s; }
+        .index-menu-submenu.open .index-menu-subitem:nth-child(4) { transition-delay: 0.16s; }
+        .index-menu-subitem:hover {
+            color: var(--accent-color);
+            padding-left: 1.15rem;
+            padding-right: 0;
+            letter-spacing: 0.02em;
+        }
+        .index-menu-subitem:hover span,
+        .index-menu-subitem:hover small {
+            color: inherit;
+            transform: none;
+            letter-spacing: inherit;
+        }
+        .index-menu-subitem small {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.62rem;
+            letter-spacing: 0.12em;
+            color: rgba(79, 91, 105, 0.68);
         }
         #system-menu-section .index-menu-section-title {
             color: var(--accent-red);
@@ -3833,6 +3907,21 @@
                 font-size: 0.64rem !important;
                 letter-spacing: 0.03em !important;
             }
+            .index-menu-submenu-inner {
+                padding-left: 2.98rem !important;
+            }
+            .index-menu-subitem {
+                display: flex !important;
+                grid-template-columns: none !important;
+                gap: 0.75rem !important;
+                padding: 0.42rem 0 0.42rem 0.72rem !important;
+                font-size: 0.7rem !important;
+                letter-spacing: 0.02em !important;
+            }
+            .index-menu-subitem small {
+                font-size: 0.57rem !important;
+                letter-spacing: 0.06em !important;
+            }
             #main-header > div:first-child {
                 height: 84px !important;
                 padding-left: max(0.8rem, env(safe-area-inset-left)) !important;
@@ -3876,18 +3965,6 @@
                 padding: 2.15rem 1.25rem 3rem !important;
                 gap: 1.75rem !important;
                 flex-direction: column !important;
-            }
-            .mypage-mobile-nav {
-                display: flex !important;
-                gap: 0.55rem;
-                width: 100%;
-                overflow-x: auto;
-                padding: 0.15rem 0 0.75rem;
-                border-bottom: 1px solid var(--border-light);
-                scrollbar-width: none;
-            }
-            .mypage-mobile-nav::-webkit-scrollbar {
-                display: none;
             }
             .mypage-content {
                 width: 100% !important;
@@ -4302,7 +4379,15 @@
 
             <section class="index-menu-section">
                 <p class="index-menu-section-title">Personal</p>
-                <button type="button" class="view-trigger hidden" data-target="view-my-page" id="my-page-nav-link"><em>08</em><span>My Profile</span><small>[ 설정 ]</small></button>
+                <button type="button" class="hidden" id="my-page-nav-link" data-profile-menu-toggle aria-expanded="false" aria-controls="my-profile-index-submenu"><em>08</em><span>My Profile</span><small>[ 설정 ]</small></button>
+                <div id="my-profile-index-submenu" class="index-menu-submenu" aria-hidden="true">
+                    <div class="index-menu-submenu-inner">
+                        <button type="button" class="index-menu-subitem" data-my-menu-action="account"><span>Account Info</span><small>[ 계정 ]</small></button>
+                        <button type="button" class="index-menu-subitem" data-my-menu-action="security"><span>Privacy &amp; Security</span><small>[ 보안 ]</small></button>
+                        <button type="button" class="index-menu-subitem" data-my-menu-action="questionnaire"><span>My Questionnaire</span><small>[ 질문지 ]</small></button>
+                        <button type="button" class="index-menu-subitem" data-my-menu-action="likes"><span>Liked Posts Log</span><small>[ 좋아요 ]</small></button>
+                    </div>
+                </div>
                 <button type="button" class="view-trigger hidden" data-target="view-self-introduction" id="self-intro-nav-link"><em>09</em><span>Self Introduction</span><small>[ 자기소개 ]</small></button>
             </section>
 
@@ -4368,13 +4453,6 @@
                         </div>
                     </div>
                 </aside>
-
-                <nav class="mypage-mobile-nav" aria-label="My Profile sections">
-                    <button type="button" class="mypage-mobile-tab active" data-my-action="account">Account Info</button>
-                    <button type="button" class="mypage-mobile-tab" data-my-action="security">Security</button>
-                    <button type="button" class="mypage-mobile-tab" data-my-action="questionnaire">Questionnaire</button>
-                    <button type="button" class="mypage-mobile-tab" data-my-action="likes">Liked</button>
-                </nav>
 
                 <div class="mypage-content">
                     <div class="mypage-header-title">
@@ -4814,7 +4892,7 @@
                             </form>
                         </div>
                         <div class="border border-[var(--border-light)] bg-white p-3">
-                            <img id="main-image-admin-preview" src="/assets/main.png?v=<?= (int) (@filemtime(__DIR__ . '/assets/main.png') ?: time()) ?>" alt="현재 메인 이미지" class="w-full aspect-[4/5] object-cover grayscale">
+                            <img id="main-image-admin-preview" src="/assets/main.png?v=<?php echo (int) (file_exists(__DIR__ . '/assets/main.png') ? filemtime(__DIR__ . '/assets/main.png') : time()); ?>" alt="현재 메인 이미지" class="w-full aspect-[4/5] object-cover grayscale">
                         </div>
                     </div>
                 </div>
@@ -4843,7 +4921,7 @@
                 </div>
 
                 <div class="gallery-home-art">
-                    <img id="home-main-image" src="/assets/main.png?v=<?= (int) (@filemtime(__DIR__ . '/assets/main.png') ?: time()) ?>" alt="Abstract archive artwork" class="gallery-home-image">
+                    <img id="home-main-image" src="/assets/main.png?v=<?php echo (int) (file_exists(__DIR__ . '/assets/main.png') ? filemtime(__DIR__ . '/assets/main.png') : time()); ?>" alt="Abstract archive artwork" class="gallery-home-image">
                     <h1 class="gallery-home-title">Private <i>Archive</i></h1>
                 </div>
 
@@ -5625,6 +5703,7 @@
         const membershipNavLink = document.getElementById('membership-nav-link');
         const systemMenuSection = document.getElementById('system-menu-section');
         const myPageNavLink = document.getElementById('my-page-nav-link');
+        const myProfileIndexSubmenu = document.getElementById('my-profile-index-submenu');
         const selfIntroNavLink = document.getElementById('self-intro-nav-link');
         const loginNavBtn = document.getElementById('login-nav-btn');
         const headerNoticeBtn = document.getElementById('header-notice-btn');
@@ -5659,6 +5738,7 @@
         let passwordReminderShownFor = null;
         let currentViewId = 'view-read';
         let isRestoringHistory = false;
+        let pendingMyPageAction = null;
 
         const dateOptions = { year: 'numeric', month: 'short', day: '2-digit' };
         function updateHeaderBg() {
@@ -5752,10 +5832,18 @@
             updateHeaderBg();
         }
 
+        function setMyProfileIndexSubmenuOpen(open) {
+            if (!myProfileIndexSubmenu || !myPageNavLink) return;
+            myProfileIndexSubmenu.classList.toggle('open', open);
+            myProfileIndexSubmenu.setAttribute('aria-hidden', open ? 'false' : 'true');
+            myPageNavLink.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
+
         function closeMenu() {
             indexMenu.classList.remove('open');
             menuOverlay.classList.remove('opacity-100');
             menuOverlay.classList.add('pointer-events-none');
+            setMyProfileIndexSubmenuOpen(false);
             document.body.style.overflow = '';
             isMenuOpen = false;
             updateHeaderBg();
@@ -5763,6 +5851,10 @@
 
         indexMenuOpen?.addEventListener('click', openMenu);
         indexMenuClose?.addEventListener('click', closeMenu);
+        myPageNavLink?.addEventListener('click', () => {
+            const isOpen = myProfileIndexSubmenu?.classList.contains('open') || false;
+            setMyProfileIndexSubmenuOpen(!isOpen);
+        });
 
         function openLoginModal() {
             closeMenu();
@@ -5980,6 +6072,34 @@
                     await runPageTransition();
                 }
                 navigateToView(targetId);
+            });
+        });
+
+        document.querySelectorAll('[data-my-menu-action]').forEach(item => {
+            item.addEventListener('click', async () => {
+                const action = item.dataset.myMenuAction || 'account';
+                pendingMyPageAction = action === 'security' ? 'account' : action;
+                setMyProfileIndexSubmenuOpen(false);
+                if (currentViewId !== 'view-my-page') {
+                    await runPageTransition();
+                }
+                navigateToView('view-my-page');
+                window.setTimeout(() => {
+                    if (action === 'security') {
+                        openSecurityPasswordModal();
+                        return;
+                    }
+                    if (action === 'questionnaire') {
+                        activateMyPageTab('questionnaire');
+                        return;
+                    }
+                    if (action === 'likes') {
+                        activateMyPageTab('account');
+                        showToast('Liked Posts Log는 아직 준비 중입니다.', false);
+                        return;
+                    }
+                    activateMyPageTab('account');
+                }, 180);
             });
         });
 
@@ -9695,7 +9815,8 @@
                 if (!response.ok) throw new Error(payload.error || '프로필을 불러오지 못했습니다.');
                 fillMyProfile(payload.profile);
                 myPageStatus.classList.add('hidden');
-                const activeAction = document.querySelector('[data-my-action].active')?.dataset.myAction || 'account';
+                const activeAction = pendingMyPageAction || document.querySelector('#view-my-page [data-my-action].active')?.dataset.myAction || 'account';
+                pendingMyPageAction = null;
                 if (activeAction === 'questionnaire') {
                     activateMyPageTab('questionnaire');
                 } else {
