@@ -5049,6 +5049,7 @@
                 <div id="questionnaire-tag-filters" class="hidden mb-6 flex flex-wrap items-center gap-2">
                     <button type="button" class="questionnaire-filter active" data-questionnaire-filter="all">전체 보기</button>
                     <button type="button" class="questionnaire-filter" data-questionnaire-filter="회원">회원만 보기</button>
+                    <button type="button" class="questionnaire-filter" data-questionnaire-filter="unlinked">미연결 회원</button>
                     <button type="button" class="questionnaire-filter" data-questionnaire-filter="비회원">비회원 보기</button>
                 </div>
                 <div class="mb-8 border-b border-[var(--border-light)] flex items-center gap-3">
@@ -8174,9 +8175,17 @@
 
         function filterQuestionnaires() {
             const query = questionnaireSearch?.value.trim().toLocaleLowerCase('ko-KR') || '';
+            const visibleItems = questionnaireCanManage && siteUser?.role === 'admin'
+                ? questionnaireItems.filter(item => !item.userId)
+                : questionnaireItems;
             const taggedItems = questionnaireTagFilter === 'all'
-                ? questionnaireItems
-                : questionnaireItems.filter(item => (item.adminTag || '비회원') === questionnaireTagFilter);
+                ? visibleItems
+                : visibleItems.filter(item => {
+                    if (questionnaireTagFilter === 'unlinked') {
+                        return (item.adminTag || '비회원') === '회원' && !item.userId;
+                    }
+                    return (item.adminTag || '비회원') === questionnaireTagFilter;
+                });
             const items = query
                 ? taggedItems
                     .map((item, index) => ({ item, index, score: questionnaireSearchScore(item, query) }))
