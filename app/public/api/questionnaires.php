@@ -266,6 +266,45 @@ if ($action === 'updateTag') {
     questionnaires_json(['ok' => true]);
 }
 
+if ($action === 'mapApplicationUser') {
+    $applicationId = (int) ($body['applicationId'] ?? 0);
+    $selectedUserId = (int) ($body['userId'] ?? 0);
+    if ($applicationId <= 0 || $selectedUserId <= 0) {
+        questionnaires_json(['error' => 'Application id and user id are required.'], 422);
+    }
+
+    $appStmt = $pdo->prepare('SELECT id, approved_user_id FROM tally_membership_applications WHERE id = :id');
+    $appStmt->execute([':id' => $applicationId]);
+    $application = $appStmt->fetch();
+    if (!$application) {
+        questionnaires_json(['error' => 'Questionnaire not found.'], 404);
+    }
+
+    $mappedUserId = $application['approved_user_id'] !== null ? (int) $application['approved_user_id'] : null;
+    if ($mappedUserId !== null && $mappedUserId !== $selectedUserId && (string) $viewer['role'] !== 'superuser') {
+        questionnaires_json(['error' => '이미 연결된 계정은 superuser만 변경할 수 있습니다.'], 403);
+    }
+
+    $userStmt = $pdo->prepare('SELECT id FROM users WHERE id = :id AND is_active = 1');
+    $userStmt->execute([':id' => $selectedUserId]);
+    if (!$userStmt->fetch()) {
+        questionnaires_json(['error' => '선택한 회원을 찾을 수 없습니다.'], 404);
+    }
+
+    $update = $pdo->prepare(
+        "UPDATE tally_membership_applications
+         SET approved_user_id = :user_id,
+             admin_tag = '회원'
+         WHERE id = :id"
+    );
+    $update->execute([
+        ':user_id' => $selectedUserId,
+        ':id' => $applicationId,
+    ]);
+
+    questionnaires_json(['ok' => true]);
+}
+
 if ($action === 'syncApplicationProfile') {
     $applicationId = (int) ($body['applicationId'] ?? 0);
     $selectedUserId = (int) ($body['userId'] ?? 0);

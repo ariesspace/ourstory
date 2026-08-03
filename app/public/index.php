@@ -7096,22 +7096,31 @@
                         await updateQuestionnaireTag(item.id, tagSelect.value);
                     });
 
-                    const sync = document.createElement('button');
-                    sync.type = 'button';
-                    sync.className = 'bg-[var(--accent-red)] text-white px-5 py-2.5 text-xs tracking-widest uppercase disabled:opacity-35 disabled:cursor-not-allowed';
-                    sync.textContent = item.hasSyncedProfile ? '다시 연동하기' : '연동하기';
-                    const isMemberApplication = (item.adminTag || '비회원') === '회원';
-                    sync.disabled = !isMemberApplication;
-                    sync.title = isMemberApplication
-                        ? (item.userId && siteUser?.role !== 'superuser'
-                            ? '이미 매핑된 회원의 최신 질문지만 다시 반영합니다.'
-                            : '현재 회원을 직접 선택해 질문지를 연동합니다.')
-                        : '회원 태그로 변경한 뒤 연동할 수 있습니다.';
-                    sync.addEventListener('click', async () => {
+                    const connect = document.createElement('button');
+                    connect.type = 'button';
+                    connect.className = 'border border-[var(--text-dark)] px-5 py-2.5 text-xs tracking-widest uppercase disabled:opacity-35 disabled:cursor-not-allowed';
+                    connect.textContent = item.userId ? '계정 연결됨' : '계정 연결';
+                    connect.disabled = Boolean(item.userId && siteUser?.role !== 'superuser');
+                    connect.title = item.userId && siteUser?.role !== 'superuser'
+                        ? '이미 연결된 계정은 superuser만 변경할 수 있습니다.'
+                        : '회원 목록에서 연결할 계정을 선택합니다.';
+                    connect.addEventListener('click', async () => {
                         await openQuestionnaireSyncModal(item.id, item.userId || null);
                     });
 
-                    membershipDetailActions.append(statusBadge, tagSelect, sync);
+                    const sync = document.createElement('button');
+                    sync.type = 'button';
+                    sync.className = 'bg-[var(--accent-red)] text-white px-5 py-2.5 text-xs tracking-widest uppercase disabled:opacity-35 disabled:cursor-not-allowed';
+                    sync.textContent = item.hasSyncedProfile ? '질문지 다시 연동' : '질문지 연동';
+                    sync.disabled = !item.userId;
+                    sync.title = item.userId
+                        ? '연결된 회원이 마이페이지에서 작성한 질문지를 현재 질문지에 반영합니다.'
+                        : '먼저 계정을 연결해주세요.';
+                    sync.addEventListener('click', async () => {
+                        await syncApplicationQuestionnaire(item.id);
+                    });
+
+                    membershipDetailActions.append(statusBadge, tagSelect, connect, sync);
                 } else {
                 const statusBadge = document.createElement('span');
                 statusBadge.className = 'mr-auto px-3 py-2 text-[0.65rem] tracking-widest uppercase border border-[var(--border-light)]';
@@ -8238,7 +8247,7 @@
                 const row = document.createElement('button');
                 row.type = 'button';
                 row.className = 'w-full py-4 text-left flex items-center gap-4 hover:px-3 hover:bg-white/70 transition-all disabled:opacity-45 disabled:cursor-not-allowed';
-                row.disabled = !candidate.hasQuestionnaire;
+                row.disabled = false;
 
                 const avatar = document.createElement('div');
                 avatar.className = 'w-11 h-11 rounded-full bg-[var(--accent-green)] text-white shrink-0 overflow-hidden flex items-center justify-center';
@@ -8276,16 +8285,16 @@
                     status.textContent = '현재 매핑';
                 } else if (candidate.hasQuestionnaire) {
                     status.className += ' border border-[var(--text-dark)]';
-                    status.textContent = '선택';
+                    status.textContent = '질문지 있음';
                 } else {
                     status.className += ' border border-[var(--border-light)] opacity-60';
-                    status.textContent = '질문지 없음';
+                    status.textContent = '계정만 연동';
                 }
 
                 row.append(avatar, body, status);
                 row.addEventListener('click', async () => {
-                    if (row.disabled || !questionnaireSyncApplicationId) return;
-                    await syncApplicationQuestionnaire(questionnaireSyncApplicationId, candidate.id);
+                    if (!questionnaireSyncApplicationId) return;
+                    await connectApplicationUser(questionnaireSyncApplicationId, candidate.id);
                 });
                 questionnaireSyncList.appendChild(row);
             });
@@ -8338,7 +8347,30 @@
                 closeQuestionnaireSyncModal();
                 closeMembershipDetail();
                 await loadQuestionnaires();
-                showToast('회원 질문지를 수동 연동했습니다.', true);
+                if (payload.mappedOnly) {
+                    showToast('계정은 연동했고, 작성된 회원 질문지가 없어 원본 신청서를 유지했습니다.', true);
+                } else {
+                    showToast('회원 질문지를 수동 연동했습니다.', true);
+                }
+            } catch (error) {
+                showToast(error.message, false);
+            }
+        }
+
+        async function connectApplicationUser(applicationId, userId) {
+            try {
+                const response = await fetch('/api/questionnaires.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-Token': csrfToken || '' },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ action: 'mapApplicationUser', applicationId, userId })
+                });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '계정을 연결하지 못했습니다.');
+                closeQuestionnaireSyncModal();
+                closeMembershipDetail();
+                await loadQuestionnaires();
+                showToast('계정을 연결했습니다. 질문지 반영은 별도로 연동할 수 있습니다.', true);
             } catch (error) {
                 showToast(error.message, false);
             }
