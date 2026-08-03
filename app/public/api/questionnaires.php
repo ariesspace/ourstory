@@ -63,6 +63,74 @@ function questionnaire_find_answer(array $fields, array $needles): string
     return '';
 }
 
+function questionnaire_intro_from_fields(array $fields): string
+{
+    $lines = [];
+    foreach ($fields as $field) {
+        if (!is_array($field)) {
+            continue;
+        }
+        $label = trim((string) ($field['label'] ?? ''));
+        $answer = questionnaire_field_answer($field);
+        if ($label !== '' && $answer !== '') {
+            $lines[] = $label . "\n" . $answer;
+        }
+    }
+    return mb_substr(implode("\n\n", $lines), 0, 20000);
+}
+
+function questionnaire_copy_application_to_user_draft(PDO $pdo, array $application, array $user): int
+{
+    $fields = json_decode((string) ($application['fields_json'] ?? '[]'), true);
+    $fields = is_array($fields) ? $fields : [];
+    $profileJson = json_encode($fields, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    $introText = questionnaire_intro_from_fields($fields);
+
+    $existing = $pdo->prepare('SELECT id FROM profiles WHERE user_id = :user_id ORDER BY id DESC LIMIT 1');
+    $existing->execute([':user_id' => (int) $user['id']]);
+    $profileId = (int) ($existing->fetchColumn() ?: 0);
+
+    if ($profileId > 0) {
+        $stmt = $pdo->prepare(
+            'UPDATE profiles
+             SET source_application_id = :source_application_id,
+                 draft_profile_data_json = :draft_json,
+                 draft_intro_text = :draft_intro,
+                 draft_updated_at = CURRENT_TIMESTAMP,
+                 updated_at = CURRENT_TIMESTAMP
+             WHERE id = :id AND user_id = :user_id'
+        );
+        $stmt->execute([
+            ':source_application_id' => (int) $application['id'],
+            ':draft_json' => $profileJson,
+            ':draft_intro' => $introText,
+            ':id' => $profileId,
+            ':user_id' => (int) $user['id'],
+        ]);
+        return $profileId;
+    }
+
+    $stmt = $pdo->prepare(
+        'INSERT INTO profiles
+            (user_id, source_application_id, author_snapshot, nickname_snapshot, profile_data_json, intro_text,
+             draft_profile_data_json, draft_intro_text, draft_updated_at, is_visible)
+         VALUES
+            (:user_id, :source_application_id, :author_snapshot, :nickname_snapshot, :profile_json, :intro_text,
+             :draft_json, :draft_intro, CURRENT_TIMESTAMP, 1)'
+    );
+    $stmt->execute([
+        ':user_id' => (int) $user['id'],
+        ':source_application_id' => (int) $application['id'],
+        ':author_snapshot' => (string) ($user['username'] ?? ''),
+        ':nickname_snapshot' => (string) ($user['display_name'] ?? ''),
+        ':profile_json' => '[]',
+        ':intro_text' => '',
+        ':draft_json' => $profileJson,
+        ':draft_intro' => $introText,
+    ]);
+    return (int) $pdo->lastInsertId();
+}
+
 function questionnaire_profile_row(PDO $pdo, int $applicationId, ?int $approvedUserId): ?array
 {
     $stmt = $pdo->prepare(
@@ -273,7 +341,7 @@ if ($action === 'mapApplicationUser') {
         questionnaires_json(['error' => 'Application id and user id are required.'], 422);
     }
 
-    $appStmt = $pdo->prepare('SELECT id, approved_user_id FROM tally_membership_applications WHERE id = :id');
+    $appStmt = $pdo->prepare('SELECT id, fields_json, approved_user_id FROM tally_membership_applications WHERE id = :id');
     $appStmt->execute([':id' => $applicationId]);
     $application = $appStmt->fetch();
     if (!$application) {
@@ -285,9 +353,10 @@ if ($action === 'mapApplicationUser') {
         questionnaires_json(['error' => '이미 연결된 계정은 superuser만 변경할 수 있습니다.'], 403);
     }
 
-    $userStmt = $pdo->prepare('SELECT id FROM users WHERE id = :id AND is_active = 1');
+    $userStmt = $pdo->prepare('SELECT id, username, display_name FROM users WHERE id = :id AND is_active = 1');
     $userStmt->execute([':id' => $selectedUserId]);
-    if (!$userStmt->fetch()) {
+    $selectedUser = $userStmt->fetch();
+    if (!$selectedUser) {
         questionnaires_json(['error' => '선택한 회원을 찾을 수 없습니다.'], 404);
     }
 
@@ -302,7 +371,9 @@ if ($action === 'mapApplicationUser') {
         ':id' => $applicationId,
     ]);
 
-    questionnaires_json(['ok' => true]);
+    $profileId = questionnaire_copy_application_to_user_draft($pdo, $application, $selectedUser);
+
+    questionnaires_json(['ok' => true, 'profileId' => $profileId]);
 }
 
 if ($action === 'syncApplicationProfile') {
