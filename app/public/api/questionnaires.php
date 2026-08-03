@@ -85,6 +85,24 @@ function questionnaire_profile_row(PDO $pdo, int $applicationId, ?int $approvedU
     return $row ?: null;
 }
 
+function questionnaire_profile_by_user(PDO $pdo, int $userId): ?array
+{
+    $stmt = $pdo->prepare(
+        "SELECT p.id, p.user_id, p.profile_data_json, p.intro_text, p.draft_profile_data_json,
+                p.draft_intro_text, p.draft_updated_at, p.updated_at,
+                u.username, u.display_name, u.role, u.birth_year, u.region,
+                u.personality, u.relationship_style, u.bio, u.avatar_stored_name
+         FROM profiles p
+         LEFT JOIN users u ON u.id = p.user_id
+         WHERE p.user_id = :user_id
+         ORDER BY p.updated_at DESC, p.id DESC
+         LIMIT 1"
+    );
+    $stmt->execute([':user_id' => $userId]);
+    $row = $stmt->fetch();
+    return $row ?: null;
+}
+
 $pdo = site_db();
 $viewer = site_current_user($pdo);
 if (!$viewer) {
@@ -95,6 +113,52 @@ $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $canManage = in_array((string) $viewer['role'], ['superuser', 'admin'], true);
 
 if ($method === 'GET') {
+    $getAction = (string) ($_GET['action'] ?? '');
+    if ($getAction === 'syncCandidates') {
+        if (!$canManage) {
+            questionnaires_json(['error' => 'Admin required.'], 403);
+        }
+        $rows = $pdo->query(
+            "SELECT u.id, u.username, u.display_name, u.role, u.birth_year, u.region,
+                    u.personality, u.relationship_style, u.avatar_stored_name,
+                    p.id AS profile_id, p.profile_data_json, p.draft_profile_data_json,
+                    p.draft_updated_at, p.updated_at
+             FROM users u
+             LEFT JOIN profiles p ON p.id = (
+                SELECT id FROM profiles
+                WHERE user_id = u.id
+                ORDER BY updated_at DESC, id DESC
+                LIMIT 1
+             )
+             WHERE u.is_active = 1
+             ORDER BY
+                CASE u.role WHEN 'superuser' THEN 1 WHEN 'admin' THEN 2 ELSE 3 END,
+                u.display_name COLLATE NOCASE,
+                u.username COLLATE NOCASE"
+        )->fetchAll();
+        $items = array_map(static function (array $row): array {
+            $draft = json_decode((string) ($row['draft_profile_data_json'] ?? ''), true);
+            $published = json_decode((string) ($row['profile_data_json'] ?? ''), true);
+            $draft = is_array($draft) ? $draft : [];
+            $published = is_array($published) ? $published : [];
+            return [
+                'id' => (int) $row['id'],
+                'username' => (string) $row['username'],
+                'displayName' => (string) $row['display_name'],
+                'role' => (string) $row['role'],
+                'birthYear' => $row['birth_year'] !== null ? (int) $row['birth_year'] : null,
+                'region' => (string) ($row['region'] ?? ''),
+                'personality' => (string) ($row['personality'] ?? ''),
+                'relationshipStyle' => (string) ($row['relationship_style'] ?? ''),
+                'avatarUrl' => questionnaire_avatar_url($row),
+                'profileId' => $row['profile_id'] !== null ? (int) $row['profile_id'] : null,
+                'hasQuestionnaire' => $draft !== [] || $published !== [],
+                'updatedAt' => (string) ($row['draft_updated_at'] ?: $row['updated_at'] ?: ''),
+            ];
+        }, $rows);
+        questionnaires_json(['items' => $items]);
+    }
+
     $stmt = $pdo->query(
         "SELECT id, submission_id, form_name, submitted_at, fields_json, status, is_hidden,
                 approved_user_id, admin_tag, synced_profile_id, synced_profile_data_json,
@@ -204,6 +268,7 @@ if ($action === 'updateTag') {
 
 if ($action === 'syncApplicationProfile') {
     $applicationId = (int) ($body['applicationId'] ?? 0);
+    $selectedUserId = (int) ($body['userId'] ?? 0);
     if ($applicationId <= 0) {
         questionnaires_json(['error' => 'Application id is required.'], 422);
     }
@@ -213,9 +278,25 @@ if ($action === 'syncApplicationProfile') {
     if (!$application) {
         questionnaires_json(['error' => 'Questionnaire not found.'], 404);
     }
-    $profile = questionnaire_profile_row($pdo, $applicationId, $application['approved_user_id'] !== null ? (int) $application['approved_user_id'] : null);
+    $mappedUserId = $application['approved_user_id'] !== null ? (int) $application['approved_user_id'] : null;
+    if ($selectedUserId > 0) {
+        if ($mappedUserId !== null && $mappedUserId !== $selectedUserId && (string) $viewer['role'] !== 'superuser') {
+            questionnaires_json(['error' => '이미 다른 회원과 매핑된 질문지는 Superuser만 재매핑할 수 있습니다.'], 403);
+        }
+        $userStmt = $pdo->prepare('SELECT id FROM users WHERE id = :id AND is_active = 1');
+        $userStmt->execute([':id' => $selectedUserId]);
+        if (!$userStmt->fetch()) {
+            questionnaires_json(['error' => '선택한 회원을 찾을 수 없습니다.'], 404);
+        }
+        $profile = questionnaire_profile_by_user($pdo, $selectedUserId);
+    } else {
+        $profile = questionnaire_profile_row($pdo, $applicationId, $mappedUserId);
+    }
     if (!$profile) {
         questionnaires_json(['error' => '연동할 회원 질문지가 없습니다.'], 422);
+    }
+    if ($mappedUserId !== null && (int) $profile['user_id'] !== $mappedUserId && (string) $viewer['role'] !== 'superuser') {
+        questionnaires_json(['error' => '이미 매핑된 회원만 다시 연동할 수 있습니다.'], 403);
     }
 
     $draftJson = (string) ($profile['draft_profile_data_json'] ?? '');
@@ -228,13 +309,16 @@ if ($action === 'syncApplicationProfile') {
          SET synced_profile_id = :profile_id,
              synced_profile_data_json = :profile_json,
              synced_intro_text = :intro_text,
-             synced_at = CURRENT_TIMESTAMP
+             synced_at = CURRENT_TIMESTAMP,
+             approved_user_id = :user_id,
+             admin_tag = '회원'
          WHERE id = :id"
     );
     $update->execute([
         ':profile_id' => (int) $profile['id'],
         ':profile_json' => $publicJson,
         ':intro_text' => $publicIntro,
+        ':user_id' => (int) $profile['user_id'],
         ':id' => $applicationId,
     ]);
     questionnaires_json(['ok' => true]);

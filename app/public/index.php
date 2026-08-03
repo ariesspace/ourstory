@@ -5409,6 +5409,23 @@
         </form>
     </div>
 
+    <div id="questionnaire-sync-modal" class="fixed inset-0 z-[97] hidden items-center justify-center bg-black/55 p-4" role="dialog" aria-modal="true" aria-labelledby="questionnaire-sync-title">
+        <div class="relative w-full max-w-2xl max-h-[86vh] overflow-hidden bg-[var(--bg-cream)] border border-[var(--border-light)] shadow-2xl">
+            <button type="button" id="questionnaire-sync-close" class="absolute top-4 right-4 w-9 h-9 rounded-full border border-[var(--border-light)] flex items-center justify-center hover:bg-[var(--accent-red)] hover:text-white transition-colors" aria-label="회원 선택 닫기">
+                <i class="ph ph-x"></i>
+            </button>
+            <div class="p-7 sm:p-10 border-b border-[var(--border-light)]">
+                <p class="text-[0.65rem] tracking-[0.32em] uppercase opacity-45 font-mono">Manual Mapping</p>
+                <h2 id="questionnaire-sync-title" class="mt-3 text-3xl sm:text-4xl font-document italic">Select Member</h2>
+                <p class="mt-4 text-sm leading-relaxed opacity-60 font-serif-ko">연동할 현재 회원을 직접 선택해주세요. 한 번 매핑된 질문지는 일반 관리자가 다른 회원으로 변경할 수 없습니다.</p>
+                <label for="questionnaire-sync-search" class="sr-only">회원 검색</label>
+                <input id="questionnaire-sync-search" type="search" class="mt-7 w-full bg-transparent border-b border-[var(--text-dark)] py-3 text-base outline-none" placeholder="닉네임, 아이디, 지역, 성향으로 검색">
+            </div>
+            <div id="questionnaire-sync-status" class="hidden px-7 sm:px-10 py-5 text-sm opacity-55"></div>
+            <div id="questionnaire-sync-list" class="max-h-[45vh] overflow-y-auto divide-y divide-[var(--border-light)] px-7 sm:px-10"></div>
+        </div>
+    </div>
+
     <div id="gallery-modal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-black/60 p-3 sm:p-6">
         <div class="relative w-full max-w-6xl max-h-[94vh] overflow-y-auto bg-[var(--bg-cream)] border border-[var(--border-light)] shadow-2xl rounded-sm">
             <button type="button" id="gallery-modal-close" class="absolute top-5 right-5 z-10 w-10 h-10 rounded-full bg-white/80 hover:bg-[var(--accent-red)] hover:text-white transition-colors flex items-center justify-center" aria-label="Close gallery detail">
@@ -5855,6 +5872,7 @@
             closeOpenIntroduction({ history: false });
             if (loginModal?.classList.contains('open')) closeLoginModal();
             if (!membershipDetailModal?.classList.contains('hidden')) closeMembershipDetail();
+            if (!questionnaireSyncModal?.classList.contains('hidden')) closeQuestionnaireSyncModal();
             if (!profilePhotoModal?.classList.contains('hidden')) closeProfilePhoto();
             if (!memberProfileModal?.classList.contains('hidden')) closeMemberProfileModal();
             if (!galleryModal?.classList.contains('hidden')) closeGalleryModal({ history: false });
@@ -6277,6 +6295,11 @@
         const securityPasswordSubmit = document.getElementById('security-password-submit');
         const securityPasswordClose = document.getElementById('security-password-close');
         const securityPasswordCancel = document.getElementById('security-password-cancel');
+        const questionnaireSyncModal = document.getElementById('questionnaire-sync-modal');
+        const questionnaireSyncClose = document.getElementById('questionnaire-sync-close');
+        const questionnaireSyncSearch = document.getElementById('questionnaire-sync-search');
+        const questionnaireSyncList = document.getElementById('questionnaire-sync-list');
+        const questionnaireSyncStatus = document.getElementById('questionnaire-sync-status');
         const myAvatarInput = document.getElementById('my-avatar-input');
         const myAvatarPreviewWrap = document.getElementById('my-avatar-preview-wrap');
         const myAvatarPreview = document.getElementById('my-avatar-preview');
@@ -6402,6 +6425,9 @@
         let questionnaireItems = [];
         let questionnaireCanManage = false;
         let questionnaireTagFilter = 'all';
+        let questionnaireSyncApplicationId = null;
+        let questionnaireSyncMappedUserId = null;
+        let questionnaireSyncCandidates = [];
         let currentMyProfile = null;
         let smCurrentPost = null;
         let smEditingPostId = null;
@@ -6477,11 +6503,11 @@
             const storySections = [
                 take('reason', '선택한 성향이 주성향이라고 생각하는 이유는 무엇인가요?', [/선택한\s*성향이\s*주성향이라고\s*생각하는\s*이유/i, /주성향이라고\s*생각하는\s*이유/i]),
                 take('trigger', '성향을 깨닫게 된 계기는 어떻게 되시나요?', [/성향을\s*깨닫게\s*된\s*계기/i]),
-                take('preference', '선택하신 성향에 대해 설명해주세요.', [/선택하신\s*성향.*설명/i, /보조\s*성향.*설명/i]),
+                take('preference', '선택하신 성향에 대해 설명해주세요.', [/선택하신\s*성향.*설명/i, /선택하신\s*보조성향.*설명/i, /보조\s*성향.*설명/i]),
                 take('care', '주로 본인이 사용하는 케어 방식은 어떤 방법인가요?', [/주로\s*본인이\s*사용하는\s*케어\s*방식/i]),
                 take('switch', '어떤 사람이 변바라고 생각하십니까?', [/어떤\s*사람이\s*변바라고\s*생각/i]),
                 take('bdsm', 'BDSM이란 무엇이라고 생각하나요?', [/BDSM이란\s*무엇이라고\s*생각/i, /비디에스엠이란\s*무엇/i]),
-                take('playSex', '플과 섹스의 차이점은 무엇이라고 생각하나요?', [/플과\s*섹스의\s*차이점/i]),
+                take('playSex', '플과 섹스의 차이점은 무엇이라고 생각하나요?', [/플과\s*섹스의\s*차이점/i, /플레이와\s*섹스.*차이/i, /플.*섹스.*차이/i]),
                 take('caregiver', '케어기버란 어떤 성향인가요?', [/케어기버란\s*어떤\s*성향/i, /care\s*giver/i]),
             ];
             const storyByKey = new Map(storySections.map(field => [field.key, field]));
@@ -6571,6 +6597,24 @@
         function questionnaireTemplateFields(fields) {
             const normalized = normalizeMembershipDetailFields(fields);
             return [...normalized.summary, ...normalized.storySections];
+        }
+
+        function defaultQuestionnaireFields() {
+            return [
+                { label: '사용할 닉네임', value: '', photoUrls: [] },
+                { label: '지원자 년생', value: '', photoUrls: [] },
+                { label: '지역', value: '', photoUrls: [] },
+                { label: '본인의 주 성향은?', value: '', photoUrls: [] },
+                { label: '보조 성향?', value: '', photoUrls: [] },
+                { label: '선택한 성향이 주성향이라고 생각하는 이유는 무엇인가요?', value: '', photoUrls: [] },
+                { label: '성향을 깨닫게 된 계기는 어떻게 되시나요?', value: '', photoUrls: [] },
+                { label: '선택하신 성향에 대해 설명해주세요.', value: '', photoUrls: [] },
+                { label: '주로 본인이 사용하는 케어 방식은 어떤 방법인가요?', value: '', photoUrls: [] },
+                { label: '어떤 사람이 변바라고 생각하십니까?', value: '', photoUrls: [] },
+                { label: 'BDSM이란 무엇이라고 생각하나요?', value: '', photoUrls: [] },
+                { label: '플과 섹스의 차이점은 무엇이라고 생각하나요?', value: '', photoUrls: [] },
+                { label: '케어기버란 어떤 성향인가요?', value: '', photoUrls: [] },
+            ];
         }
 
         function closeOpenIntroduction(options = {}) {
@@ -7070,9 +7114,17 @@
                     sync.textContent = item.hasSyncedProfile ? '다시 연동하기' : '연동하기';
                     const isMemberApplication = (item.adminTag || '비회원') === '회원';
                     sync.disabled = !isMemberApplication;
-                    sync.title = isMemberApplication ? '회원이 마이페이지에서 작성한 질문지를 이 원본 질문지에 수동 반영합니다.' : '회원 태그로 변경한 뒤 연동할 수 있습니다.';
+                    sync.title = isMemberApplication
+                        ? (item.userId && siteUser?.role !== 'superuser'
+                            ? '이미 매핑된 회원의 최신 질문지만 다시 반영합니다.'
+                            : '현재 회원을 직접 선택해 질문지를 연동합니다.')
+                        : '회원 태그로 변경한 뒤 연동할 수 있습니다.';
                     sync.addEventListener('click', async () => {
-                        await syncApplicationQuestionnaire(item.id);
+                        if (item.userId && siteUser?.role !== 'superuser') {
+                            await syncApplicationQuestionnaire(item.id);
+                        } else {
+                            await openQuestionnaireSyncModal(item.id, item.userId || null);
+                        }
                     });
 
                     membershipDetailActions.append(statusBadge, tagSelect, sync);
@@ -8164,17 +8216,143 @@
             }
         }
 
-        async function syncApplicationQuestionnaire(applicationId) {
+        function closeQuestionnaireSyncModal() {
+            if (!questionnaireSyncModal) return;
+            questionnaireSyncModal.classList.add('hidden');
+            questionnaireSyncModal.classList.remove('flex');
+            questionnaireSyncApplicationId = null;
+            questionnaireSyncMappedUserId = null;
+            questionnaireSyncCandidates = [];
+            if (questionnaireSyncSearch) questionnaireSyncSearch.value = '';
+            questionnaireSyncList?.replaceChildren();
+            questionnaireSyncStatus?.classList.add('hidden');
+            if (membershipDetailModal?.classList.contains('hidden')) {
+                document.body.classList.remove('overflow-hidden');
+            }
+        }
+
+        function renderQuestionnaireSyncCandidates() {
+            if (!questionnaireSyncList || !questionnaireSyncStatus) return;
+            const keyword = (questionnaireSyncSearch?.value || '').trim().toLowerCase();
+            const filtered = questionnaireSyncCandidates.filter(candidate => {
+                if (!keyword) return true;
+                return [
+                    candidate.displayName,
+                    candidate.username,
+                    candidate.region,
+                    candidate.personality,
+                    candidate.relationshipStyle,
+                    candidate.role
+                ].some(value => String(value || '').toLowerCase().includes(keyword));
+            });
+
+            questionnaireSyncList.replaceChildren();
+            questionnaireSyncStatus.classList.toggle('hidden', filtered.length > 0);
+            questionnaireSyncStatus.textContent = filtered.length ? '' : '검색 결과가 없습니다.';
+
+            filtered.forEach(candidate => {
+                const row = document.createElement('button');
+                row.type = 'button';
+                row.className = 'w-full py-4 text-left flex items-center gap-4 hover:px-3 hover:bg-white/70 transition-all disabled:opacity-45 disabled:cursor-not-allowed';
+                row.disabled = !candidate.hasQuestionnaire;
+
+                const avatar = document.createElement('div');
+                avatar.className = 'w-11 h-11 rounded-full bg-[var(--accent-green)] text-white shrink-0 overflow-hidden flex items-center justify-center';
+                if (candidate.avatarUrl) {
+                    const image = document.createElement('img');
+                    image.src = candidate.avatarUrl;
+                    image.alt = `${candidate.displayName || candidate.username} 프로필`;
+                    image.className = 'w-full h-full object-cover';
+                    avatar.appendChild(image);
+                } else {
+                    avatar.innerHTML = '<i class="ph ph-user text-xl"></i>';
+                }
+
+                const body = document.createElement('div');
+                body.className = 'min-w-0 flex-1';
+                const title = document.createElement('div');
+                title.className = 'flex flex-wrap items-center gap-x-3 gap-y-1';
+                const name = document.createElement('strong');
+                name.className = 'font-serif-ko text-lg';
+                name.textContent = candidate.displayName || candidate.username;
+                const id = document.createElement('span');
+                id.className = 'font-mono text-xs tracking-widest opacity-45';
+                id.textContent = `@${candidate.username}`;
+                title.append(name, id);
+
+                const meta = document.createElement('p');
+                meta.className = 'mt-1 text-xs opacity-55';
+                meta.textContent = [candidate.region, candidate.birthYear ? `${candidate.birthYear}년생` : '', candidate.personality, candidate.relationshipStyle].filter(Boolean).join(' · ') || '프로필 정보 없음';
+                body.append(title, meta);
+
+                const status = document.createElement('span');
+                status.className = 'shrink-0 px-3 py-1 text-[0.62rem] tracking-widest uppercase';
+                if (questionnaireSyncMappedUserId && Number(questionnaireSyncMappedUserId) === Number(candidate.id)) {
+                    status.className += ' bg-[var(--accent-green)] text-white';
+                    status.textContent = '현재 매핑';
+                } else if (candidate.hasQuestionnaire) {
+                    status.className += ' border border-[var(--text-dark)]';
+                    status.textContent = '선택';
+                } else {
+                    status.className += ' border border-[var(--border-light)] opacity-60';
+                    status.textContent = '질문지 없음';
+                }
+
+                row.append(avatar, body, status);
+                row.addEventListener('click', async () => {
+                    if (row.disabled || !questionnaireSyncApplicationId) return;
+                    await syncApplicationQuestionnaire(questionnaireSyncApplicationId, candidate.id);
+                });
+                questionnaireSyncList.appendChild(row);
+            });
+        }
+
+        async function openQuestionnaireSyncModal(applicationId, mappedUserId = null) {
+            if (!questionnaireSyncModal) return;
+            questionnaireSyncApplicationId = applicationId;
+            questionnaireSyncMappedUserId = mappedUserId;
+            questionnaireSyncCandidates = [];
+            questionnaireSyncList?.replaceChildren();
+            if (questionnaireSyncStatus) {
+                questionnaireSyncStatus.classList.remove('hidden');
+                questionnaireSyncStatus.textContent = '회원 목록을 불러오는 중입니다...';
+            }
+            questionnaireSyncModal.classList.remove('hidden');
+            questionnaireSyncModal.classList.add('flex');
+            document.body.classList.add('overflow-hidden');
+            questionnaireSyncSearch?.focus();
+            try {
+                const response = await fetch('/api/questionnaires.php?action=syncCandidates', {
+                    headers: { Accept: 'application/json' },
+                    credentials: 'same-origin'
+                });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '회원 목록을 불러오지 못했습니다.');
+                questionnaireSyncCandidates = Array.isArray(payload.items) ? payload.items : [];
+                if (questionnaireSyncStatus) questionnaireSyncStatus.classList.add('hidden');
+                renderQuestionnaireSyncCandidates();
+            } catch (error) {
+                if (questionnaireSyncStatus) {
+                    questionnaireSyncStatus.classList.remove('hidden');
+                    questionnaireSyncStatus.textContent = error.message;
+                }
+            }
+        }
+
+        async function syncApplicationQuestionnaire(applicationId, userId = null) {
             if (!window.confirm('이 회원이 마이페이지에서 작성한 질문지를 현재 질문지에 수동 반영하시겠습니까? 원본 신청서는 보존됩니다.')) return;
             try {
+                const requestBody = { action: 'syncApplicationProfile', applicationId };
+                if (userId) requestBody.userId = userId;
                 const response = await fetch('/api/questionnaires.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-Token': csrfToken || '' },
                     credentials: 'same-origin',
-                    body: JSON.stringify({ action: 'syncApplicationProfile', applicationId })
+                    body: JSON.stringify(requestBody)
                 });
                 const payload = await response.json();
                 if (!response.ok) throw new Error(payload.error || '질문지를 연동하지 못했습니다.');
+                closeQuestionnaireSyncModal();
                 closeMembershipDetail();
                 await loadQuestionnaires();
                 showToast('회원 질문지를 수동 연동했습니다.', true);
@@ -8184,6 +8362,11 @@
         }
 
         questionnaireSearch?.addEventListener('input', filterQuestionnaires);
+        questionnaireSyncSearch?.addEventListener('input', renderQuestionnaireSyncCandidates);
+        questionnaireSyncClose?.addEventListener('click', closeQuestionnaireSyncModal);
+        questionnaireSyncModal?.addEventListener('click', event => {
+            if (event.target === questionnaireSyncModal) closeQuestionnaireSyncModal();
+        });
         questionnaireTagFilters?.addEventListener('click', event => {
             const button = event.target.closest('[data-questionnaire-filter]');
             if (!button) return;
@@ -8483,7 +8666,7 @@
             if (!myQuestionnaireList || !myQuestionnaireEmpty) return;
             myQuestionnaireList.replaceChildren();
             const fields = Array.isArray(questionnaire?.fields) ? questionnaire.fields : [];
-            const displayFields = fields.length ? questionnaireTemplateFields(fields) : [];
+            const displayFields = fields.length ? questionnaireTemplateFields(fields) : defaultQuestionnaireFields();
 
             myQuestionnaireEmpty.classList.add('hidden');
             if (myQuestionnaireDate) {
@@ -8493,21 +8676,7 @@
                     : '';
             }
 
-            const fieldsToRender = displayFields.length > 0 ? displayFields : [
-                { label: '사용할 닉네임', value: '연결된 답변 없음', photoUrls: [] },
-                { label: '지원자 년생', value: '연결된 답변 없음', photoUrls: [] },
-                { label: '지역', value: '연결된 답변 없음', photoUrls: [] },
-                { label: '본인의 주 성향은?', value: '연결된 답변 없음', photoUrls: [] },
-                { label: '보조 성향?', value: '연결된 답변 없음', photoUrls: [] },
-                { label: '선택한 성향이 주성향이라고 생각하는 이유는 무엇인가요?', value: '연결된 답변 없음', photoUrls: [] },
-                { label: '성향을 깨닫게 된 계기는 어떻게 되시나요?', value: '연결된 답변 없음', photoUrls: [] },
-                { label: '선택하신 성향에 대해 설명해주세요.', value: '연결된 답변 없음', photoUrls: [] },
-                { label: '주로 본인이 사용하는 케어 방식은 어떤 방법인가요?', value: '연결된 답변 없음', photoUrls: [] },
-                { label: '어떤 사람이 변바라고 생각하십니까?', value: '연결된 답변 없음', photoUrls: [] },
-                { label: 'BDSM이란 무엇이라고 생각하나요?', value: '연결된 답변 없음', photoUrls: [] },
-                { label: '플과 섹스의 차이점은 무엇이라고 생각하나요?', value: '연결된 답변 없음', photoUrls: [] },
-                { label: '케어기버란 어떤 성향인가요?', value: '연결된 답변 없음', photoUrls: [] },
-            ];
+            const fieldsToRender = displayFields;
 
             fieldsToRender.forEach((field, index) => {
                 const group = document.createElement('dl');
@@ -8538,11 +8707,11 @@
                 } else {
                     value.className = 'font-serif-ko text-sm sm:text-base leading-[1.9]';
                     const input = document.createElement('textarea');
-                    input.className = `w-full min-h-[5rem] bg-transparent border-0 border-b border-[var(--border-light)] resize-y outline-none py-2 leading-[1.8]${displayFields.length > 0 ? '' : ' opacity-45'}`;
-                    input.value = field.value;
+                    input.className = 'w-full min-h-[5rem] bg-transparent border-0 border-b border-[var(--border-light)] resize-y outline-none py-2 leading-[1.8] focus:border-[var(--text-dark)] transition-colors';
+                    input.value = field.value === '연결된 답변 없음' ? '' : field.value;
+                    input.placeholder = '답변을 입력해주세요.';
                     input.dataset.questionnaireIndex = String(index);
                     input.dataset.questionnaireLabel = field.label;
-                    input.disabled = displayFields.length === 0;
                     value.appendChild(input);
                 }
 
@@ -8552,11 +8721,11 @@
         }
 
         myQuestionnaireSave?.addEventListener('click', async () => {
-            if (!currentMyProfile?.questionnaire) return;
             const fields = [...myQuestionnaireList.querySelectorAll('[data-questionnaire-index]')].map(input => ({
                 label: input.dataset.questionnaireLabel || 'Answer',
                 value: input.value.trim(),
             }));
+            if (!fields.length) return;
             myQuestionnaireSave.disabled = true;
             if (myQuestionnaireSaveStatus) myQuestionnaireSaveStatus.textContent = '질문지 초안을 저장하는 중입니다.';
             try {
@@ -10806,6 +10975,7 @@
         });
         window.addEventListener('keydown', (event) => {
             if (event.key !== 'Escape') return;
+            if (!questionnaireSyncModal?.classList.contains('hidden')) return closeQuestionnaireSyncModal();
             if (!securityPasswordModal?.classList.contains('hidden')) return closeSecurityPasswordModal();
             if (!initialPasswordModal?.classList.contains('hidden')) return closeInitialPasswordReminder();
             if (!memberProfileModal?.classList.contains('hidden')) return closeMemberProfileModal();
