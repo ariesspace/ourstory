@@ -8085,7 +8085,7 @@
                             ...item,
                             submittedAt: item.publishedAt || item.draftUpdatedAt || '',
                             status: item.status || 'linked',
-                            questionnaireAdmin: item.questionnaireAdmin !== false
+                            questionnaireAdmin: true
                         },
                         fields,
                         questionnaireCanManage,
