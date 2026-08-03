@@ -1785,14 +1785,22 @@
             border: 1px solid transparent;
         }
         .questionnaire-card-status.is-member {
-            background: var(--accent-red);
-            border-color: var(--accent-red);
+            background: var(--accent-green);
+            border-color: var(--accent-green);
             color: #fff;
         }
         .questionnaire-card-status.is-guest {
-            background: #eef1ee;
+            background: #f4f6f4;
             border-color: #d8ddd8;
-            color: #56635b;
+            color: #66736b;
+        }
+        .questionnaire-card-status.is-unlinked {
+            background: #fff5df;
+            border-color: #d89b31;
+            color: #9a5d00;
+        }
+        .questionnaire-card-status.is-synced {
+            box-shadow: inset 0 -2px 0 rgba(255,255,255,0.45);
         }
         .questionnaire-card-title {
             margin-top: 0.75rem;
@@ -5489,7 +5497,7 @@
                 <time id="membership-detail-date"></time>
             </div>
             <div id="membership-detail-answers" class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6 mt-8"></div>
-            <div id="membership-detail-actions" class="hidden justify-end gap-3 mt-8 pt-6 border-t border-[var(--border-light)]"></div>
+            <div id="membership-detail-actions" class="hidden flex-col sm:flex-row sm:flex-wrap sm:justify-end gap-2 sm:gap-3 mt-8 pt-6 border-t border-[var(--border-light)]"></div>
         </div>
     </div>
 
@@ -7080,11 +7088,11 @@
             if (canManage) {
                 if (item.questionnaireAdmin) {
                     const statusBadge = document.createElement('span');
-                    statusBadge.className = 'mr-auto px-3 py-2 text-[0.65rem] tracking-widest uppercase border border-[var(--border-light)]';
+                    statusBadge.className = 'w-full sm:w-auto sm:mr-auto px-3 py-2 text-center text-[0.65rem] tracking-widest uppercase border border-[var(--border-light)]';
                     statusBadge.textContent = item.hasSyncedProfile ? 'Synced' : 'Original';
 
                     const tagSelect = document.createElement('select');
-                    tagSelect.className = 'bg-transparent border border-[var(--text-dark)] px-4 py-2.5 text-xs tracking-widest uppercase outline-none';
+                    tagSelect.className = 'w-full sm:w-auto bg-transparent border border-[var(--text-dark)] px-4 py-2.5 text-xs tracking-widest uppercase outline-none';
                     ['비회원', '회원'].forEach(tag => {
                         const option = document.createElement('option');
                         option.value = tag;
@@ -7098,7 +7106,7 @@
 
                     const connect = document.createElement('button');
                     connect.type = 'button';
-                    connect.className = 'border border-[var(--text-dark)] px-5 py-2.5 text-xs tracking-widest uppercase disabled:opacity-35 disabled:cursor-not-allowed';
+                    connect.className = 'w-full sm:w-auto border border-[var(--text-dark)] px-5 py-2.5 text-xs tracking-widest uppercase disabled:opacity-35 disabled:cursor-not-allowed';
                     connect.textContent = item.userId ? '계정 연결됨' : '계정 연결';
                     connect.disabled = Boolean(item.userId && siteUser?.role !== 'superuser');
                     connect.title = item.userId && siteUser?.role !== 'superuser'
@@ -7110,7 +7118,7 @@
 
                     const sync = document.createElement('button');
                     sync.type = 'button';
-                    sync.className = 'bg-[var(--accent-red)] text-white px-5 py-2.5 text-xs tracking-widest uppercase disabled:opacity-35 disabled:cursor-not-allowed';
+                    sync.className = 'w-full sm:w-auto bg-[var(--accent-red)] text-white px-5 py-2.5 text-xs tracking-widest uppercase disabled:opacity-35 disabled:cursor-not-allowed';
                     sync.textContent = item.hasSyncedProfile ? '질문지 다시 연동' : '질문지 연동';
                     sync.disabled = !item.userId;
                     sync.title = item.userId
@@ -8096,11 +8104,20 @@
                 const top = document.createElement('div');
                 const status = document.createElement('span');
                 status.className = 'questionnaire-card-status';
+                const syncState = item.hasSyncedProfile ? '질문지연동' : '원본';
+                const isMemberTag = item.adminTag === '회원';
+                const accountState = isMemberTag ? (item.userId ? '계정연결' : '미연결') : '';
                 status.textContent = questionnaireCanManage && item.adminTag
-                    ? `${item.adminTag} · ${item.hasSyncedProfile ? 'Synced' : 'Original'}`
+                    ? [item.adminTag, accountState, syncState].filter(Boolean).join(' · ')
                     : (item.status || 'application');
                 if (questionnaireCanManage && item.adminTag) {
-                    status.classList.add(item.adminTag === '회원' ? 'is-member' : 'is-guest');
+                    status.classList.add(isMemberTag ? 'is-member' : 'is-guest');
+                    if (isMemberTag && !item.userId) {
+                        status.classList.add('is-unlinked');
+                    }
+                    if (item.hasSyncedProfile) {
+                        status.classList.add('is-synced');
+                    }
                 }
                 const title = document.createElement('h3');
                 title.className = 'questionnaire-card-title';
