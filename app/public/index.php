@@ -1802,6 +1802,14 @@
         .questionnaire-card-status.is-synced {
             box-shadow: inset 0 -2px 0 rgba(255,255,255,0.45);
         }
+        .questionnaire-card-status-note {
+            margin-top: 0.45rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.58rem;
+            letter-spacing: 0.13em;
+            text-transform: uppercase;
+            color: rgba(17,17,17,0.48);
+        }
         .questionnaire-card-title {
             margin-top: 0.75rem;
             font-family: 'Noto Serif KR', 'Cormorant Garamond', serif;
@@ -8106,9 +8114,9 @@
                 status.className = 'questionnaire-card-status';
                 const syncState = item.hasSyncedProfile ? '질문지연동' : '원본';
                 const isMemberTag = item.adminTag === '회원';
-                const accountState = isMemberTag ? (item.userId ? '계정연결' : '미연결') : '';
+                const accountState = isMemberTag ? (item.userId ? '연결됨' : '미연결') : '';
                 status.textContent = questionnaireCanManage && item.adminTag
-                    ? [item.adminTag, accountState, syncState].filter(Boolean).join(' · ')
+                    ? (accountState || item.adminTag)
                     : (item.status || 'application');
                 if (questionnaireCanManage && item.adminTag) {
                     status.classList.add(isMemberTag ? 'is-member' : 'is-guest');
@@ -8119,13 +8127,22 @@
                         status.classList.add('is-synced');
                     }
                 }
+                const statusNote = document.createElement('div');
+                statusNote.className = 'questionnaire-card-status-note';
+                statusNote.textContent = questionnaireCanManage && item.adminTag
+                    ? [item.adminTag, syncState].filter(Boolean).join(' · ')
+                    : '';
                 const title = document.createElement('h3');
                 title.className = 'questionnaire-card-title';
                 title.textContent = item.displayName || item.username || 'Untitled';
                 const info = document.createElement('p');
                 info.className = 'questionnaire-card-meta';
                 info.textContent = meta;
-                top.append(status, title, info);
+                top.append(status);
+                if (statusNote.textContent) {
+                    top.appendChild(statusNote);
+                }
+                top.append(title, info);
 
                 const footer = document.createElement('div');
                 footer.className = 'questionnaire-card-footer';
