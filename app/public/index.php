@@ -568,6 +568,26 @@
             font-weight: 600;
             letter-spacing: 0.02em;
         }
+        .mypage-mobile-nav {
+            display: none;
+        }
+        .mypage-mobile-tab {
+            flex: 0 0 auto;
+            border: 1px solid var(--border-light);
+            padding: 0.7rem 0.95rem;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            color: rgba(17, 17, 17, 0.56);
+            background: rgba(255, 255, 255, 0.72);
+            transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+        }
+        .mypage-mobile-tab.active {
+            border-color: var(--accent-red);
+            color: var(--text-dark);
+            background: rgba(42, 59, 50, 0.08);
+        }
         .mypage-menu-title,
         .mypage-menu-sub {
             display: flex;
@@ -3855,6 +3875,19 @@
                 width: 100% !important;
                 padding: 2.15rem 1.25rem 3rem !important;
                 gap: 1.75rem !important;
+                flex-direction: column !important;
+            }
+            .mypage-mobile-nav {
+                display: flex !important;
+                gap: 0.55rem;
+                width: 100%;
+                overflow-x: auto;
+                padding: 0.15rem 0 0.75rem;
+                border-bottom: 1px solid var(--border-light);
+                scrollbar-width: none;
+            }
+            .mypage-mobile-nav::-webkit-scrollbar {
+                display: none;
             }
             .mypage-content {
                 width: 100% !important;
@@ -4335,6 +4368,13 @@
                         </div>
                     </div>
                 </aside>
+
+                <nav class="mypage-mobile-nav" aria-label="My Profile sections">
+                    <button type="button" class="mypage-mobile-tab active" data-my-action="account">Account Info</button>
+                    <button type="button" class="mypage-mobile-tab" data-my-action="security">Security</button>
+                    <button type="button" class="mypage-mobile-tab" data-my-action="questionnaire">Questionnaire</button>
+                    <button type="button" class="mypage-mobile-tab" data-my-action="likes">Liked</button>
+                </nav>
 
                 <div class="mypage-content">
                     <div class="mypage-header-title">
