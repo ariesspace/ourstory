@@ -3882,6 +3882,11 @@
         #my-questionnaire-list .questionnaire-story-field textarea {
             min-height: 16rem;
         }
+        #my-questionnaire-list .questionnaire-summary-field textarea {
+            min-height: 3.2rem;
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+        }
         @media (max-width: 640px) {
             html,
             body {
@@ -4063,6 +4068,9 @@
             }
             #my-questionnaire-list .questionnaire-story-field textarea {
                 min-height: 12rem !important;
+            }
+            #my-questionnaire-list .questionnaire-summary-field textarea {
+                min-height: 3.1rem !important;
             }
             #my-questionnaire-panel > div > div:last-child {
                 margin-top: 1.4rem !important;
