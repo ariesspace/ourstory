@@ -321,6 +321,18 @@ function site_migrate(PDO $pdo): void
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_timeline_comments_post ON timeline_comments (post_id, created_at, id)');
 
     $pdo->exec(
+        'CREATE TABLE IF NOT EXISTS timeline_likes (
+            post_id INTEGER NOT NULL,
+            user_id INTEGER NOT NULL,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (post_id, user_id),
+            FOREIGN KEY (post_id) REFERENCES timeline_posts(id) ON DELETE CASCADE,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )'
+    );
+    $pdo->exec('CREATE INDEX IF NOT EXISTS idx_timeline_likes_user_created ON timeline_likes (user_id, created_at DESC)');
+
+    $pdo->exec(
         'CREATE TABLE IF NOT EXISTS self_introductions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL UNIQUE,

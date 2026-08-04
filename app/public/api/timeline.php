@@ -189,6 +189,62 @@ function timeline_post_comments(PDO $pdo, array $postIds, array $viewer): array
     return $comments;
 }
 
+function timeline_post_like_summary(PDO $pdo, array $postIds, int $viewerId): array
+{
+    if (!$postIds) return [];
+    $placeholders = implode(',', array_fill(0, count($postIds), '?'));
+    $stmt = $pdo->prepare(
+        "SELECT post_id,
+                COUNT(*) AS like_count,
+                SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_me
+         FROM timeline_likes
+         WHERE post_id IN ($placeholders)
+         GROUP BY post_id"
+    );
+    $stmt->execute(array_merge([$viewerId], $postIds));
+    $likes = [];
+    foreach ($stmt->fetchAll() as $row) {
+        $likes[(int) $row['post_id']] = [
+            'count' => (int) $row['like_count'],
+            'likedByMe' => (int) $row['liked_by_me'] > 0,
+        ];
+    }
+    return $likes;
+}
+
+function timeline_post_payload(array $row, array $viewer, array $photos, array $comments, array $likes, ?bool $canDelete = null): array
+{
+    $postId = (int) $row['id'];
+    $isAnonymous = (int) ($row['is_anonymous'] ?? 0) === 1;
+    return [
+        'id' => $postId,
+        'content' => $row['content'],
+        'createdAt' => $row['created_at'],
+        'updatedAt' => $row['updated_at'],
+        'likedAt' => $row['liked_at'] ?? '',
+        'photos' => $photos[$postId] ?? [],
+        'comments' => $comments[$postId] ?? [],
+        'likeCount' => $likes[$postId]['count'] ?? 0,
+        'likedByMe' => $likes[$postId]['likedByMe'] ?? false,
+        'isAnonymous' => $isAnonymous,
+        'author' => $isAnonymous ? [
+            'id' => 0,
+            'username' => '',
+            'displayName' => 'Anonymous',
+            'avatarUrl' => '',
+        ] : [
+            'id' => (int) $row['user_id'],
+            'username' => $row['username'] ?? '',
+            'displayName' => $row['display_name'] ?? '',
+            'role' => $row['role'] ?? '',
+            'avatarUrl' => ($row['avatar_stored_name'] ?? '') !== ''
+                ? '/api/avatar.php?username=' . rawurlencode((string) $row['username']) . '&version=' . rawurlencode((string) $row['avatar_stored_name'])
+                : '',
+        ],
+        'canDelete' => $canDelete ?? ($viewer['id'] === (int) $row['user_id'] || in_array($viewer['role'], ['superuser', 'admin'], true)),
+    ];
+}
+
 if ($method === 'GET' && $action === 'feed') {
     $rows = $pdo->query(
         'SELECT t.id, t.user_id, t.content, t.is_anonymous, t.created_at, t.updated_at,
@@ -202,33 +258,30 @@ if ($method === 'GET' && $action === 'feed') {
     $postIds = array_map(static fn(array $row): int => (int) $row['id'], $rows);
     $photos = timeline_post_photos($pdo, $postIds);
     $comments = timeline_post_comments($pdo, $postIds, $viewer);
-    $items = array_map(static function (array $row) use ($viewer, $photos, $comments): array {
-        $postId = (int) $row['id'];
-        return [
-            'id' => $postId,
-            'content' => $row['content'],
-            'createdAt' => $row['created_at'],
-            'updatedAt' => $row['updated_at'],
-            'photos' => $photos[$postId] ?? [],
-            'comments' => $comments[$postId] ?? [],
-            'isAnonymous' => (int) $row['is_anonymous'] === 1,
-            'author' => (int) $row['is_anonymous'] === 1 ? [
-                'id' => 0,
-                'username' => '',
-                'displayName' => 'Anonymous',
-                'avatarUrl' => '',
-            ] : [
-                'id' => (int) $row['user_id'],
-                'username' => $row['username'],
-                'displayName' => $row['display_name'],
-                'role' => $row['role'],
-                'avatarUrl' => $row['avatar_stored_name'] !== ''
-                    ? '/api/avatar.php?username=' . rawurlencode($row['username']) . '&version=' . rawurlencode($row['avatar_stored_name'])
-                    : '',
-            ],
-            'canDelete' => $viewer['id'] === (int) $row['user_id'] || in_array($viewer['role'], ['superuser', 'admin'], true),
-        ];
-    }, $rows);
+    $likes = timeline_post_like_summary($pdo, $postIds, (int) $viewer['id']);
+    $items = array_map(static fn(array $row): array => timeline_post_payload($row, $viewer, $photos, $comments, $likes), $rows);
+    timeline_json(['items' => $items]);
+}
+
+if ($method === 'GET' && $action === 'liked') {
+    $stmt = $pdo->prepare(
+        'SELECT t.id, t.user_id, t.content, t.is_anonymous, t.created_at, t.updated_at,
+                tl.created_at AS liked_at,
+                u.username, u.display_name, u.role, u.avatar_stored_name
+         FROM timeline_likes tl
+         JOIN timeline_posts t ON t.id = tl.post_id
+         JOIN users u ON u.id = t.user_id
+         WHERE tl.user_id = :viewer_id
+         ORDER BY tl.created_at DESC, t.created_at DESC, t.id DESC
+         LIMIT 120'
+    );
+    $stmt->execute([':viewer_id' => $viewer['id']]);
+    $rows = $stmt->fetchAll() ?: [];
+    $postIds = array_map(static fn(array $row): int => (int) $row['id'], $rows);
+    $photos = timeline_post_photos($pdo, $postIds);
+    $comments = timeline_post_comments($pdo, $postIds, $viewer);
+    $likes = timeline_post_like_summary($pdo, $postIds, (int) $viewer['id']);
+    $items = array_map(static fn(array $row): array => timeline_post_payload($row, $viewer, $photos, $comments, $likes), $rows);
     timeline_json(['items' => $items]);
 }
 
@@ -267,16 +320,15 @@ if ($method === 'GET' && $action === 'profile') {
     $postIds = array_map(static fn(array $row): int => (int) $row['id'], $postRows);
     $photos = timeline_post_photos($pdo, $postIds);
     $comments = timeline_post_comments($pdo, $postIds, $viewer);
-    $items = array_map(static fn(array $row): array => [
-        'id' => (int) $row['id'],
-        'content' => $row['content'],
-        'createdAt' => $row['created_at'],
-        'updatedAt' => $row['updated_at'],
-        'isAnonymous' => (int) $row['is_anonymous'] === 1,
-        'photos' => $photos[(int) $row['id']] ?? [],
-        'comments' => $comments[(int) $row['id']] ?? [],
-        'canDelete' => $canManage,
-    ], $postRows);
+    $likes = timeline_post_like_summary($pdo, $postIds, (int) $viewer['id']);
+    $items = array_map(static fn(array $row): array => timeline_post_payload([
+        ...$row,
+        'user_id' => $profile['id'],
+        'username' => $profile['username'],
+        'display_name' => $profile['display_name'],
+        'role' => '',
+        'avatar_stored_name' => $profile['avatar_stored_name'] ?? '',
+    ], $viewer, $photos, $comments, $likes, $canManage), $postRows);
     timeline_json([
         'profile' => timeline_public_profile($profile),
         'items' => $items,
@@ -290,6 +342,31 @@ if ($method !== 'POST') {
 }
 
 timeline_csrf();
+
+if ($action === 'like') {
+    $postId = max(0, (int) ($_POST['post_id'] ?? 0));
+    $stmt = $pdo->prepare('SELECT id FROM timeline_posts WHERE id = :id');
+    $stmt->execute([':id' => $postId]);
+    if (!$stmt->fetch()) {
+        timeline_json(['error' => '타임라인 글을 찾을 수 없습니다.'], 404);
+    }
+
+    $exists = $pdo->prepare('SELECT 1 FROM timeline_likes WHERE post_id = :post_id AND user_id = :user_id');
+    $exists->execute([':post_id' => $postId, ':user_id' => $viewer['id']]);
+    if ($exists->fetchColumn()) {
+        $pdo->prepare('DELETE FROM timeline_likes WHERE post_id = :post_id AND user_id = :user_id')
+            ->execute([':post_id' => $postId, ':user_id' => $viewer['id']]);
+        $liked = false;
+    } else {
+        $pdo->prepare('INSERT OR IGNORE INTO timeline_likes (post_id, user_id) VALUES (:post_id, :user_id)')
+            ->execute([':post_id' => $postId, ':user_id' => $viewer['id']]);
+        $liked = true;
+    }
+
+    $count = $pdo->prepare('SELECT COUNT(*) FROM timeline_likes WHERE post_id = :post_id');
+    $count->execute([':post_id' => $postId]);
+    timeline_json(['ok' => true, 'liked' => $liked, 'likeCount' => (int) $count->fetchColumn()]);
+}
 
 if ($action === 'create') {
     $content = trim((string) ($_POST['content'] ?? ''));

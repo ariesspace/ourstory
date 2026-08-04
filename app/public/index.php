@@ -1201,8 +1201,158 @@
         .tweet-action-btn:hover {
             color: var(--accent-red);
         }
+        .tweet-like.liked {
+            color: var(--accent-red);
+        }
         .tweet-delete {
             margin-left: auto;
+        }
+        .liked-posts-panel {
+            border: 1px solid var(--border-light);
+            background: rgba(255, 255, 255, 0.76);
+            padding: clamp(1.4rem, 3vw, 2.6rem);
+        }
+        .liked-posts-head {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 1rem;
+            border-bottom: 1px solid var(--text-dark);
+            padding-bottom: 1.4rem;
+            margin-bottom: 1.8rem;
+        }
+        .liked-posts-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: clamp(2.4rem, 6vw, 4.6rem);
+            line-height: 0.9;
+            letter-spacing: -0.04em;
+        }
+        .liked-posts-count {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.68rem;
+            color: var(--accent-red);
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        .liked-posts-refresh {
+            border: 1px solid var(--border-light);
+            width: 2.65rem;
+            height: 2.65rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: border-color 0.25s ease, color 0.25s ease;
+        }
+        .liked-posts-refresh:hover {
+            border-color: var(--text-dark);
+            color: var(--accent-red);
+        }
+        .liked-post-list {
+            display: grid;
+            gap: 1.2rem;
+        }
+        .liked-post-card {
+            display: grid;
+            grid-template-columns: 3rem minmax(0, 1fr);
+            gap: 1rem;
+            border-bottom: 1px dashed var(--border-light);
+            padding: 1.2rem 0;
+        }
+        .liked-post-avatar {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 999px;
+            overflow: hidden;
+            background: var(--accent-red);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .liked-post-meta {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 0.7rem;
+        }
+        .liked-post-author {
+            font-weight: 700;
+        }
+        .liked-post-author small {
+            margin-left: 0.45rem;
+            font-weight: 400;
+            color: rgba(17, 17, 17, 0.45);
+        }
+        .liked-post-time {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.66rem;
+            color: rgba(17, 17, 17, 0.44);
+            white-space: nowrap;
+        }
+        .liked-post-text {
+            white-space: pre-wrap;
+            word-break: keep-all;
+            overflow-wrap: break-word;
+            line-height: 1.8;
+        }
+        .liked-post-photos {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.65rem;
+            margin-top: 1rem;
+        }
+        .liked-post-photos img {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+            border: 1px solid var(--border-light);
+            filter: grayscale(65%);
+            cursor: zoom-in;
+            transition: filter 0.25s ease;
+        }
+        .liked-post-photos img:hover {
+            filter: grayscale(0%);
+        }
+        .liked-post-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.68rem;
+            color: rgba(17, 17, 17, 0.48);
+        }
+        .liked-post-unlike {
+            margin-left: auto;
+            color: var(--accent-red);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        @media (max-width: 640px) {
+            .liked-posts-head {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+            .liked-post-card {
+                grid-template-columns: 2.6rem minmax(0, 1fr);
+                gap: 0.8rem;
+            }
+            .liked-post-avatar {
+                width: 2.6rem;
+                height: 2.6rem;
+            }
+            .liked-post-meta {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 0.35rem;
+            }
+            .liked-post-unlike {
+                margin-left: 0;
+            }
         }
         .schedule-header {
             text-align: center;
@@ -4683,6 +4833,23 @@
                             </div>
                         </div>
                     </div>
+
+                    <div id="my-liked-posts-panel" class="liked-posts-panel hidden">
+                        <div class="liked-posts-head">
+                            <div>
+                                <span class="text-xs tracking-[0.24em] uppercase opacity-45 font-mono">Saved Timeline</span>
+                                <h2 class="liked-posts-title">Liked Posts</h2>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span id="my-liked-count" class="liked-posts-count">0 Records</span>
+                                <button type="button" id="my-liked-refresh" class="liked-posts-refresh" title="새로고침">
+                                    <i class="ph ph-arrow-clockwise"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <p id="my-liked-status" class="py-12 text-center text-sm opacity-45">좋아요한 글을 불러오는 중입니다.</p>
+                        <div id="my-liked-list" class="liked-post-list"></div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -6219,8 +6386,7 @@
                         return;
                     }
                     if (action === 'likes') {
-                        activateMyPageTab('account');
-                        showToast('Liked Posts Log는 아직 준비 중입니다.', false);
+                        activateMyPageTab('likes');
                         return;
                     }
                     activateMyPageTab('account');
@@ -6578,6 +6744,11 @@
         const myQuestionnaireDate = document.getElementById('my-questionnaire-date');
         const myQuestionnaireSave = document.getElementById('my-questionnaire-save');
         const myQuestionnaireSaveStatus = document.getElementById('my-questionnaire-save-status');
+        const myLikedPostsPanel = document.getElementById('my-liked-posts-panel');
+        const myLikedList = document.getElementById('my-liked-list');
+        const myLikedStatus = document.getElementById('my-liked-status');
+        const myLikedCount = document.getElementById('my-liked-count');
+        const myLikedRefresh = document.getElementById('my-liked-refresh');
         const securityPasswordModal = document.getElementById('security-password-modal');
         const securityPasswordForm = document.getElementById('security-password-form');
         const securityCurrentPassword = document.getElementById('security-current-password');
@@ -8963,8 +9134,11 @@
         function activateMyPageTab(action) {
             document.querySelectorAll('[data-my-action]').forEach(nav => nav.classList.toggle('active', nav.dataset.myAction === action));
             document.getElementById('view-my-page')?.classList.toggle('mypage-security-mode', action === 'security');
-            myPageForm?.classList.toggle('hidden', action === 'questionnaire');
-            myQuestionnairePanel?.classList.toggle('hidden', action !== 'questionnaire');
+            const isQuestionnaire = action === 'questionnaire';
+            const isLikes = action === 'likes';
+            myPageForm?.classList.toggle('hidden', isQuestionnaire || isLikes);
+            myQuestionnairePanel?.classList.toggle('hidden', !isQuestionnaire);
+            myLikedPostsPanel?.classList.toggle('hidden', !isLikes);
             if (action === 'account') {
                 if (myPageHeading) myPageHeading.textContent = 'Account Info';
                 if (myPageKicker) myPageKicker.textContent = '[ Profile Dossier ]';
@@ -8986,6 +9160,13 @@
                 renderMyQuestionnaire(currentMyProfile?.questionnaire || null);
                 requestAnimationFrame(resizeMyQuestionnaireTextareas);
                 myQuestionnairePanel?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            if (action === 'likes') {
+                if (myPageHeading) myPageHeading.textContent = 'Liked Posts';
+                if (myPageKicker) myPageKicker.textContent = '[ Saved Archive ]';
+                setMyPasswordEditorOpen(false);
+                loadMyLikedPosts();
+                myLikedPostsPanel?.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
 
@@ -9193,7 +9374,10 @@
                     activateMyPageTab('questionnaire');
                     return;
                 }
-                showToast('Liked Posts Log는 아직 준비 중입니다.', false);
+                if (action === 'likes') {
+                    activateMyPageTab('likes');
+                    return;
+                }
             });
         });
 
@@ -9251,6 +9435,15 @@
             return date.toLocaleDateString('ko-KR');
         }
 
+        function createTimelineLikeButton(post, context = 'feed') {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = `tweet-action-btn tweet-like${post.likedByMe ? ' liked' : ''}`;
+            button.innerHTML = `<i class="ph ${post.likedByMe ? 'ph-heart-fill' : 'ph-heart'}"></i><span>${post.likeCount || 0}</span>`;
+            button.addEventListener('click', () => toggleTimelineLike(post.id, context));
+            return button;
+        }
+
         function renderTimeline(profile, items, container, countElement, context) {
             container.innerHTML = '';
             countElement.textContent = `${items.length} posts`;
@@ -9292,7 +9485,10 @@
                 const content = document.createElement('p');
                 content.className = 'mt-3 whitespace-pre-wrap break-words leading-relaxed';
                 content.textContent = post.content;
-                body.append(header, content);
+                const actions = document.createElement('div');
+                actions.className = 'tweet-actions';
+                actions.appendChild(createTimelineLikeButton(post, context));
+                body.append(header, content, actions);
                 article.append(avatar, body);
                 container.appendChild(article);
             });
@@ -9541,6 +9737,7 @@
                 commentToggle.type = 'button';
                 commentToggle.className = 'tweet-action-btn';
                 commentToggle.innerHTML = `<i class="ph ph-chat-circle"></i><span>${(post.comments || []).length}</span>`;
+                actions.appendChild(createTimelineLikeButton(post, 'feed'));
                 actions.appendChild(commentToggle);
 
                 if (post.canDelete) {
@@ -9628,6 +9825,128 @@
                 timelineStatus.classList.remove('hidden');
             }
         }
+
+        async function toggleTimelineLike(postId, context = 'feed') {
+            if (!siteUser) {
+                showToast('로그인이 필요합니다.', false);
+                return;
+            }
+            const body = new FormData();
+            body.append('action', 'like');
+            body.append('post_id', String(postId));
+            try {
+                const response = await fetch('/api/timeline.php', {
+                    method: 'POST',
+                    headers: { 'X-CSRF-Token': csrfToken || '' },
+                    body,
+                });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '좋아요를 저장하지 못했습니다.');
+                if (context === 'liked') await loadMyLikedPosts();
+                else if (context === 'self') await loadMyTimeline();
+                else if (context === 'feed') await loadTimelineFeed();
+                else if (viewedTimelineUsername) await openMemberTimeline(viewedTimelineUsername, false);
+            } catch (error) {
+                showToast(error.message, false);
+            }
+        }
+
+        function renderMyLikedPosts(items) {
+            if (!myLikedList || !myLikedStatus) return;
+            myLikedList.replaceChildren();
+            myLikedStatus.classList.add('hidden');
+            if (myLikedCount) myLikedCount.textContent = `${items.length} Records`;
+            if (!items.length) {
+                myLikedStatus.textContent = '아직 좋아요한 글이 없습니다.';
+                myLikedStatus.classList.remove('hidden');
+                return;
+            }
+
+            items.forEach(post => {
+                const author = post.author || {};
+                const article = document.createElement('article');
+                article.className = 'liked-post-card';
+
+                const avatar = document.createElement('div');
+                avatar.className = 'liked-post-avatar';
+                if (post.isAnonymous || !author.avatarUrl) {
+                    avatar.classList.add('default-profile-icon');
+                    avatar.innerHTML = '<i class="ph ph-user"></i>';
+                } else {
+                    renderProfileAvatar(avatar, author);
+                }
+
+                const body = document.createElement('div');
+                const meta = document.createElement('div');
+                meta.className = 'liked-post-meta';
+                const authorName = document.createElement('button');
+                authorName.type = 'button';
+                authorName.className = 'liked-post-author';
+                authorName.textContent = post.isAnonymous ? 'Anonymous' : (author.displayName || author.username || 'Member');
+                if (!post.isAnonymous && author.username) {
+                    const handle = document.createElement('small');
+                    handle.textContent = `@${author.username}`;
+                    authorName.appendChild(handle);
+                    makeProfileLink(authorName, author.username);
+                    makeProfileLink(avatar, author.username);
+                }
+                const time = document.createElement('time');
+                time.className = 'liked-post-time';
+                time.dateTime = post.likedAt || post.createdAt;
+                time.textContent = `${formatTimelineDate(post.likedAt || post.createdAt)} 저장`;
+                meta.append(authorName, time);
+
+                const text = document.createElement('p');
+                text.className = 'liked-post-text';
+                text.textContent = post.content;
+
+                const photos = document.createElement('div');
+                photos.className = 'liked-post-photos';
+                (post.photos || []).slice(0, 4).forEach(photo => {
+                    const image = document.createElement('img');
+                    image.src = photo.url;
+                    image.alt = photo.name || 'liked post image';
+                    image.addEventListener('click', () => openTimelinePhoto(photo.url, photo.name || 'liked post image'));
+                    photos.appendChild(image);
+                });
+
+                const actions = document.createElement('div');
+                actions.className = 'liked-post-actions';
+                const comments = document.createElement('span');
+                comments.innerHTML = `<i class="ph ph-chat-circle"></i> ${(post.comments || []).length}`;
+                const unlike = document.createElement('button');
+                unlike.type = 'button';
+                unlike.className = 'liked-post-unlike';
+                unlike.innerHTML = '<i class="ph ph-heart-fill"></i><span>Remove Like</span>';
+                unlike.addEventListener('click', () => toggleTimelineLike(post.id, 'liked'));
+                actions.append(comments, unlike);
+
+                body.append(meta, text);
+                if (photos.childElementCount) body.appendChild(photos);
+                body.appendChild(actions);
+                article.append(avatar, body);
+                myLikedList.appendChild(article);
+            });
+        }
+
+        async function loadMyLikedPosts() {
+            if (!siteUser || !myLikedList || !myLikedStatus) return;
+            myLikedStatus.textContent = '좋아요한 글을 불러오는 중입니다.';
+            myLikedStatus.classList.remove('hidden');
+            myLikedList.replaceChildren();
+            if (myLikedCount) myLikedCount.textContent = '...';
+            try {
+                const response = await fetch('/api/timeline.php?action=liked', { headers: { Accept: 'application/json' }, cache: 'no-store' });
+                const payload = await response.json();
+                if (!response.ok) throw new Error(payload.error || '좋아요한 글을 불러오지 못했습니다.');
+                renderMyLikedPosts(Array.isArray(payload.items) ? payload.items : []);
+            } catch (error) {
+                myLikedStatus.textContent = error.message;
+                myLikedStatus.classList.remove('hidden');
+            }
+        }
+
+        myLikedRefresh?.addEventListener('click', loadMyLikedPosts);
 
         let timelineSelectedFiles = [];
 
@@ -9719,6 +10038,7 @@
                 showToast('타임라인 글을 삭제했습니다.', true);
                 if (context === 'self') await loadMyTimeline();
                 else if (context === 'feed') await loadTimelineFeed();
+                else if (context === 'liked') await loadMyLikedPosts();
                 else await openMemberTimeline(viewedTimelineUsername, false);
             } catch (error) {
                 showToast(error.message, false);
