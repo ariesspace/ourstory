@@ -2318,6 +2318,12 @@
             color: rgba(17, 17, 17, 0.72);
             text-transform: uppercase;
         }
+        #main-header #header-logout-btn {
+            color: #b85454 !important;
+        }
+        #main-header #header-logout-btn:hover {
+            color: #8f3737 !important;
+        }
         #main-header .view-trigger[data-target="view-read"] {
             font-family: 'Cormorant Garamond', serif;
             font-style: italic;
@@ -4466,7 +4472,7 @@
                 <button type="button" class="view-trigger header-auth-item hover:opacity-100" data-target="view-notice" id="header-notice-btn">Notice</button>
                 <button type="button" class="view-trigger hidden header-user-link hover:opacity-100" data-target="view-my-page" id="header-user-btn"></button>
                 <button type="button" class="view-trigger header-auth-item hover:opacity-100" data-target="view-login" id="login-nav-btn">Login</button>
-                <button type="button" id="header-logout-btn" class="logout-trigger hidden header-auth-item hover:text-[var(--accent-red)]">Logout</button>
+                <button type="button" id="header-logout-btn" class="logout-trigger hidden header-auth-item">Logout</button>
             </div>
         </div>
         <div class="absolute bottom-0 left-0 w-full h-px bg-black/[0.06]" aria-hidden="true">
