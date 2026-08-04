@@ -3908,28 +3908,28 @@
                 letter-spacing: 0.03em !important;
             }
             .index-menu-submenu-inner {
-                display: grid !important;
-                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-                gap: 0.42rem 0.5rem !important;
-                padding: 0.38rem 0 0.2rem 2.98rem !important;
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 0 !important;
+                padding: 0.24rem 0 0.24rem 2.98rem !important;
             }
             .index-menu-subitem {
                 display: flex !important;
                 grid-template-columns: none !important;
-                justify-content: flex-start !important;
+                justify-content: space-between !important;
                 min-width: 0 !important;
-                gap: 0.32rem !important;
-                padding: 0.48rem 0.52rem !important;
-                border-left: 0 !important;
-                border: 1px solid var(--border-light) !important;
-                background: rgba(255, 255, 255, 0.58) !important;
-                font-size: 0.64rem !important;
-                letter-spacing: 0 !important;
-                line-height: 1.15 !important;
+                gap: 0.55rem !important;
+                padding: 0.4rem 0 0.4rem 0.62rem !important;
+                border: 0 !important;
+                border-left: 1px solid var(--border-light) !important;
+                background: transparent !important;
+                font-size: 0.68rem !important;
+                letter-spacing: 0.01em !important;
+                line-height: 1.25 !important;
             }
             .index-menu-subitem:hover {
-                padding-left: 0.58rem !important;
-                padding-right: 0.46rem !important;
+                padding-left: 0.78rem !important;
+                padding-right: 0 !important;
             }
             .index-menu-subitem span {
                 min-width: 0 !important;
@@ -3939,8 +3939,8 @@
             }
             .index-menu-subitem small {
                 flex: none !important;
-                font-size: 0.5rem !important;
-                letter-spacing: 0.02em !important;
+                font-size: 0.54rem !important;
+                letter-spacing: 0.05em !important;
             }
             #main-header > div:first-child {
                 height: 84px !important;
@@ -4042,6 +4042,31 @@
             #my-questionnaire-panel > div > div:last-child {
                 margin-top: 1.4rem !important;
                 padding-top: 1rem !important;
+            }
+            #membership-detail-title {
+                font-size: clamp(2.25rem, 13vw, 3.1rem) !important;
+                line-height: 1.08 !important;
+            }
+            #membership-detail-answers {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 1.05rem 1rem !important;
+            }
+            #membership-detail-answers .membership-summary-field {
+                padding-top: 0.72rem !important;
+            }
+            #membership-detail-answers .membership-story-field,
+            #membership-detail-answers .membership-extra-field,
+            #membership-detail-answers .membership-attachment-field {
+                grid-column: 1 / -1 !important;
+            }
+            #membership-detail-answers dt {
+                font-size: 0.68rem !important;
+                line-height: 1.35 !important;
+                margin-bottom: 0.38rem !important;
+            }
+            #membership-detail-answers dd {
+                font-size: 0.92rem !important;
+                line-height: 1.65 !important;
             }
             .mypage-profile-grid {
                 grid-template-columns: 1fr !important;
@@ -7264,9 +7289,14 @@
                 ...normalized.extra,
             ];
 
-            orderedFields.forEach(field => {
+            const summaryCount = normalized.summary.length;
+            const storyCount = normalized.storySections.length;
+            orderedFields.forEach((field, index) => {
                 const group = document.createElement('dl');
-                group.className = 'border-t border-[var(--border-light)] pt-4 min-w-0';
+                const fieldKind = index < summaryCount
+                    ? 'membership-summary-field'
+                    : (index < summaryCount + storyCount ? 'membership-story-field' : 'membership-extra-field');
+                group.className = `border-t border-[var(--border-light)] pt-4 min-w-0 ${fieldKind}`;
                 const label = document.createElement('dt');
                 label.className = 'text-xs opacity-45 mb-2 leading-relaxed font-sans';
                 label.textContent = field.label || 'Answer';
@@ -7279,7 +7309,7 @@
 
             if (normalized.attachments.length) {
                 const group = document.createElement('dl');
-                group.className = 'md:col-span-2 border-t border-[var(--border-light)] pt-4 min-w-0';
+                group.className = 'md:col-span-2 border-t border-[var(--border-light)] pt-4 min-w-0 membership-attachment-field';
                 const label = document.createElement('dt');
                 label.className = 'text-xs opacity-45 mb-3 leading-relaxed font-sans';
                 label.textContent = '첨부 자료';
