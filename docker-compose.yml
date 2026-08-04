@@ -31,6 +31,7 @@ services:
     command: sh -c "mkdir -p storage/data && chown -R www-data:www-data storage && php-fpm"
     environment:
       TALLY_WEBHOOK_SECRET: "${TALLY_WEBHOOK_SECRET:-}"
+      TALLY_MEMBERSHIP_WEBHOOK_SECRET: "${TALLY_MEMBERSHIP_WEBHOOK_SECRET:-}"
       OUR_STORY_ADMIN_PASSWORD: "${OUR_STORY_ADMIN_PASSWORD:-}"
     volumes:
       - ./app:/var/www/html
