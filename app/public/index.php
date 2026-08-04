@@ -3908,19 +3908,39 @@
                 letter-spacing: 0.03em !important;
             }
             .index-menu-submenu-inner {
-                padding-left: 2.98rem !important;
+                display: grid !important;
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 0.42rem 0.5rem !important;
+                padding: 0.38rem 0 0.2rem 2.98rem !important;
             }
             .index-menu-subitem {
                 display: flex !important;
                 grid-template-columns: none !important;
-                gap: 0.75rem !important;
-                padding: 0.42rem 0 0.42rem 0.72rem !important;
-                font-size: 0.7rem !important;
-                letter-spacing: 0.02em !important;
+                justify-content: flex-start !important;
+                min-width: 0 !important;
+                gap: 0.32rem !important;
+                padding: 0.48rem 0.52rem !important;
+                border-left: 0 !important;
+                border: 1px solid var(--border-light) !important;
+                background: rgba(255, 255, 255, 0.58) !important;
+                font-size: 0.64rem !important;
+                letter-spacing: 0 !important;
+                line-height: 1.15 !important;
+            }
+            .index-menu-subitem:hover {
+                padding-left: 0.58rem !important;
+                padding-right: 0.46rem !important;
+            }
+            .index-menu-subitem span {
+                min-width: 0 !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                white-space: nowrap !important;
             }
             .index-menu-subitem small {
-                font-size: 0.57rem !important;
-                letter-spacing: 0.06em !important;
+                flex: none !important;
+                font-size: 0.5rem !important;
+                letter-spacing: 0.02em !important;
             }
             #main-header > div:first-child {
                 height: 84px !important;
@@ -3962,8 +3982,8 @@
             }
             .mypage-layout {
                 width: 100% !important;
-                padding: 2.15rem 1.25rem 3rem !important;
-                gap: 1.75rem !important;
+                padding: 1.55rem 1rem 2.55rem !important;
+                gap: 1.2rem !important;
                 flex-direction: column !important;
             }
             .mypage-content {
@@ -3972,15 +3992,56 @@
             }
             .mypage-header-title {
                 display: block !important;
-                font-size: clamp(3.15rem, 17vw, 4.45rem) !important;
-                line-height: 0.92 !important;
+                font-size: clamp(2.05rem, 10.8vw, 3.05rem) !important;
+                line-height: 1.02 !important;
+                letter-spacing: -0.025em !important;
+                padding-bottom: 1rem !important;
+                margin-bottom: 1.35rem !important;
                 white-space: normal !important;
+            }
+            .mypage-header-title strong {
+                display: block !important;
+                max-width: 100% !important;
+                overflow-wrap: anywhere !important;
             }
             .mypage-header-title span {
                 display: block;
-                margin-top: 0.85rem;
-                font-size: 0.62rem !important;
-                letter-spacing: 0.16em !important;
+                margin-top: 0.45rem;
+                font-size: 0.54rem !important;
+                letter-spacing: 0.1em !important;
+            }
+            #my-questionnaire-panel > div {
+                padding: 1rem !important;
+            }
+            #my-questionnaire-panel > div > div:first-child {
+                padding-bottom: 1rem !important;
+                margin-bottom: 1.1rem !important;
+                gap: 0.45rem !important;
+            }
+            #my-questionnaire-panel h2 {
+                font-size: clamp(2rem, 10vw, 2.7rem) !important;
+                margin-top: 0.45rem !important;
+            }
+            #my-questionnaire-list {
+                gap: 1.1rem !important;
+            }
+            #my-questionnaire-list dl {
+                padding-top: 0.78rem !important;
+            }
+            #my-questionnaire-list dt {
+                margin-bottom: 0.45rem !important;
+                line-height: 1.45 !important;
+            }
+            #my-questionnaire-list textarea {
+                min-height: 3.8rem !important;
+                padding-top: 0.35rem !important;
+                padding-bottom: 0.35rem !important;
+                font-size: 0.92rem !important;
+                line-height: 1.65 !important;
+            }
+            #my-questionnaire-panel > div > div:last-child {
+                margin-top: 1.4rem !important;
+                padding-top: 1rem !important;
             }
             .mypage-profile-grid {
                 grid-template-columns: 1fr !important;
@@ -4384,7 +4445,7 @@
                     <div class="index-menu-submenu-inner">
                         <button type="button" class="index-menu-subitem" data-my-menu-action="account"><span>Account Info</span><small>[ 계정 ]</small></button>
                         <button type="button" class="index-menu-subitem" data-my-menu-action="security"><span>Privacy &amp; Security</span><small>[ 보안 ]</small></button>
-                        <button type="button" class="index-menu-subitem" data-my-menu-action="questionnaire"><span>My Questionnaire</span><small>[ 질문지 ]</small></button>
+                        <button type="button" class="index-menu-subitem" data-my-menu-action="questionnaire"><span>Questionnaire</span><small>[ 질문지 ]</small></button>
                         <button type="button" class="index-menu-subitem" data-my-menu-action="likes"><span>Liked Posts Log</span><small>[ 좋아요 ]</small></button>
                     </div>
                 </div>
