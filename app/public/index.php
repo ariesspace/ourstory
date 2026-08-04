@@ -3861,6 +3861,18 @@
         #main-header > div:first-child > div:last-child button {
             white-space: nowrap !important;
         }
+        #membership-detail-answers,
+        #my-questionnaire-list {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        #membership-detail-answers .membership-story-field,
+        #membership-detail-answers .membership-extra-field,
+        #membership-detail-answers .membership-attachment-field,
+        #my-questionnaire-list .questionnaire-story-field,
+        #my-questionnaire-list .questionnaire-extra-field,
+        #my-questionnaire-list .questionnaire-attachment-field {
+            grid-column: 1 / -1;
+        }
         @media (max-width: 640px) {
             html,
             body {
@@ -4637,7 +4649,7 @@
                                 <span id="my-questionnaire-date" class="text-xs tracking-[0.16em] uppercase opacity-45 font-mono"></span>
                             </div>
                             <p id="my-questionnaire-empty" class="hidden"></p>
-                            <div id="my-questionnaire-list" class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8"></div>
+                            <div id="my-questionnaire-list" class="grid gap-x-10 gap-y-8"></div>
                             <div class="mt-10 pt-6 border-t border-[var(--border-light)] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                                 <p id="my-questionnaire-save-status" class="text-xs opacity-45 font-serif-ko">수정 내용은 관리자 연동 후 공개 질문지에 반영됩니다.</p>
                                 <button type="button" id="my-questionnaire-save" class="border border-[var(--text-dark)] px-6 py-3 text-xs tracking-[0.22em] uppercase hover:bg-[var(--text-dark)] hover:text-white transition-colors">Save Draft</button>
@@ -5709,7 +5721,7 @@
                 <span id="membership-detail-meta"></span>
                 <time id="membership-detail-date"></time>
             </div>
-            <div id="membership-detail-answers" class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6 mt-8"></div>
+            <div id="membership-detail-answers" class="grid gap-x-10 gap-y-6 mt-8"></div>
             <div id="membership-detail-actions" class="hidden flex-col sm:flex-row sm:flex-wrap sm:justify-end gap-2 sm:gap-3 mt-8 pt-6 border-t border-[var(--border-light)]"></div>
         </div>
     </div>
@@ -8987,11 +8999,16 @@
 
             const fieldsToRender = displayFields;
 
+            const summaryFieldCount = 5;
             fieldsToRender.forEach((field, index) => {
                 const group = document.createElement('dl');
-                group.className = field.value.length > 260 || field.photoUrls?.length
-                    ? 'md:col-span-2 border-t border-[var(--border-light)] pt-5'
-                    : 'border-t border-[var(--border-light)] pt-5';
+                const isSummaryField = index < summaryFieldCount;
+                const isWideField = !isSummaryField && (field.value.length > 260 || field.photoUrls?.length);
+                group.className = isSummaryField
+                    ? 'questionnaire-summary-field border-t border-[var(--border-light)] pt-5'
+                    : (isWideField
+                        ? 'questionnaire-story-field md:col-span-2 border-t border-[var(--border-light)] pt-5'
+                        : 'questionnaire-extra-field border-t border-[var(--border-light)] pt-5');
                 const label = document.createElement('dt');
                 label.className = 'text-xs opacity-45 mb-3 leading-relaxed font-sans';
                 label.textContent = field.label;
