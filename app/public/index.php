@@ -3873,6 +3873,15 @@
         #my-questionnaire-list .questionnaire-attachment-field {
             grid-column: 1 / -1;
         }
+        #my-questionnaire-list textarea {
+            min-height: 8.5rem;
+            height: auto;
+            overflow: hidden;
+            resize: none;
+        }
+        #my-questionnaire-list .questionnaire-story-field textarea {
+            min-height: 16rem;
+        }
         @media (max-width: 640px) {
             html,
             body {
@@ -4045,11 +4054,15 @@
                 line-height: 1.45 !important;
             }
             #my-questionnaire-list textarea {
-                min-height: 3.8rem !important;
+                min-height: 7rem !important;
                 padding-top: 0.35rem !important;
                 padding-bottom: 0.35rem !important;
                 font-size: 0.92rem !important;
                 line-height: 1.65 !important;
+                overflow: hidden !important;
+            }
+            #my-questionnaire-list .questionnaire-story-field textarea {
+                min-height: 12rem !important;
             }
             #my-questionnaire-panel > div > div:last-child {
                 margin-top: 1.4rem !important;
@@ -8957,6 +8970,7 @@
                 if (myPageKicker) myPageKicker.textContent = '[ Original Application ]';
                 setMyPasswordEditorOpen(false);
                 renderMyQuestionnaire(currentMyProfile?.questionnaire || null);
+                requestAnimationFrame(resizeMyQuestionnaireTextareas);
                 myQuestionnairePanel?.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
@@ -8981,6 +8995,17 @@
             if (securityCurrentPassword) securityCurrentPassword.value = '';
             securityPasswordError?.classList.add('hidden');
             document.body.classList.remove('overflow-hidden');
+        }
+
+        function autoResizeQuestionnaireTextarea(textarea) {
+            if (!textarea) return;
+            textarea.style.height = 'auto';
+            textarea.style.height = `${textarea.scrollHeight}px`;
+        }
+
+        function resizeMyQuestionnaireTextareas() {
+            if (!myQuestionnaireList) return;
+            myQuestionnaireList.querySelectorAll('textarea').forEach(autoResizeQuestionnaireTextarea);
         }
 
         function renderMyQuestionnaire(questionnaire) {
@@ -9038,12 +9063,15 @@
                     input.placeholder = '답변을 입력해주세요.';
                     input.dataset.questionnaireIndex = String(index);
                     input.dataset.questionnaireLabel = field.label;
+                    input.addEventListener('input', () => autoResizeQuestionnaireTextarea(input));
                     value.appendChild(input);
+                    requestAnimationFrame(() => autoResizeQuestionnaireTextarea(input));
                 }
 
                 group.append(label, value);
                 myQuestionnaireList.appendChild(group);
             });
+            requestAnimationFrame(resizeMyQuestionnaireTextareas);
         }
 
         myQuestionnaireSave?.addEventListener('click', async () => {
