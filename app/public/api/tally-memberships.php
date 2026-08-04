@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 require dirname(__DIR__, 2) . '/src/bootstrap.php';
 
-const TALLY_MEMBERSHIP_FORM_ID = '7f7bec85-ea1d-4707-90dd-12a9a8b13a9c';
+define('TALLY_MEMBERSHIP_FORM_ID', '7f7bec85-ea1d-4707-90dd-12a9a8b13a9c');
+define('TALLY_MEMBERSHIP_SHARE_ID', 'wMv6Rk');
 
 function membership_json(array $body, int $status = 200): never
 {
@@ -381,7 +382,10 @@ if (!is_array($payload) || ($payload['eventType'] ?? '') !== 'FORM_RESPONSE') {
     membership_json(['error' => 'Unsupported event.'], 400);
 }
 $data = $payload['data'] ?? null;
-if (!is_array($data) || (string) ($data['formId'] ?? '') !== TALLY_MEMBERSHIP_FORM_ID) {
+if (
+    !is_array($data)
+    || !in_array((string) ($data['formId'] ?? ''), [TALLY_MEMBERSHIP_FORM_ID, TALLY_MEMBERSHIP_SHARE_ID], true)
+) {
     membership_json(['error' => 'Unexpected form.'], 400);
 }
 $submissionId = trim((string) ($data['submissionId'] ?? $data['responseId'] ?? ''));
