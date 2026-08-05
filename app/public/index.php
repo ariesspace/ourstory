@@ -543,6 +543,7 @@
             border-bottom: 1px solid var(--border-light);
         }
         .mypage-nav-item {
+            position: relative;
             display: block;
             width: 100%;
             text-align: left;
@@ -554,19 +555,33 @@
             letter-spacing: 0.02em;
             color: rgba(17, 17, 17, 0.56);
             cursor: pointer;
-            transition: color 0.25s ease, padding-left 0.25s ease;
+            transition: color 0.25s ease, padding-left 0.25s ease, background-color 0.25s ease;
+        }
+        .mypage-nav-item::before {
+            content: '';
+            position: absolute;
+            left: -0.9rem;
+            top: 50%;
+            width: 0.28rem;
+            height: 0;
+            background: var(--accent-color);
+            transform: translateY(-50%);
+            transition: height 0.24s ease;
         }
         .mypage-nav-item:last-child {
             border-bottom: 0;
         }
         .mypage-nav-item:hover {
-            color: var(--accent-red);
+            color: var(--accent-color);
             padding-left: 0.35rem;
         }
         .mypage-nav-item.active {
-            color: var(--text-dark);
-            font-weight: 600;
+            color: var(--accent-color);
+            font-weight: 700;
             letter-spacing: 0.02em;
+        }
+        .mypage-nav-item.active::before {
+            height: 1.05rem;
         }
         .mypage-mobile-nav {
             display: none;
@@ -1204,6 +1219,38 @@
         .tweet-like.liked {
             color: var(--accent-red);
         }
+        .tweet-like i {
+            font-size: 1.05rem;
+        }
+        .heart-burst {
+            position: fixed;
+            inset: 0;
+            z-index: 10020;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+        .heart-burst i {
+            color: var(--accent-red);
+            font-size: clamp(4.5rem, 14vw, 9rem);
+            filter: drop-shadow(0 18px 42px rgba(184, 84, 84, 0.22));
+            animation: heartBurst 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes heartBurst {
+            0% {
+                opacity: 0;
+                transform: scale(0.38) translateY(1.2rem);
+            }
+            28% {
+                opacity: 1;
+                transform: scale(1.08) translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1.42) translateY(-0.9rem);
+            }
+        }
         .tweet-delete {
             margin-left: auto;
         }
@@ -1211,6 +1258,7 @@
             border: 1px solid var(--border-light);
             background: rgba(255, 255, 255, 0.76);
             padding: clamp(1.4rem, 3vw, 2.6rem);
+            scroll-margin-top: 7rem;
         }
         .liked-posts-head {
             display: flex;
@@ -1333,9 +1381,30 @@
             gap: 0.3rem;
         }
         @media (max-width: 640px) {
+            .liked-posts-panel {
+                margin-top: 1.4rem;
+                padding: 1.35rem 1.05rem 1.5rem;
+                scroll-margin-top: 6.2rem;
+            }
             .liked-posts-head {
                 align-items: flex-start;
                 flex-direction: column;
+                gap: 0.85rem;
+                padding-top: 0.35rem;
+                padding-bottom: 1.05rem;
+                margin-bottom: 1.2rem;
+            }
+            .liked-posts-title {
+                font-size: clamp(2.2rem, 14vw, 3.2rem);
+                line-height: 0.98;
+                margin-top: 0.35rem;
+            }
+            .liked-posts-count {
+                font-size: 0.61rem;
+            }
+            .liked-posts-refresh {
+                width: 2.35rem;
+                height: 2.35rem;
             }
             .liked-post-card {
                 grid-template-columns: 2.6rem minmax(0, 1fr);
@@ -1750,6 +1819,15 @@
             text-transform: uppercase;
             color: rgba(79, 91, 105, 0.78);
         }
+        .index-menu-section:nth-of-type(1) .index-menu-section-title {
+            color: #5f7569;
+        }
+        .index-menu-section:nth-of-type(2) .index-menu-section-title {
+            color: #b85454;
+        }
+        .index-menu-section:nth-of-type(3) .index-menu-section-title {
+            color: #6d7191;
+        }
         .index-menu-links {
             display: flex;
             flex-direction: column;
@@ -1884,6 +1962,28 @@
             font-family: 'Space Mono', monospace;
             font-size: 0.62rem;
             letter-spacing: 0.12em;
+            color: rgba(79, 91, 105, 0.68);
+        }
+        .index-menu-links .index-menu-subitem {
+            display: flex;
+            grid-template-columns: none;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.7rem;
+            font-size: 0.78rem;
+            letter-spacing: 0.02em;
+            line-height: 1.35;
+            text-transform: none;
+            white-space: nowrap;
+        }
+        .index-menu-links .index-menu-subitem span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: rgba(17, 17, 17, 0.62);
+        }
+        .index-menu-links .index-menu-subitem small {
+            flex: none;
             color: rgba(79, 91, 105, 0.68);
         }
         #system-menu-section .index-menu-section-title {
@@ -9439,9 +9539,19 @@
             const button = document.createElement('button');
             button.type = 'button';
             button.className = `tweet-action-btn tweet-like${post.likedByMe ? ' liked' : ''}`;
-            button.innerHTML = `<i class="ph ${post.likedByMe ? 'ph-heart-fill' : 'ph-heart'}"></i><span>${post.likeCount || 0}</span>`;
+            button.setAttribute('aria-label', post.likedByMe ? '좋아요 취소' : '좋아요');
+            button.title = post.likedByMe ? '좋아요 취소' : '좋아요';
+            button.innerHTML = `<i class="ph ${post.likedByMe ? 'ph-heart-fill' : 'ph-heart'}"></i>`;
             button.addEventListener('click', () => toggleTimelineLike(post.id, context));
             return button;
+        }
+
+        function showHeartBurst() {
+            const burst = document.createElement('div');
+            burst.className = 'heart-burst';
+            burst.innerHTML = '<i class="ph ph-heart-fill"></i>';
+            document.body.appendChild(burst);
+            setTimeout(() => burst.remove(), 920);
         }
 
         function renderTimeline(profile, items, container, countElement, context) {
@@ -9842,6 +9952,7 @@
                 });
                 const payload = await response.json();
                 if (!response.ok) throw new Error(payload.error || '좋아요를 저장하지 못했습니다.');
+                if (payload.liked) showHeartBurst();
                 if (context === 'liked') await loadMyLikedPosts();
                 else if (context === 'self') await loadMyTimeline();
                 else if (context === 'feed') await loadTimelineFeed();
