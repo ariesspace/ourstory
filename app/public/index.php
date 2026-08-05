@@ -1220,26 +1220,31 @@
             color: #d62828;
         }
         .tweet-like {
-            min-width: 1.35rem;
-            min-height: 1.35rem;
+            min-width: 1.5rem;
+            min-height: 1.5rem;
             justify-content: center;
+            color: rgba(17, 17, 17, 0.58);
         }
         .tweet-like-symbol {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 1.2rem;
-            height: 1.2rem;
-            font-family: Georgia, 'Times New Roman', serif;
-            font-size: 1.08rem;
+            width: 1.45rem;
+            height: 1.45rem;
+            font-size: 1.18rem;
             line-height: 1;
-            transition: transform 0.22s ease, color 0.22s ease;
+            transition: transform 0.22s ease, color 0.22s ease, filter 0.22s ease;
+        }
+        .tweet-like-symbol i {
+            display: block;
+            line-height: 1;
         }
         .tweet-like.liked .tweet-like-symbol {
             color: #d62828;
+            filter: drop-shadow(0 4px 9px rgba(214, 40, 40, 0.16));
         }
         .tweet-like:hover .tweet-like-symbol {
-            transform: scale(1.18);
+            transform: scale(1.12);
         }
         .heart-burst {
             position: fixed;
@@ -1252,11 +1257,13 @@
         }
         .heart-burst span {
             color: #d62828;
-            font-size: clamp(4.5rem, 14vw, 9rem);
-            font-family: Georgia, 'Times New Roman', serif;
+            font-size: clamp(4.2rem, 13vw, 8rem);
             line-height: 1;
-            filter: drop-shadow(0 18px 42px rgba(184, 84, 84, 0.22));
+            filter: drop-shadow(0 18px 42px rgba(214, 40, 40, 0.2));
             animation: heartBurst 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .heart-burst span i {
+            display: block;
         }
         @keyframes heartBurst {
             0% {
@@ -9535,13 +9542,17 @@
             return date.toLocaleDateString('ko-KR');
         }
 
+        function renderTimelineHeartIcon(liked) {
+            return `<span class="tweet-like-symbol" aria-hidden="true"><i class="ph ${liked ? 'ph-heart-fill' : 'ph-heart'}"></i></span>`;
+        }
+
         function createTimelineLikeButton(post, context = 'feed') {
             const button = document.createElement('button');
             button.type = 'button';
             button.className = `tweet-action-btn tweet-like${post.likedByMe ? ' liked' : ''}`;
             button.setAttribute('aria-label', post.likedByMe ? '좋아요 취소' : '좋아요');
             button.title = post.likedByMe ? '좋아요 취소' : '좋아요';
-            button.innerHTML = `<span class="tweet-like-symbol" aria-hidden="true">${post.likedByMe ? '♥' : '♡'}</span>`;
+            button.innerHTML = renderTimelineHeartIcon(Boolean(post.likedByMe));
             button.addEventListener('click', () => toggleTimelineLike(post.id, context, button));
             return button;
         }
@@ -9549,7 +9560,7 @@
         function showHeartBurst() {
             const burst = document.createElement('div');
             burst.className = 'heart-burst';
-            burst.innerHTML = '<span aria-hidden="true">♥</span>';
+            burst.innerHTML = '<span aria-hidden="true"><i class="ph ph-heart-fill"></i></span>';
             document.body.appendChild(burst);
             setTimeout(() => burst.remove(), 920);
         }
@@ -9941,7 +9952,7 @@
             button.classList.toggle('liked', Boolean(liked));
             button.setAttribute('aria-label', liked ? '좋아요 취소' : '좋아요');
             button.title = liked ? '좋아요 취소' : '좋아요';
-            button.innerHTML = `<span class="tweet-like-symbol" aria-hidden="true">${liked ? '♥' : '♡'}</span>`;
+            button.innerHTML = renderTimelineHeartIcon(Boolean(liked));
         }
 
         async function toggleTimelineLike(postId, context = 'feed', sourceButton = null) {
