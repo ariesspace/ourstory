@@ -4141,44 +4141,90 @@
             text-transform: uppercase;
         }
         @media (max-width: 860px) {
+            #view-sm-bar-list > .py-14 {
+                padding-top: 2.4rem;
+                padding-bottom: 1.9rem;
+                margin-bottom: 1.4rem;
+                gap: 1.15rem;
+            }
+            #view-sm-bar-list h1 {
+                font-size: clamp(2.7rem, 15vw, 4.15rem);
+                line-height: 0.94;
+            }
+            #view-sm-bar-list p {
+                max-width: 18rem;
+                font-size: 0.86rem;
+                line-height: 1.75;
+            }
+            #view-sm-bar-list #sm-bar-add-btn {
+                width: 100%;
+                justify-content: center;
+            }
             .bar-card {
-                grid-template-columns: 1fr;
+                display: block;
                 min-height: 0;
+                background: rgba(255, 255, 255, 0.94);
+                border-color: rgba(17, 17, 17, 0.12);
+                box-shadow: 0 10px 22px rgba(17, 17, 17, 0.035);
+            }
+            .bar-card:hover {
+                transform: none;
+                box-shadow: 0 10px 22px rgba(17, 17, 17, 0.035);
             }
             .bar-meta {
-                padding: 1.35rem 1.25rem 1.1rem;
+                justify-content: flex-start;
+                gap: 0.9rem;
+                padding: 1.2rem 1.15rem 0.95rem;
+                border-bottom: 1px solid rgba(17, 17, 17, 0.08);
             }
             .bar-divider {
-                height: 1.5rem;
-                border-left: 0;
-                border-right: 0;
-                border-top: 1px dashed rgba(42, 59, 50, 0.22);
-                border-bottom: 1px dashed rgba(42, 59, 50, 0.06);
+                display: none;
             }
-            .bar-divider::before,
-            .bar-divider::after {
-                top: 50%;
-                bottom: auto;
-                transform: translateY(-50%);
+            .bar-number {
+                padding: 0.24rem 0.48rem;
+                font-size: 0.56rem;
             }
-            .bar-divider::before {
-                left: -0.65rem;
+            .bar-name {
+                font-size: clamp(2rem, 11vw, 2.55rem);
+                line-height: 1;
+                letter-spacing: -0.025em;
             }
-            .bar-divider::after {
-                left: auto;
-                right: -0.65rem;
+            .bar-tags {
+                font-size: 0.57rem;
+                line-height: 1.45;
+                letter-spacing: 0.1em;
+                overflow-wrap: anywhere;
+            }
+            .bar-location {
+                margin-top: 0;
+                font-size: 0.74rem;
+                line-height: 1.55;
             }
             .bar-desc {
-                padding: 1.1rem 1.25rem 1.25rem;
-                font-size: 0.9rem;
-                line-height: 1.75;
+                gap: 0.8rem;
+                padding: 1rem 1.15rem 1.1rem;
+                font-size: 0.88rem;
+                line-height: 1.72;
             }
             .bar-desc-text {
                 max-height: none;
                 overflow: visible;
             }
-            .bar-name {
-                font-size: clamp(2rem, 12vw, 2.75rem);
+            .bar-desc-meta {
+                display: grid;
+                gap: 0.45rem;
+                font-size: 0.6rem;
+            }
+            .bar-actions {
+                justify-content: flex-start;
+                padding-top: 0.2rem;
+            }
+            .bar-action-btn {
+                width: 2rem;
+                height: 2rem;
+            }
+            .bar-list {
+                gap: 1rem;
             }
             .gallery-archive-head {
                 grid-template-columns: 1fr;
