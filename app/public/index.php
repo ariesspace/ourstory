@@ -1219,8 +1219,24 @@
         .tweet-like.liked {
             color: var(--accent-red);
         }
-        .tweet-like i {
-            font-size: 1.05rem;
+        .tweet-like {
+            min-width: 1.35rem;
+            min-height: 1.35rem;
+            justify-content: center;
+        }
+        .tweet-like-symbol {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.2rem;
+            height: 1.2rem;
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 1.08rem;
+            line-height: 1;
+            transition: transform 0.22s ease, color 0.22s ease;
+        }
+        .tweet-like:hover .tweet-like-symbol {
+            transform: scale(1.18);
         }
         .heart-burst {
             position: fixed;
@@ -1231,9 +1247,11 @@
             justify-content: center;
             pointer-events: none;
         }
-        .heart-burst i {
+        .heart-burst span {
             color: var(--accent-red);
             font-size: clamp(4.5rem, 14vw, 9rem);
+            font-family: Georgia, 'Times New Roman', serif;
+            line-height: 1;
             filter: drop-shadow(0 18px 42px rgba(184, 84, 84, 0.22));
             animation: heartBurst 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
@@ -4402,30 +4420,87 @@
                 margin-right: auto !important;
             }
             .self-intro-shell {
-                padding: 2.4rem 1.1rem 3.5rem !important;
+                padding: 2.15rem 1rem 3.25rem !important;
             }
             .self-intro-head {
-                margin-bottom: 1.7rem !important;
+                padding-bottom: 1.2rem !important;
+                margin-bottom: 1.25rem !important;
+            }
+            .self-intro-kicker {
+                margin-bottom: 0.55rem !important;
+                font-size: 0.58rem !important;
+                letter-spacing: 0.22em !important;
             }
             .self-intro-title {
-                font-size: clamp(3rem, 17vw, 4.5rem) !important;
+                font-size: clamp(2.55rem, 13.2vw, 3.65rem) !important;
+                line-height: 0.96 !important;
+                letter-spacing: -0.04em !important;
             }
             .self-intro-document {
-                padding: 1.15rem !important;
+                padding: 1rem !important;
             }
             .self-intro-grid {
-                grid-template-columns: 1fr !important;
-                gap: 1.45rem !important;
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 1.05rem 0.85rem !important;
+            }
+            .self-intro-field {
+                min-width: 0 !important;
+                padding-top: 0.78rem !important;
+            }
+            .self-intro-label {
+                margin-bottom: 0.45rem !important;
+                font-size: 0.72rem !important;
+                line-height: 1.35 !important;
+                word-break: keep-all !important;
+            }
+            .self-intro-label.is-required::after {
+                width: 0.86rem !important;
+                height: 0.86rem !important;
+                margin-left: 0.22rem !important;
+                font-size: 0.56rem !important;
+            }
+            .self-intro-input,
+            .self-intro-select,
+            .self-intro-textarea {
+                min-width: 0 !important;
+                font-size: 0.92rem !important;
+                line-height: 1.55 !important;
+                padding-bottom: 0.48rem !important;
+            }
+            .self-intro-help {
+                font-size: 0.58rem !important;
+                letter-spacing: 0.05em !important;
+            }
+            .ratio-options,
+            .multi-choice-group {
+                display: grid !important;
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 0.4rem !important;
+            }
+            .ratio-option,
+            .multi-choice-option {
+                min-width: 0 !important;
+                width: 100% !important;
+                padding: 0.48rem 0.25rem !important;
+                text-align: center !important;
+                font-size: 0.72rem !important;
+                line-height: 1.25 !important;
+                word-break: keep-all !important;
             }
             .self-intro-textarea {
-                min-height: 6.25rem !important;
+                min-height: 7.25rem !important;
+                padding: 0.72rem !important;
             }
             .self-intro-actions {
                 align-items: stretch !important;
                 flex-direction: column !important;
+                margin-top: 1.3rem !important;
+                padding-top: 1rem !important;
             }
             .self-intro-submit {
                 width: 100% !important;
+                padding: 0.95rem 1rem !important;
+                font-size: 0.68rem !important;
             }
             .profile-img-frame {
                 width: min(100%, 20.5rem) !important;
@@ -9574,15 +9649,15 @@
             button.className = `tweet-action-btn tweet-like${post.likedByMe ? ' liked' : ''}`;
             button.setAttribute('aria-label', post.likedByMe ? '좋아요 취소' : '좋아요');
             button.title = post.likedByMe ? '좋아요 취소' : '좋아요';
-            button.innerHTML = `<i class="ph ${post.likedByMe ? 'ph-heart-fill' : 'ph-heart'}"></i>`;
-            button.addEventListener('click', () => toggleTimelineLike(post.id, context));
+            button.innerHTML = `<span class="tweet-like-symbol" aria-hidden="true">${post.likedByMe ? '♥' : '♡'}</span>`;
+            button.addEventListener('click', () => toggleTimelineLike(post.id, context, button));
             return button;
         }
 
         function showHeartBurst() {
             const burst = document.createElement('div');
             burst.className = 'heart-burst';
-            burst.innerHTML = '<i class="ph ph-heart-fill"></i>';
+            burst.innerHTML = '<span aria-hidden="true">♥</span>';
             document.body.appendChild(burst);
             setTimeout(() => burst.remove(), 920);
         }
@@ -9969,7 +10044,15 @@
             }
         }
 
-        async function toggleTimelineLike(postId, context = 'feed') {
+        function updateTimelineLikeButton(button, liked) {
+            if (!button) return;
+            button.classList.toggle('liked', Boolean(liked));
+            button.setAttribute('aria-label', liked ? '좋아요 취소' : '좋아요');
+            button.title = liked ? '좋아요 취소' : '좋아요';
+            button.innerHTML = `<span class="tweet-like-symbol" aria-hidden="true">${liked ? '♥' : '♡'}</span>`;
+        }
+
+        async function toggleTimelineLike(postId, context = 'feed', sourceButton = null) {
             if (!siteUser) {
                 showToast('로그인이 필요합니다.', false);
                 return;
@@ -9985,6 +10068,7 @@
                 });
                 const payload = await response.json();
                 if (!response.ok) throw new Error(payload.error || '좋아요를 저장하지 못했습니다.');
+                updateTimelineLikeButton(sourceButton, payload.liked);
                 if (payload.liked) showHeartBurst();
                 if (context === 'liked') await loadMyLikedPosts();
                 else if (context === 'self') await loadMyTimeline();
