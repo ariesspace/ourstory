@@ -922,18 +922,23 @@
             grid-column: 1 / -1;
         }
         .self-intro-label {
-            display: block;
+            display: inline-flex;
+            align-items: center;
+            max-width: 100%;
             margin-bottom: 0.8rem;
             font-family: 'Noto Sans KR', sans-serif;
             font-size: 0.88rem;
             color: rgba(17, 17, 17, 0.64);
             letter-spacing: -0.01em;
+            line-height: 1.35;
+            word-break: keep-all;
         }
         .self-intro-label.is-required::after {
             content: '*';
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            flex: 0 0 auto;
             width: 1.05rem;
             height: 1.05rem;
             margin-left: 0.35rem;
@@ -975,6 +980,19 @@
             letter-spacing: 0.08em;
             color: rgba(17, 17, 17, 0.38);
         }
+        .self-intro-ratio-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1rem;
+        }
+        .self-intro-ratio-select {
+            display: grid;
+            gap: 0.35rem;
+            min-width: 0;
+        }
+        .self-intro-ratio-select span {
+            margin: 0;
+        }
         .ratio-options {
             display: flex;
             flex-wrap: wrap;
@@ -982,8 +1000,11 @@
         }
         .multi-choice-group {
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             gap: 0.55rem;
+            overflow-x: auto;
+            padding-bottom: 0.3rem;
+            scrollbar-width: thin;
         }
         .ratio-option {
             min-width: 2.65rem;
@@ -1000,6 +1021,7 @@
             color: #fff;
         }
         .multi-choice-option {
+            flex: 0 0 auto;
             border: 1px solid var(--border-light);
             background: #fff;
             padding: 0.56rem 0.9rem;
@@ -4580,17 +4602,22 @@
                 font-size: 0.58rem !important;
                 letter-spacing: 0.05em !important;
             }
-            .ratio-options,
-            .multi-choice-group {
-                display: grid !important;
+            .self-intro-ratio-row {
                 grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-                gap: 0.4rem !important;
+                gap: 0.7rem !important;
             }
-            .ratio-option,
+            .multi-choice-group {
+                display: flex !important;
+                flex-wrap: nowrap !important;
+                gap: 0.45rem !important;
+                overflow-x: auto !important;
+                padding-bottom: 0.28rem !important;
+            }
             .multi-choice-option {
                 min-width: 0 !important;
-                width: 100% !important;
-                padding: 0.48rem 0.25rem !important;
+                width: auto !important;
+                flex: 0 0 auto !important;
+                padding: 0.46rem 0.72rem !important;
                 text-align: center !important;
                 font-size: 0.72rem !important;
                 line-height: 1.25 !important;
@@ -5209,13 +5236,19 @@
                     </div>
                     <div class="self-intro-field">
                         <span class="self-intro-label is-required">나의 잠자리 성향</span>
-                        <div class="mb-4">
-                            <p class="self-intro-help mb-2">GIVE RATIO</p>
-                            <div class="ratio-options" data-ratio-group="giveRatio"></div>
-                        </div>
-                        <div>
-                            <p class="self-intro-help mb-2">TAKE RATIO</p>
-                            <div class="ratio-options" data-ratio-group="takeRatio"></div>
+                        <div class="self-intro-ratio-row">
+                            <div class="self-intro-ratio-select">
+                                <p class="self-intro-help">GIVE</p>
+                                <select class="self-intro-select self-intro-ratio-control" data-ratio-select="giveRatio" aria-label="깁 비율">
+                                    <option value="">선택</option>
+                                </select>
+                            </div>
+                            <div class="self-intro-ratio-select">
+                                <p class="self-intro-help">TAKE</p>
+                                <select class="self-intro-select self-intro-ratio-control" data-ratio-select="takeRatio" aria-label="텍 비율">
+                                    <option value="">선택</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <div class="self-intro-field full">
@@ -9065,31 +9098,25 @@
         }
 
         function renderSelfIntroRatioOptions() {
-            document.querySelectorAll('[data-ratio-group]').forEach(group => {
-                const key = group.dataset.ratioGroup;
-                group.replaceChildren();
+            document.querySelectorAll('[data-ratio-select]').forEach(select => {
+                const key = select.dataset.ratioSelect;
+                select.replaceChildren(new Option('선택', ''));
                 for (let value = 0; value <= 100; value += 10) {
-                    const button = document.createElement('button');
-                    button.type = 'button';
-                    button.className = 'ratio-option';
-                    button.textContent = String(value);
-                    button.dataset.value = String(value);
-                    button.addEventListener('click', () => {
-                        selfIntroRatioState[key] = value;
-                        updateSelfIntroRatioButtons();
-                    });
-                    group.appendChild(button);
+                    select.appendChild(new Option(`${value}%`, String(value)));
                 }
+                select.addEventListener('change', () => {
+                    selfIntroRatioState[key] = select.value === '' ? null : Number(select.value);
+                });
             });
             updateSelfIntroRatioButtons();
         }
 
         function updateSelfIntroRatioButtons() {
-            document.querySelectorAll('[data-ratio-group]').forEach(group => {
-                const key = group.dataset.ratioGroup;
-                group.querySelectorAll('.ratio-option').forEach(button => {
-                    button.classList.toggle('active', Number(button.dataset.value) === Number(selfIntroRatioState[key]));
-                });
+            document.querySelectorAll('[data-ratio-select]').forEach(select => {
+                const key = select.dataset.ratioSelect;
+                select.value = selfIntroRatioState[key] === null || selfIntroRatioState[key] === undefined
+                    ? ''
+                    : String(selfIntroRatioState[key]);
             });
         }
 
