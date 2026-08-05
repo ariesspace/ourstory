@@ -5440,44 +5440,6 @@
             <div id="latest-dashboard" class="hidden"></div>
         </section>
 
-        <section id="view-anonymous" class="w-full max-w-[960px] mx-auto view-hidden fade-in bg-white/75 sm:border-x border-[var(--border-light)] sm:shadow-[0_0_40px_rgba(42,40,37,0.03)]">
-            <div class="px-4 sm:px-8 md:px-10 py-5 sm:py-8 border-b border-[var(--border-light)] bg-white/80 flex items-start sm:items-end justify-between gap-4">
-                <div>
-                    <div class="flex items-center gap-3 text-[var(--accent-red)]">
-                        <i class="ph ph-chat-circle-dots text-lg sm:text-xl"></i>
-                        <span class="text-[0.62rem] sm:text-[0.65rem] tracking-[0.24em] sm:tracking-[0.3em] uppercase font-bold">Journal · Records</span>
-                    </div>
-                    <h1 class="mt-3 sm:mt-4 text-3xl sm:text-4xl font-serif-en tracking-tight">Anonymous Talk</h1>
-                    <p class="mt-2 sm:mt-3 text-xs sm:text-sm opacity-55 font-serif-ko leading-relaxed">이름 없이 가볍게 이야기하는 회원 전용 공간입니다.</p>
-                </div>
-                <button type="button" id="anonymous-refresh" class="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center text-black/45 hover:text-[var(--accent-red)] hover:bg-black/[0.03] transition-colors" aria-label="익명 게시판 새로고침">
-                    <i class="ph ph-arrow-clockwise"></i>
-                </button>
-            </div>
-
-            <p id="anonymous-status" class="py-14 text-center text-sm opacity-45">익명 대화를 불러오는 중입니다.</p>
-            <div id="anonymous-list" class="min-h-[46vh] sm:min-h-[52vh] max-h-[54vh] sm:max-h-[62vh] overflow-y-auto overflow-x-hidden px-4 sm:px-8 py-5 sm:py-8 flex flex-col gap-4 sm:gap-6 bg-white/35" aria-live="polite"></div>
-
-            <form id="anonymous-form" class="p-4 sm:p-7 border-t border-[var(--border-light)] bg-white">
-                <label for="anonymous-input" class="sr-only">익명 글 작성</label>
-                <div class="relative rounded-xl sm:rounded-2xl border border-[var(--border-light)] bg-[var(--bg-cream)]/70 focus-within:border-[var(--text-dark)] focus-within:ring-1 focus-within:ring-[var(--text-dark)] transition-all overflow-hidden">
-                    <textarea id="anonymous-input" maxlength="500" rows="2" class="w-full bg-transparent resize-none px-4 sm:px-5 py-3 sm:py-4 pb-12 sm:pb-14 text-sm sm:text-base leading-relaxed font-serif-ko focus:outline-none" placeholder="이름 없이 편하게 남겨보세요..." required></textarea>
-                    <div class="absolute bottom-0 left-0 w-full px-4 sm:px-5 py-2 sm:py-3 flex items-center justify-between bg-gradient-to-t from-[var(--bg-cream)] via-[var(--bg-cream)]/95 to-transparent">
-                        <div>
-                            <span id="anonymous-length" class="text-xs opacity-45">0 / 500</span>
-                            <span class="hidden sm:inline ml-3 text-[0.65rem] opacity-35">Ctrl + Enter로 전송</span>
-                        </div>
-                        <button type="submit" id="anonymous-submit" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[var(--text-dark)] text-white flex items-center justify-center hover:bg-[var(--accent-red)] hover:scale-105 transition-all shadow-md" aria-label="익명 글 등록">
-                            <i class="ph ph-paper-plane-tilt text-base"></i>
-                        </button>
-                    </div>
-                </div>
-                <p id="anonymous-error" class="hidden mt-4 text-sm text-[var(--accent-red)]"></p>
-            </form>
-
-            <p class="px-4 sm:px-8 pb-5 sm:pb-6 text-[0.7rem] sm:text-xs leading-relaxed opacity-35 font-serif-ko bg-white">화면에는 작성자가 표시되지 않습니다. 안전한 운영과 본인 글 관리를 위해 계정 연결 정보는 서버에만 보관됩니다.</p>
-        </section>
-
         <section id="view-notice" class="w-full max-w-4xl mx-auto view-hidden fade-in py-8 md:py-12">
             <div class="notice-doc-page-header">
                 <h2>Notice & Rules</h2>
@@ -6425,7 +6387,6 @@
 
         function loadViewData(targetId) {
             if (targetId === 'view-introduce') loadIntroductions();
-            if (targetId === 'view-anonymous') loadAnonymousTalk();
             if (targetId === 'view-membership-archive') loadMembershipApplications();
             if (targetId === 'view-questionnaires') loadQuestionnaires();
             if (targetId === 'view-read') loadLatestDashboard();
@@ -6462,12 +6423,6 @@
             }
             if (targetId === 'view-timeline' && !siteUser) {
                 showToast('타임라인은 회원 로그인 후 이용할 수 있습니다.', false);
-                localStorage.setItem(pendingAuthViewKey, targetId);
-                openLoginModal();
-                return null;
-            }
-            if (targetId === 'view-anonymous' && !siteUser) {
-                showToast('익명 게시판은 회원 로그인 후 이용할 수 있습니다.', false);
                 localStorage.setItem(pendingAuthViewKey, targetId);
                 openLoginModal();
                 return null;
@@ -6661,7 +6616,6 @@
                 myTimelineSection.classList.add('hidden');
                 peopleList.innerHTML = '';
                 memberTimelineList.innerHTML = '';
-                anonymousList.innerHTML = '';
                 passwordReminderShownFor = null;
                 closeInitialPasswordReminder();
             } else if (user.mustChangePassword) {
@@ -6856,14 +6810,6 @@
         const form = document.getElementById('story-form');
         const latestDashboard = document.getElementById('latest-dashboard');
         const submitBtn = document.getElementById('submit-btn');
-        const anonymousForm = document.getElementById('anonymous-form');
-        const anonymousInput = document.getElementById('anonymous-input');
-        const anonymousLength = document.getElementById('anonymous-length');
-        const anonymousSubmit = document.getElementById('anonymous-submit');
-        const anonymousError = document.getElementById('anonymous-error');
-        const anonymousStatus = document.getElementById('anonymous-status');
-        const anonymousList = document.getElementById('anonymous-list');
-        const anonymousRefresh = document.getElementById('anonymous-refresh');
         const calendarGrid = document.getElementById('calendar-grid');
         const calendarMonthYear = document.getElementById('calendar-month-year');
         const selectedDateDisplay = document.getElementById('selected-date-display');
@@ -7460,166 +7406,6 @@
 
         introRefreshBtn?.addEventListener('click', loadIntroductions);
         introSearch?.addEventListener('input', filterIntroductions);
-
-        function anonymousDate(value) {
-            if (!value) return '';
-            const date = new Date(value.includes('T') ? value : `${value.replace(' ', 'T')}Z`);
-            if (Number.isNaN(date.getTime())) return value;
-            return date.toLocaleString('ko-KR', {
-                month: 'numeric',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
-
-        function anonymousDay(value) {
-            if (!value) return '';
-            const date = new Date(value.includes('T') ? value : `${value.replace(' ', 'T')}Z`);
-            if (Number.isNaN(date.getTime())) return '';
-            return `${date.getFullYear()}. ${String(date.getMonth() + 1).padStart(2, '0')}. ${String(date.getDate()).padStart(2, '0')}`;
-        }
-
-        function anonymousTime(value) {
-            if (!value) return '';
-            const date = new Date(value.includes('T') ? value : `${value.replace(' ', 'T')}Z`);
-            if (Number.isNaN(date.getTime())) return anonymousDate(value);
-            return date.toLocaleTimeString('ko-KR', {
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
-
-        function renderAnonymousTalk(items) {
-            anonymousList.replaceChildren();
-            anonymousStatus.classList.add('hidden');
-            if (!items.length) {
-                const empty = document.createElement('div');
-                empty.className = 'py-24 text-center';
-                empty.innerHTML = '<i class="ph ph-chat-circle-dots text-4xl opacity-20"></i><p class="mt-4 text-sm opacity-45 font-serif-ko">아직 남겨진 이야기가 없습니다.</p>';
-                anonymousList.appendChild(empty);
-                return;
-            }
-
-            let currentDay = '';
-            items.forEach(item => {
-                const day = anonymousDay(item.createdAt);
-                if (day && day !== currentDay) {
-                    currentDay = day;
-                    const separator = document.createElement('div');
-                    separator.className = 'flex items-center justify-center gap-3 sm:gap-5 py-2 sm:py-3 text-[0.65rem] sm:text-[0.7rem] tracking-[0.14em] sm:tracking-[0.18em] text-black/30';
-                    separator.innerHTML = `<span class="h-px w-8 sm:w-14 bg-[var(--border-light)]"></span><time>${day}</time><span class="h-px w-8 sm:w-14 bg-[var(--border-light)]"></span>`;
-                    anonymousList.appendChild(separator);
-                }
-
-                const row = document.createElement('article');
-                row.className = `group flex ${item.isOwn ? 'justify-end' : 'justify-start'}`;
-                const wrap = document.createElement('div');
-                wrap.className = `flex flex-col max-w-[82%] sm:max-w-[76%] ${item.isOwn ? 'items-end' : 'items-start'}`;
-
-                const bubble = document.createElement('div');
-                bubble.className = item.isOwn
-                    ? 'relative bg-[var(--text-dark)] text-white px-4 sm:px-5 py-3 sm:py-3.5 rounded-2xl rounded-tr-sm shadow-md'
-                    : 'relative bg-white border border-[var(--border-light)] text-[var(--text-dark)] px-4 sm:px-5 py-3 sm:py-3.5 rounded-2xl rounded-tl-sm shadow-sm';
-                const content = document.createElement('p');
-                content.className = 'text-[0.9rem] sm:text-[0.95rem] leading-relaxed whitespace-pre-wrap break-words';
-                content.textContent = item.content;
-                bubble.appendChild(content);
-
-                if (item.canDelete) {
-                    const remove = document.createElement('button');
-                    remove.type = 'button';
-                    remove.className = 'absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white text-[var(--text-dark)] border border-[var(--border-light)] flex items-center justify-center shadow-sm opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity hover:text-[var(--accent-red)] hover:border-[var(--accent-red)]';
-                    remove.setAttribute('aria-label', '익명 글 삭제');
-                    remove.innerHTML = '<i class="ph ph-x text-xs"></i>';
-                    remove.addEventListener('click', () => deleteAnonymousPost(item.id));
-                    bubble.appendChild(remove);
-                }
-
-                const date = document.createElement('time');
-                date.className = `mt-1.5 px-1 text-[0.65rem] text-black/35 ${item.isOwn ? 'text-right' : 'text-left'}`;
-                date.dateTime = item.createdAt;
-                date.textContent = anonymousTime(item.createdAt);
-
-                wrap.append(bubble, date);
-                row.appendChild(wrap);
-                anonymousList.appendChild(row);
-            });
-            requestAnimationFrame(() => { anonymousList.scrollTop = anonymousList.scrollHeight; });
-        }
-
-        async function loadAnonymousTalk() {
-            if (!siteUser || !anonymousList) return;
-            anonymousStatus.textContent = '익명 대화를 불러오는 중입니다.';
-            anonymousStatus.classList.remove('hidden');
-            try {
-                const response = await fetch('/api/anonymous-talk.php', { headers: { Accept: 'application/json' }, cache: 'no-store', credentials: 'same-origin' });
-                const payload = await response.json();
-                if (!response.ok) throw new Error(payload.error || '익명 대화를 불러오지 못했습니다.');
-                renderAnonymousTalk(Array.isArray(payload.items) ? payload.items : []);
-            } catch (error) {
-                anonymousList.replaceChildren();
-                anonymousStatus.textContent = error.message;
-                anonymousStatus.classList.remove('hidden');
-            }
-        }
-
-        async function deleteAnonymousPost(id) {
-            if (!window.confirm('이 익명 글을 삭제하시겠습니까?')) return;
-            const body = new FormData();
-            body.append('action', 'delete');
-            body.append('id', String(id));
-            try {
-                const response = await fetch('/api/anonymous-talk.php', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken || '' }, credentials: 'same-origin', body });
-                const payload = await response.json();
-                if (!response.ok) throw new Error(payload.error || '익명 글을 삭제하지 못했습니다.');
-                await loadAnonymousTalk();
-                showToast('익명 글을 삭제했습니다.', true);
-            } catch (error) {
-                showToast(error.message, false);
-            }
-        }
-
-        anonymousInput?.addEventListener('input', () => {
-            anonymousLength.textContent = `${anonymousInput.value.length} / 500`;
-        });
-        anonymousInput?.addEventListener('keydown', event => {
-            if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
-                event.preventDefault();
-                anonymousForm.requestSubmit();
-            }
-        });
-        anonymousRefresh?.addEventListener('click', loadAnonymousTalk);
-        anonymousForm?.addEventListener('submit', async event => {
-            event.preventDefault();
-            anonymousError.classList.add('hidden');
-            anonymousSubmit.disabled = true;
-            try {
-                if (!siteUser || !csrfToken) {
-                    await loadSiteSession();
-                }
-                if (!siteUser || !csrfToken) {
-                    throw new Error('로그인 세션이 만료되었습니다. 다시 로그인해 주세요.');
-                }
-                const body = new FormData();
-                body.append('action', 'create');
-                body.append('content', anonymousInput.value.trim());
-                const response = await fetch('/api/anonymous-talk.php', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken || '' }, credentials: 'same-origin', body });
-                const payload = await response.json();
-                if (response.status === 401) {
-                    await loadSiteSession();
-                }
-                if (!response.ok) throw new Error(payload.error || '익명 글을 등록하지 못했습니다.');
-                anonymousForm.reset();
-                anonymousLength.textContent = '0 / 500';
-                await loadAnonymousTalk();
-            } catch (error) {
-                anonymousError.textContent = error.message;
-                anonymousError.classList.remove('hidden');
-            } finally {
-                anonymousSubmit.disabled = false;
-            }
-        });
 
         function membershipFieldUrls(field) {
             const urls = [];
@@ -11216,30 +11002,6 @@
             } catch (error) {
                 console.error("인증 오류:", error);
             }
-        }
-
-        function getSampleStories() {
-            const now = new Date();
-            return [
-                {
-                    id: 'sample-1',
-                    title: '비 내리는 날의 카페, 그리고 기록',
-                    content: '따뜻한 아메리카노 한 잔과 방금 구운 시나몬 롤. 창밖으로 떨어지는 빗소리를 들으며 책을 읽는 시간은 언제나 완벽한 평화를 가져다준다.',
-                    createdAt: { toMillis: () => now.getTime() - 86400000 * 2 }
-                },
-                {
-                    id: 'sample-2',
-                    title: '오후 세 시의 조각',
-                    content: '길을 걷다 우연히 마주친 작은 소품숍에서 오래된 필름 카메라를 발견했다. 뷰파인더 너머로 보이는 세상은 조금 더 느리고 부드럽게 흘러가는 것 같았다.',
-                    createdAt: { toMillis: () => now.getTime() - 86400000 * 5 }
-                },
-                {
-                    id: 'sample-3',
-                    title: '새로운 프로젝트의 시작',
-                    content: '우리만의 공간을 만드는 일. 색상을 고르고 폰트를 맞추며 빈칸을 채우는 과정은 어렵지만 꽤 즐겁다. 좋은 결과물이 나오기를 기대하며.',
-                    createdAt: { toMillis: () => now.getTime() - 86400000 * 10 }
-                }
-            ];
         }
 
         function renderGalleryPagination(totalPages) {
