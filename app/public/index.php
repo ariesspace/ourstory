@@ -1906,37 +1906,68 @@
             transform: translateX(-0.18rem);
             letter-spacing: 0.14em;
         }
+        #my-page-nav-link span {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        #my-page-nav-link span::after {
+            content: "";
+            width: 0.38rem;
+            height: 0.38rem;
+            border-right: 1px solid currentColor;
+            border-bottom: 1px solid currentColor;
+            transform: translateY(-0.08rem) rotate(45deg);
+            opacity: 0.55;
+            transition: transform 0.32s ease, opacity 0.22s ease;
+        }
+        #my-page-nav-link[aria-expanded="true"] span {
+            color: var(--accent-color);
+        }
+        #my-page-nav-link[aria-expanded="true"] span::after {
+            transform: translateY(0.08rem) rotate(225deg);
+            opacity: 0.95;
+        }
         .index-menu-submenu {
-            display: grid;
-            grid-template-rows: 0fr;
-            transition: grid-template-rows 0.42s cubic-bezier(0.77, 0, 0.175, 1);
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(-0.35rem);
+            transition:
+                max-height 0.46s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.28s ease,
+                transform 0.36s ease;
         }
         .index-menu-submenu-inner {
-            overflow: hidden;
             display: flex;
             flex-direction: column;
-            gap: 0;
-            padding-left: 4.35rem;
+            gap: 0.08rem;
+            margin: 0.28rem 0 0.12rem 4.35rem;
+            padding: 0.18rem 0 0.18rem 0.85rem;
+            border-left: 1px solid rgba(42, 59, 50, 0.18);
         }
         .index-menu-submenu.open {
-            grid-template-rows: 1fr;
+            max-height: 16rem;
+            opacity: 1;
+            transform: translateY(0);
         }
         .index-menu-subitem {
             display: flex;
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            padding: 0.56rem 0 0.56rem 0.9rem;
-            border-left: 1px solid var(--border-light);
+            padding: 0.46rem 0.35rem 0.46rem 0.55rem;
+            border-left: 0;
             font-family: 'Noto Sans KR', sans-serif;
             font-size: 0.78rem;
             font-weight: 500;
             letter-spacing: 0.02em;
             color: rgba(17, 17, 17, 0.56);
             text-align: left;
+            border-radius: 2px;
             opacity: 0;
             transform: translateY(-0.35rem);
-            transition: opacity 0.28s ease, transform 0.28s ease, color 0.22s ease, padding-left 0.22s ease;
+            transition: opacity 0.28s ease, transform 0.28s ease, color 0.22s ease, background 0.22s ease, padding-left 0.22s ease;
         }
         .index-menu-submenu.open .index-menu-subitem {
             opacity: 1;
@@ -1948,8 +1979,9 @@
         .index-menu-submenu.open .index-menu-subitem:nth-child(4) { transition-delay: 0.16s; }
         .index-menu-subitem:hover {
             color: var(--accent-color);
-            padding-left: 1.15rem;
-            padding-right: 0;
+            background: rgba(42, 59, 50, 0.045);
+            padding-left: 0.78rem;
+            padding-right: 0.35rem;
             letter-spacing: 0.02em;
         }
         .index-menu-subitem:hover span,
@@ -4192,8 +4224,10 @@
             .index-menu-submenu-inner {
                 display: flex !important;
                 flex-direction: column !important;
-                gap: 0 !important;
-                padding: 0.24rem 0 0.24rem 2.98rem !important;
+                gap: 0.04rem !important;
+                margin: 0.2rem 0 0.1rem 2.98rem !important;
+                padding: 0.16rem 0 0.16rem 0.68rem !important;
+                border-left: 1px solid rgba(42, 59, 50, 0.18) !important;
             }
             .index-menu-subitem {
                 display: flex !important;
@@ -4201,17 +4235,16 @@
                 justify-content: space-between !important;
                 min-width: 0 !important;
                 gap: 0.55rem !important;
-                padding: 0.4rem 0 0.4rem 0.62rem !important;
+                padding: 0.38rem 0.28rem 0.38rem 0.48rem !important;
                 border: 0 !important;
-                border-left: 1px solid var(--border-light) !important;
                 background: transparent !important;
                 font-size: 0.68rem !important;
                 letter-spacing: 0.01em !important;
                 line-height: 1.25 !important;
             }
             .index-menu-subitem:hover {
-                padding-left: 0.78rem !important;
-                padding-right: 0 !important;
+                padding-left: 0.62rem !important;
+                padding-right: 0.28rem !important;
             }
             .index-menu-subitem span {
                 min-width: 0 !important;
