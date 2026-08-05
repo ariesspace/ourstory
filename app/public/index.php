@@ -1217,7 +1217,7 @@
             color: var(--accent-red);
         }
         .tweet-like.liked {
-            color: var(--accent-red);
+            color: #d62828;
         }
         .tweet-like {
             min-width: 1.35rem;
@@ -1235,6 +1235,9 @@
             line-height: 1;
             transition: transform 0.22s ease, color 0.22s ease;
         }
+        .tweet-like.liked .tweet-like-symbol {
+            color: #d62828;
+        }
         .tweet-like:hover .tweet-like-symbol {
             transform: scale(1.18);
         }
@@ -1248,7 +1251,7 @@
             pointer-events: none;
         }
         .heart-burst span {
-            color: var(--accent-red);
+            color: #d62828;
             font-size: clamp(4.5rem, 14vw, 9rem);
             font-family: Georgia, 'Times New Roman', serif;
             line-height: 1;
@@ -3739,7 +3742,7 @@
         .bar-card {
             position: relative;
             display: grid;
-            grid-template-columns: minmax(15rem, 0.95fr) 2.2rem minmax(0, 1.9fr);
+            grid-template-columns: minmax(15rem, 0.95fr) minmax(0, 1.9fr);
             gap: 0;
             border: 1px solid var(--border-light);
             background: rgba(255, 255, 255, 0.78);
@@ -3765,30 +3768,7 @@
             gap: 1.1rem;
             min-width: 0;
             padding: clamp(1.3rem, 3vw, 2.25rem);
-        }
-        .bar-divider {
-            position: relative;
-            border-left: 1px dashed rgba(42, 59, 50, 0.24);
-            border-right: 1px dashed rgba(42, 59, 50, 0.08);
-        }
-        .bar-divider::before,
-        .bar-divider::after {
-            content: '';
-            position: absolute;
-            left: 50%;
-            width: 1.3rem;
-            height: 1.3rem;
-            border: 1px solid var(--border-light);
-            border-radius: 999px;
-            background: var(--bg-color);
-            transform: translateX(-50%);
-            box-shadow: inset 0 2px 5px rgba(17, 17, 17, 0.035);
-        }
-        .bar-divider::before {
-            top: -0.66rem;
-        }
-        .bar-divider::after {
-            bottom: -0.66rem;
+            border-right: 1px solid rgba(42, 59, 50, 0.12);
         }
         .bar-number {
             display: inline-flex;
@@ -4175,10 +4155,8 @@
                 justify-content: flex-start;
                 gap: 0.9rem;
                 padding: 1.2rem 1.15rem 0.95rem;
+                border-right: 0;
                 border-bottom: 1px solid rgba(17, 17, 17, 0.08);
-            }
-            .bar-divider {
-                display: none;
             }
             .bar-number {
                 padding: 0.24rem 0.48rem;
@@ -7950,10 +7928,6 @@
                 metaTop.append(number, name, tags);
                 meta.append(metaTop, location);
 
-                const divider = document.createElement('div');
-                divider.className = 'bar-divider';
-                divider.setAttribute('aria-hidden', 'true');
-
                 const desc = document.createElement('div');
                 desc.className = 'bar-desc';
                 const description = document.createElement('p');
@@ -8005,7 +7979,7 @@
                 }
                 desc.append(description, descMeta);
                 if (item.canEdit) desc.appendChild(manage);
-                card.append(meta, divider, desc);
+                card.append(meta, desc);
                 smBarList.appendChild(card);
             });
         }
