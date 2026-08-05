@@ -3734,22 +3734,25 @@
         .bar-list {
             display: flex;
             flex-direction: column;
-            gap: 1.65rem;
+            gap: 1.35rem;
         }
         .bar-card {
             position: relative;
             display: grid;
-            grid-template-columns: minmax(14rem, 0.9fr) minmax(0, 2fr);
-            gap: clamp(1.6rem, 4vw, 2.7rem);
+            grid-template-columns: minmax(15rem, 0.95fr) 2.2rem minmax(0, 1.9fr);
+            gap: 0;
             border: 1px solid var(--border-light);
-            background: rgba(255, 255, 255, 0.62);
-            padding: clamp(1.35rem, 3vw, 2.35rem);
+            background: rgba(255, 255, 255, 0.78);
             text-align: left;
-            transition: border-color 0.35s ease, background-color 0.35s ease, transform 0.35s ease;
+            min-height: 16rem;
+            overflow: hidden;
+            box-shadow: 0 14px 34px rgba(17, 17, 17, 0.025);
+            transition: border-color 0.35s ease, background-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
         }
         .bar-card:hover {
             border-color: var(--text-dark);
-            background: rgba(255, 255, 255, 0.86);
+            background: rgba(255, 255, 255, 0.94);
+            box-shadow: 0 22px 48px rgba(17, 17, 17, 0.055);
             transform: translateY(-2px);
         }
         .bar-card.is-hidden {
@@ -3758,22 +3761,60 @@
         .bar-meta {
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
-            border-right: 1px solid var(--border-light);
-            padding-right: clamp(1rem, 3vw, 2rem);
+            justify-content: space-between;
+            gap: 1.1rem;
+            min-width: 0;
+            padding: clamp(1.3rem, 3vw, 2.25rem);
+        }
+        .bar-divider {
+            position: relative;
+            border-left: 1px dashed rgba(42, 59, 50, 0.24);
+            border-right: 1px dashed rgba(42, 59, 50, 0.08);
+        }
+        .bar-divider::before,
+        .bar-divider::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            width: 1.3rem;
+            height: 1.3rem;
+            border: 1px solid var(--border-light);
+            border-radius: 999px;
+            background: var(--bg-color);
+            transform: translateX(-50%);
+            box-shadow: inset 0 2px 5px rgba(17, 17, 17, 0.035);
+        }
+        .bar-divider::before {
+            top: -0.66rem;
+        }
+        .bar-divider::after {
+            bottom: -0.66rem;
+        }
+        .bar-number {
+            display: inline-flex;
+            width: fit-content;
+            border: 1px solid rgba(42, 59, 50, 0.18);
+            padding: 0.32rem 0.55rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            color: rgba(42, 59, 50, 0.62);
+            text-transform: uppercase;
         }
         .bar-name {
             font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(2rem, 4vw, 2.7rem);
+            font-size: clamp(2.2rem, 4vw, 3.25rem);
             font-style: italic;
             font-weight: 400;
             line-height: 0.95;
             letter-spacing: -0.035em;
+            overflow-wrap: anywhere;
         }
         .bar-tags {
             font-family: 'Space Mono', monospace;
-            font-size: 0.66rem;
-            color: var(--accent-red);
+            font-size: 0.62rem;
+            color: var(--accent-color);
             letter-spacing: 0.12em;
             line-height: 1.55;
             word-break: keep-all;
@@ -3790,12 +3831,18 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            gap: 1rem;
+            gap: 1.15rem;
             font-size: 0.95rem;
             font-weight: 300;
             line-height: 1.9;
             color: rgba(17, 17, 17, 0.7);
             word-break: keep-all;
+            padding: clamp(1.3rem, 3vw, 2.25rem);
+        }
+        .bar-desc-text {
+            max-height: 7.5rem;
+            overflow: auto;
+            padding-right: 0.35rem;
         }
         .bar-desc-meta {
             display: flex;
@@ -3810,6 +3857,7 @@
             display: flex;
             gap: 0.35rem;
             margin-top: 0.35rem;
+            justify-content: flex-end;
         }
         .bar-action-btn {
             width: 2.25rem;
@@ -4095,12 +4143,42 @@
         @media (max-width: 860px) {
             .bar-card {
                 grid-template-columns: 1fr;
+                min-height: 0;
             }
             .bar-meta {
+                padding: 1.35rem 1.25rem 1.1rem;
+            }
+            .bar-divider {
+                height: 1.5rem;
+                border-left: 0;
                 border-right: 0;
-                border-bottom: 1px solid var(--border-light);
-                padding-right: 0;
-                padding-bottom: 1.1rem;
+                border-top: 1px dashed rgba(42, 59, 50, 0.22);
+                border-bottom: 1px dashed rgba(42, 59, 50, 0.06);
+            }
+            .bar-divider::before,
+            .bar-divider::after {
+                top: 50%;
+                bottom: auto;
+                transform: translateY(-50%);
+            }
+            .bar-divider::before {
+                left: -0.65rem;
+            }
+            .bar-divider::after {
+                left: auto;
+                right: -0.65rem;
+            }
+            .bar-desc {
+                padding: 1.1rem 1.25rem 1.25rem;
+                font-size: 0.9rem;
+                line-height: 1.75;
+            }
+            .bar-desc-text {
+                max-height: none;
+                overflow: visible;
+            }
+            .bar-name {
+                font-size: clamp(2rem, 12vw, 2.75rem);
             }
             .gallery-archive-head {
                 grid-template-columns: 1fr;
@@ -7806,8 +7884,10 @@
                 const meta = document.createElement('div');
                 meta.className = 'bar-meta';
                 const number = document.createElement('span');
-                number.className = 'font-mono text-[0.66rem] tracking-[0.22em] uppercase opacity-40';
+                number.className = 'bar-number';
                 number.textContent = `Place ${String(index + 1).padStart(2, '0')}`;
+                const metaTop = document.createElement('div');
+                metaTop.className = 'space-y-4';
                 const name = document.createElement('h3');
                 name.className = 'bar-name';
                 name.textContent = item.name;
@@ -7821,11 +7901,17 @@
                 const location = document.createElement('p');
                 location.className = 'bar-location';
                 location.textContent = item.address || item.region || 'Location not provided';
-                meta.append(number, name, tags, location);
+                metaTop.append(number, name, tags);
+                meta.append(metaTop, location);
+
+                const divider = document.createElement('div');
+                divider.className = 'bar-divider';
+                divider.setAttribute('aria-hidden', 'true');
 
                 const desc = document.createElement('div');
                 desc.className = 'bar-desc';
                 const description = document.createElement('p');
+                description.className = 'bar-desc-text';
                 description.textContent = item.description || '등록된 상세 설명이 없습니다.';
                 const descMeta = document.createElement('div');
                 descMeta.className = 'bar-desc-meta';
@@ -7873,7 +7959,7 @@
                 }
                 desc.append(description, descMeta);
                 if (item.canEdit) desc.appendChild(manage);
-                card.append(meta, desc);
+                card.append(meta, divider, desc);
                 smBarList.appendChild(card);
             });
         }
