@@ -4923,6 +4923,97 @@
             padding-top: 0 !important;
             padding-bottom: 2.2rem !important;
         }
+
+        /* Keep the mobile cover as one compact editorial composition. */
+        @media (max-width: 767px) {
+            #view-read .gallery-home {
+                display: grid !important;
+                grid-template-columns: 1fr !important;
+                gap: 1.35rem !important;
+                min-height: auto !important;
+                padding: 1rem 0 2.25rem !important;
+            }
+            #view-read .gallery-home-art {
+                order: 1 !important;
+                width: min(100%, 28rem) !important;
+                margin: 0 auto !important;
+                overflow: hidden;
+                background: #f4f4f2;
+            }
+            #view-read .gallery-home-image {
+                display: block;
+                width: 100% !important;
+                max-width: none !important;
+                height: min(58svh, 35rem) !important;
+                aspect-ratio: auto !important;
+                object-fit: cover !important;
+                object-position: center !important;
+                margin: 0 !important;
+            }
+            #view-read .gallery-home-title {
+                position: absolute !important;
+                left: 1rem !important;
+                right: 1rem !important;
+                bottom: 0.8rem !important;
+                width: auto !important;
+                max-width: none !important;
+                margin: 0 !important;
+                transform: none !important;
+                color: #fff !important;
+                mix-blend-mode: difference !important;
+                font-size: clamp(2.4rem, 12vw, 4rem) !important;
+                line-height: 0.86 !important;
+                letter-spacing: -0.035em !important;
+                text-align: left !important;
+                white-space: nowrap !important;
+            }
+            #view-read .gallery-home-detail {
+                order: 2 !important;
+                display: grid !important;
+                grid-template-columns: minmax(0, 1.7fr) minmax(6.5rem, 0.8fr) !important;
+                gap: 1.25rem !important;
+                width: min(100%, 28rem) !important;
+                margin: 0 auto !important;
+            }
+            #view-read .gallery-home-detail > div {
+                min-width: 0;
+            }
+            #view-read .gallery-home-kicker {
+                padding-bottom: 0.42rem !important;
+                font-size: 0.56rem !important;
+                letter-spacing: 0.17em !important;
+            }
+            #view-read .gallery-home-copy {
+                margin-top: 0.7rem !important;
+                font-size: 0.76rem !important;
+                line-height: 1.72 !important;
+            }
+            #view-read .gallery-home-action {
+                order: 3 !important;
+                display: block !important;
+                width: min(100%, 28rem) !important;
+                min-height: 0 !important;
+                margin: 0 auto !important;
+                text-align: left !important;
+            }
+            #view-read .gallery-home-date {
+                display: none !important;
+            }
+            #view-read .gallery-home-action > div:last-child {
+                display: grid !important;
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 0.65rem !important;
+                width: 100% !important;
+            }
+            #view-read .gallery-home-button {
+                width: 100% !important;
+                min-width: 0 !important;
+                justify-content: space-between !important;
+                padding: 0.78rem 0.85rem !important;
+                font-size: 0.58rem !important;
+                letter-spacing: 0.12em !important;
+            }
+        }
     </style>
 </head>
 <body class="loading-lock">
