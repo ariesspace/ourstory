@@ -3836,22 +3836,24 @@
         .bar-carousel-prev { left: -3.35rem; }
         .bar-carousel-next { right: -3.35rem; }
         .bar-card {
+            --ticket-rgb: 122, 139, 126;
+            --ticket-accent: #52675b;
+            --ticket-paper: #f5f8f5;
             position: relative;
             min-width: 0;
             min-height: 37rem;
             display: flex;
             flex-direction: column;
-            border: 1px solid rgba(42, 59, 50, 0.2);
+            border: 1px solid rgba(120, 128, 125, 0.38);
             background:
-                repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.16) 0 1px, transparent 1px 3px),
-                radial-gradient(circle at 12% 10%, rgba(233, 214, 229, 0.48), transparent 31%),
-                radial-gradient(circle at 90% 28%, rgba(247, 230, 174, 0.34), transparent 33%),
-                radial-gradient(circle at 24% 88%, rgba(207, 225, 239, 0.32), transparent 34%),
-                linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(241, 246, 242, 0.9));
+                repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.2) 0 1px, transparent 1px 3px),
+                radial-gradient(circle at 8% 7%, rgba(var(--ticket-rgb), 0.25), transparent 34%),
+                radial-gradient(circle at 92% 34%, rgba(255, 255, 255, 0.82), transparent 38%),
+                linear-gradient(145deg, rgba(255, 255, 255, 0.98), var(--ticket-paper));
             text-align: left;
             overflow: hidden;
             scroll-snap-align: start;
-            box-shadow: 0 15px 34px rgba(42, 59, 50, 0.06);
+            box-shadow: 0 18px 36px rgba(38, 48, 44, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.72) inset;
             transition: border-color 0.35s ease, background-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
             -webkit-mask:
                 radial-gradient(circle at 50% 0, transparent 4px, #000 4.8px) 0 0 / 13px 51% repeat-x,
@@ -3859,6 +3861,26 @@
             mask:
                 radial-gradient(circle at 50% 0, transparent 4px, #000 4.8px) 0 0 / 13px 51% repeat-x,
                 radial-gradient(circle at 50% 100%, transparent 4px, #000 4.8px) 0 100% / 13px 51% repeat-x;
+        }
+        .bar-card.bar-ticket-tone-1 {
+            --ticket-rgb: 183, 129, 145;
+            --ticket-accent: #885866;
+            --ticket-paper: #fbf3f5;
+        }
+        .bar-card.bar-ticket-tone-2 {
+            --ticket-rgb: 112, 150, 172;
+            --ticket-accent: #4f7185;
+            --ticket-paper: #f1f7fa;
+        }
+        .bar-card.bar-ticket-tone-3 {
+            --ticket-rgb: 205, 168, 91;
+            --ticket-accent: #806735;
+            --ticket-paper: #fbf8ed;
+        }
+        .bar-card.bar-ticket-tone-4 {
+            --ticket-rgb: 114, 145, 123;
+            --ticket-accent: #4f6a57;
+            --ticket-paper: #f1f7f2;
         }
         .bar-card::before,
         .bar-card::after {
@@ -3887,8 +3909,48 @@
             position: absolute;
             inset: 0.82rem;
             z-index: 1;
-            border: 1px solid rgba(42, 59, 50, 0.16);
+            border: 1px solid rgba(128, 136, 133, 0.32);
             pointer-events: none;
+        }
+        .bar-ticket-foil {
+            position: absolute;
+            top: calc(40% - 2px);
+            left: 0.85rem;
+            right: 0.85rem;
+            z-index: 4;
+            height: 4px;
+            background: linear-gradient(90deg,
+                #929b98 0%, #f7f8f7 13%, #c5d4da 25%, #f1cedb 38%,
+                #fbefb8 50%, #c9e3da 63%, #d5d1e8 76%, #fff 88%, #89928f 100%);
+            background-size: 160% 100%;
+            background-position: 0 50%;
+            box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9), 0 -1px 0 rgba(92, 100, 97, 0.2);
+            opacity: 0.72;
+            transition: background-position 0.8s ease, opacity 0.35s ease;
+            pointer-events: none;
+        }
+        .bar-ticket-hologram {
+            position: absolute;
+            top: 1.25rem;
+            right: 1.25rem;
+            z-index: 2;
+            width: 2.2rem;
+            height: 2.2rem;
+            border: 1px solid rgba(126, 136, 133, 0.38);
+            border-radius: 50%;
+            background: conic-gradient(from 35deg, rgba(209, 232, 244, 0.85), rgba(248, 210, 222, 0.75), rgba(252, 237, 168, 0.78), rgba(203, 231, 219, 0.82), rgba(218, 210, 240, 0.78), rgba(209, 232, 244, 0.85));
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.55) inset, 0 3px 9px rgba(44, 58, 52, 0.12);
+            opacity: 0.68;
+            transition: transform 0.65s ease, opacity 0.35s ease;
+            pointer-events: none;
+        }
+        .bar-card:hover .bar-ticket-foil {
+            background-position: 100% 50%;
+            opacity: 0.9;
+        }
+        .bar-card:hover .bar-ticket-hologram {
+            transform: rotate(18deg);
+            opacity: 0.82;
         }
         .bar-ticket-glare {
             position: absolute;
@@ -3917,6 +3979,33 @@
             border-bottom: 1px dashed rgba(42, 59, 50, 0.2);
             text-align: center;
         }
+        .bar-meta-top {
+            position: relative;
+            width: 100%;
+            min-height: 8.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .bar-ticket-art {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            display: grid;
+            place-items: center;
+            width: 8rem;
+            height: 8rem;
+            border: 1px solid rgba(var(--ticket-rgb), 0.45);
+            border-radius: 50%;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(var(--ticket-rgb), 0.13));
+            color: var(--ticket-accent);
+            box-shadow: 0 8px 20px rgba(var(--ticket-rgb), 0.12), 0 0 0 4px rgba(255, 255, 255, 0.45) inset;
+            font-size: 3rem;
+            opacity: 0.2;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
         .bar-number {
             display: inline-flex;
             width: fit-content;
@@ -3938,6 +4027,8 @@
             text-transform: uppercase;
         }
         .bar-name {
+            position: relative;
+            z-index: 1;
             font-family: 'Cormorant Garamond', serif;
             font-size: clamp(2.1rem, 3vw, 2.8rem);
             font-style: italic;
@@ -3945,11 +4036,12 @@
             line-height: 0.95;
             letter-spacing: -0.035em;
             overflow-wrap: anywhere;
+            color: #171918;
         }
         .bar-tags {
             font-family: 'Space Mono', monospace;
             font-size: 0.62rem;
-            color: var(--accent-color);
+            color: var(--ticket-accent);
             letter-spacing: 0.12em;
             line-height: 1.55;
             word-break: keep-all;
@@ -3990,6 +4082,13 @@
             font-size: 0.68rem;
             letter-spacing: 0.08em;
             color: rgba(17, 17, 17, 0.48);
+        }
+        .bar-ticket-place-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+            padding-bottom: 0.95rem;
+            border-bottom: 1px solid rgba(42, 59, 50, 0.14);
         }
         .bar-ticket-fields {
             display: grid;
@@ -4080,7 +4179,10 @@
         .bar-list.is-list-view .bar-card::before,
         .bar-list.is-list-view .bar-card::after,
         .bar-list.is-list-view .bar-card-inner-frame,
-        .bar-list.is-list-view .bar-ticket-glare {
+        .bar-list.is-list-view .bar-ticket-glare,
+        .bar-list.is-list-view .bar-ticket-foil,
+        .bar-list.is-list-view .bar-ticket-hologram,
+        .bar-list.is-list-view .bar-ticket-art {
             display: none;
         }
         .bar-list.is-list-view .bar-card:hover {
@@ -4097,6 +4199,8 @@
             text-align: left;
         }
         .bar-list.is-list-view .bar-meta-top {
+            min-height: 0;
+            align-items: flex-start;
             text-align: left;
         }
         .bar-list.is-list-view .bar-name {
@@ -8399,24 +8503,30 @@
             }
             items.forEach((item, index) => {
                 const card = document.createElement('article');
-                card.className = `bar-card${item.isHidden ? ' is-hidden' : ''}`;
+                card.className = `bar-card bar-ticket-tone-${(index % 4) + 1}${item.isHidden ? ' is-hidden' : ''}`;
                 const innerFrame = document.createElement('span');
                 innerFrame.className = 'bar-card-inner-frame';
                 innerFrame.setAttribute('aria-hidden', 'true');
                 const glare = document.createElement('span');
                 glare.className = 'bar-ticket-glare';
                 glare.setAttribute('aria-hidden', 'true');
+                const foil = document.createElement('span');
+                foil.className = 'bar-ticket-foil';
+                foil.setAttribute('aria-hidden', 'true');
+                const hologram = document.createElement('span');
+                hologram.className = 'bar-ticket-hologram';
+                hologram.setAttribute('aria-hidden', 'true');
 
                 const meta = document.createElement('div');
                 meta.className = 'bar-meta';
-                const number = document.createElement('span');
-                number.className = 'bar-number';
-                number.textContent = `Place ${String(index + 1).padStart(2, '0')}`;
                 const metaTop = document.createElement('div');
-                metaTop.className = 'bar-meta-top space-y-4';
-                const admission = document.createElement('span');
-                admission.className = 'bar-ticket-admission';
-                admission.textContent = item.isHidden ? 'Archive Hold' : 'Private Admission';
+                metaTop.className = 'bar-meta-top';
+                const art = document.createElement('span');
+                art.className = 'bar-ticket-art';
+                art.setAttribute('aria-hidden', 'true');
+                const artIcon = document.createElement('i');
+                artIcon.className = `ph ${['ph-martini', 'ph-wine', 'ph-moon-stars', 'ph-sparkle'][index % 4]}`;
+                art.appendChild(artIcon);
                 const name = document.createElement('h3');
                 name.className = 'bar-name';
                 name.textContent = item.name;
@@ -8430,11 +8540,14 @@
                 const location = document.createElement('p');
                 location.className = 'bar-location';
                 location.textContent = item.address || item.region || 'Location not provided';
-                metaTop.append(number, admission, name, tags);
-                meta.append(metaTop, location);
+                metaTop.append(art, name);
+                meta.append(metaTop);
 
                 const desc = document.createElement('div');
                 desc.className = 'bar-desc';
+                const placeInfo = document.createElement('div');
+                placeInfo.className = 'bar-ticket-place-info';
+                placeInfo.append(tags, location);
                 const description = document.createElement('p');
                 description.className = 'bar-desc-text';
                 description.textContent = item.description || '등록된 상세 설명이 없습니다.';
@@ -8507,9 +8620,9 @@
                     remove.addEventListener('click', () => deleteSmBar(item));
                     manage.append(visibility, edit, remove);
                 }
-                desc.append(description, descMeta, fields, barcodeRow);
+                desc.append(placeInfo, description, descMeta, fields, barcodeRow);
                 if (item.canEdit) desc.appendChild(manage);
-                card.append(innerFrame, glare, meta, desc);
+                card.append(innerFrame, glare, foil, hologram, meta, desc);
                 smBarList.appendChild(card);
             });
             smBarList.scrollLeft = 0;
