@@ -4935,12 +4935,15 @@
             }
             #view-read .gallery-home-art {
                 order: 1 !important;
+                display: flex !important;
+                flex-direction: column !important;
                 width: min(100%, 28rem) !important;
                 margin: 0 auto !important;
-                overflow: hidden;
-                background: #f4f4f2;
+                overflow: visible;
+                background: transparent;
             }
             #view-read .gallery-home-image {
+                order: 2;
                 display: block;
                 width: 100% !important;
                 max-width: none !important;
@@ -4951,18 +4954,19 @@
                 margin: 0 !important;
             }
             #view-read .gallery-home-title {
-                position: absolute !important;
-                left: 1rem !important;
-                right: 1rem !important;
-                bottom: 0.8rem !important;
-                width: auto !important;
+                order: 1;
+                position: static !important;
+                left: auto !important;
+                right: auto !important;
+                bottom: auto !important;
+                width: 100% !important;
                 max-width: none !important;
-                margin: 0 !important;
+                margin: 0 0 1.25rem !important;
                 transform: none !important;
-                color: #fff !important;
-                mix-blend-mode: difference !important;
-                font-size: clamp(2.6rem, 13vw, 4.25rem) !important;
-                line-height: 0.8 !important;
+                color: var(--text-dark) !important;
+                mix-blend-mode: normal !important;
+                font-size: clamp(2.7rem, 13vw, 4.15rem) !important;
+                line-height: 0.82 !important;
                 letter-spacing: -0.035em !important;
                 text-align: left !important;
                 white-space: normal !important;
