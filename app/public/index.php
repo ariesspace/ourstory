@@ -3765,13 +3765,40 @@
         }
         .bar-carousel {
             position: relative;
-            padding-inline: 3.35rem;
+            padding-inline: 0;
+        }
+        .bar-view-toolbar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 0.35rem;
+            margin: -0.75rem 0 1.25rem;
+        }
+        .bar-view-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            min-height: 2.25rem;
+            padding: 0 0.8rem;
+            border: 1px solid rgba(42, 59, 50, 0.18);
+            color: rgba(17, 17, 17, 0.48);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.62rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+        }
+        .bar-view-toggle:hover,
+        .bar-view-toggle.is-active {
+            border-color: var(--accent-color);
+            background: var(--accent-color);
+            color: #fff;
         }
         .bar-list {
             display: grid;
             grid-auto-flow: column;
-            grid-auto-columns: calc((100% - 2.4rem) / 3);
-            gap: 1.2rem;
+            grid-auto-columns: calc((100% - 4.5rem) / 4);
+            gap: 1.5rem;
             overflow-x: auto;
             overscroll-behavior-inline: contain;
             scroll-behavior: smooth;
@@ -3806,31 +3833,39 @@
             opacity: 0.22;
             cursor: default;
         }
-        .bar-carousel-prev { left: 0; }
-        .bar-carousel-next { right: 0; }
+        .bar-carousel-prev { left: -3.35rem; }
+        .bar-carousel-next { right: -3.35rem; }
         .bar-card {
             position: relative;
             min-width: 0;
-            min-height: 34rem;
+            min-height: 37rem;
             display: flex;
             flex-direction: column;
             border: 1px solid rgba(42, 59, 50, 0.2);
             background:
-                radial-gradient(circle at 15% 10%, rgba(233, 214, 229, 0.42), transparent 30%),
-                radial-gradient(circle at 90% 30%, rgba(247, 230, 174, 0.28), transparent 32%),
+                repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.16) 0 1px, transparent 1px 3px),
+                radial-gradient(circle at 12% 10%, rgba(233, 214, 229, 0.48), transparent 31%),
+                radial-gradient(circle at 90% 28%, rgba(247, 230, 174, 0.34), transparent 33%),
+                radial-gradient(circle at 24% 88%, rgba(207, 225, 239, 0.32), transparent 34%),
                 linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(241, 246, 242, 0.9));
             text-align: left;
             overflow: hidden;
             scroll-snap-align: start;
             box-shadow: 0 15px 34px rgba(42, 59, 50, 0.06);
             transition: border-color 0.35s ease, background-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
+            -webkit-mask:
+                radial-gradient(circle at 50% 0, transparent 4px, #000 4.8px) 0 0 / 13px 51% repeat-x,
+                radial-gradient(circle at 50% 100%, transparent 4px, #000 4.8px) 0 100% / 13px 51% repeat-x;
+            mask:
+                radial-gradient(circle at 50% 0, transparent 4px, #000 4.8px) 0 0 / 13px 51% repeat-x,
+                radial-gradient(circle at 50% 100%, transparent 4px, #000 4.8px) 0 100% / 13px 51% repeat-x;
         }
         .bar-card::before,
         .bar-card::after {
             content: '';
             position: absolute;
-            top: 42%;
-            z-index: 1;
+            top: 40%;
+            z-index: 3;
             width: 1rem;
             height: 1rem;
             border: 1px solid rgba(42, 59, 50, 0.14);
@@ -3848,16 +3883,39 @@
         .bar-card.is-hidden {
             opacity: 0.56;
         }
+        .bar-card-inner-frame {
+            position: absolute;
+            inset: 0.82rem;
+            z-index: 1;
+            border: 1px solid rgba(42, 59, 50, 0.16);
+            pointer-events: none;
+        }
+        .bar-ticket-glare {
+            position: absolute;
+            inset: -45% -70%;
+            z-index: 1;
+            background: linear-gradient(112deg, transparent 36%, rgba(255, 255, 255, 0.4) 48%, transparent 60%);
+            transform: translateX(-32%);
+            transition: transform 0.75s ease;
+            pointer-events: none;
+        }
+        .bar-card:hover .bar-ticket-glare {
+            transform: translateX(32%);
+        }
         .bar-meta {
+            position: relative;
+            z-index: 2;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
-            gap: 1rem;
+            justify-content: center;
+            align-items: center;
+            gap: 0.85rem;
             min-width: 0;
-            min-height: 42%;
-            padding: 1.5rem 1.4rem 1.3rem;
+            min-height: 40%;
+            padding: 2.15rem 1.5rem 1.55rem;
             border-right: 0;
             border-bottom: 1px dashed rgba(42, 59, 50, 0.2);
+            text-align: center;
         }
         .bar-number {
             display: inline-flex;
@@ -3868,12 +3926,20 @@
             font-size: 0.62rem;
             font-weight: 700;
             letter-spacing: 0.18em;
-            color: rgba(42, 59, 50, 0.58);
+            color: rgba(42, 59, 50, 0.62);
+            text-transform: uppercase;
+        }
+        .bar-ticket-admission {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.55rem;
+            font-weight: 700;
+            letter-spacing: 0.24em;
+            color: rgba(17, 17, 17, 0.46);
             text-transform: uppercase;
         }
         .bar-name {
             font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(2.2rem, 3.6vw, 3rem);
+            font-size: clamp(2.1rem, 3vw, 2.8rem);
             font-style: italic;
             font-weight: 400;
             line-height: 0.95;
@@ -3890,24 +3956,26 @@
             text-transform: uppercase;
         }
         .bar-location {
-            margin-top: auto;
+            margin-top: 0.35rem;
             font-size: 0.78rem;
             color: rgba(17, 17, 17, 0.48);
             line-height: 1.65;
         }
         .bar-desc {
+            position: relative;
+            z-index: 2;
             min-width: 0;
             display: flex;
             flex-direction: column;
             flex: 1;
             justify-content: flex-start;
-            gap: 1rem;
+            gap: 0.9rem;
             font-size: 0.88rem;
             font-weight: 300;
             line-height: 1.9;
             color: rgba(17, 17, 17, 0.7);
             word-break: keep-all;
-            padding: 1.3rem 1.4rem 1.4rem;
+            padding: 1.35rem 1.45rem 1.65rem;
         }
         .bar-desc-text {
             max-height: 9.25rem;
@@ -3922,6 +3990,54 @@
             font-size: 0.68rem;
             letter-spacing: 0.08em;
             color: rgba(17, 17, 17, 0.48);
+        }
+        .bar-ticket-fields {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.65rem;
+            margin-top: auto;
+            padding: 0.9rem 0;
+            border-top: 1px solid rgba(42, 59, 50, 0.16);
+            border-bottom: 1px dashed rgba(42, 59, 50, 0.16);
+        }
+        .bar-ticket-field {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.18rem;
+        }
+        .bar-ticket-field small,
+        .bar-ticket-code {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.5rem;
+            letter-spacing: 0.14em;
+            color: rgba(17, 17, 17, 0.42);
+            text-transform: uppercase;
+        }
+        .bar-ticket-field strong {
+            overflow: hidden;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem;
+            font-weight: 600;
+            line-height: 1.1;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .bar-ticket-barcode-row {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 0.75rem;
+        }
+        .bar-ticket-barcode {
+            display: block;
+            width: min(68%, 8.5rem);
+            height: 2rem;
+            opacity: 0.7;
+            background: repeating-linear-gradient(90deg,
+                #1a1a1a 0 1px, transparent 1px 3px,
+                #1a1a1a 3px 5px, transparent 5px 7px,
+                #1a1a1a 7px 8px, transparent 8px 11px);
         }
         .bar-actions {
             display: flex;
@@ -3944,10 +4060,79 @@
             border-color: var(--accent-red);
             background: rgba(42, 59, 50, 0.06);
         }
+        .bar-list.is-list-view {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            overflow: visible;
+            scroll-snap-type: none;
+        }
+        .bar-list.is-list-view .bar-card {
+            min-height: 0;
+            display: grid;
+            grid-template-columns: minmax(13rem, 0.85fr) minmax(0, 2fr);
+            border-width: 0 0 1px;
+            background: transparent;
+            box-shadow: none;
+            -webkit-mask: none;
+            mask: none;
+        }
+        .bar-list.is-list-view .bar-card::before,
+        .bar-list.is-list-view .bar-card::after,
+        .bar-list.is-list-view .bar-card-inner-frame,
+        .bar-list.is-list-view .bar-ticket-glare {
+            display: none;
+        }
+        .bar-list.is-list-view .bar-card:hover {
+            box-shadow: none;
+            transform: none;
+        }
+        .bar-list.is-list-view .bar-meta {
+            min-height: 0;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 1.5rem 1.4rem 1.5rem 0;
+            border-right: 1px solid var(--border-light);
+            border-bottom: 0;
+            text-align: left;
+        }
+        .bar-list.is-list-view .bar-meta-top {
+            text-align: left;
+        }
+        .bar-list.is-list-view .bar-name {
+            font-size: 2rem;
+        }
+        .bar-list.is-list-view .bar-desc {
+            display: grid;
+            grid-template-columns: minmax(0, 1.6fr) minmax(13rem, 0.9fr);
+            align-items: center;
+            padding: 1.5rem 0 1.5rem 1.75rem;
+        }
+        .bar-list.is-list-view .bar-desc-text {
+            max-height: 5.5rem;
+        }
+        .bar-list.is-list-view .bar-ticket-fields {
+            margin: 0;
+        }
+        .bar-list.is-list-view .bar-ticket-barcode-row {
+            grid-column: 2;
+        }
+        .bar-list.is-list-view .bar-actions {
+            grid-column: 1 / -1;
+        }
+        @media (max-width: 1450px) and (min-width: 1101px) {
+            .bar-list {
+                grid-auto-columns: calc((100% - 3rem) / 3);
+            }
+            .bar-carousel-prev { left: -2.85rem; }
+            .bar-carousel-next { right: -2.85rem; }
+        }
         @media (max-width: 1100px) and (min-width: 861px) {
             .bar-list {
-                grid-auto-columns: calc((100% - 1.2rem) / 2);
+                grid-auto-columns: calc((100% - 1.5rem) / 2);
             }
+            .bar-carousel-prev { left: -2.65rem; }
+            .bar-carousel-next { right: -2.65rem; }
         }
         #view-gallery {
             max-width: min(100%, 1240px);
@@ -4235,6 +4420,15 @@
                 width: 100%;
                 justify-content: center;
             }
+            .bar-view-toolbar {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                margin: -0.2rem 0 1rem;
+            }
+            .bar-view-toggle {
+                justify-content: center;
+                min-height: 2.65rem;
+            }
             .bar-carousel {
                 margin-inline: -0.35rem;
                 padding-inline: 0;
@@ -4302,6 +4496,31 @@
             .bar-actions {
                 justify-content: flex-start;
                 padding-top: 0.2rem;
+            }
+            .bar-list.is-list-view {
+                padding: 0 0.35rem 0.5rem;
+            }
+            .bar-list.is-list-view .bar-card {
+                display: block;
+            }
+            .bar-list.is-list-view .bar-meta {
+                padding: 1.15rem 0;
+                border-right: 0;
+                border-bottom: 1px solid var(--border-light);
+            }
+            .bar-list.is-list-view .bar-meta-top {
+                width: 100%;
+            }
+            .bar-list.is-list-view .bar-desc {
+                display: flex;
+                padding: 1rem 0 1.3rem;
+            }
+            .bar-list.is-list-view .bar-ticket-fields {
+                width: 100%;
+            }
+            .bar-list.is-list-view .bar-ticket-barcode-row,
+            .bar-list.is-list-view .bar-actions {
+                grid-column: auto;
             }
             .bar-action-btn {
                 width: 2rem;
@@ -6031,6 +6250,14 @@
                 <input type="search" id="sm-bar-search" class="w-full bg-transparent py-4 outline-none placeholder:opacity-40" placeholder="Bar 이름, 지역, 주소, 입장료 또는 트위터 검색">
                 <span id="sm-bar-search-count" class="shrink-0 text-xs tracking-widest uppercase opacity-45"></span>
             </div>
+            <div class="bar-view-toolbar" role="group" aria-label="SM Bar 목록 보기 방식">
+                <button type="button" id="sm-bar-ticket-view" class="bar-view-toggle is-active" aria-pressed="true">
+                    <i class="ph ph-ticket" aria-hidden="true"></i>티켓 보기
+                </button>
+                <button type="button" id="sm-bar-list-view" class="bar-view-toggle" aria-pressed="false">
+                    <i class="ph ph-list" aria-hidden="true"></i>리스트 보기
+                </button>
+            </div>
             <div class="bar-carousel" aria-label="SM Bar 티켓 목록">
                 <button type="button" id="sm-bar-prev" class="bar-carousel-nav bar-carousel-prev" title="이전 티켓" aria-label="이전 티켓">
                     <i class="ph ph-caret-left" aria-hidden="true"></i>
@@ -7320,6 +7547,9 @@
         const smBarSearchCount = document.getElementById('sm-bar-search-count');
         const smBarPrev = document.getElementById('sm-bar-prev');
         const smBarNext = document.getElementById('sm-bar-next');
+        const smBarTicketView = document.getElementById('sm-bar-ticket-view');
+        const smBarListView = document.getElementById('sm-bar-list-view');
+        let smBarViewMode = localStorage.getItem('ourstory-sm-bar-view') === 'list' ? 'list' : 'ticket';
 
         let calendarDate = new Date();
         let selectedDateKey = formatDateKey(calendarDate);
@@ -8113,6 +8343,11 @@
 
         function updateSmBarCarousel() {
             if (!smBarList || !smBarPrev || !smBarNext) return;
+            if (smBarViewMode === 'list') {
+                smBarPrev.hidden = true;
+                smBarNext.hidden = true;
+                return;
+            }
             const hasOverflow = smBarList.scrollWidth > smBarList.clientWidth + 2;
             smBarPrev.hidden = !hasOverflow;
             smBarNext.hidden = !hasOverflow;
@@ -8121,6 +8356,7 @@
         }
 
         function moveSmBarCarousel(direction) {
+            if (smBarViewMode === 'list') return;
             const cards = Array.from(smBarList.querySelectorAll('.bar-card'));
             if (!cards.length) return;
             const firstWidth = cards[0].getBoundingClientRect().width;
@@ -8133,6 +8369,18 @@
             const cardRect = cards[targetIndex].getBoundingClientRect();
             const targetLeft = smBarList.scrollLeft + cardRect.left - listRect.left;
             smBarList.scrollTo({ left: targetLeft, behavior: 'smooth' });
+        }
+
+        function setSmBarViewMode(mode, persist = true) {
+            smBarViewMode = mode === 'list' ? 'list' : 'ticket';
+            smBarList.classList.toggle('is-list-view', smBarViewMode === 'list');
+            smBarTicketView.classList.toggle('is-active', smBarViewMode === 'ticket');
+            smBarListView.classList.toggle('is-active', smBarViewMode === 'list');
+            smBarTicketView.setAttribute('aria-pressed', String(smBarViewMode === 'ticket'));
+            smBarListView.setAttribute('aria-pressed', String(smBarViewMode === 'list'));
+            smBarList.scrollLeft = 0;
+            if (persist) localStorage.setItem('ourstory-sm-bar-view', smBarViewMode);
+            requestAnimationFrame(updateSmBarCarousel);
         }
 
         function renderSmBars() {
@@ -8152,6 +8400,12 @@
             items.forEach((item, index) => {
                 const card = document.createElement('article');
                 card.className = `bar-card${item.isHidden ? ' is-hidden' : ''}`;
+                const innerFrame = document.createElement('span');
+                innerFrame.className = 'bar-card-inner-frame';
+                innerFrame.setAttribute('aria-hidden', 'true');
+                const glare = document.createElement('span');
+                glare.className = 'bar-ticket-glare';
+                glare.setAttribute('aria-hidden', 'true');
 
                 const meta = document.createElement('div');
                 meta.className = 'bar-meta';
@@ -8159,7 +8413,10 @@
                 number.className = 'bar-number';
                 number.textContent = `Place ${String(index + 1).padStart(2, '0')}`;
                 const metaTop = document.createElement('div');
-                metaTop.className = 'space-y-4';
+                metaTop.className = 'bar-meta-top space-y-4';
+                const admission = document.createElement('span');
+                admission.className = 'bar-ticket-admission';
+                admission.textContent = item.isHidden ? 'Archive Hold' : 'Private Admission';
                 const name = document.createElement('h3');
                 name.className = 'bar-name';
                 name.textContent = item.name;
@@ -8173,7 +8430,7 @@
                 const location = document.createElement('p');
                 location.className = 'bar-location';
                 location.textContent = item.address || item.region || 'Location not provided';
-                metaTop.append(number, name, tags);
+                metaTop.append(number, admission, name, tags);
                 meta.append(metaTop, location);
 
                 const desc = document.createElement('div');
@@ -8202,6 +8459,31 @@
                     twitter.textContent = item.twitterAccount || 'Twitter / X';
                     descMeta.appendChild(twitter);
                 }
+                const fields = document.createElement('div');
+                fields.className = 'bar-ticket-fields';
+                [
+                    ['Region', item.region || 'Private'],
+                    ['Entry', item.entranceFee || 'Guide'],
+                    ['Status', item.isHidden ? 'Hold' : 'Open'],
+                ].forEach(([label, value]) => {
+                    const field = document.createElement('span');
+                    field.className = 'bar-ticket-field';
+                    const fieldLabel = document.createElement('small');
+                    fieldLabel.textContent = label;
+                    const fieldValue = document.createElement('strong');
+                    fieldValue.textContent = value;
+                    field.append(fieldLabel, fieldValue);
+                    fields.appendChild(field);
+                });
+                const barcodeRow = document.createElement('div');
+                barcodeRow.className = 'bar-ticket-barcode-row';
+                const barcode = document.createElement('span');
+                barcode.className = 'bar-ticket-barcode';
+                barcode.setAttribute('aria-hidden', 'true');
+                const ticketCode = document.createElement('span');
+                ticketCode.className = 'bar-ticket-code';
+                ticketCode.textContent = `OS-${String(item.id || index + 1).padStart(4, '0')}`;
+                barcodeRow.append(barcode, ticketCode);
                 const manage = document.createElement('div');
                 manage.className = 'bar-actions';
                 if (item.canEdit) {
@@ -8225,18 +8507,21 @@
                     remove.addEventListener('click', () => deleteSmBar(item));
                     manage.append(visibility, edit, remove);
                 }
-                desc.append(description, descMeta);
+                desc.append(description, descMeta, fields, barcodeRow);
                 if (item.canEdit) desc.appendChild(manage);
-                card.append(meta, desc);
+                card.append(innerFrame, glare, meta, desc);
                 smBarList.appendChild(card);
             });
             smBarList.scrollLeft = 0;
+            setSmBarViewMode(smBarViewMode, false);
             requestAnimationFrame(updateSmBarCarousel);
         }
 
         smBarSearch?.addEventListener('input', renderSmBars);
         smBarPrev?.addEventListener('click', () => moveSmBarCarousel(-1));
         smBarNext?.addEventListener('click', () => moveSmBarCarousel(1));
+        smBarTicketView?.addEventListener('click', () => setSmBarViewMode('ticket'));
+        smBarListView?.addEventListener('click', () => setSmBarViewMode('list'));
         smBarList?.addEventListener('scroll', updateSmBarCarousel, { passive: true });
         window.addEventListener('resize', updateSmBarCarousel, { passive: true });
 
