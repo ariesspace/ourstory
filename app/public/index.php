@@ -4961,11 +4961,15 @@
                 transform: none !important;
                 color: #fff !important;
                 mix-blend-mode: difference !important;
-                font-size: clamp(2.4rem, 12vw, 4rem) !important;
-                line-height: 0.86 !important;
+                font-size: clamp(2.6rem, 13vw, 4.25rem) !important;
+                line-height: 0.8 !important;
                 letter-spacing: -0.035em !important;
                 text-align: left !important;
-                white-space: nowrap !important;
+                white-space: normal !important;
+            }
+            #view-read .gallery-home-title i {
+                display: block !important;
+                margin-left: clamp(1.4rem, 8vw, 2.75rem) !important;
             }
             #view-read .gallery-home-detail {
                 order: 2 !important;
@@ -5665,7 +5669,7 @@
                             <span>Notice</span><i class="ph ph-arrow-up-right"></i>
                         </button>
                         <button type="button" class="gallery-home-button view-trigger" data-target="view-gallery">
-                            <span>Enter Gallery</span><i class="ph ph-arrow-right"></i>
+                            <span>Enter</span><i class="ph ph-arrow-right"></i>
                         </button>
                     </div>
                 </div>
