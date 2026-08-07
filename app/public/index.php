@@ -3763,29 +3763,87 @@
             color: rgba(17, 17, 17, 0.52);
             font-style: italic;
         }
-        .bar-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1.35rem;
+        .bar-carousel {
+            position: relative;
+            padding-inline: 3.35rem;
         }
+        .bar-list {
+            display: grid;
+            grid-auto-flow: column;
+            grid-auto-columns: calc((100% - 2.4rem) / 3);
+            gap: 1.2rem;
+            overflow-x: auto;
+            overscroll-behavior-inline: contain;
+            scroll-behavior: smooth;
+            scroll-snap-type: inline mandatory;
+            scrollbar-width: none;
+            touch-action: pan-x pan-y;
+        }
+        .bar-list::-webkit-scrollbar {
+            display: none;
+        }
+        .bar-carousel-nav {
+            position: absolute;
+            top: 50%;
+            z-index: 2;
+            width: 2.45rem;
+            height: 4.5rem;
+            border: 1px solid rgba(42, 59, 50, 0.2);
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--accent-color);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transform: translateY(-50%);
+            transition: color 0.25s ease, border-color 0.25s ease, background-color 0.25s ease, opacity 0.25s ease;
+        }
+        .bar-carousel-nav:hover:not(:disabled) {
+            color: #fff;
+            border-color: var(--accent-color);
+            background: var(--accent-color);
+        }
+        .bar-carousel-nav:disabled {
+            opacity: 0.22;
+            cursor: default;
+        }
+        .bar-carousel-prev { left: 0; }
+        .bar-carousel-next { right: 0; }
         .bar-card {
             position: relative;
-            display: grid;
-            grid-template-columns: minmax(15rem, 0.95fr) minmax(0, 1.9fr);
-            gap: 0;
-            border: 1px solid var(--border-light);
-            background: rgba(255, 255, 255, 0.78);
+            min-width: 0;
+            min-height: 34rem;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(42, 59, 50, 0.2);
+            background:
+                radial-gradient(circle at 15% 10%, rgba(233, 214, 229, 0.42), transparent 30%),
+                radial-gradient(circle at 90% 30%, rgba(247, 230, 174, 0.28), transparent 32%),
+                linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(241, 246, 242, 0.9));
             text-align: left;
-            min-height: 16rem;
             overflow: hidden;
-            box-shadow: 0 14px 34px rgba(17, 17, 17, 0.025);
+            scroll-snap-align: start;
+            box-shadow: 0 15px 34px rgba(42, 59, 50, 0.06);
             transition: border-color 0.35s ease, background-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
         }
+        .bar-card::before,
+        .bar-card::after {
+            content: '';
+            position: absolute;
+            top: 42%;
+            z-index: 1;
+            width: 1rem;
+            height: 1rem;
+            border: 1px solid rgba(42, 59, 50, 0.14);
+            border-radius: 50%;
+            background: var(--bg-color);
+            transform: translateY(-50%);
+        }
+        .bar-card::before { left: -0.55rem; }
+        .bar-card::after { right: -0.55rem; }
         .bar-card:hover {
-            border-color: var(--text-dark);
-            background: rgba(255, 255, 255, 0.94);
-            box-shadow: 0 22px 48px rgba(17, 17, 17, 0.055);
-            transform: translateY(-2px);
+            border-color: var(--accent-color);
+            box-shadow: 0 20px 42px rgba(42, 59, 50, 0.11);
+            transform: translateY(-3px);
         }
         .bar-card.is-hidden {
             opacity: 0.56;
@@ -3793,27 +3851,29 @@
         .bar-meta {
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            gap: 1.1rem;
+            justify-content: flex-start;
+            gap: 1rem;
             min-width: 0;
-            padding: clamp(1.3rem, 3vw, 2.25rem);
-            border-right: 1px solid rgba(42, 59, 50, 0.12);
+            min-height: 42%;
+            padding: 1.5rem 1.4rem 1.3rem;
+            border-right: 0;
+            border-bottom: 1px dashed rgba(42, 59, 50, 0.2);
         }
         .bar-number {
             display: inline-flex;
             width: fit-content;
-            border: 1px solid rgba(42, 59, 50, 0.18);
-            padding: 0.32rem 0.55rem;
+            border: 0;
+            padding: 0;
             font-family: 'Space Mono', monospace;
             font-size: 0.62rem;
             font-weight: 700;
             letter-spacing: 0.18em;
-            color: rgba(42, 59, 50, 0.62);
+            color: rgba(42, 59, 50, 0.58);
             text-transform: uppercase;
         }
         .bar-name {
             font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(2.2rem, 4vw, 3.25rem);
+            font-size: clamp(2.2rem, 3.6vw, 3rem);
             font-style: italic;
             font-weight: 400;
             line-height: 0.95;
@@ -3830,7 +3890,7 @@
             text-transform: uppercase;
         }
         .bar-location {
-            margin-top: 0.25rem;
+            margin-top: auto;
             font-size: 0.78rem;
             color: rgba(17, 17, 17, 0.48);
             line-height: 1.65;
@@ -3839,17 +3899,18 @@
             min-width: 0;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            gap: 1.15rem;
-            font-size: 0.95rem;
+            flex: 1;
+            justify-content: flex-start;
+            gap: 1rem;
+            font-size: 0.88rem;
             font-weight: 300;
             line-height: 1.9;
             color: rgba(17, 17, 17, 0.7);
             word-break: keep-all;
-            padding: clamp(1.3rem, 3vw, 2.25rem);
+            padding: 1.3rem 1.4rem 1.4rem;
         }
         .bar-desc-text {
-            max-height: 7.5rem;
+            max-height: 9.25rem;
             overflow: auto;
             padding-right: 0.35rem;
         }
@@ -3865,7 +3926,7 @@
         .bar-actions {
             display: flex;
             gap: 0.35rem;
-            margin-top: 0.35rem;
+            margin-top: auto;
             justify-content: flex-end;
         }
         .bar-action-btn {
@@ -3882,6 +3943,11 @@
             color: var(--accent-red);
             border-color: var(--accent-red);
             background: rgba(42, 59, 50, 0.06);
+        }
+        @media (max-width: 1100px) and (min-width: 861px) {
+            .bar-list {
+                grid-auto-columns: calc((100% - 1.2rem) / 2);
+            }
         }
         #view-gallery {
             max-width: min(100%, 1240px);
@@ -4169,23 +4235,33 @@
                 width: 100%;
                 justify-content: center;
             }
+            .bar-carousel {
+                margin-inline: -0.35rem;
+                padding-inline: 0;
+            }
+            .bar-carousel-nav {
+                display: none;
+            }
+            .bar-list {
+                grid-auto-columns: min(86vw, 21.5rem);
+                gap: 0.85rem;
+                padding: 0 0.35rem 0.85rem;
+                scroll-padding-inline: 0.35rem;
+            }
             .bar-card {
-                display: block;
-                min-height: 0;
-                background: rgba(255, 255, 255, 0.94);
-                border-color: rgba(17, 17, 17, 0.12);
-                box-shadow: 0 10px 22px rgba(17, 17, 17, 0.035);
+                min-height: 30rem;
+                box-shadow: 0 10px 22px rgba(42, 59, 50, 0.055);
             }
             .bar-card:hover {
                 transform: none;
-                box-shadow: 0 10px 22px rgba(17, 17, 17, 0.035);
+                box-shadow: 0 10px 22px rgba(42, 59, 50, 0.055);
             }
             .bar-meta {
                 justify-content: flex-start;
                 gap: 0.9rem;
+                min-height: 39%;
                 padding: 1.2rem 1.15rem 0.95rem;
-                border-right: 0;
-                border-bottom: 1px solid rgba(17, 17, 17, 0.08);
+                border-bottom-style: dashed;
             }
             .bar-number {
                 padding: 0.24rem 0.48rem;
@@ -4208,6 +4284,7 @@
                 line-height: 1.55;
             }
             .bar-desc {
+                flex: 1;
                 gap: 0.8rem;
                 padding: 1rem 1.15rem 1.1rem;
                 font-size: 0.88rem;
@@ -4229,9 +4306,6 @@
             .bar-action-btn {
                 width: 2rem;
                 height: 2rem;
-            }
-            .bar-list {
-                gap: 1rem;
             }
             .gallery-archive-head {
                 grid-template-columns: 1fr;
@@ -5957,7 +6031,15 @@
                 <input type="search" id="sm-bar-search" class="w-full bg-transparent py-4 outline-none placeholder:opacity-40" placeholder="Bar 이름, 지역, 주소, 입장료 또는 트위터 검색">
                 <span id="sm-bar-search-count" class="shrink-0 text-xs tracking-widest uppercase opacity-45"></span>
             </div>
-            <div id="sm-bar-list" class="bar-list"></div>
+            <div class="bar-carousel" aria-label="SM Bar 티켓 목록">
+                <button type="button" id="sm-bar-prev" class="bar-carousel-nav bar-carousel-prev" title="이전 티켓" aria-label="이전 티켓">
+                    <i class="ph ph-caret-left" aria-hidden="true"></i>
+                </button>
+                <div id="sm-bar-list" class="bar-list"></div>
+                <button type="button" id="sm-bar-next" class="bar-carousel-nav bar-carousel-next" title="다음 티켓" aria-label="다음 티켓">
+                    <i class="ph ph-caret-right" aria-hidden="true"></i>
+                </button>
+            </div>
             <p id="sm-bar-status" class="py-16 text-center text-sm opacity-50">목록을 불러오는 중입니다.</p>
         </section>
 
@@ -7236,6 +7318,8 @@
         const smBarFormError = document.getElementById('sm-bar-form-error');
         const smBarSearch = document.getElementById('sm-bar-search');
         const smBarSearchCount = document.getElementById('sm-bar-search-count');
+        const smBarPrev = document.getElementById('sm-bar-prev');
+        const smBarNext = document.getElementById('sm-bar-next');
 
         let calendarDate = new Date();
         let selectedDateKey = formatDateKey(calendarDate);
@@ -8027,6 +8111,30 @@
             document.getElementById('sm-bar-name').focus();
         }
 
+        function updateSmBarCarousel() {
+            if (!smBarList || !smBarPrev || !smBarNext) return;
+            const hasOverflow = smBarList.scrollWidth > smBarList.clientWidth + 2;
+            smBarPrev.hidden = !hasOverflow;
+            smBarNext.hidden = !hasOverflow;
+            smBarPrev.disabled = !hasOverflow || smBarList.scrollLeft <= 2;
+            smBarNext.disabled = !hasOverflow || smBarList.scrollLeft + smBarList.clientWidth >= smBarList.scrollWidth - 2;
+        }
+
+        function moveSmBarCarousel(direction) {
+            const cards = Array.from(smBarList.querySelectorAll('.bar-card'));
+            if (!cards.length) return;
+            const firstWidth = cards[0].getBoundingClientRect().width;
+            const styles = window.getComputedStyle(smBarList);
+            const gap = Number.parseFloat(styles.columnGap || styles.gap) || 0;
+            const pageSize = Math.max(1, Math.round((smBarList.clientWidth + gap) / (firstWidth + gap)));
+            const currentIndex = Math.max(0, Math.round(smBarList.scrollLeft / (firstWidth + gap)));
+            const targetIndex = Math.min(cards.length - 1, Math.max(0, currentIndex + direction * pageSize));
+            const listRect = smBarList.getBoundingClientRect();
+            const cardRect = cards[targetIndex].getBoundingClientRect();
+            const targetLeft = smBarList.scrollLeft + cardRect.left - listRect.left;
+            smBarList.scrollTo({ left: targetLeft, behavior: 'smooth' });
+        }
+
         function renderSmBars() {
             smBarList.innerHTML = '';
             const query = smBarSearch.value.trim().toLocaleLowerCase('ko-KR');
@@ -8038,6 +8146,7 @@
             smBarStatus.classList.toggle('hidden', items.length > 0);
             if (!items.length) {
                 smBarStatus.textContent = query ? '검색 결과가 없습니다.' : '아직 등록된 SM Bar 정보가 없습니다.';
+                updateSmBarCarousel();
                 return;
             }
             items.forEach((item, index) => {
@@ -8121,9 +8230,15 @@
                 card.append(meta, desc);
                 smBarList.appendChild(card);
             });
+            smBarList.scrollLeft = 0;
+            requestAnimationFrame(updateSmBarCarousel);
         }
 
         smBarSearch?.addEventListener('input', renderSmBars);
+        smBarPrev?.addEventListener('click', () => moveSmBarCarousel(-1));
+        smBarNext?.addEventListener('click', () => moveSmBarCarousel(1));
+        smBarList?.addEventListener('scroll', updateSmBarCarousel, { passive: true });
+        window.addEventListener('resize', updateSmBarCarousel, { passive: true });
 
         async function loadSmBars() {
             smBarStatus.textContent = '목록을 불러오는 중입니다.';
