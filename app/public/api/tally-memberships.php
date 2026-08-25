@@ -18,12 +18,24 @@ function membership_json(array $body, int $status = 200): never
 
 function membership_verify_signature(string $payload): bool
 {
-    $secret = (string) (getenv('TALLY_MEMBERSHIP_WEBHOOK_SECRET') ?: getenv('TALLY_WEBHOOK_SECRET'));
     $received = (string) ($_SERVER['HTTP_TALLY_SIGNATURE'] ?? '');
-    if ($secret === '' || $received === '') {
+    if ($received === '') {
         return false;
     }
-    return hash_equals(base64_encode(hash_hmac('sha256', $payload, $secret, true)), $received);
+
+    $secrets = array_unique(array_filter([
+        (string) getenv('TALLY_MEMBERSHIP_WEBHOOK_SECRET'),
+        (string) getenv('TALLY_WEBHOOK_SECRET'),
+    ], static fn (string $secret): bool => $secret !== ''));
+
+    foreach ($secrets as $secret) {
+        $expected = base64_encode(hash_hmac('sha256', $payload, $secret, true));
+        if (hash_equals($expected, $received)) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 function membership_require_manager(?array $viewer): void
