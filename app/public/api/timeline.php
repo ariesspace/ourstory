@@ -161,8 +161,12 @@ function timeline_post_comments(PDO $pdo, array $postIds, array $viewer): array
     if (!$postIds) return [];
     $placeholders = implode(',', array_fill(0, count($postIds), '?'));
     $stmt = $pdo->prepare(
-        "SELECT c.id, c.post_id, c.user_id, c.content, c.created_at, u.username, u.display_name, u.role, u.avatar_stored_name
-         FROM timeline_comments c JOIN users u ON u.id = c.user_id
+        "SELECT c.id, c.post_id, c.user_id, c.content, c.created_at,
+                u.username, u.display_name, u.role, u.avatar_stored_name,
+                p.is_anonymous AS post_is_anonymous
+         FROM timeline_comments c
+         JOIN timeline_posts p ON p.id = c.post_id
+         JOIN users u ON u.id = c.user_id
          WHERE c.post_id IN ($placeholders)
          ORDER BY c.created_at, c.id"
     );
@@ -170,11 +174,18 @@ function timeline_post_comments(PDO $pdo, array $postIds, array $viewer): array
     $comments = [];
     foreach ($stmt->fetchAll() as $row) {
         $postId = (int) $row['post_id'];
+        $isAnonymous = (int) ($row['post_is_anonymous'] ?? 0) === 1;
         $comments[$postId][] = [
             'id' => (int) $row['id'],
             'content' => $row['content'],
             'createdAt' => $row['created_at'],
-            'author' => [
+            'author' => $isAnonymous ? [
+                'id' => 0,
+                'username' => '',
+                'displayName' => 'Anonymous',
+                'role' => '',
+                'avatarUrl' => '',
+            ] : [
                 'id' => (int) $row['user_id'],
                 'username' => $row['username'],
                 'displayName' => $row['display_name'],
@@ -312,7 +323,8 @@ if ($method === 'GET' && $action === 'profile') {
     }
     $posts = $pdo->prepare(
         'SELECT id, content, is_anonymous, created_at, updated_at FROM timeline_posts
-         WHERE user_id = :user_id ORDER BY created_at DESC, id DESC LIMIT 100'
+         WHERE user_id = :user_id AND COALESCE(is_anonymous, 0) = 0
+         ORDER BY created_at DESC, id DESC LIMIT 100'
     );
     $posts->execute([':user_id' => $profile['id']]);
     $canManage = $viewer['id'] === (int) $profile['id'] || in_array($viewer['role'], ['superuser', 'admin'], true);
